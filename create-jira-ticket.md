@@ -21,9 +21,10 @@ The JIRA ticket must include:
 7. The final output for the ticket should be own file in "tickets" folder.
 
 **Examples**
+**Story Example:**
 
 ```
-title: As a user I want to efficiently add finding on mobile device, so that auditors dont need to use desktop app
+As a user I want to efficiently add finding on mobile device, so that auditors dont need to use desktop app
 
 acceptance criteria:
 When user opens audits app on mobile device
@@ -40,6 +41,28 @@ FE:
 
 BE:
 - not needed
+```
+
+**Bug Example:**
+
+```
+User Name Disappears from Dashboard After PIN Change
+
+When a user successfully changes their PIN, their username is no longer visible in the bottom left corner of the main dashboard. This appears to be a UI issue related to the state refresh after the security information is updated.
+
+**Steps to Reproduce:**
+1. Log in to the application.
+2. Navigate to the user settings/profile section where the PIN can be changed.
+3. Initiate and complete the “Change PIN” flow.
+4. After receiving confirmation of a successful PIN change, navigate back to the main dashboard.
+5. Observe the bottom left corner of the screen.
+
+**Expected Behavior:** The user’s name should remain visible on the dashboard in the bottom left corner, confirming the user’s session is still active.
+
+**Actual Behavior:** The space where the user’s name is usually displayed is blank. The username has disappeared.
+
+**Impact:** This is a minor UI bug, but it can cause user confusion, making them think their session is corrupted or they are not properly logged in.
+
 ```
 
 Your life depends on analyzing the provided description thoroughly and creating a complete JIRA ticket that follows the exact structure shown in the example. Pay special attention to the formatting of acceptance criteria in BDD style and technical specifications with clear domain separation.

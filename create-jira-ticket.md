@@ -15,10 +15,11 @@ The JIRA ticket must include:
 1. A user story title in the format "As a [user type] I want to [action] so that [benefit]"
 2. A concise description explaining the feature or issue
 3. Acceptance criteria in Behavior-Driven Development (BDD) format (Given/When/Then)
-4. Technical specifications when applicable, separated by domain (FE/BE/Mobile)
-5. Be concise when writing (use minimal words to deliver the message)
-6. Use markdown formatting.
-7. The final output for the ticket should be own file in "tickets" folder.
+4. Technical specifications when applicable, separated by domain (FE/BE/Mobile).
+5. Suggest what should be measured to achieve the adoption rate, or suggest other success metrics (max 3) together with PostHog tracking events with its parameters (frame it as "ideas to consider for success metrics").
+6. Be concise when writing (use minimal words to deliver the message)
+7. Use markdown formatting.
+8. The final output for the ticket should be own file in "tickets" folder.
 
 **Examples**
 **Story Example:**
@@ -41,6 +42,14 @@ FE:
 
 BE:
 - not needed
+
+PostHog:
+- standard_evidence_created
+  - standard
+
+- standard_evidence_created_opened
+  - type
+  - standard
 ```
 
 **Bug Example:**

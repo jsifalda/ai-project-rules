@@ -19,7 +19,7 @@ The JIRA ticket must include:
 5. Suggest what should be measured to achieve the adoption rate, or suggest other success metrics (max 3) together with PostHog tracking events with its parameters (frame it as "ideas to consider for success metrics"), only for story-type tickets.
 6. Be concise when writing (use minimal words to deliver the message)
 7. Use markdown formatting.
-8. The final output for the ticket should be own file in "tickets" folder.
+8. The final output for the ticket should be own file in "\_tickets" folder.
 
 **Examples**
 **Story Example:**

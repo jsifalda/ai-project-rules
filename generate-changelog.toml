@@ -1,0 +1,16 @@
+description="Generage summary of changes for current branch and master"
+prompt = """
+
+!{git diff master...HEAD} 
+
+GOAL:
+generate high-level summary of current changes for my coolegues, so they understand what changed and why for easier merge request code review
+
+Instructions:
+- be concoise (use the minimal words to deliver message)
+- use markdown formating
+
+Additional user's instructions:
+
+{{args}}
+"""

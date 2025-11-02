@@ -55,8 +55,9 @@ Assume the primary reader of the PRD is a **junior developer**. Therefore, requi
 ## Final instructions
 
 1. Be concise yet thorough when generating the PRD (use minimal words to deliver the message).
-2. Do NOT start implementing the PRD
-3. Make sure to ask the user clarifying questions
-4. Take the user's answers to the clarifying questions and improve the PRD
+2. Reason from first principles and explain your thought process
+3. Do NOT start implementing the PRD
+4. Make sure to ask the user clarifying questions, don't make any assuptions (or state them clearly)
+5. Take the user's answers to the clarify questions and improve the PRD
 
 """

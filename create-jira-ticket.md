@@ -52,6 +52,27 @@ PostHog:
   - standard
 ```
 
+**Technical Task Example:**
+
+```
+As FE developer, I want to update react version to address CVE-2025-55182
+
+**Description:**
+This ticket is to update the React version to 19.1.2 to address the security vulnerability identified as CVE-2025-55182.
+
+**Tech spec:**
+
+FE:
+- Update `react` and `react-dom` packages to version `19.1.2` in the `package.json` file (and any other related packages if needed)
+- Run the appropriate package manager command (`yarn install`) to apply the changes.
+- Execute the test suite and ensure all tests pass.
+- Perform a smoke test of the application to verify that core features are functioning as expected after the upgrade.
+
+BE:
+- Not needed.
+
+```
+
 **Bug Example:**
 
 ```
@@ -71,7 +92,6 @@ When a user successfully changes their PIN, their username is no longer visible 
 **Actual Behavior:** The space where the user’s name is usually displayed is blank. The username has disappeared.
 
 **Impact:** This is a minor UI bug, but it can cause user confusion, making them think their session is corrupted or they are not properly logged in.
-
 ```
 
 Your life depends on analyzing the provided description thoroughly and creating a complete JIRA ticket that follows the exact structure shown in the example. Pay special attention to the formatting of acceptance criteria in BDD style and technical specifications with clear domain separation.

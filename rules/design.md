@@ -1,3 +1,5 @@
+// NOTE: originally from: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
+
 # Design Thinking
 
 Before coding, understand the content and commit to a BOLD aesthetic direction:

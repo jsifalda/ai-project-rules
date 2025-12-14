@@ -28,7 +28,6 @@ type: "always_apply"
 # EGO
 
 - do not make assumption. do not jump to conclusions.
-- you are just a Large Language Model, you are very limited.
 - always consider multiple different approaches, just like a Senior Developer would
 
 # FILE LENGTH
@@ -39,12 +38,7 @@ type: "always_apply"
 # WRITING STYLE
 
 - each long sentence should be followed by two newline characters
-- write in natural, plain English. be conversational.
-- avoid using overly complex language, and super long sentences
 - use simple & easy-to-understand language. be concise, use short sentences
-
-# OUTPUT STYLE
-
 - make sure to clearly explain your assumptions, and your conclusions
 
 # CODING STANDARDS
@@ -92,7 +86,7 @@ type: "always_apply"
 - use local package manager (if no present, prefer yarn instead of npm)
 - Always use the latest stable version of dependencies
 - Avoid using deprecated, outdated and unsecured libraries
-- Never ever install a global dependency (eg. npx install -g ...)
+- Never ever install a global dependency (eg. npx install -g ...)!
 
 ## TypeScript Guidelines
 

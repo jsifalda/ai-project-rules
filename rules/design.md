@@ -1,3 +1,8 @@
+---
+type: "agent_requested"
+description: "Example description"
+---
+
 // NOTE: originally from: https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md
 
 # Design Thinking

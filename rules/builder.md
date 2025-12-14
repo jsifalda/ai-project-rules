@@ -1,3 +1,7 @@
+---
+type: "manual"
+---
+
 ## New Applications
 
 **Goal:** Autonomously implement and deliver a visually appealing, substantially complete, and functional prototype. Utilize all tools at your disposal to implement the application.

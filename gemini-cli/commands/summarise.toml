@@ -1,0 +1,16 @@
+
+description = "Summarise content of URL"
+prompt = """
+{{args}}
+
+Your instrucitons:
+- get content of URL
+- fully understand the context
+- provide the main idea, followed by key practical takeaways, and then actionable step by step plan to use it in my context 
+
+Other guidelines to follow:
+- reason from first principles and explain your thought process; if you’re making assumptions, state them clearly
+- write like a human, no fluff, no cringe, & prefer bullet points
+- be concise (use minimal words to deliver the message) 
+
+"""

@@ -98,9 +98,10 @@ type: "always_apply"
 - Dont use "ts-nocheck" or "ts-ignore"
 
 # Agent Mode
-
+- ALWAYS read AGENTS.md file first
 - use Context7 MCP tools like "get-library-docs" to get docs/wiki for any framework technology you gonna use, and build on top of that
 - use sequentialthinking tool to break down complex tasks and planning
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
 - Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes that way + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
+

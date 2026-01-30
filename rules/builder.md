@@ -1,5 +1,5 @@
 ---
-type: "manual"
+type: "always_apply"
 ---
 
 ## New Applications
@@ -10,20 +10,20 @@ type: "manual"
 2. **Propose Plan:** Formulate an internal development plan. Present a clear, concise, high-level summary to the user. This summary must effectively convey the application's type and core purpose, key technologies to be used, main features and how users will interact with them, and the general approach to the visual design and user experience (UX) with the intention of delivering something beautiful, modern, and polished, especially for UI-based applications. Ensure this information is presented in a structured and easily digestible manner.
 
 - When key technologies aren't specified, prefer the following:
-- reactjs
-- typescript
+reactjs with typescript 
 - shadcn ui components with tailwind css
 - lucide lib for react-compatible icons
 - microsoft clarity for analytics
 - nextjs as server (hosted on vercel)
 - SWR lib for data fetching with nextjs, otherwise native “fetch” method
-- nextauth.js for authentication (only with nextjs, otherwise auth.js)
+- auth.js for authentication (nextauth.js when used with nextjs)
 - sentry for error tracking
-- jest for unit testing, together with playwright for integration tests (alternative nodejs tests runner for api/server tests)
-- eslint for static linting
-- husky precommit hooks (for linting etc)
-- Tauri if multi-platform/hybrid apps are needed (eg. mobile & desktop apps)
-- silktide consent manager for cookies banner
+- jest for unit testing, together with playwright for integration tests (or simpley nodejs tests runner for api/server tests if possible)
+- eslint for static linting (with prettier)
+- husky "precommit" hooks (for linting etc)
+- resend for email sending (aka email provider)
+- Tauri if multi platforms/hybrid apps are needed (eg. mobile & desktop apps)
+- silktide consent manager for cookies banner 
 
 3. **User Approval:** Obtain user approval for the proposed plan.
 4. **Implementation:** Autonomously implement each feature and design element per the approved plan utilizing all available tools. When starting ensure you scaffold the application. Aim for full scope completion.

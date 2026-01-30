@@ -77,8 +77,8 @@ type: "always_apply"
 
 ## Testing
 
-- Write unit tests where it makes sense
-- Prefer the Jest runner if possible
+- Write unit tests a lot (aim at least for covering all user scenarios)!
+- Prefer the Jest runner if possible (if not possible, ask the user to choice different runner - provide the best possible options to run tests in the context for the codebase)
 - Never ever remove any tests if they are failing (only if there are no longer needed)
 
 ## Dependency Management
@@ -99,7 +99,7 @@ type: "always_apply"
 
 # Agent Mode
 - ALWAYS read AGENTS.md file first
-- use Context7 MCP tools like "get-library-docs" to get docs/wiki for any framework technology you gonna use, and build on top of that
+- use Context7 skill to get docs/wiki for any framework technology you gonna use, and build on top of that
 - use sequentialthinking tool to break down complex tasks and planning
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.

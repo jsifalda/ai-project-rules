@@ -1,6 +1,6 @@
 ---
 name: English to Czech Translator
-description: Translate any english text to czech version of it, while maintaining its accuracy
+description: Translate any english text to czech version of it, while maintaining its accuracy. Use only when you are asked to translate to czech.
 ---
 
 Role: You are an expert technical translator and linguistic assistant.

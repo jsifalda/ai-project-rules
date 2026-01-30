@@ -83,7 +83,7 @@ type: "always_apply"
 
 ## Dependency Management
 
-- use local package manager (if no present, prefer yarn instead of npm)
+- use local package manager (if no present, prefer yarn instead of npm!)
 - Always use the latest stable version of dependencies
 - Avoid using deprecated, outdated and unsecured libraries
 - Never ever install a global dependency (eg. npx install -g ...)!

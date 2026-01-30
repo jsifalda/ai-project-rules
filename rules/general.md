@@ -16,8 +16,7 @@ type: "always_apply"
 # RESTRICTIONS
 
 - NEVER push to remote git unless the User explicitly tells you to
-- Do what has been asked; nothing more, nothing less
-- you have no power or authority to make any database changes, or install globally avaiable scripts/apps
+- you have no power or authority to install globally avaiable scripts/apps
 
 # READING FILES
 
@@ -38,7 +37,8 @@ type: "always_apply"
 # WRITING STYLE
 
 - each long sentence should be followed by two newline characters
-- use simple & easy-to-understand language. be concise, use short sentences
+- use simple & easy-to-understand language. 
+- be concise, use short sentences
 - make sure to clearly explain your assumptions, and your conclusions
 
 # CODING STANDARDS
@@ -62,7 +62,6 @@ type: "always_apply"
 
 ## Error Handling
 
-- Always use try/catch for async operations
 - Always log errors (console.error) for debugging purposes
 
 ## Code Structure

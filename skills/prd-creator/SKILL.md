@@ -1,6 +1,6 @@
 ---
 name: prd-creator
-description: "Comprehensive tool for generating detailed Product Requirements Documents (PRDs) in Markdown format. Use when Claude needs to: (1) Transform a feature idea into a detailed technical specification, (2) Gather requirements from a user through structured clarifying questions, (3) Create documentation suitable for junior developers to implement a feature."
+description: "Comprehensive tool for generating detailed Product Requirements Documents (PRDs) in Markdown format. Use when needs to: (1) Transform a feature idea into a detailed technical specification, (2) Gather requirements from a user through structured clarifying questions, (3) Create documentation suitable for junior developers to implement a feature."
 ---
 
 # Product Requirements Document (PRD) Creator

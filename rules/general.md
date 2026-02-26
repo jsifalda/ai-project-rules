@@ -104,6 +104,21 @@ type: "always_apply"
 - When working with GitLab (merge requests, issues, pipelines, CI, etc.), **default to using `glab` CLI commands** rather than API calls or web links.
 - Examples: `glab mr list`, `glab mr create`, `glab ci status`, `glab issue list`, `glab ci trace`.
 
+### `glab` Safety Instructions
+**NEVER** execute these `glab` commands — they are **banned** due to destructive/irreversible impact:
+
+## Banned (never execute)
+- `glab repo delete` / `glab repo transfer`
+- `glab api` (arbitrary API calls bypass all guardrails)
+- `glab mr delete` / `glab issue delete` / `glab release delete`
+- `glab label delete` / `glab variable delete` / `glab schedule delete` / `glab milestone delete`
+- `glab token revoke` / `glab securefile remove`
+- `glab ssh-key delete` / `glab gpg-key delete` / `glab deploy-key delete`
+
+## Require explicit user confirmation
+- `glab mr close` / `glab issue close` / `glab incident close`
+
+
 
 # Agent Mode
 - ALWAYS read AGENTS.md file first

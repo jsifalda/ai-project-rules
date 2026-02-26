@@ -96,6 +96,15 @@ type: "always_apply"
 - Strict TypeScript types with zero "any"
 - Dont use "ts-nocheck" or "ts-ignore"
 
+
+# TOOLS
+
+## GitLab
+
+- When working with GitLab (merge requests, issues, pipelines, CI, etc.), **default to using `glab` CLI commands** rather than API calls or web links.
+- Examples: `glab mr list`, `glab mr create`, `glab ci status`, `glab issue list`, `glab ci trace`.
+
+
 # Agent Mode
 - ALWAYS read AGENTS.md file first
 - use Context7 skill to get docs/wiki for any framework technology you gonna use, and build on top of that

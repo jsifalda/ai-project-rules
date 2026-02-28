@@ -96,6 +96,30 @@ type: "always_apply"
 - Strict TypeScript types with zero "any"
 - Dont use "ts-nocheck" or "ts-ignore"
 
+
+# TOOLS
+
+## GitLab
+
+- When working with GitLab (merge requests, issues, pipelines, CI, etc.), **default to using `glab` CLI commands** rather than API calls or web links.
+- Examples: `glab mr list`, `glab mr create`, `glab ci status`, `glab issue list`, `glab ci trace`.
+
+### `glab` Safety Instructions
+**NEVER** execute these `glab` commands — they are **banned** due to destructive/irreversible impact:
+
+## Banned (never execute)
+- `glab repo delete` / `glab repo transfer`
+- `glab api` (arbitrary API calls bypass all guardrails)
+- `glab mr delete` / `glab issue delete` / `glab release delete`
+- `glab label delete` / `glab variable delete` / `glab schedule delete` / `glab milestone delete`
+- `glab token revoke` / `glab securefile remove`
+- `glab ssh-key delete` / `glab gpg-key delete` / `glab deploy-key delete`
+
+## Require explicit user confirmation
+- `glab mr close` / `glab issue close` / `glab incident close`
+
+
+
 # Agent Mode
 - ALWAYS read AGENTS.md file first
 - use Context7 skill to get docs/wiki for any framework technology you gonna use, and build on top of that
@@ -104,3 +128,27 @@ type: "always_apply"
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
 - Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes that way + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
 
+## Implementation Verification Protocol
+
+After completing any code changes, perform a three-phase verification before considering the task complete:
+
+### Phase 1: Build Verification
+- Run the project's build command (e.g., yarn build, npm run build)
+- Ensure zero compile errors and warnings are addressed
+- Verify all TypeScript types resolve correctly
+
+### Phase 2: Automated Testing
+- Run the relevant test suite (e.g., yarn test, npm test)
+- Ensure all existing tests pass
+- If you modified functionality, verify affected tests still pass or update them accordingly
+
+### Phase 3: Visual/Browser Verification
+- Use the agent-browser skill and its tools to visually verify your changes in the running application
+- Navigate to the affected pages/components and confirm:
+	- The UI renders correctly without visual regressions
+	- Interactive elements (buttons, forms, links) function as expected
+	- No console errors appear in the browser
+	- The user flow works end-to-end as intended
+- Take screenshots when your observe any inconsistncies
+
+CRITICAL: Do not mark implementation as complete until all three verification phases pass. If any phase fails, fix the issues and re-run all phases.

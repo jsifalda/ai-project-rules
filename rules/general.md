@@ -99,6 +99,23 @@ type: "always_apply"
 
 # TOOLS
 
+## Mermaid Diagrams
+
+When creating or editing Mermaid diagrams (`.mmd` files):
+
+### Syntax Rules
+- Never mix bracket types — `{...}` (diamond) must close with `}`, `[...]` (box) must close with `]`
+- Avoid special characters (`[`, `]`, `{`, `}`, `(`, `)`) inside node labels — use `<br/>` for line breaks, and rephrase to avoid brackets
+- Use `"quoted titles"` for subgraph labels containing special characters or emoji
+- Pipe labels on edges must be closed: `-->|label text|` (pipe on both sides)
+
+### Mandatory Validation
+- After creating or editing any `.mmd` file, **always validate** it using the mermaid parser before marking the task as done
+- Validation method (requires `jsdom` and `mermaid` npm packages in `/tmp`)
+- If validation fails, fix the errors and re-validate — repeat until it passes
+- **Never mark a Mermaid diagram task as done without a passing validation**
+
+
 ## GitLab
 
 - When working with GitLab (merge requests, issues, pipelines, CI, etc.), **default to using `glab` CLI commands** rather than API calls or web links.

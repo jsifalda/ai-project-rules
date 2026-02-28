@@ -138,9 +138,11 @@ After completing any code changes, perform a three-phase verification before con
 - Verify all TypeScript types resolve correctly
 
 ### Phase 2: Automated Testing
-- Run the relevant test suite (e.g., yarn test, npm test)
-- Ensure all existing tests pass
+- Run the full test suite (`yarn test` or any other test command available) after **every** code change — no exceptions
+- Ensure all existing tests pass — zero failures
+- If your changes break existing tests, **fix them immediately** before proceeding
 - If you modified functionality, verify affected tests still pass or update them accordingly
+- If new functionality was added, write tests for it
 
 ### Phase 3: Visual/Browser Verification
 - Use the agent-browser skill and its tools to visually verify your changes in the running application

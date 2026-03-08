@@ -1,5 +1,5 @@
 ---
-name: Summarise Link
+name: Summarise URL
 description: Fetch link content, understand context, and return correctly summarised version
 ---
 
@@ -11,4 +11,4 @@ Your instrucitons:
 Other guidelines to follow:
 - reason from first principles and explain your thought process; if you’re making assumptions, state them clearly
 - write like a human, no fluff, no cringe, & prefer bullet points
-- be concise (use minimal words to deliver the message) 
+- be concise (use minimal words to deliver the message)

@@ -95,6 +95,7 @@ type: "always_apply"
 - Use TSX "node --import=tsx ..." to run typescript locally (for production code use tsc build)
 - Strict TypeScript types with zero "any"
 - Dont use "ts-nocheck" or "ts-ignore"
+- Dont allow any types errors - always check your TS (eg. with npx tsc --noEmit), and fix typing if needed
 
 
 # TOOLS
@@ -134,7 +135,6 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 
 ## Require explicit user confirmation
 - `glab mr close` / `glab issue close` / `glab incident close`
-
 
 
 # Agent Mode

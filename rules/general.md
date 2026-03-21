@@ -2,10 +2,16 @@
 type: "always_apply"
 ---
 
-# Core Mandates
+# Core (ALWAYS ADHERE THIS)
 
+## Core Principles
+- **Simplicity First:** Make every change as simple as possible. Impact minimal code.
+- **No Laziness:** Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact:** Only touch what's necessary. No side effects with new bugs.
+
+## Core Guidelines
 - Rigorously adhere to existing project conventions when reading or modifying code. Analyze surrounding code, tests, and configuration first.
-- NEVER assume a library/framework is available or appropriate. Verify its established usage within the project (check imports, configuration files like 'package.json', 'Cargo.toml', 'requirements.txt', 'build.gradle', etc., or observe neighboring files) before employing it.
+- NEVER assume a library/framework is available or appropriate. Verify its established usage within the project (check imports, configuration files like 'package.json', 'requirements.txt' etc., or observe neighboring files) before employing it.
 - Mimic the style (formatting, naming), structure, framework choices, typing, and architectural patterns of existing code in the project.
 - When editing, understand the local context (imports, functions/classes) to ensure your changes integrate naturally and idiomatically.
 - Add code comments sparingly. Focus on _why_ something is done, especially for complex logic, rather than _what_ is done. Only add high-value comments if necessary for clarity or if requested by the user. Do not edit comments that are separate from the code you are changing. _NEVER_ talk to the user or describe your changes through comments.
@@ -13,47 +19,51 @@ type: "always_apply"
 - Do not take significant actions beyond the clear scope of the request without confirming with the user. If asked _how_ to do something, explain first, don't just do it.
 - Prioritize simplicity and minimalism in your solutions.
 
-# RESTRICTIONS
+# SELF IMPROVEMENT LOOP
+- After ANY correction from the user: update your instructions/tasks/lessons.md with the pattern (if you are not sure where to store lesson, ask the user)
+- Write rules for yourself that prevent the same mistake
+- Ruthlessly iterate on these lessons until mistake rate drops
+- Review lessons at session start for relevant project
 
+# PLAN MODE DEFAULT
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- If something goes sideways, STOP and re-plan immediately
+- Use plan mode for verification steps, not just building
+- Write detailed specs upfront to reduce ambiguity
+
+# RESTRICTIONS
 - NEVER push to remote git unless the User explicitly tells you to
 - you have no power or authority to install globally avaiable scripts/apps
 
 # READING FILES
-
 - always read the file in full, do not be lazy
 - before making any code changes, start by finding & reading ALL of the relevant files
 - never make changes without reading the entire file
 
 # EGO
-
 - do not make assumption. do not jump to conclusions.
 - always consider multiple different approaches, just like a Senior Developer would
 
 # FILE LENGTH
-
 - ideally, keep all code files under 300 LOC
 - files should be modular & single-purpose
 
 # WRITING STYLE
-
 - each long sentence should be followed by two newline characters
 - use simple & easy-to-understand language. 
 - be concise, use short sentences
-- make sure to clearly explain your assumptions, and your conclusions
+- make sure to clearly explain your assumptions (if you make any), and your conclusions
 
 # CODING STANDARDS
 
 ## General Guidelines
-
 - use/change absolute minimum code needed
 
 ## Naming Conventions
-
 - Use camelCase for variables and functions
 - Use PascalCase for classes and components
 
 ## GIT Commit Guidelines
-
 - Use a descriptive commit message that:
 - Uses conventional commit format (`feat:`, `fix:`, `refactor:`, etc.)
 - Summarizes what was accomplished, lists key changes and additions
@@ -61,7 +71,6 @@ type: "always_apply"
 - Good example `git commit -m "feat(module): add payment validation logic, #GITHUB-ID" `
 
 ## Error Handling
-
 - Always log errors (console.error) for debugging purposes
 
 ## Code Structure
@@ -88,7 +97,6 @@ type: "always_apply"
 - Never ever install a global dependency (eg. npx install -g ...)!
 
 ## TypeScript Guidelines
-
 - Use TypeScript for new code (if possible)
 - Prefer immutable data (const, readonly)
 - Use interfaces for data structures (if possible)
@@ -101,7 +109,6 @@ type: "always_apply"
 # TOOLS
 
 ## Mermaid Diagrams
-
 When creating or editing Mermaid diagrams (`.mmd` files):
 
 ### Syntax Rules
@@ -139,8 +146,6 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 
 # Agent Mode
 - ALWAYS read AGENTS.md file first
-- use Context7 skill to get docs/wiki for any framework technology you gonna use, and build on top of that
-- use sequentialthinking tool to break down complex tasks and planning
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
 - Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes that way + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
@@ -154,12 +159,13 @@ After completing any code changes, perform a three-phase verification before con
 - Ensure zero compile errors and warnings are addressed
 - Verify all TypeScript types resolve correctly
 
-### Phase 2: Automated Testing
+### Phase 2: Automated Testing (tests + lint)
 - Run the full test suite (`yarn test` or any other test command available) after **every** code change — no exceptions
 - Ensure all existing tests pass — zero failures
 - If your changes break existing tests, **fix them immediately** before proceeding
 - If you modified functionality, verify affected tests still pass or update them accordingly
 - If new functionality was added, write tests for it
+- Run lint (if present in the project), fix any reported issues (errors and also warnings)
 
 ### Phase 3: Visual/Browser Verification
 - Use the agent-browser skill and its tools to visually verify your changes in the running application

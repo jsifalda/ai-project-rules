@@ -1,26 +1,22 @@
 /* 
   Silktide Consent Manager - https://silktide.com/consent-manager/  
-
-  Styles are at risked of being overridden by styles coming from the site the consent manager is used on.
-  To help prevent this, global wrapper elements are prefixed with "#silktide-"
 */
 
 /* --------------------------------
-  Global Styles - These elements exist in the main DOM and styling is limited to positioning and animation
+  Global Styles
 -------------------------------- */
 /* Wrapper (Global) */
-#silktide-wrapper {
-              --focus: 0 0 0 2px #ffffff, 0 0 0 4px #000000, 0 0 0 6px #ffffff;
-              --boxShadow: -5px 5px 10px 0px #00000012, 0px 0px 50px 0px #0000001a;
-              --fontFamily: Helvetica Neue, Segoe UI, Arial, sans-serif;
-              --primaryColor: #F9D000;
-              --backgroundColor: #050505;
-              --textColor: #F4F0DF;
-              --backdropBackgroundColor: #00000033;
-              --backdropBackgroundBlur: 0px;
-              --cookieIconColor: #F9D000;
-              --cookieIconBackgroundColor: #050505;
-              position: fixed;
+#stcm-wrapper {
+  --boxShadow: -5px 5px 10px 0px #00000012, 0px 0px 50px 0px #0000001a;
+  --fontFamily: Helvetica Neue, Segoe UI, Arial, sans-serif;
+  --primaryColor: #F9D000;
+  --backgroundColor: #050505;
+  --textColor: #F4F0DF;
+  --backdropBackgroundColor: #00000077;
+  --backdropBackgroundBlur: 0px;
+  --iconColor: #050505;
+  --iconBackgroundColor: #F9D000;
+  position: fixed;
   bottom: 0;
   right: 0;
   width: 100%;
@@ -30,57 +26,44 @@
   border: 0px;
   display: flex;
   justify-content: center;
-  align-items: center
-            }
-
-/* Backdrop (Global) */
-#silktide-backdrop-global {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: auto;
-  border: 0px;
-  display: none;
+  align-items: center;
 }
 
 /* --------------------------------
-  Links
+Links
 -------------------------------- */
-#silktide-wrapper a {
+#stcm-wrapper a {
   all: unset;
   display: inline-block;
   color: var(--primaryColor);
   text-decoration: underline;
 }
 
-#silktide-wrapper a:hover {
+#stcm-wrapper a:hover {
   cursor: pointer;
   color: var(--textColor);
 }
 
 /* --------------------------------
-  Focus Styles
+Focus Styles
 -------------------------------- */
-#silktide-wrapper a:focus,
-#silktide-wrapper #silktide-banner button:focus,
-#silktide-wrapper #silktide-modal button:focus,
-#silktide-wrapper #silktide-cookie-icon:focus {
+#stcm-wrapper a:focus,
+#stcm-wrapper #stcm-banner button:focus,
+#stcm-wrapper #stcm-modal button:focus,
+#stcm-wrapper #stcm-icon:focus {
   outline: none;
-  box-shadow: var(--focus);
+  box-shadow: 0 0 0 2px var(--backgroundColor), 0 0 0 4px #ffffff;
   border-radius: 5px;
 }
 
-#silktide-wrapper #silktide-cookie-icon:focus {
+#stcm-wrapper #stcm-icon:focus {
   border-radius: 50%;
 }
 
 /* --------------------------------
-  General Styles
+General Styles
 -------------------------------- */
-
-#silktide-wrapper .st-button {
+#stcm-wrapper .stcm-button {
   color: var(--backgroundColor);
   background-color: var(--primaryColor);
   border: 2px solid var(--primaryColor);
@@ -94,34 +77,31 @@
   border-radius: 5px;
 }
 
-#silktide-wrapper .st-button--primary {
-}
-
-#silktide-wrapper .st-button--primary:hover {
+#stcm-wrapper .stcm-button-primary:hover {
   background-color: var(--backgroundColor);
   color: var(--primaryColor);
 }
 
-#silktide-wrapper .st-button--secondary {
+#stcm-wrapper .stcm-button-secondary {
   background-color: var(--backgroundColor);
   color: var(--primaryColor);
 }
 
-#silktide-wrapper .st-button--secondary:hover {
+#stcm-wrapper .stcm-button-secondary:hover {
   background-color: var(--primaryColor);
   color: var(--backgroundColor);
 }
 
 /* --------------------------------
-  Banner
+Banner
 -------------------------------- */
-#silktide-banner {
+#stcm-banner {
   font-family: var(--fontFamily);
   color: var(--textColor);
   background-color: var(--backgroundColor);
   box-sizing: border-box;
   padding: 32px;
-  border-radius: 5px;
+  border-radius: 12px;
   pointer-events: auto;
   border: 0px;
   position: fixed;
@@ -133,40 +113,46 @@
   max-height: calc(100vh - 32px);
   transform: translate(0, -20px);
   opacity: 0;
-  animation: silktide-slideInDown 350ms ease-out forwards;
+  animation: stcm-slide-down 350ms ease-out;
   animation-delay: 0.3s;
   box-shadow: -5px 5px 10px 0px #00000012, 0px 0px 50px 0px #0000001a;
 }
 
-#silktide-banner:focus {
+#stcm-banner.stcm-loaded {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+
+#stcm-banner:focus {
   border-radius: 50%;
 }
 
-#silktide-banner.center {
+#stcm-banner.stcm-pos-center {
   top: 50%;
   left: 50%;
   bottom: auto;
   right: auto;
   position: fixed;
   transform: translate(-50%, calc(-50% - 20px));
-  animation: silktide-slideInDown-center 350ms ease-out forwards;
+  animation: stcm-slide-down-center 350ms ease-out forwards;
 }
 
-#silktide-banner.bottomLeft {
+#stcm-banner.stcm-pos-bottom-left {
   bottom: 16px;
   left: 16px;
   position: fixed;
 }
 
-#silktide-banner.bottomCenter {
+#stcm-banner.stcm-pos-bottom-center {
   bottom: 16px;
   left: 50%;
   position: fixed;
   transform: translate(-50%, -20px);
-  animation: silktide-slideInDown-bottomCenter 350ms ease-out forwards;
+  animation: stcm-slide-down-bottom-center 350ms ease-out forwards;
 }
 
-#silktide-banner .preferences {
+#stcm-banner .stcm-preferences-button {
   display: flex;
   gap: 5px;
   border: none;
@@ -177,40 +163,35 @@
   font-size: 16px;
 }
 
-#silktide-banner .preferences span {
+#stcm-banner .stcm-preferences-button span {
   display: block;
   white-space: nowrap;
-  text-decoration: underline;
-}
-
-#silktide-banner .preferences span:hover {
-  color: var(--textColor);
-}
-
-#silktide-banner .preferences:after {
-  display: block;
-  content: '>';
   text-decoration: none;
 }
 
-#silktide-banner p {
+#stcm-banner .stcm-preferences-button span:hover {
+  color: var(--textColor);
+}
+
+#stcm-banner p {
   font-size: 16px;
   line-height: 24px;
+  color: var(--textColor);
   margin: 0px 0px 15px;
 }
 
-#silktide-banner a {
+#stcm-banner a {
   display: inline-block;
   color: var(--primaryColor);
   text-decoration: underline;
   background-color: var(--backgroundColor);
 }
 
-#silktide-banner a:hover {
+#stcm-banner a:hover {
   color: var(--textColor);
 }
 
-#silktide-banner a.silktide-logo {
+#stcm-banner a.stcm-logo {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,10 +199,10 @@
   margin-left: auto;
   width: 48px;
   height: 48px;
+  text-decoration: none;
 }
 
-
-#silktide-banner .actions {
+#stcm-banner .stcm-actions {
   display: flex;
   gap: 16px;
   flex-direction: column;
@@ -229,13 +210,13 @@
 }
 
 @media (min-width: 600px) {
-  #silktide-banner .actions {
+  #stcm-banner .stcm-actions {
     flex-direction: row;
     align-items: center;
   }
 }
 
-#silktide-banner .actions-row {
+#stcm-banner .stcm-actions-row {
   display: flex;
   gap: 16px;
   flex-direction: row;
@@ -245,9 +226,9 @@
 }
 
 /* --------------------------------
-  Modal
+Modal
 -------------------------------- */
-#silktide-modal {
+#stcm-modal {
   display: none;
   pointer-events: auto;
   overflow: auto;
@@ -257,21 +238,21 @@
   border: 0px;
   transform: translate(0px, -20px);
   opacity: 0;
-  animation: silktide-slideInUp-center 350ms ease-out forwards;
+  animation: stcm-slide-up-center 350ms ease-out forwards;
   box-shadow: -5px 5px 10px 0px #00000012, 0px 0px 50px 0px #0000001a;
   font-family: var(--fontFamily);
   color: var(--textColor);
   flex-direction: column;
   padding: 30px;
   background-color: var(--backgroundColor);
-  border-radius: 5px;
+  border-radius: 12px;
   box-sizing: border-box;
 }
 
 /* --------------------------------
-  Modal - Header
+Modal - Header
 -------------------------------- */
-#silktide-modal header {
+#stcm-modal header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -279,7 +260,7 @@
   gap: 16px;
 }
 
-#silktide-modal h1 {
+#stcm-modal h1 {
   font-family: var(--fontFamily);
   color: var(--textColor);
   font-size: 24px;
@@ -287,61 +268,60 @@
   margin: 0px;
 }
 
-#silktide-modal .modal-close {
+#stcm-modal .stcm-modal-close {
   display: inline-flex;
   border: none;
   padding: 13px;
-  border: 0px;
   cursor: pointer;
   background: var(--backgroundColor);
   color: var(--primaryColor);
 }
 
-#silktide-modal .modal-close svg {
+#stcm-modal .stcm-modal-close svg {
   fill: var(--primaryColor);
 }
 
 /* --------------------------------
-  Modal - Content
+Modal - Content
 -------------------------------- */
-
-#silktide-modal section {
+#stcm-modal section {
   flex: 1;
   margin-top: 32px;
 }
 
-#silktide-modal section::-webkit-scrollbar {
+#stcm-modal section::-webkit-scrollbar {
   display: block; /* Force scrollbars to show */
   width: 5px; /* Width of the scrollbar */
 }
 
-#silktide-modal section::-webkit-scrollbar-thumb {
+#stcm-modal section::-webkit-scrollbar-thumb {
   background-color: var(--textColor); /* Color of the scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the thumb */
 }
 
-#silktide-modal p {
+#stcm-modal p {
   font-size: 16px;
   line-height: 24px;
   color: var(--textColor);
+  opacity: 0.6;
   margin: 0px 0px 15px;
 }
 
-#silktide-modal p:last-of-type {
+#stcm-modal p:last-of-type {
   margin: 0px;
 }
 
-#silktide-modal fieldset {
+#stcm-modal fieldset {
   padding: 0px;
   border: none;
   margin: 0px 0px 32px;
 }
 
-#silktide-modal fieldset:last-of-type {
+#stcm-modal fieldset:last-of-type {
   margin: 0px;
 }
 
-#silktide-modal legend {
+#stcm-modal legend {
   padding: 0px;
   margin: 0px 0px 10px;
   font-weight: 700;
@@ -349,7 +329,7 @@
   font-size: 16px;
 }
 
-#silktide-modal .cookie-type-content {
+#stcm-modal .stcm-consent-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -357,9 +337,9 @@
 }
 
 /* --------------------------------
-  Modal - Switches
+Modal - Switches
 -------------------------------- */
-#silktide-modal .switch {
+#stcm-modal .stcm-toggle {
   flex-shrink: 0;
   position: relative;
   display: inline-block;
@@ -368,19 +348,19 @@
   cursor: pointer;
 }
 
-#silktide-modal .switch:focus-within {
+#stcm-modal .stcm-toggle:focus-within {
   outline: none;
-  box-shadow: var(--focus);
+  box-shadow: 0 0 0 2px var(--backgroundColor), 0 0 0 4px #ffffff;
   border-radius: 25px;
 }
 
-#silktide-modal .switch input {
+#stcm-modal .stcm-toggle input {
   opacity: 0;
   position: absolute;
 }
 
 /* Unchecked Switch Styles */
-#silktide-modal .switch__pill {
+#stcm-modal .stcm-toggle-track {
   position: relative;
   display: block;
   height: 34px;
@@ -389,7 +369,7 @@
   border-radius: 25px;
 }
 
-#silktide-modal .switch__dot {
+#stcm-modal .stcm-toggle-thumb {
   position: absolute;
   top: 2px;
   left: 2px;
@@ -401,55 +381,55 @@
   transition: left 150ms ease-out;
 }
 
-#silktide-modal .switch__off,
-#silktide-modal .switch__on {
+#stcm-modal .stcm-toggle-off,
+#stcm-modal .stcm-toggle-on {
   text-transform: uppercase;
   font-size: 15px;
   font-weight: 500;
   color: var(--backgroundColor);
   position: absolute;
-  top: 7px;
+  top: 5px;
   right: 8px;
   transition: right 150ms ease-out, opacity 150ms ease-out;
 }
 
-#silktide-modal .switch__off {
+#stcm-modal .stcm-toggle-off {
   opacity: 1;
 }
 
-#silktide-modal .switch__on {
+#stcm-modal .stcm-toggle-on {
   opacity: 0;
 }
 
 /* Checked Switch Styles */
-#silktide-modal .switch input:checked + .switch__pill {
+#stcm-modal .stcm-toggle input:checked + .stcm-toggle-track {
   background: var(--primaryColor);
 }
 
-#silktide-modal .switch input:checked ~ .switch__dot {
+#stcm-modal .stcm-toggle input:checked ~ .stcm-toggle-thumb {
   left: calc(100% - 32px);
 }
 
-#silktide-modal .switch input:checked ~ .switch__off {
+#stcm-modal .stcm-toggle input:checked ~ .stcm-toggle-off {
   right: calc(100% - 32px);
   opacity: 0;
 }
 
-#silktide-modal .switch input:checked ~ .switch__on {
+#stcm-modal .stcm-toggle input:checked ~ .stcm-toggle-on {
   right: calc(100% - 34px);
   opacity: 1;
 }
 
-/* Disabled Switch Styles */
-#silktide-modal .switch input:disabled + .switch__pill {
+#stcm-modal .stcm-toggle input:disabled + .stcm-toggle-track {
   opacity: 0.65;
+  filter: grayscale(100%);
   cursor: not-allowed;
 }
 
 /* --------------------------------
-  Modal - Footer
+Modal - Footer
 -------------------------------- */
-#silktide-modal footer {
+#stcm-modal footer {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -457,19 +437,27 @@
 }
 
 @media (min-width: 600px) {
-  #silktide-modal footer {
+  #stcm-modal footer {
     flex-direction: row;
     align-items: center;
   }
 }
 
-#silktide-modal footer a {
+#stcm-modal footer a {
   margin-left: auto;
-  padding: 14px 0px;
+  padding: 0;
+}
+
+#stcm-modal footer a.stcm-credit-link {
+  text-decoration: none;
+}
+
+#stcm-modal footer a.stcm-credit-link:hover {
+  text-decoration: underline;
 }
 
 /* Cookie Icon */
-#silktide-cookie-icon {
+#stcm-icon {
   display: none;
   position: fixed;
   bottom: 10px;
@@ -481,26 +469,26 @@
   border-radius: 50%;
   padding: 0px;
   border: none;
-  background-color: var(--cookieIconColor);
+  background-color: var(--iconColor);
   cursor: pointer;
   box-shadow: 0px 0px 6px 0px #0000001a;
   pointer-events: auto;
-  animation: silktide-fadeIn 0.3s ease-in-out forwards;
+  animation: stcm-fade-in 0.3s ease-in-out forwards;
 }
 
-#silktide-cookie-icon.bottomRight {
+#stcm-icon.stcm-pos-bottom-right {
   left: auto;
   right: 10px;
 }
 
-#silktide-cookie-icon svg {
-  fill: var(--cookieIconBackgroundColor);
+#stcm-icon svg {
+  fill: var(--iconBackgroundColor);
 }
 
 /* --------------------------------
-  Backdrop
+Backdrop
 -------------------------------- */
-#silktide-backdrop {
+#stcm-backdrop {
   display: none;
   position: absolute;
   top: 0;
@@ -513,9 +501,9 @@
 }
 
 /* --------------------------------
-  Animations
+Animations
 -------------------------------- */
-@keyframes silktide-fadeIn {
+@keyframes stcm-fade-in {
   from {
     opacity: 0;
   }
@@ -524,7 +512,7 @@
   }
 }
 
-@keyframes silktide-slideInDown {
+@keyframes stcm-slide-down {
   from {
     opacity: 0;
     transform: translateY(-20px);
@@ -535,7 +523,7 @@
   }
 }
 
-@keyframes silktide-slideInDown-center {
+@keyframes stcm-slide-down-center {
   from {
     opacity: 0;
     transform: translate(-50%, calc(-50% - 20px));
@@ -546,7 +534,7 @@
   }
 }
 
-@keyframes silktide-slideInDown-bottomCenter {
+@keyframes stcm-slide-down-bottom-center {
   from {
     opacity: 0;
     transform: translate(-50%, -20px);
@@ -557,7 +545,7 @@
   }
 }
 
-@keyframes silktide-slideInUp-center {
+@keyframes stcm-slide-up-center {
   from {
     opacity: 0;
     transform: translate(0px, 20px);
@@ -565,5 +553,37 @@
   to {
     opacity: 1;
     transform: translate(0px, 0px);
+  }
+}
+
+/* --------------------------------
+Animation - backdrop click feedback
+-------------------------------- */
+@keyframes stcm-nudge {
+  0%, 100% { right: 16px; }
+  10%, 30%, 50%, 70%, 90% { right: 20px; }
+  20%, 40%, 60%, 80% { right: 12px; }
+}
+
+/* Apply to banner */
+#stcm-banner.stcm-nudge {
+  animation: stcm-nudge 1s ease-in-out;
+}
+
+/* Apply to modal */
+#stcm-modal.stcm-nudge {
+  animation: stcm-nudge 0.5s ease-in-out;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  #stcm-banner.stcm-nudge,
+  #stcm-modal.stcm-nudge {
+    animation: stcm-pulse 0.5s ease-in-out;
+  }
+  
+  @keyframes stcm-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
   }
 }

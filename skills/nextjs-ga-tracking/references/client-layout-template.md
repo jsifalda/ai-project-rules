@@ -9,24 +9,22 @@ Replace all `{PLACEHOLDER}` values with user-provided parameters from Step 0.
 ```tsx
 "use client"
 
-import { useEffect } from "react"
+import { useCallback } from "react"
+import Script from "next/script"
 
-export default function CookieConsent() {
-  useEffect(() => {
+export function CookieConsent() {
+  const handleScriptLoad = useCallback(() => {
     try {
-      window.silktideCookieBannerManager.updateCookieBannerConfig({
-        background: {
-          showBackground: true,
-        },
-        cookieIcon: {
+      window.silktideConsentManager.init({
+        icon: {
           position: "bottomLeft",
         },
-        cookieTypes: [
+        consentTypes: [
           {
             id: "necessary",
             name: "Necessary",
             description:
-              "<p>{NECESSARY_DESCRIPTION}</p>",
+              "{NECESSARY_DESCRIPTION}",
             required: true,
             onAccept: function () {},
           },
@@ -34,7 +32,7 @@ export default function CookieConsent() {
             id: "analytics",
             name: "Analytics",
             description:
-              "<p>{ANALYTICS_DESCRIPTION}</p>",
+              "{ANALYTICS_DESCRIPTION}",
             defaultValue: true,
             onAccept: function () {
               if (typeof window.gtag === "function") {
@@ -61,7 +59,7 @@ export default function CookieConsent() {
             id: "advertising",
             name: "Advertising",
             description:
-              "<p>{ADVERTISING_DESCRIPTION}</p>",
+              "{ADVERTISING_DESCRIPTION}",
             onAccept: function () {
               if (typeof window.gtag === "function") {
                 window.gtag("consent", "update", {
@@ -88,9 +86,9 @@ export default function CookieConsent() {
           },
         ],
         text: {
-          banner: {
+          prompt: {
             description:
-              "<p>{BANNER_DESCRIPTION}</p>",
+              "{BANNER_DESCRIPTION}",
             acceptAllButtonText: "{ACCEPT_ALL_TEXT}",
             acceptAllButtonAccessibleLabel: "{ACCEPT_ALL_TEXT}",
             rejectNonEssentialButtonText: "{REJECT_TEXT}",
@@ -101,7 +99,7 @@ export default function CookieConsent() {
           preferences: {
             title: "{PREFERENCES_TITLE}",
             description:
-              "<p>{PREFERENCES_DESCRIPTION}</p>",
+              "{PREFERENCES_DESCRIPTION}",
             creditLinkText: "Get this banner for free",
             creditLinkAccessibleLabel: "Get this banner for free",
           },
@@ -112,9 +110,30 @@ export default function CookieConsent() {
     }
   }, [])
 
-  return null
+  return (
+    <>
+      <link rel="stylesheet" href="/csm.css" />
+      <Script
+        src="/csm.js"
+        strategy="afterInteractive"
+        onLoad={handleScriptLoad}
+      />
+    </>
+  )
 }
 ```
+
+## Key Design Decisions
+
+### Why `next/script` with `onLoad` instead of `useEffect`?
+
+The `csm.js` script loads asynchronously. If you use `useEffect`, it fires on component mount — before the script has loaded. This causes `Cannot read properties of undefined (reading 'init')` because `window.silktideConsentManager` doesn't exist yet.
+
+Using `next/script` with `onLoad` guarantees the callback only fires after the script has fully loaded and executed, so `window.silktideConsentManager` is available.
+
+### Why does the component render `<link>` and `<Script>` instead of returning `null`?
+
+In Next.js App Router, raw `<link rel="stylesheet">` tags added to the layout's `<head>` may be converted to `<link rel="preload">` — meaning the CSS is never applied as a stylesheet. By including the `<link>` in the client component's return, it renders correctly in the document.
 
 ## Placeholders Reference
 
@@ -133,7 +152,7 @@ export default function CookieConsent() {
 ## Usage in Root Layout
 
 ```tsx
-import CookieConsent from "./_components/CookieConsent"
+import { CookieConsent } from "@/components/CookieConsent"
 
 // Inside <body>:
 <CookieConsent />
@@ -143,4 +162,4 @@ Place it near the top of `<body>` so the consent manager initializes early.
 
 ## Without Advertising Category
 
-If the user does not want the advertising consent category, remove the entire `{ id: "advertising", ... }` block from the `cookieTypes` array.
+If the user does not want the advertising consent category, remove the entire `{ id: "advertising", ... }` block from the `consentTypes` array.

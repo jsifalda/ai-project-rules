@@ -41,7 +41,7 @@ type: "always_apply"
 - never make changes without reading the entire file
 
 # EGO
-- do not make assumption. do not jump to conclusions.
+- always verify; do not make assumptions or jump to conclusions (unless you are asked to do so; if so, state your assumptions clearly).
 - always consider multiple different approaches, just like a Senior Developer would
 
 # FILE LENGTH
@@ -148,7 +148,7 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 - ALWAYS read AGENTS.md file first
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
-- Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes that way + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
+- Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes, and very briefly "how" (dont include any technical details) + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
 
 ## Implementation Verification Protocol
 

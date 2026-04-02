@@ -48,7 +48,7 @@ Save framed question for transcript.
 
 ### Step 2: Spawn 5 advisors in PARALLEL (single batch)
 
-Spawn all 5 simultaneously via `sessions_spawn`. Each gets their identity + framed question.
+Spawn all 5 simultaneously using your agent platform's supported mechanism for running multiple sub-agents in parallel (for example, parallel tool calls or concurrent sessions). Each gets their identity + the framed question.
 
 **Sub-agent prompt template:**
 ```

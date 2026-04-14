@@ -91,10 +91,13 @@ type: "always_apply"
 
 ### TDD (mandatory)
 
-Red → Green → Refactor → Commit. One cycle per commit. For bugs: write failing regression test first, then fix. Exception: pure CSS/layout changes.
-
-**Test quality (Kent Beck's Desiderata):** Isolated · Deterministic · Fast · Behavioral · Structure-insensitive · Specific · Predictive. Fix flaky tests first. Prefer E2E over unit tests for user flows.
-
+- Follow the cycle: Red → Green → Refactor → Commit.
+- Keep to one cycle per commit.
+- For bugs, write a failing regression test first, then fix the bug.
+- Exception: pure CSS/layout changes.
+- **Test quality (Kent Beck's Desiderata):** Isolated · Deterministic · Fast · Behavioral · Structure-insensitive · Specific · Predictive.
+- Fix flaky tests first.
+- Prefer E2E over unit tests for user flows.
 ## Dependency Management
 
 - use local package manager (if no present, prefer yarn instead of npm!)

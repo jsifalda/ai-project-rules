@@ -89,6 +89,12 @@ type: "always_apply"
 - Prefer the Jest runner if possible (if not possible, ask the user to choice different runner - provide the best possible options to run tests in the context for the codebase)
 - Never ever remove any tests if they are failing (only if there are no longer needed)
 
+### TDD (mandatory)
+
+Red → Green → Refactor → Commit. One cycle per commit. For bugs: write failing regression test first, then fix. Exception: pure CSS/layout changes.
+
+**Test quality (Kent Beck's Desiderata):** Isolated · Deterministic · Fast · Behavioral · Structure-insensitive · Specific · Predictive. Fix flaky tests first. Prefer E2E over unit tests for user flows.
+
 ## Dependency Management
 
 - use local package manager (if no present, prefer yarn instead of npm!)

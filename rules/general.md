@@ -135,29 +135,26 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 
 ## GitLab
 
-- When working with GitLab (merge requests, issues, pipelines, CI, etc.), **default to using `glab` CLI commands** rather than API calls or web links.
+- When working with GitLab (merge requests, issues, pipelines, CI, etc.), default to using `glab` CLI commands rather than API calls or web links.
 - Examples: `glab mr list`, `glab mr create`, `glab ci status`, `glab issue list`, `glab ci trace`.
 
 ### `glab` Safety Instructions
 **NEVER** execute these `glab` commands — they are **banned** due to destructive/irreversible impact:
 
-## Banned (never execute)
-- `glab repo delete` / `glab repo transfer`
-- `glab api` (arbitrary API calls bypass all guardrails)
-- `glab mr delete` / `glab issue delete` / `glab release delete`
-- `glab label delete` / `glab variable delete` / `glab schedule delete` / `glab milestone delete`
-- `glab token revoke` / `glab securefile remove`
-- `glab ssh-key delete` / `glab gpg-key delete` / `glab deploy-key delete`
+#### Banned (never execute)
+```
+glab repo delete, glab repo transfer, glab api, glab mr delete, glab issue delete, glab release delete, glab label delete, glab variable delete, glab schedule delete, glab milestone delete, glab token revoke, glab securefile remove, glab ssh-key delete, glab gpg-key delete, glab deploy-key delete
+```
 
-## Require explicit user confirmation
-- `glab mr close` / `glab issue close` / `glab incident close`
-
+#### Require explicit user confirmation
+```
+glab mr close, glab issue close, glab incident close
+```
 
 # Agent Mode
 - ALWAYS read AGENTS.md file first
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
-- Always summarise changes you (agent) made into the changelog.md (create file if needed), with timestamp (eg, 202507192135) -> specifically I am interested in "why" you made changes, and very briefly "how" (dont include any technical details) + always include the name of the dependency you needed to add, use bullet points only, be concise (minimal words to deliver the message), latest changes summary should be at the top of the changelog file (prepend it, not append)
 
 ## Implementation Verification Protocol
 

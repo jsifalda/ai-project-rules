@@ -26,7 +26,7 @@ equipped with procedural knowledge that no model can fully possess.
 
 Skills fall into two categories, and the distinction matters for how long they stay useful:
 
-- **Capability skills** — teach Claude a procedure the base model can't do reliably (e.g., PDF form filling, OOXML editing). These become unnecessary as models improve — verify via retirement eval (see Step 7).
+- **Capability skills** — teach Claude a procedure the base model can't do reliably (e.g., PDF form filling, OOXML editing). These may become unnecessary as models improve.
 - **Preference skills** — encode team or project workflow (e.g., code-review checklist, commit-message format). These stay useful as long as the underlying process does, but must be kept in sync with how the team actually works.
 
 ## Core Principles
@@ -364,7 +364,3 @@ After testing the skill, users may request improvements. Often this happens righ
 4. Implement changes and test again
 
 Before distributing, run a behavioral eval loop — see [references/testing.md](references/testing.md) for the 5-step process (per-prompt success criteria, mixed prompt buckets, 3–5 trials, run isolation, fix-description-first).
-
-### Step 7: Know When to Retire
-
-Skills have a lifecycle. Periodically run the skill's evals **without the skill loaded**. If they still pass, the base model has absorbed the capability and the skill is adding cost without value — delete it. This is especially true for capability skills (see "Two Types of Skills"); preference skills are durable but should be retired when the underlying team process changes.

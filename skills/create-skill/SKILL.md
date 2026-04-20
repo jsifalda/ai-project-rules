@@ -1,10 +1,10 @@
 ---
-name: skill-creator
+name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
 license: Complete terms in LICENSE.txt
 ---
 
-# Skill Creator
+# Create Skill
 
 This skill provides guidance for creating effective skills.
 
@@ -22,6 +22,13 @@ equipped with procedural knowledge that no model can fully possess.
 3. Domain expertise - Company-specific knowledge, schemas, business logic
 4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks
 
+### Two Types of Skills
+
+Skills fall into two categories, and the distinction matters for how long they stay useful:
+
+- **Capability skills** — teach Claude a procedure the base model can't do reliably (e.g., PDF form filling, OOXML editing). These become unnecessary as models improve — verify via retirement eval (see Step 7).
+- **Preference skills** — encode team or project workflow (e.g., code-review checklist, commit-message format). These stay useful as long as the underlying process does, but must be kept in sync with how the team actually works.
+
 ## Core Principles
 
 ### Concise is Key
@@ -30,7 +37,7 @@ The context window is a public good. Skills share the context window with everyt
 
 **Default assumption: Claude is already very smart.** Only add context Claude doesn't already have. Challenge each piece of information: "Does Claude really need this explanation?" and "Does this paragraph justify its token cost?"
 
-Prefer concise examples over verbose explanations.
+Prefer concise examples over verbose explanations. For deeper guidance on phrasing instructions (directives, examples-first, explain-the-why, avoiding overfit), see [references/writing-style.md](references/writing-style.md).
 
 ### Set Appropriate Degrees of Freedom
 
@@ -197,7 +204,7 @@ Claude reads REDLINING.md or OOXML.md only when the user needs those features.
 **Important guidelines:**
 
 - **Avoid deeply nested references** - Keep references one level deep from SKILL.md. All reference files should link directly from SKILL.md.
-- **Structure longer reference files** - For files longer than 100 lines, include a table of contents at the top so Claude can see the full scope when previewing.
+- **Structure longer reference files** - For files longer than 100 lines, include a table of contents at the top with line-number hints (e.g., `- Form filling (L40-90)`) so Claude can see the full scope when previewing and jump directly with offset reads.
 
 ## Skill Creation Process
 
@@ -306,10 +313,11 @@ Any example files and directories not needed for the skill should be deleted. Th
 Write the YAML frontmatter with `name` and `description`:
 
 - `name`: The skill name
-- `description`: This is the primary triggering mechanism for your skill, and helps Claude understand when to use the skill.
+- `description`: This is the primary triggering mechanism for your skill, and helps Claude understand when to use the skill. The description is in context on every request, so tuning it is often the highest-leverage change you can make to a skill — expect bigger wins from description rewrites than from body rewrites.
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Claude.
-  - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks"
+  - **Describe when the skill should NOT fire.** A description like *"Use for any document task"* hijacks unrelated requests. Spell out what's out of scope: *"Use when working with PDF files. Do NOT use for general document editing, spreadsheets, or plain text files."* Negative triggers are as important as positive ones.
+  - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks. Do NOT use for plain text files, PDFs, or spreadsheets."
 
 Do not include any other fields in YAML frontmatter.
 
@@ -354,3 +362,9 @@ After testing the skill, users may request improvements. Often this happens righ
 2. Notice struggles or inefficiencies
 3. Identify how SKILL.md or bundled resources should be updated
 4. Implement changes and test again
+
+Before distributing, run a behavioral eval loop — see [references/testing.md](references/testing.md) for the 5-step process (per-prompt success criteria, mixed prompt buckets, 3–5 trials, run isolation, fix-description-first).
+
+### Step 7: Know When to Retire
+
+Skills have a lifecycle. Periodically run the skill's evals **without the skill loaded**. If they still pass, the base model has absorbed the capability and the skill is adding cost without value — delete it. This is especially true for capability skills (see "Two Types of Skills"); preference skills are durable but should be retired when the underlying team process changes.

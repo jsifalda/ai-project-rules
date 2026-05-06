@@ -69,12 +69,14 @@ Every research report includes:
 
 ## Output Location
 
-All research is saved to:
+All research is saved inside the current project, under:
 ```
-~/.claude/research_output/
+./documents/[TopicName]_Research_YYYYMMDD/
 ```
 
-Format: `research_report_YYYYMMDD_HHMMSS.md`
+Internal continuation/state files live alongside in `./documents/.state/`.
+
+Filename format: `research_report_YYYYMMDD_[topic_slug].md` (also `.html`, `.pdf`)
 
 ## Features That Beat Claude Desktop Research
 

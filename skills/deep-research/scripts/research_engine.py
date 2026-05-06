@@ -125,7 +125,7 @@ class ResearchEngine:
     def __init__(self, mode: ResearchMode = ResearchMode.STANDARD):
         self.mode = mode
         self.state: Optional[ResearchState] = None
-        self.output_dir = Path.home() / ".claude" / "research_output"
+        self.output_dir = Path.cwd() / "documents" / ".state"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def initialize_research(self, query: str) -> ResearchState:

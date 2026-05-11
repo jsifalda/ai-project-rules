@@ -178,12 +178,19 @@ After completing any code changes, perform a three-phase verification before con
 - Run lint (if present in the project), fix any reported issues (errors and also warnings)
 
 ### Phase 3: Visual/Browser Verification
+
 - Use the agent-browser skill and its tools to visually verify your changes in the running application
 - Navigate to the affected pages/components and confirm:
-	- The UI renders correctly without visual regressions
-	- Interactive elements (buttons, forms, links) function as expected
-	- No console errors appear in the browser
-	- The user flow works end-to-end as intended
+  - The UI renders correctly without visual regressions
+  - Interactive elements (buttons, forms, links) function as expected
+  - No console errors appear in the browser
+  - The user flow works end-to-end as intended
 - Take screenshots when your observe any inconsistncies
+
+### Phase 4: Code Review
+
+- Run a `code-review` task agent on the changes made in this session
+- Fix the findings from the review, if that makes a sense
+- Present to the user what review returned and how it was addressed
 
 CRITICAL: Do not mark implementation as complete until all three verification phases pass. If any phase fails, fix the issues and re-run all phases.

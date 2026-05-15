@@ -23,10 +23,15 @@ type: "always_apply"
 
 # SELF IMPROVEMENT LOOP
 
-- After ANY correction from the user: update your instructions/tasks/lessons.md with the pattern (if you are not sure where to store lesson, ask the user)
-- Write rules for yourself that prevent the same mistake
+- After ANY correction from the user → persist a lesson using your agent's available memory/preference system
+- Decide scope before saving:
+  - **Cross-project** rules (tone, language, code style, tool preferences, workflow habits) → save to the agent's global/user memory
+  - **Project-specific** rules (build commands, local conventions, repo gotchas) → save to the agent's project-scoped memory if one exists; otherwise fall back to global and prefix with the project name
+- Write the rule so it prevents the same mistake recurring; capture **Why** (the reason / past incident) and **How to apply** (when it kicks in)
+- Update existing entries rather than duplicating; remove entries that turn out wrong
+- Review prior lessons at session start (each agent has its own loading mechanism — Claude Code reads `MEMORY.md`, Copilot reads its own config, etc.)
+- Capture from success too, not only correction: if the user explicitly confirms a non-obvious choice ("yes exactly", "perfect"), that is also a lesson worth saving
 - Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
 
 # PLAN MODE DEFAULT
 

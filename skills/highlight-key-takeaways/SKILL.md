@@ -22,30 +22,59 @@ Wrap the most important takeaways and key learnings in an Obsidian note with `==
 ### Step 2: Read the full note
 Read the entire file. Do NOT truncate — takeaways can appear anywhere. For long notes, read in chunks until the end.
 
-### Step 3: Identify takeaways (be selective)
-Highlight only **key learnings** and **most important takeaways** — not every useful sentence. Aim for roughly 10–25 highlights per chapter-length file; fewer for short notes. Good candidates:
+### Step 3: Identify takeaways (be ruthlessly selective)
 
-- The core thesis / one-line summary of the whole piece
-- Named principles, laws, or frameworks
-- Decisive rules ("reject X", "always Y", "never Z")
-- Research findings, stats, or quoted data (e.g. "zero relationship")
-- Memorable quotes attributed to experts
-- Actionable directives the reader should apply
-- Counter-intuitive or surprising claims
+Highlight only the **most important** ideas — not every useful sentence. Most candidates that *look* important should still be skipped. A note with **zero** highlights is acceptable if nothing passes the bar.
 
-Skip:
-- Narrative anecdotes and illustrative stories (unless they end in a crisp lesson)
-- Transitional sentences, setup, flavor prose
-- Examples that merely restate an already-highlighted rule
+**Density target:** roughly **1 highlight per 800 words**, with a **hard cap of 8 highlights per note** regardless of length. Short notes (<1000 words) usually get 1–3; chapter-length notes get 5–8; never more.
+
+#### Priority tiers
+
+Fill slots top-down. Lower tiers only get highlighted if the higher tier is exhausted AND slots remain.
+
+- **Tier 1 — always highlight if present (max 1 each):**
+  - The single core thesis / one-line summary of the whole piece
+  - A named principle, law, or framework that the note is built around
+
+- **Tier 2 — highlight if slots remain (max 2–3 each):**
+  - Research findings, stats, or quoted data that anchor the argument (e.g. "zero relationship")
+  - Decisive rules the author insists on ("reject X", "always Y", "never Z")
+
+- **Tier 3 — rarely; only if Tiers 1–2 left slots open:**
+  - A genuinely counter-intuitive or surprising claim
+  - A single memorable quote that captures the whole idea in one line
+
+Per-note caps: **1** thesis, **3** named principles, **2** stats, **2** directives. If a tier is full, skip further candidates in it — do not promote to a different tier.
+
+#### Memorability test (apply to every candidate)
+
+Before highlighting a span, ask: **"If I quoted only this sentence from the entire note, would it still convey the most important idea?"**
+
+- If **yes** → highlight.
+- If **no, but it's a useful supporting point** → skip.
+- If **it only makes sense with the paragraph around it** → skip.
+
+When two candidates compete for the same idea, keep the shorter, more quotable one.
+
+#### Skip even if it seems important
+
+- Narrative anecdotes and illustrative stories (unless they end in a crisp lesson — then highlight only the lesson clause)
+- Useful supporting points that elaborate on an already-highlighted idea
+- Definitions, setup, context-setting sentences
+- Examples that restate a named principle
+- Transitional sentences, framing, flavor prose
 - Frontmatter, headings, code blocks
+- Any sentence whose "importance" comes from the surrounding paragraph, not itself
 
 ### Step 4: Apply highlights
+
 Wrap the selected text in `==...==`. Rules:
 
-- Wrap the **minimal meaningful span** — a full sentence or clause, not a whole paragraph
+- Wrap the **shortest clause that carries the idea** — ideally under 20 words, never more than one sentence
+- If a sentence has framing prose plus the actual takeaway, highlight only the takeaway clause (leave the framing unhighlighted)
+- Never wrap a full paragraph; never wrap multiple sentences in a single `==...==`
 - Preserve all inner markdown (bold, italics, links, quotes) exactly
 - Do NOT change any other text — no rewording, no added commentary
-- If only part of a sentence carries the takeaway, highlight just that part (leave the framing prose unhighlighted)
 - Never wrap already-wrapped text (skip if `==` already surrounds it)
 
 Use the `Edit` tool with exact string matches. Batch multiple independent `Edit` calls in parallel in one message for speed.

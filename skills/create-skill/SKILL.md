@@ -317,6 +317,7 @@ Write the YAML frontmatter with `name` and `description`:
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Claude.
   - **Describe when the skill should NOT fire.** A description like *"Use for any document task"* hijacks unrelated requests. Spell out what's out of scope: *"Use when working with PDF files. Do NOT use for general document editing, spreadsheets, or plain text files."* Negative triggers are as important as positive ones.
+  - **Hard length limit: 1024 characters.** Enforced by Copilot CLI — skills with longer descriptions fail to load with `Skill description must be at most 1024 characters`. Matched by `scripts/quick_validate.py`. Target ≤ ~950 chars to leave a buffer. Verify before shipping: `python scripts/quick_validate.py <skill-dir>`.
   - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks. Do NOT use for plain text files, PDFs, or spreadsheets."
 
 Do not include any other fields in YAML frontmatter.

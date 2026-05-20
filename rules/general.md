@@ -120,7 +120,7 @@ type: "always_apply"
 
 ## Dependency Management
 
-- use local package manager (if no present, prefer yarn instead of npm!)
+- use local package manager (respect existing lockfile; if none present, prefer pnpm, then yarn, then npm)
 - Always use the latest stable version of dependencies
 - Avoid using deprecated, outdated and unsecured libraries
 - Never ever install a global dependency (e.g. `npm i -g`, `yarn global add`,
@@ -169,13 +169,13 @@ After completing any code changes, perform a three-phase verification before con
 
 ### Phase 1: Build Verification
 
-- Run the project's build command (e.g., yarn build, npm run build)
+- Run the project's build command (e.g., pnpm build, yarn build, npm run build)
 - Ensure zero compile errors and warnings are addressed
 - Verify all TypeScript types resolve correctly
 
 ### Phase 2: Automated Testing (tests + lint)
 
-- Run the full test suite (`yarn test` or any other test command available) after **every** code change — no exceptions
+- Run the full test suite (`pnpm test` or any other test command available) after **every** code change — no exceptions
 - Ensure all existing tests pass — zero failures
 - If your changes break existing tests, **fix them immediately** before proceeding
 - If you modified functionality, verify affected tests still pass or update them accordingly

@@ -1,0 +1,19 @@
+# Copy this file to scripts/universality-denylist.txt and edit it for your machine.
+# One token per line. Blank lines and lines starting with '#' are ignored.
+# Matching is case-insensitive, fixed-string (not regex).
+#
+# Add things that should NEVER appear in files committed to this repo:
+#   - Your own name(s) and common handles
+#   - Your employer / org names and product codenames
+#   - Internal team names
+#   - Internal Slack channels, Confluence space slugs, Jira project keys
+#   - Anything else that ties content to you specifically
+#
+# Examples (replace with your own):
+#
+# Alice Example
+# alicee
+# alice@example.com
+# AcmeCorp
+# acme-internal
+# ACME-

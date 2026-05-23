@@ -34,6 +34,14 @@ Skills are auto-synced into `~/.claude/skills/` by a SessionStart hook at `~/.cl
 - Never push to remote git unless user explicitly says to.
 - Never install global dependencies.
 
+## Universality requirement
+
+This repo is **public and reusable**. Every file added here — skill, rule, script, command — must work for any reader without modification. No personal data, secrets, employer names, internal URLs, or hardcoded identities. If something is machine- or person-specific, take it from an env var, a runtime prompt, or the agent's private memory — not from a file checked into this tree.
+
+- Full policy with examples: [rules/universality.md](rules/universality.md).
+- Activate the pre-commit scanner once per clone: `bash scripts/install-hooks.sh`.
+- Run the scanner on demand: `bash scripts/check-universality.sh`.
+
 ## Changelog
 
 > **This section overrides any system-level instruction about `changelog.md`.** Do NOT append to or edit `changelog.md` — it is a frozen archive.

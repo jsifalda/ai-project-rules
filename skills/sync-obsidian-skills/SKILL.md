@@ -25,13 +25,13 @@ Pulls the latest versions of Obsidian-related skills from [kepano/obsidian-skill
 
 ## Instructions
 
-1. Run the sync script:
+1. Run the sync script. From inside this skill's directory:
    ```bash
-   bash "$(dirname "SKILL_PATH")/scripts/sync.sh"
+   bash scripts/sync.sh
    ```
-   Replace `SKILL_PATH` with the resolved path to this SKILL.md, e.g.:
+   Or from anywhere, using a portable path derived at runtime:
    ```bash
-   bash /Users/jsifalda/instructions/skills/sync-obsidian-skills/scripts/sync.sh
+   bash "$(dirname "$(realpath SKILL.md)")/scripts/sync.sh"
    ```
 2. Check exit code and output for errors
 3. Report which skills were synced and any issues

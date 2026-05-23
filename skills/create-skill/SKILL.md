@@ -287,6 +287,26 @@ After initialization, customize or remove the generated SKILL.md and example fil
 
 When editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Include information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.
 
+#### Universality Pre-flight (MANDATORY for this repo)
+
+If you are authoring this skill inside the `~/instructions` repo (or any public/shared instruction repo), the skill MUST be **universal** — usable by any reader on any machine, with zero personal data, secrets, employer-specific names, internal URLs, or hardcoded identities. Read the full policy at [`rules/universality.md`](../../rules/universality.md) before writing any content.
+
+Common pitfalls to avoid while drafting:
+
+- Absolute paths like `/Users/<name>/...` — use `~`, `${HOME}`, or `$(dirname "$0")`-derived paths instead.
+- Real names, emails, handles, Slack/Atlassian account IDs — replace with placeholders or runtime lookups.
+- Employer / team / internal-project names — parametrise or drop entirely.
+- Internal hostnames (`*.internal`, `*.corp`) and internal Confluence/Linear/Jira IDs — keep them out; reference env vars or ask the user at runtime.
+- Hardcoded secrets, even fake-looking ones — always `$ENV_VAR`, never literals.
+
+Before moving to Step 5, run the scanner:
+
+```bash
+bash scripts/check-universality.sh skills/<your-skill>/
+```
+
+It must exit clean. The pre-commit hook will block you otherwise.
+
 #### Learn Proven Design Patterns
 
 Consult these helpful guides based on your skill's needs:
@@ -329,6 +349,8 @@ Write instructions for using the skill and its bundled resources.
 ### Step 5: Packaging a Skill
 
 Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:
+
+- **Before packaging**, re-run `bash scripts/check-universality.sh` (whole-repo scan) to confirm the skill contains no personal data, secrets, or employer-specific content. The pre-commit hook enforces the same check, but running it here gives a faster signal.
 
 ```bash
 scripts/package_skill.py <path/to/skill-folder>

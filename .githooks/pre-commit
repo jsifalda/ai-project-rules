@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Tracked pre-commit hook for the instructions repo.
+# Activated by: bash scripts/install-hooks.sh  (sets core.hooksPath=.githooks)
+# Bypass: git commit --no-verify   (intentional escape hatch; do not use to hide leaks)
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+SCANNER="${REPO_ROOT}/scripts/check-universality.sh"
+
+[[ -x "$SCANNER" ]] || { echo "pre-commit: $SCANNER not found or not executable" >&2; exit 1; }
+
+# Only scan files staged for this commit (added/copied/modified).
+# Use a `while read` loop because macOS ships bash 3.2 which lacks `mapfile`.
+abs=()
+while IFS= read -r f; do
+  [[ -z "$f" ]] && continue
+  abs+=("${REPO_ROOT}/${f}")
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+[[ ${#abs[@]} -eq 0 ]] && exit 0
+
+"$SCANNER" "${abs[@]}"

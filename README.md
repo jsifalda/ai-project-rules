@@ -92,4 +92,7 @@ Personal repo, but PRs welcome if something here is genuinely useful elsewhere. 
 - A **rule**: add `rules/<name>.md` with `type: "always_apply"` frontmatter.
 - A **Gemini command**: add `gemini-cli/commands/<name>.toml`.
 
+**Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: [`rules/universality.md`](rules/universality.md). After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
+
 Log notable changes in `changelog.md` using the existing `YYYYMMDDTHHMM — Title` format.
+

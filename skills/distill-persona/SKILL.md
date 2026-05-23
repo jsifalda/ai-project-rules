@@ -88,14 +88,9 @@ Ask one `AskUserQuestion`:
 
 **If No:** fall straight through to Step 7. Don't touch the cwd files.
 
-**If Yes:** ask one follow-up `AskUserQuestion` for the target location. Preset options (these are the three sync sources from the user's CLAUDE.md — anything written here gets auto-synced by `sync-skills.js`):
+**If Yes:** ask the user (in plain chat — no presets) for the absolute path of the directory where the new `persona-<slug>/` folder should be created. Example prompt: *"Which directory should I create the persona skill in? Provide an absolute path."*
 
-1. `~/instructions/skills/` (global — syncs to Claude Code + Copilot) **(recommended)**
-2. `~/mofa/ai-prompts/.agents/skills/` (mofa-shared)
-3. `~/mofa/gemini/skills/` (gemini project-scoped)
-4. User picks "Other" to enter a custom absolute path.
-
-Resolve `~` to the user's home directory. Validate that the chosen directory exists; if not, stop and ask the user to either create it first or pick another path. Don't auto-create the parent.
+Resolve `~` to the user's home directory. Validate that the chosen directory exists; if not, stop and ask the user to either create it first or pick another path. Don't auto-create the parent. If the chosen directory is one of the user's auto-sync sources (e.g. wired into a `sync-skills` hook), the skill will be picked up automatically on the next session — otherwise the user is responsible for wiring it up.
 
 Then load `references/persona-skill-template.md` and follow its instructions to:
 
@@ -105,7 +100,7 @@ Then load `references/persona-skill-template.md` and follow its instructions to:
 4. Move `<cwd>/<slug>-role.md` → `<chosen-path>/persona-<slug>/references/role.md`, then edit one line inside it: `Principles document: ./<slug>-principles.md` → `Principles document: references/principles.md`.
 5. Ask the user once whether to delete the now-moved source files in cwd. Default: keep them.
 
-Report the new skill folder's absolute path. Mention that `sync-skills.js` will pick it up on the next session start (no manual symlink needed).
+Report the new skill folder's absolute path. If the chosen path is an auto-sync source, mention that the hook will pick it up on the next session start; otherwise remind the user they may need to wire it into their agent's skill-loading mechanism.
 
 ### Step 7 — Done
 

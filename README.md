@@ -1,192 +1,95 @@
-# 🚀 AI Dev Tasks 🤖
+# instructions
 
-Welcome to **AI Dev Tasks**! This repository provides a collection of markdown files designed to supercharge your feature development workflow with AI-powered IDEs and CLIs. Originally built for [Cursor](https://cursor.sh/), these tools work with any AI coding assistant including Claude Code, Windsurf, and others. By leveraging these structured prompts, you can systematically approach building features, from ideation to implementation, with built-in checkpoints for verification.
+Jiri's personal monorepo of AI-tool instructions: rules, skills, and slash commands consumed by Claude Code, Copilot CLI, Gemini CLI, Cursor, and any other agent that can read markdown.
 
-Stop wrestling with monolithic AI requests and start guiding your AI collaborator step-by-step!
+Everything here is tool-agnostic where possible. Each AI tool picks up what it needs through its own loading mechanism (Claude Code via the sync hook, Cursor via `@file` references, Gemini CLI via its commands directory, etc.).
 
-## ✨ The Core Idea
+## Repository layout
 
-Building complex features with AI can sometimes feel like a black box. This workflow aims to bring structure, clarity, and control to the process by:
+| Path | Purpose |
+| --- | --- |
+| `rules/` | Always-apply rule files (`type: "always_apply"` frontmatter) — coding standards, restrictions, writing style |
+| `skills/` | Agent skills following the [agentskills.io](https://agentskills.io/specification) spec. Each subdir has a `SKILL.md` |
+| `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
+| `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
+| `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
+| `changelog.md` | Manually-maintained log of notable changes |
+| `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
 
-1. **Defining Scope:** Clearly outlining what needs to be built with a Product Requirement Document (PRD).
-2. **Detailed Planning:** Breaking down the PRD into a granular, actionable task list.
-3. **Iterative Implementation:** Guiding the AI to tackle one task at a time, allowing you to review and approve each change.
+## How it gets into Claude Code & Copilot CLI
 
-This structured approach helps ensure the AI stays on track, makes it easier to debug issues, and gives you confidence in the generated code.
+A SessionStart hook at `~/.claude/hooks/sync-skills.js` scans this repo (plus a couple of other source dirs) and symlinks every `skills/*/` folder into `~/.claude/skills/`. Result: skills appear automatically inside Claude Code at every session start, no manual install step.
 
-## Workflow: From Idea to Implemented Feature 💡➡️💻
+- **Sources**, in priority order (first wins on name conflict):
+  1. `~/instructions/skills/` (this repo)
+  2. `~/mofa/ai-prompts/.agents/skills/`
+  3. `~/mofa/gemini/skills/`
+- **Copilot CLI** uses a parallel script at `~/.copilot/hooks/sync-skills.js` that copies (not symlinks, [github/copilot-cli#1021](https://github.com/github/copilot-cli/issues/1021)) the same skills into `~/.copilot/skills/`.
 
-Here's the step-by-step process using the `.md` files in this repository:
+The hook script is the source of truth for the sync behaviour — read it directly if you need to debug.
 
-### 1️⃣ Create a Product Requirement Document (PRD)
+## Rules
 
-First, lay out the blueprint for your feature. A PRD clarifies what you're building, for whom, and why.
+Three always-apply files under `rules/`. Each carries `type: "always_apply"` frontmatter so AI tools that respect that convention load them on every interaction.
 
-You can create a lightweight PRD directly within your AI tool of choice:
+- `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style, git commit format.
+- `rules/builder.md` — defaults for spinning up new applications (tech stack picks, scaffolding flow, verification protocol).
+- `rules/design.md` — frontend design thinking and aesthetics guidelines (originally from the Anthropic `frontend-design` plugin).
 
-1. Ensure you have the `create-prd.md` file from this repository accessible.
-2. In your AI tool, initiate PRD creation:
+`CLAUDE.md` mandates `rules/general.md` is loaded first, before anything else.
 
-    ```text
-    Use @create-prd.md
-    Here's the feature I want to build: [Describe your feature in detail]
-    Reference these files to help you: [Optional: @file1.py @file2.ts]
-    ```
-    *(Pro Tip: For Cursor users, MAX mode is recommended for complex PRDs if your budget allows for more comprehensive generation.)*
+## Skills
 
-    ![Example of initiating PRD creation](https://pbs.twimg.com/media/Go6DDlyX0AAS7JE?format=jpg&name=large)
+35 skills under `skills/`, each a directory containing a `SKILL.md` with `name`, `description`, and (optional) `metadata` frontmatter, followed by the skill body. See the [agentskills.io spec](https://agentskills.io/specification) for the format.
 
-### 2️⃣ Generate Your Task List from the PRD
+A few representative entries:
 
-With your PRD drafted (e.g., `MyFeature-PRD.md`), the next step is to generate a detailed, step-by-step implementation plan for your AI Developer.
+- `prd-creator` — generate full PRDs with a clarifying-questions interview
+- `code-review` (loaded from another source) — review current diff at configurable effort level
+- `confluence-search` / `confluence-conduct-postmortem` — Confluence read + post-mortem authoring
+- `jira-create-task` / `jira-search` / `sl-jira-tickets-validator` — Jira tooling
+- `write-like-human` — strict 17-rule style guide for non-AI-sounding prose
+- `summarise-url` / `summarise-text` — link/text condensation pipelines
+- `obsidian-markdown` / `obsidian-cli` / `obsidian-bases` / `json-canvas` — Obsidian vault tooling
+- `create-skill` — guide for authoring new skills
+- `deep-research`, `council`, `frontend-design`, `landing-page-copy`, ...
 
-1. Ensure you have `generate-tasks.md` accessible.
-2. In your AI tool, use the PRD to create tasks:
+Full list: `ls skills/`.
 
-    ```text
-    Now take @MyFeature-PRD.md and create tasks using @generate-tasks.md
-    ```
-    *(Note: Replace `@MyFeature-PRD.md` with the actual filename of the PRD you generated in step 1.)*
+## Gemini CLI commands
 
-    ![Example of generating tasks from PRD](https://pbs.twimg.com/media/Go6FITbWkAA-RCT?format=jpg&name=medium)
+TOML slash commands under `gemini-cli/commands/`. Format:
 
-### 3️⃣ Examine Your Task List
+```toml
+description = "One-line description shown in /help"
+prompt = """
+Your prompt body. Use {{args}} where the user's input should be interpolated.
+"""
+```
 
-You'll now have a well-structured task list, often with tasks and sub-tasks, ready for the AI to start working on. This provides a clear roadmap for implementation.
+Current commands: `create-prd`, `feature-request`, `generate-changelog`, `process-task-list`, `summarise`.
 
-![Example of a generated task list](https://pbs.twimg.com/media/Go6GNuOWsAEcSDm?format=jpg&name=medium)
+Gemini CLI reads from its own config path — symlink or copy this directory there to wire them up.
 
-### 4️⃣ Instruct the AI to Work Through Tasks (and Mark Completion)
+## PRD workflow (legacy)
 
-To ensure methodical progress and allow for verification, we'll use `process-task-list.md`. This command instructs the AI to focus on one task at a time and wait for your go-ahead before moving to the next.
+The original PRD → tasks → process pipeline this repo started as. Still usable as standalone prompts when you want a structured feature-development flow with manual review gates.
 
-1. Create or ensure you have the `process-task-list.md` file accessible.
-2. In your AI tool, tell the AI to start with the first task (e.g., `1.1`):
+1. `create-prd.md` — interview-driven PRD generation. Output: `_prds/prd-[feature-name].md`.
+2. `generate-tasks.md` — break the PRD into parent tasks, then sub-tasks (with a confirmation gate between them). Output: `_tasks/tasks-[name].md`.
+3. `process-task-list.md` — instructs the AI to work one sub-task at a time, waiting for approval, running tests, committing per parent task.
+4. `feature-request.md` — alternative entry point: skip the PRD and go straight from a feature request to a task list.
 
-    ```text
-    Please start on task 1.1 and use @process-task-list.md
-    ```
-    *(Important: You only need to reference `@process-task-list.md` for the *first* task. The instructions within it guide the AI for subsequent tasks.)*
+Usage in Claude Code / Cursor: reference the file with `@create-prd.md` (or your tool's equivalent) and let it drive.
 
-    The AI will attempt the task and then prompt you to review.
+Video demo of the original workflow on [Claire Vo's "How I AI" podcast](https://www.youtube.com/watch?v=fD4ktSkNCw4).
 
-    ![Example of starting on a task with process-task-list.md](https://pbs.twimg.com/media/Go6I41KWcAAAlHc?format=jpg&name=medium)
+## Contributing
 
-### 5️⃣ Review, Approve, and Progress ✅
+Personal repo, but PRs welcome if something here is genuinely useful elsewhere. To add:
 
-As the AI completes each task, you review the changes.
+- A **skill**: create `skills/<name>/SKILL.md` following the agentskills.io spec. It will be picked up by the sync hook on next session start.
+- A **rule**: add `rules/<name>.md` with `type: "always_apply"` frontmatter.
+- A **Gemini command**: add `gemini-cli/commands/<name>.toml`.
 
-* If the changes are good, simply reply with "yes" (or a similar affirmative) to instruct the AI to mark the task complete and move to the next one.
-* If changes are needed, provide feedback to the AI to correct the current task before moving on.
-
-You'll see a satisfying list of completed items grow, providing a clear visual of your feature coming to life!
-
-![Example of a progressing task list with completed items](https://pbs.twimg.com/media/Go6KrXZWkAA_UuX?format=jpg&name=medium)
-
-While it's not always perfect, this method has proven to be a very reliable way to build out larger features with AI assistance.
-
-### Video Demonstration 🎥
-
-If you'd like to see this in action, I demonstrated it on [Claire Vo's "How I AI" podcast](https://www.youtube.com/watch?v=fD4ktSkNCw4).
-
-![Demonstration of AI Dev Tasks on How I AI Podcast](https://img.youtube.com/vi/fD4ktSkNCw4/maxresdefault.jpg)
-
-## 🗂️ Files in this Repository
-
-* **`create-prd.md`**: Guides the AI in generating a Product Requirement Document for your feature.
-* **`generate-tasks.md`**: Takes a PRD markdown file as input and helps the AI break it down into a detailed, step-by-step implementation task list.
-* **`process-task-list.md`**: Instructs the AI on how to process the generated task list, tackling one task at a time and waiting for your approval before proceeding. (This file also contains logic for the AI to mark tasks as complete).
-
-## 🌟 Benefits
-
-* **Structured Development:** Enforces a clear process from idea to code.
-* **Step-by-Step Verification:** Allows you to review and approve AI-generated code at each small step, ensuring quality and control.
-* **Manages Complexity:** Breaks down large features into smaller, digestible tasks for the AI, reducing the chance of it getting lost or generating overly complex, incorrect code.
-* **Improved Reliability:** Offers a more dependable approach to leveraging AI for significant development work compared to single, large prompts.
-* **Clear Progress Tracking:** Provides a visual representation of completed tasks, making it easy to see how much has been done and what's next.
-
-## 🛠️ How to Use
-
-1. **Clone or Download:** Get these `.md` files into your project or a central location where your AI tool can access them.
-2. **Follow the Workflow:** Systematically use the `.md` files in your AI assistant as described in the workflow above.
-3. **Adapt and Iterate:**
-    * Feel free to modify the prompts within the `.md` files to better suit your specific needs or coding style.
-    * If the AI struggles with a task, try rephrasing your initial feature description or breaking down tasks even further.
-
-## Tool-Specific Instructions
-
-### Cursor
-
-Cursor users can follow the workflow described above, using the `.md` files directly in the Agent chat:
-
-1. Ensure you have the files from this repository accessible
-2. In Cursor's Agent chat, reference files with `@` (e.g., `@create-prd.md`)
-3. Follow the 5-step workflow as outlined above
-4. **MAX Mode for PRDs:** Using MAX mode in Cursor for PRD creation can yield more thorough results if your budget supports it
-
-### Claude Code
-
-To use these tools with Claude Code:
-
-1. **Copy files to your repo**: Copy the three `.md` files to a subdirectory in your project (e.g., `/ai-dev-tasks`)
-
-2. **Reference in CLAUDE.md**: Add these lines to your project's `./CLAUDE.md` file:
-   ```
-   # AI Dev Tasks
-   Use these files when I request structured feature development using PRDs:
-   /ai-dev-tasks/create-prd.md
-   /ai-dev-tasks/generate-tasks.md
-   /ai-dev-tasks/process-task-list.md
-   ```
-
-3. **Create custom commands** (optional): For easier access, create these files in `.claude/commands/`:
-   - `.claude/commands/create-prd.md` with content:
-     ```
-     Please use the structured workflow in /ai-dev-tasks/create-prd.md to help me create a PRD for a new feature.
-     ```
-   - `.claude/commands/generate-tasks.md` with content:
-     ```
-     Please generate tasks from the PRD using /ai-dev-tasks/generate-tasks.md
-     If not explicitly told which PRD to use, generate a list of PRDs and ask the user to select one under `/tasks` or create a new one using `create-prd.md`:
-     - assume it's stored under `/tasks` and has a filename starting with `prd-` (e.g., `prd-[name].md`)
-     - it should not already have a corresponding task list in `/tasks` (e.g., `tasks-prd-[name].md`)
-     - **always** ask the user to confirm the PRD file name before proceeding
-     Make sure to provide options in number lists so I can respond easily (if multiple options).
-     ```
-   - `.claude/commands/process-task-list.md` with content:
-     ```
-     Please process the task list using /ai-dev-tasks/process-task-list.md
-     ```
-
-   Make sure to restart Claude Code after adding these files (`/exit`).
-   Then use commands like `/create-prd` to quickly start the workflow.
-   Note: This setup can also be adopted for a global level across all your projects, please refer to the Claude Code documentation [here](https://docs.anthropic.com/en/docs/claude-code/memory) and [here](https://docs.anthropic.com/en/docs/claude-code/common-workflows#create-personal-slash-commands).
-
-### Other Tools
-
-For other AI-powered IDEs or CLIs:
-
-1. Copy the `.md` files to your project
-2. Reference them according to your tool's documentation
-3. Follow the same workflow principles
-
-## 💡 Tips for Success
-
-* **Be Specific:** The more context and clear instructions you provide (both in your initial feature description and any clarifications), the better the AI's output will be.
-* **Use a Capable Model:** The free version of Cursor currently uses less capable AI models that often struggle to follow the structured instructions in this workflow. For best results, consider upgrading to the Pro plan to ensure consistent, accurate task execution.
-* **MAX Mode for PRDs:** As mentioned, using MAX mode in Cursor for PRD creation (`create-prd.mdc`) can yield more thorough and higher-quality results if your budget supports it.
-* **Correct File Tagging:** Always ensure you're accurately tagging the PRD filename (e.g., `@MyFeature-PRD.md`) when generating tasks.
-* **Patience and Iteration:** AI is a powerful tool, but it's not magic. Be prepared to guide, correct, and iterate. This workflow is designed to make that iteration process smoother.
-
-## 🤝 Contributing
-
-Got ideas to improve these `.md` files or have new ones that fit this workflow? Contributions are welcome!
-
-Please feel free to:
-
-* Open an issue to discuss changes or suggest new features.
-* Submit a pull request with your enhancements.
-
----
-
-Happy AI-assisted developing!
+Log notable changes in `changelog.md` using the existing `YYYYMMDDTHHMM — Title` format.

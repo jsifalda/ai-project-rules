@@ -1,3 +1,15 @@
+> **Frozen archive** — do not edit. New entries go in `changelog/` as individual files.
+
+---
+
+20260523T0850 — Refresh docs to match current repo state
+
+• Why: README still described the repo as the original "AI Dev Tasks" fork, ignoring 35 skills, `rules/`, `gemini-cli/`, and the sync hook. `CLAUDE.md` was a 22-line stub.
+• What: rewrote `README.md` as a personal monorepo overview (repo layout, skills sync, rules, skills, gemini-cli commands, legacy PRD workflow); expanded `CLAUDE.md` with repository layout, skills-sync architecture, and conventions sections.
+• How: structural rewrite of `README.md`; section additions to `CLAUDE.md` (`AGENTS.md` inherits via symlink).
+
+---
+
 20260420T0825 — Add `highlight-key-takeaways` skill
 
 • Why: mark AI-authored highlights in Obsidian notes so they are distinguishable from the user's own.

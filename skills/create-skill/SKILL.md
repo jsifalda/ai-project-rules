@@ -337,8 +337,25 @@ Write the YAML frontmatter with `name` and `description`:
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Claude.
   - **Describe when the skill should NOT fire.** A description like *"Use for any document task"* hijacks unrelated requests. Spell out what's out of scope: *"Use when working with PDF files. Do NOT use for general document editing, spreadsheets, or plain text files."* Negative triggers are as important as positive ones.
-  - **Hard length limit: 1024 characters.** Enforced by Copilot CLI — skills with longer descriptions fail to load with `Skill description must be at most 1024 characters`. Matched by `scripts/quick_validate.py`. Target ≤ ~950 chars to leave a buffer. Verify before shipping: `python scripts/quick_validate.py <skill-dir>`.
-  - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks. Do NOT use for plain text files, PDFs, or spreadsheets."
+  - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks. Do NOT use for plain text files, PDFs, or spreadsheets."
+
+###### Frontmatter pitfalls (silently work in Claude Code, fail in Copilot CLI)
+
+Two parser-strictness rules trip up long descriptions. Both pass Claude Code's lenient frontmatter parser and fail Copilot CLI's spec-compliant one — meaning a skill can land that loads fine for the author but breaks every other consumer.
+
+1. **No `": "` (colon + space) inside the description.** The `description` value is a YAML plain scalar (YAML 1.2 §7.3.3); `": "` is reserved as the key/value separator and terminates the value mid-string. Use ` — ` (em-dash) or `, ` instead. If `": "` is genuinely needed, switch to a folded block scalar (`description: >-` with the body indented on the next line).
+   - Bad: `…via the slash command: runs end-to-end…`
+   - Good: `…via the slash command — runs end-to-end…`
+
+2. **`description` ≤ 1024 characters.** Copilot CLI rejects longer descriptions outright (`Skill description must be at most 1024 characters`). Target ≤ ~950 chars to leave headroom — em-dashes are 3 UTF-8 bytes, and some parsers count bytes. Keep operational detail in the body; the description is for discovery only.
+
+**Always validate before committing:**
+
+```bash
+python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/
+```
+
+`quick_validate.py` catches both pitfalls (PyYAML rejects `": "` with `mapping values are not allowed here` plus the offending column; the 1024 check is explicit). The repo's pre-commit hook also runs the validator on every staged `SKILL.md`, but running it manually during authoring gives a faster feedback loop.
 
 Do not include any other fields in YAML frontmatter.
 

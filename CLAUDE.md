@@ -18,6 +18,9 @@ Skills are auto-synced into `~/.claude/skills/` by a SessionStart hook at `~/.cl
 ## Conventions
 
 - **Skill files** follow the [agentskills.io](https://agentskills.io/specification) spec. Frontmatter requires at least `name` + `description`.
+- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing. The pre-commit hook runs the same validator on every staged `SKILL.md`. Two parser-strictness rules to know (both silently pass Claude Code but break Copilot CLI):
+  - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
+  - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
 

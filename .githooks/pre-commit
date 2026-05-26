@@ -5,17 +5,46 @@
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SCANNER="${REPO_ROOT}/scripts/check-universality.sh"
+SKILL_VALIDATOR="${REPO_ROOT}/skills/create-skill/scripts/quick_validate.py"
 
 [[ -x "$SCANNER" ]] || { echo "pre-commit: $SCANNER not found or not executable" >&2; exit 1; }
 
-# Only scan files staged for this commit (added/copied/modified).
+# Collect staged paths (added/copied/modified) once for both scanners.
 # Use a `while read` loop because macOS ships bash 3.2 which lacks `mapfile`.
 abs=()
+rel=()
 while IFS= read -r f; do
   [[ -z "$f" ]] && continue
   abs+=("${REPO_ROOT}/${f}")
+  rel+=("$f")
 done < <(git diff --cached --name-only --diff-filter=ACM)
 
 [[ ${#abs[@]} -eq 0 ]] && exit 0
 
-"$SCANNER" "${abs[@]}"
+"$SCANNER" "${abs[@]}" || exit 1
+
+# Validate any staged skills/<name>/SKILL.md against the agentskills.io spec
+# (YAML frontmatter parses, description ≤1024 chars, etc.).
+if [[ -f "$SKILL_VALIDATOR" ]]; then
+  fail=0
+  seen_dirs=""
+  for f in "${rel[@]}"; do
+    if [[ "$f" =~ ^skills/[^/]+/SKILL\.md$ ]]; then
+      skill_dir="${REPO_ROOT}/$(dirname "$f")"
+      # Avoid re-validating the same directory if multiple files in it are staged
+      case ":$seen_dirs:" in
+        *:"$skill_dir":*) continue ;;
+      esac
+      seen_dirs="$seen_dirs:$skill_dir"
+      if ! python3 "$SKILL_VALIDATOR" "$skill_dir"; then
+        echo "pre-commit: skill validation failed for $f" >&2
+        fail=1
+      fi
+    fi
+  done
+  [[ $fail -ne 0 ]] && exit 1
+fi
+
+# Explicit success exit — without this, the [[ … ]] && exit 1 above leaks its
+# false-condition exit status (1) as the script's final status on the happy path.
+exit 0

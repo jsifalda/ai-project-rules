@@ -7,7 +7,7 @@ description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke w
 
 Go from a dirty working tree to an open PR/MR in one pass. Auto-derive everything from the diff and the repo's own conventions. No per-step confirmations.
 
-The skill runs six phases in strict order. Abort on the first failure with a one-line reason — do not retry with `--no-verify`, `--force`, or any other bypass flag.
+The skill runs six phases in strict order. Abort on the first failure with a one-line reason — do not retry with `--no-verify`, `--force`, or any other bypass flag. (Sole exception: on GitHub, a push denied for lack of write access triggers the fork fallback in Phase 5d — an alternate destination, not a bypass.)
 
 ## Phase 1 — Preflight
 
@@ -52,6 +52,14 @@ glab repo view -F json | jq -r .default_branch                    # GitLab
 ```
 
 Store as `$DEFAULT_BRANCH`. If detection fails, ask the user once.
+
+For GitHub only, also capture the canonical upstream slug now — **before** any fork, while `origin` still resolves to upstream. The fork fallback in Phase 5 uses it to target the PR at the upstream repo:
+
+```bash
+ORIGIN_SLUG=$(gh repo view --json nameWithOwner -q .nameWithOwner)   # e.g. owner/repo — GitHub only
+```
+
+Store as `$ORIGIN_SLUG`.
 
 ## Phase 3 — Detect project conventions
 
@@ -122,7 +130,7 @@ The commit message ends after the descriptive body. The PR body ends after `## T
 
 ## Phase 5 — Execute
 
-Run in order. Stop on the first failure — do NOT retry with `--no-verify`, `--no-gpg-sign`, `--force`, or `--amend`.
+Run in order. Stop on the first failure — do NOT retry with `--no-verify`, `--no-gpg-sign`, `--force`, or `--amend`. The sole exception is a push denied for lack of write access on GitHub, which triggers the fork fallback in 5d (an alternate destination, not a bypass).
 
 ### 5a. Create or stay on a feature branch
 
@@ -175,6 +183,27 @@ git push -u origin "<branch>"
 
 If the upstream is already set, plain `git push` is fine. Never `--force` or `--force-with-lease`.
 
+#### GitHub-only fork fallback (push denied)
+
+If the push fails **specifically because you lack write access** — stderr matches `Permission to .* denied`, `Write access to repository not granted`, or `The requested URL returned error: 403` — do NOT abort and do NOT retry with any bypass flag. This is not a bypass; it routes the branch to a legitimate alternate destination. Fork the upstream and push there:
+
+```bash
+# Create the fork in your account, add it as a separate remote "fork".
+# --remote-name fork keeps origin pointing at upstream (suppresses the default origin→upstream rename).
+gh repo fork --remote --remote-name fork --clone=false
+
+# Push the branch to the fork.
+git push -u fork "<branch>"
+```
+
+`gh repo fork` is idempotent — if the fork already exists it just (re)adds the remote and exits 0.
+
+Rules for this fallback:
+
+- **GitHub only.** On GitLab, a push-denied error aborts (`no write access — fork fallback is GitHub-only`); the fork+MR model differs and is out of scope.
+- A push failure that is NOT an access/permission error (non-fast-forward, network, pre-push hook) still aborts per the normal rule.
+- Record that the fork path was taken and set the PR head to `<your-login>:<branch>` for Phase 5e.
+
 ### 5e. Open the PR/MR
 
 GitHub:
@@ -182,6 +211,24 @@ GitHub:
 ```bash
 gh pr create \
   --base "$DEFAULT_BRANCH" \
+  --title "<title>" \
+  --body "$(cat <<'EOF'
+## Summary
+- ...
+
+## Test plan
+- [ ] ...
+EOF
+)"
+```
+
+GitHub — fork fallback (only when Phase 5d forked): target the upstream repo explicitly and set the head to your fork. Without `--repo`/`--head`, `gh pr create` prompts interactively, which breaks the one-shot flow.
+
+```bash
+gh pr create \
+  --repo "$ORIGIN_SLUG" \
+  --base "$DEFAULT_BRANCH" \
+  --head "$(gh api user -q .login):<branch>" \
   --title "<title>" \
   --body "$(cat <<'EOF'
 ## Summary
@@ -227,6 +274,12 @@ commit:  <short-sha>  <subject>
 pr:      <url>
 ```
 
+If the GitHub fork fallback (Phase 5d) was used, add a fourth line so the user sees where the branch lives:
+
+```
+fork:    <your-login>/<repo>
+```
+
 Nothing else. No trailing summary, no narrative paragraph.
 
 ## Hard rules (never violate)
@@ -237,6 +290,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 - Never `git add -A` / `git add .` — stage by explicit path.
 - Never auto-install `gh`, `glab`, or anything else — ask the user first.
 - Never push to the default branch.
+- Never push to a remote other than `origin` — the only exception is the GitHub fork fallback (remote `fork`) after an access-denied push. Even then, never `--force`.
 - Never include Claude / Anthropic / AI-generated attribution anywhere.
 
 ## Failure modes (abort with a one-line reason)
@@ -253,4 +307,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Default branch detection failed | ask the user once |
 | Suspicious-only diff (secrets) | `staged file looks like a secret: <path> — confirm to proceed` |
 | Pre-commit hook failure | surface the hook's error verbatim and stop |
+| Push denied — no write access (GitHub) | fork upstream, push to `fork`, open cross-repo PR (not an error) |
+| Push denied — no write access (GitLab) | `no write access — fork fallback is GitHub-only` |
+| Push fails for any other reason | surface the git error and stop |
 | Existing PR/MR for branch | return existing URL (not an error) |

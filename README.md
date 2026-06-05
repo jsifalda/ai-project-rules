@@ -18,13 +18,15 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 
 ## How it gets into Claude Code & Copilot CLI
 
-A SessionStart hook at `~/.claude/hooks/sync-skills.js` scans this repo (plus a couple of other source dirs) and symlinks every `skills/*/` folder into `~/.claude/skills/`. Result: skills appear automatically inside Claude Code at every session start, no manual install step.
+A `SessionStart` hook symlinks every `skills/*/` folder into `~/.claude/skills/`, so skills appear automatically inside Claude Code at every session start — no manual install step.
 
-- **Sources**, in priority order (first wins on name conflict):
-  1. `~/instructions/skills/` (this repo)
-  2. `~/mofa/ai-prompts/.agents/skills/`
-  3. `~/mofa/gemini/skills/`
-- **Copilot CLI** uses a parallel script at `~/.copilot/hooks/sync-skills.js` that copies (not symlinks, [github/copilot-cli#1021](https://github.com/github/copilot-cli/issues/1021)) the same skills into `~/.copilot/skills/`.
+The canonical hook script lives in this repo at `skills/setup-skills-autorefresh/scripts/sync-skills.js`. It syncs whatever **source folder is passed to it as an argument** (and prunes symlinks for skills you've removed). Register it on a machine with the bundled `setup-skills-autorefresh` skill, which bakes the folder into the hook command in `~/.claude/settings.json`:
+
+```bash
+bash skills/setup-skills-autorefresh/scripts/install.sh ~/instructions/skills
+```
+
+- **Copilot CLI** uses a parallel script at `~/.copilot/hooks/sync-skills.js` that copies (not symlinks, [github/copilot-cli#1021](https://github.com/github/copilot-cli/issues/1021)) skills into `~/.copilot/skills/`.
 
 The hook script is the source of truth for the sync behaviour — read it directly if you need to debug.
 

@@ -13,7 +13,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Skills Sync
 
-Skills are auto-synced into `~/.claude/skills/` by a SessionStart hook at `~/.claude/hooks/sync-skills.js`. The hook scans multiple sources in priority order — `~/instructions/skills/` wins on name conflicts — and creates directory symlinks. A parallel script at `~/.copilot/hooks/sync-skills.js` copies (not symlinks, due to a Copilot CLI bug) the same skills into `~/.copilot/skills/`. The hook script is the source of truth — read it for sync behaviour.
+Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The canonical hook script lives in this repo at `skills/setup-skills-autorefresh/scripts/sync-skills.js`; it symlinks every skill from a **source folder passed as an argument** into `~/.claude/skills/` and prunes removed ones. Install/register it on a machine with the `setup-skills-autorefresh` skill (`bash skills/setup-skills-autorefresh/scripts/install.sh <skills-dir>`), which bakes the source folder into the hook command in `~/.claude/settings.json`. A parallel script at `~/.copilot/hooks/sync-skills.js` copies (not symlinks, due to a Copilot CLI bug) skills into `~/.copilot/skills/`. The hook script is the source of truth — read it for sync behaviour.
 
 ## Conventions
 

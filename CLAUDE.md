@@ -23,6 +23,7 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
   - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
+- **README lists are manually maintained — keep them in sync.** The `## Skills` table in `README.md` has one row per skill. When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`). Likewise, when you add or remove a `gemini-cli/commands/*.toml`, update the "Current commands" list in `README.md`. There is no generator — drift only stays out if every skill/command change touches the README too.
 
 ## Key Rules
 

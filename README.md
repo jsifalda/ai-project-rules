@@ -42,21 +42,54 @@ Three always-apply files under `rules/`. Each carries `type: "always_apply"` fro
 
 ## Skills
 
-35 skills under `skills/`, each a directory containing a `SKILL.md` with `name`, `description`, and (optional) `metadata` frontmatter, followed by the skill body. See the [agentskills.io spec](https://agentskills.io/specification) for the format.
+Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `description`, and (optional) `metadata` frontmatter, followed by the skill body. See the [agentskills.io spec](https://agentskills.io/specification) for the format. The table below lists every skill in the repo — keep it in sync when you add, remove, or rename one.
 
-A few representative entries:
+| Skill | What it does |
+| --- | --- |
+| `apple-mail-query` | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). |
+| `changelog-setup` | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). |
+| `claude-allow-home` | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. |
+| `claude-version-check` | Check the current Claude Code CLI version and compare it to the latest published release. |
+| `council` | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. |
+| `create-codebase-docs` | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. |
+| `create-implementation-plan` | Generate a concise, machine-friendly implementation-plan template for engineering work. |
+| `create-skill` | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. |
+| `create-svg-image` | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. |
+| `deep-research` | Conduct multi-source research with synthesis, citation tracking, and claim verification. |
+| `defuddle` | Extract clean markdown from web pages with the Defuddle CLI (strips clutter) to save tokens. |
+| `distill-persona` | Distill a leader's worldview from interview transcripts into a reusable advisor persona. |
+| `first-principles-mode` | Strip a problem back to fundamental truths and rebuild the answer from only what's verifiable. |
+| `founder-thinking-mode` | Answer in a blunt founder-operator voice — the specific decision, the trade-off, and the real risk. |
+| `frontend-design` | Create distinctive, production-grade frontend UI that avoids generic AI aesthetics. |
+| `generate-prd-tasks` | Turn a PRD into a step-by-step developer task list (parent tasks + sub-tasks). |
+| `grill-me` | Interview the user relentlessly about a plan or design until reaching shared understanding. |
+| `highlight-key-takeaways` | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |
+| `json-canvas` | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. |
+| `landing-page-copy` | Generate high-converting landing page copy in markdown from a short product description. |
+| `landing-page-gap-analyzer` | Audit landing page copy against a 13-section conversion blueprint and return a scored gap report. |
+| `markdown` | Create, refine, or convert content into strictly formatted, export-ready Markdown. |
+| `microsoft-clarity` | Add Microsoft Clarity analytics (heatmaps, session recordings) to a Next.js app. |
+| `nextjs-ga-tracking` | Add GA4 tracking with GDPR-compliant Silktide cookie consent to a Next.js project. |
+| `obsidian-bases` | Create and edit Obsidian Bases (`.base`) — views, filters, formulas, summaries. |
+| `obsidian-cli` | Interact with Obsidian vaults via the Obsidian CLI (read/create/search notes; plugin/theme dev + debug). |
+| `obsidian-markdown` | Create and edit Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties). |
+| `obsidian-task-extractor` | Extract atomic tasks from a note and add them to `To Remember.md`. |
+| `pdf` | PDF toolkit — extract text/tables, create, merge/split, and fill forms at scale. |
+| `persona-stanier` | Channel James Stanier as an engineering-leadership advisor, grounded in his blog posts and frameworks. |
+| `prd-creator` | Generate detailed PRDs in Markdown via a clarifying-questions interview. |
+| `prompt-enhancer` | Transform a simple prompt into a high-quality, structured one for better AI results. |
+| `reddit-post` | Create high-engagement Reddit posts (title + body) from a guided questionnaire. |
+| `seo-keyword-generator` | Generate a categorized SEO keyword strategy for a side project via a questionnaire. |
+| `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
+| `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |
+| `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |
+| `summarise-url` | Fetch a link's content and return a structured summary. |
+| `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
+| `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
+| `user-scenarios-setup` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
+| `write-like-human` | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. |
 
-- `prd-creator` — generate full PRDs with a clarifying-questions interview
-- `code-review` (loaded from another source) — review current diff at configurable effort level
-- `confluence-search` / `confluence-conduct-postmortem` — Confluence read + post-mortem authoring
-- `jira-create-task` / `jira-search` / `sl-jira-tickets-validator` — Jira tooling
-- `write-like-human` — strict 17-rule style guide for non-AI-sounding prose
-- `summarise-url` / `summarise-text` — link/text condensation pipelines
-- `obsidian-markdown` / `obsidian-cli` / `obsidian-bases` / `json-canvas` — Obsidian vault tooling
-- `create-skill` — guide for authoring new skills
-- `deep-research`, `council`, `frontend-design`, `landing-page-copy`, ...
-
-Full list: `ls skills/`.
+_(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
 
 ## Gemini CLI commands
 
@@ -90,9 +123,9 @@ Video demo of the original workflow on [Claire Vo's "How I AI" podcast](https://
 
 Personal repo, but PRs welcome if something here is genuinely useful elsewhere. To add:
 
-- A **skill**: create `skills/<name>/SKILL.md` following the agentskills.io spec. It will be picked up by the sync hook on next session start.
+- A **skill**: create `skills/<name>/SKILL.md` following the agentskills.io spec. It will be picked up by the sync hook on next session start. Add a matching row to the [Skills](#skills) table above.
 - A **rule**: add `rules/<name>.md` with `type: "always_apply"` frontmatter.
-- A **Gemini command**: add `gemini-cli/commands/<name>.toml`.
+- A **Gemini command**: add `gemini-cli/commands/<name>.toml`. Add it to the Current commands list above.
 
 **Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: [`rules/universality.md`](rules/universality.md). After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
 

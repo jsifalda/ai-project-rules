@@ -29,7 +29,7 @@ type: "always_apply"
   - **Project-specific** rules (build commands, local conventions, repo gotchas) → save to the agent's project-scoped memory if one exists; otherwise fall back to global and prefix with the project name
 - Write the rule so it prevents the same mistake recurring; capture **Why** (the reason / past incident) and **How to apply** (when it kicks in)
 - Update existing entries rather than duplicating; remove entries that turn out wrong
-- Review prior lessons at session start (each agent has its own loading mechanism — Claude Code reads `MEMORY.md`, Copilot reads its own config, etc.)
+- Consult prior lessons on demand: when you are unsure, before a task in a domain you have past lessons about, or after an error or correction. Do not eagerly load all lessons at session start. Each agent has its own memory store (Claude Code reads `MEMORY.md`, Copilot reads its own config); load the relevant lesson when it applies.
 - Capture from success too, not only correction: if the user explicitly confirms a non-obvious choice ("yes exactly", "perfect"), that is also a lesson worth saving
 - Ruthlessly iterate on these lessons until mistake rate drops
 

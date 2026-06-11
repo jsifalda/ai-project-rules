@@ -78,6 +78,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `persona-stanier` | Channel James Stanier as an engineering-leadership advisor, grounded in his blog posts and frameworks. |
 | `prd-creator` | Generate detailed PRDs in Markdown via a clarifying-questions interview. |
 | `prompt-enhancer` | Transform a simple prompt into a high-quality, structured one for better AI results. |
+| `radical-feedback` | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. |
 | `reddit-post` | Create high-engagement Reddit posts (title + body) from a guided questionnaire. |
 | `seo-keyword-generator` | Generate a categorized SEO keyword strategy for a side project via a questionnaire. |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |

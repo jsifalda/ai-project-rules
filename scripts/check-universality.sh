@@ -2,7 +2,7 @@
 # Scans for content that violates the universality policy in rules/universality.md.
 # Usage:
 #   scripts/check-universality.sh                    # scan tracked files in the repo
-#   scripts/check-universality.sh path1 path2 ...    # scan a specific file list (used by pre-commit)
+#   scripts/check-universality.sh path1 path2 ...    # scan specific files and/or directories (used by pre-commit)
 # Exit code:
 #   0 = clean
 #   1 = violations found
@@ -109,7 +109,13 @@ scan_file() {
 files=()
 if [[ $# -gt 0 ]]; then
   for f in "$@"; do
-    [[ -f "$f" ]] && files+=("$f")
+    if [[ -d "$f" ]]; then
+      while IFS= read -r sub; do
+        files+=("$sub")
+      done < <(find "$f" -type f -not -path '*/.git/*' -not -path '*/node_modules/*')
+    elif [[ -f "$f" ]]; then
+      files+=("$f")
+    fi
   done
 else
   # Scan tracked files in the repo (so we don't trip over untracked junk).
@@ -124,9 +130,11 @@ else
   fi
 fi
 
-for f in "${files[@]}"; do
-  scan_file "$f"
-done
+if [[ ${#files[@]} -gt 0 ]]; then
+  for f in "${files[@]}"; do
+    scan_file "$f"
+  done
+fi
 
 if [[ $violations -gt 0 ]]; then
   printf '\nuniversality check: %d violation(s) found.\n' "$violations" >&2

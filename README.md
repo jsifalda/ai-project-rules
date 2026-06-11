@@ -80,6 +80,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `prompt-enhancer` | Transform a simple prompt into a high-quality, structured one for better AI results. |
 | `radical-feedback` | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. |
 | `reddit-post` | Create high-engagement Reddit posts (title + body) from a guided questionnaire. |
+| `rewrite` | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. |
 | `seo-keyword-generator` | Generate a categorized SEO keyword strategy for a side project via a questionnaire. |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |

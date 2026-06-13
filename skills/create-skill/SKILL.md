@@ -39,6 +39,14 @@ The context window is a public good. Skills share the context window with everyt
 
 Prefer concise examples over verbose explanations. For deeper guidance on phrasing instructions (directives, examples-first, explain-the-why, avoiding overfit), see [references/writing-style.md](references/writing-style.md).
 
+### Referencing Other Skills (confirm first)
+
+Skills should be self-contained. Before a skill's body mentions or references ANY other skill by name — a passing note ("see the X skill"), a cross-link, or an instruction to invoke/delegate to it — STOP and ask the user to confirm that specific reference. Leave it out unless the user explicitly approves it.
+
+This gate is per-reference: confirm each one, not once per skill.
+
+**Why:** skill-to-skill references create hidden coupling. If the referenced skill is renamed, moved, or changed, the reference breaks silently and the consumer has no way to know. Keeping skills decoupled keeps them portable across tools (Claude Code, Copilot, Gemini).
+
 ### Set Appropriate Degrees of Freedom
 
 Match the level of specificity to the task's fragility and variability:

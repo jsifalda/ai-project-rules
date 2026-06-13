@@ -24,9 +24,9 @@ Both the DB and the config are scoped into the folder, plus a named index `<NAME
    ```bash
    ~/.claude/skills/qmd-project/scripts/init.sh "$PWD"
    ```
-   It is idempotent. It writes `.mcp.json`, `.claude/settings.json` (pre-approves the MCP server + an auto-reindex SessionStart hook), appends `/.qmd/` to `.gitignore`, appends a qmd section to the folder `CLAUDE.md`, then runs `qmd collection add` + `update` + `embed`. The first `embed` loads the shared models and is the slow step. Re-runs are incremental.
+   It is idempotent. It writes `.mcp.json`, `.claude/settings.json` (pre-approves the MCP server + an auto-reindex SessionStart hook), appends `/.qmd/` to `.gitignore`, ships a project-local `qmd-ask` skill into `.claude/skills/qmd-ask/` (baked with this index name), appends a qmd section to the folder `CLAUDE.md`, then runs `qmd collection add` + `update` + `embed`. The first `embed` loads the shared models and is the slow step. Re-runs are incremental.
 
-3. Report the result: the index name, the doc/chunk counts from the `qmd status` output the script prints.
+3. Report the result: the index name, the doc/chunk counts from the `qmd status` output, and that the `qmd-ask` skill was shipped (the user asks questions about the folder to use it; it auto-loads on the next Claude Code start in the folder).
 
 ## After bootstrap
 

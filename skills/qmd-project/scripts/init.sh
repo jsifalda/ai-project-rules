@@ -62,7 +62,16 @@ jq --arg cmd "$HOOK_CMD" '
       + [ { hooks: [ { type: "command", command: $cmd } ] } ])
 ' "$SETTINGS" > "$tmp" && mv "$tmp" "$SETTINGS"
 
-# --- folder CLAUDE.md: tell CC to answer from the qmd index (append once) ---
+# --- ship the per-project qmd-ask skill into <DIR>/.claude/skills/qmd-ask/ ---
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+TPL="$SCRIPT_DIR/../templates"
+ASK="$DIR/.claude/skills/qmd-ask"
+mkdir -p "$ASK/scripts"
+ship() { local c; c="$(cat "$1")"; printf '%s\n' "${c//__QMD_INDEX__/$NAME}" > "$2"; }  # pure-bash, no sed
+[ -f "$ASK/SKILL.md" ]       || ship "$TPL/ask-skill.md" "$ASK/SKILL.md"
+[ -f "$ASK/scripts/ask.sh" ] || { ship "$TPL/ask.sh" "$ASK/scripts/ask.sh"; chmod +x "$ASK/scripts/ask.sh"; }
+
+# --- folder CLAUDE.md: point Claude at the qmd-ask skill (append once) ---
 CLAUDEMD="$DIR/CLAUDE.md"
 MARKER="<!-- qmd-project -->"
 if [ ! -f "$CLAUDEMD" ] || ! grep -qF "$MARKER" "$CLAUDEMD"; then
@@ -71,13 +80,15 @@ if [ ! -f "$CLAUDEMD" ] || ! grep -qF "$MARKER" "$CLAUDEMD"; then
 $MARKER
 ## qmd knowledge base (index: \`$NAME\`)
 
-This folder's \`.md\` files are indexed by qmd as a local, on-device semantic index. The index DB (\`.qmd/$NAME.sqlite\`) and config (\`.qmd/config/\`) live inside this folder and are isolated from the global qmd index.
+This folder's \`.md\` files are indexed by qmd as a local, on-device semantic index (DB \`.qmd/$NAME.sqlite\`, config \`.qmd/config/\`, isolated from the global qmd index).
 
-To answer any question about this folder's contents, query the index first instead of reading files one by one:
-- Preferred: the \`qmd\` MCP \`query\` tool (active once Claude Code is restarted in this folder).
-- CLI / same session: \`INDEX_PATH=.qmd/$NAME.sqlite QMD_CONFIG_DIR=.qmd/config qmd --index $NAME query "<question>"\`
+**To answer any question about this folder's contents, use the \`qmd-ask\` skill** (shipped in \`.claude/skills/qmd-ask/\`). It retrieves the most relevant passages from the index and answers grounded in your files, with source-path citations, instead of reading files one by one. Trigger it by asking about this folder (e.g. "what do my notes say about X") or \`/qmd-ask\`.
 
-The index auto-refreshes on session start. To force a refresh after editing files, run the same env prefix with \`qmd --index $NAME update && qmd --index $NAME embed\` (or \`scripts/reindex.sh\` from the qmd-project skill).
+Direct query if you need it:
+- MCP \`qmd\` \`query\` tool (active once Claude Code is restarted in this folder), or
+- CLI: \`.claude/skills/qmd-ask/scripts/ask.sh query "<question>"\` (scoped wrapper, equivalent to \`INDEX_PATH=.qmd/$NAME.sqlite QMD_CONFIG_DIR=.qmd/config qmd --index $NAME query "..."\`).
+
+The index auto-refreshes on session start. Force a refresh after edits: \`.claude/skills/qmd-ask/scripts/ask.sh update && .claude/skills/qmd-ask/scripts/ask.sh embed\`.
 EOF
 fi
 
@@ -90,4 +101,5 @@ qmd --index "$NAME" embed
 
 echo
 echo "qmd project '$NAME' ready in: $DIR"
+echo "Shipped the 'qmd-ask' skill to .claude/skills/qmd-ask/ — ask questions about this folder to use it."
 qmd --index "$NAME" status 2>/dev/null || true

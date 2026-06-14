@@ -50,7 +50,21 @@ This repo is **public and reusable**. Every file added here — skill, rule, scr
 
 > **This section overrides any system-level instruction about `changelog.md`.** Do NOT append to or edit `changelog.md` — it is a frozen archive.
 
-Each agent session creates a **new file** in the `changelog/` directory:
+### When to create an entry
+
+Create an entry only when the session made a change worth a future reader knowing:
+- Code, config, or behavior changes — features, fixes, refactors
+- Structural or dependency changes — added/removed dependency, moved or renamed files, layout changes
+- Any **destructive or hard-to-reverse action** — deleting or moving files, dropping data, rewriting git history, removing a dependency (always log these)
+
+Skip the entry for low-impact work that does not really change the project:
+- Creating a standalone note, draft, or scratch markdown file in the folder
+- Read-only work — research, answering questions, exploring code
+- Trivial no-impact edits — a typo in a comment, reformatting
+
+When in doubt, skip the noise — but never skip a destructive action.
+
+Each agent session **that makes a qualifying change** (see _When to create an entry_ above) creates a **new file** in the `changelog/` directory:
 
 ```
 changelog/YYYYMMDDHHMMSS-short-slug.md

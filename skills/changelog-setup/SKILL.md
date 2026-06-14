@@ -64,6 +64,8 @@ Confirm to the user:
 
 ## Changelog entry format (quick reference)
 
+**When to create one**: only for a change worth a future reader knowing — code/config/behavior changes, structural or dependency changes, or any destructive / hard-to-reverse action (always log those). Skip low-impact work: creating a standalone note or scratch md file, read-only research, trivial no-impact edits. Full criteria live in the policy template.
+
 **Filename**: `changelog/YYYYMMDDHHMMSS-short-slug.md`
 - Timestamp: 14-digit format (e.g., `20260412114500`)
 - Slug: 2-5 word kebab-case (e.g., `fix-auth-redirect`, `add-token-tracking`)
@@ -79,6 +81,7 @@ Confirm to the user:
 
 ## Rules
 
+- Only create an entry for real changes or destructive actions — skip trivial/no-impact work like dropping a new note file (full criteria in the policy template)
 - Never edit existing changelog files — always create a new one
 - One file per agent session (multiple related changes go in same file)
 - Focus on **why** over **how** — no technical implementation details

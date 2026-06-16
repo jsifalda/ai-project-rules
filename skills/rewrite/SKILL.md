@@ -1,6 +1,6 @@
 ---
 name: rewrite
-description: Improve, correct, or rephrase text while keeping its original language — a DeepL Write style writing assistant. Fixes spelling, grammar, and punctuation, raises clarity, fluency, and conciseness, and offers word and sentence alternatives. Supports style presets (Simple, Business, Academic, Casual) and tone presets (Enthusiastic, Friendly, Confident, Diplomatic), which can combine. Use when the user says rewrite this, improve my writing, fix grammar, rephrase, polish this text, make this more formal or casual, or mentions DeepL Write. Do NOT use to humanise or strip AI tone (use write-like-human), to translate into another language (use translate-to-czech — rewrite stays in the same language), to improve an AI prompt (use prompt-enhancer), to summarise (use summarise-text or summarise-url), or for pure markdown formatting (use markdown).
+description: Improve, correct, or rephrase text while keeping its original language — a DeepL Write style writing assistant. Fixes spelling, grammar, and punctuation, raises clarity, fluency, and conciseness, and offers word and sentence alternatives. Supports style presets (Simple, Business, Academic, Casual) and tone presets (Enthusiastic, Friendly, Confident, Diplomatic), which can combine. Use when the user says rewrite this, improve my writing, fix grammar, rephrase, polish this text, make this more formal or casual, or mentions DeepL Write. In Improve mode it loads the write-like-human ruleset first, so default output reads human and not AI-generated. Do NOT use to draft fresh prose from scratch (use write-like-human), to translate into another language (use translate-to-czech — rewrite stays in the same language), to improve an AI prompt (use prompt-enhancer), to summarise (use summarise-text or summarise-url), or for pure markdown formatting (use markdown).
 ---
 
 # Rewrite
@@ -11,7 +11,7 @@ A DeepL Write style writing assistant. Polish text without changing what it mean
 
 - **Preserve meaning.** Never add facts, opinions, or claims the author did not make. Never drop their points.
 - **Preserve the language.** Detect the input language and reply in that same language. Improve, never translate. If the user wants another language, that is `translate-to-czech`, not this skill.
-- **Preserve voice** unless a preset is requested. Default output sounds like the same author, only sharper.
+- **Preserve voice** unless a preset is requested. In Improve mode you still strip AI-tells, hype, and filler per the write-like-human rules, but keep the author's character. Default output sounds like the same author, only sharper and more human.
 - **Keep length similar** unless the user asks to shorten or expand.
 - Honor regional variants when stated (British vs American English, etc.).
 
@@ -19,7 +19,7 @@ A DeepL Write style writing assistant. Polish text without changing what it mean
 
 Pick the mode from what the user asked. If nothing is specified, use **Improve**.
 
-- **Improve** (default) — fix spelling, grammar, and punctuation, then raise clarity, fluency, conciseness, and naturalness. Rephrase awkward sentences.
+- **Improve** (default) — fix spelling, grammar, and punctuation, then raise clarity, fluency, conciseness, and naturalness. Rephrase awkward sentences. Applies the write-like-human ruleset (loaded first) as a baseline.
 - **Correct only** — fix spelling, grammar, and punctuation only. Leave wording and structure as-is. Triggers: "just fix grammar", "correct only", "don't reword".
 
 ### Style presets
@@ -41,9 +41,11 @@ A style and a tone can combine, e.g. Business + Diplomatic. Apply both.
 ## Workflow
 
 1. Detect the input language.
-2. Apply the requested mode and any preset. If none requested, default to Improve.
-3. Produce the polished text.
-4. Add a compact list of alternatives for 2-3 key or awkward sentences (or notable word choices).
+2. Determine the mode and any preset. If none requested, default to Improve.
+3. If Improve mode (no preset requested): load the `write-like-human` skill first and keep its full ruleset active while you rewrite. Correct-only and any explicit preset skip this.
+4. Apply the mode, the human-writing rules (Improve only), and any preset.
+5. Produce the polished text.
+6. Add a compact list of alternatives for 2-3 key or awkward sentences (or notable word choices).
 
 ## Output format
 
@@ -60,4 +62,5 @@ When the user explicitly requests a mode or preset (e.g. "make it Business + Dip
 
 - If the input is already clean and needs no changes, say so in one line, return it as-is, and offer the presets.
 - Do not invent content to fill a tone. Diplomatic still says the same thing, just softer.
-- The rewritten text follows the chosen preset, not any personal house style. If the user wants the output to sound human or stripped of AI tone, that is `write-like-human`.
+- In Improve mode the output follows the `write-like-human` ruleset loaded at workflow step 3 — no semicolons, em-dashes, hype, or AI-filler — applied within the detected input language. For non-English text, apply the language-agnostic intent (punctuation, active voice, cut filler) and skip the English-only idiom examples.
+- When a style or tone preset is requested, the preset governs and the human-writing pass is skipped. Correct-only never applies it.

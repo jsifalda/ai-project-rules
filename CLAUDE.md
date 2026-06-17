@@ -87,6 +87,16 @@ changelog/YYYYMMDDHHMMSS-short-slug.md
 
 Keep it concise — minimal words to deliver the message. Focus on *why* over *how*. No technical implementation details.
 
+### Commit the entry (autocommit)
+
+When you create a new changelog entry, commit it automatically — do not ask first:
+
+- **One bundled commit.** Stage the new `changelog/` file together with the related changes from this session that the entry documents, and commit them as a single commit. Use the conventional-commit format for the actual change (e.g. `feat: add foo skill`), not "add changelog" — the entry rides along with the work it describes.
+- **Stage only related files.** Add the entry plus the files this session actually changed. Never `git add -A` / `git add .` — do not sweep unrelated working-tree files into the commit.
+- **Already-committed work.** If the related changes were already committed earlier this session (e.g. per TDD cycle), commit the entry on its own as a follow-up (`docs: …`).
+- **Local only — never push.** This is a local commit. Pushing still needs an explicit user instruction (see RESTRICTIONS in `rules/general.md`).
+- **Let hooks run.** The pre-commit hooks (universality scanner + skill validator) must run — never `--no-verify`. If a hook fails, STOP, surface it, fix, then commit.
+
 ### File organization notes
 
 - `changelog.md` at root is a **frozen archive** — do not edit

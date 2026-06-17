@@ -123,9 +123,11 @@ type: "always_apply"
 - use local package manager (respect existing lockfile; if none present, prefer pnpm, then yarn, then npm)
 - Always use the latest stable version of dependencies
 - Avoid using deprecated, outdated and unsecured libraries
-- Never ever install a global dependency (e.g. `npm i -g`, `yarn global add`,
-  `pnpm add -g`, `brew install`, `pipx install`, `cargo install`, `gem install`,
-  `go install`, `curl ... | sh`, etc.). See the RESTRICTIONS section for the full policy and the ask-first protocol for required binaries.
+- Never install any dependency outside the project's local package manager — no
+  global, `--user`, or one-off installs (e.g. `npm i -g`, `yarn global add`,
+  `pnpm add -g`, `brew install`, `pipx install`, `pip install --user`, `cargo install`,
+  `gem install`, `go install`, `curl ... | sh`, etc.). See the RESTRICTIONS section
+  for the full policy and the ask-first protocol for any required package, library, or binary.
 
 ## TypeScript Guidelines
 

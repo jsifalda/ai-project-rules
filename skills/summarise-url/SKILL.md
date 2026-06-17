@@ -1,5 +1,5 @@
 ---
-name: Summarise URL
+name: summarise-url
 description: Fetch link content, understand context, and return correctly summarised version
 ---
 

@@ -87,11 +87,11 @@ type: "always_apply"
 
 ## GIT Commit Guidelines
 
-- Use a descriptive commit message that:
-- Uses conventional commit format (`feat:`, `fix:`, `refactor:`, etc.)
-- Summarizes what was accomplished, lists key changes and additions
-- References the task number and task list file context
-- Good example `git commit -m "feat(module): add payment validation logic, #GITHUB-ID" `
+- Conventional commit format (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`), optional `(scope)`.
+- Subject: imperative, ≤72 chars, no trailing period. Reference the task/issue ID when there is one.
+- **Body is optional and why-focused.** Add one only when the reason or impact isn't obvious from subject + diff. Keep to 1-2 short bullets of *why/impact*. Never list file-by-file what changed — the diff already shows that.
+- **A single-commit MR/PR uses the commit body verbatim as its description (GitLab, GitHub).** Write the body as a clean MR description, not a change inventory — no noise.
+- Good: `git commit -m "feat(module): add payment validation logic, #ISSUE-ID"`.
 
 ## Error Handling
 

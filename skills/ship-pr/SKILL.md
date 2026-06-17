@@ -105,7 +105,7 @@ Decide:
 - **Scope** — optional, only if the change is clearly scoped to one module/area visible in the diff paths
 - **Subject** — imperative, ≤72 chars, no trailing period
 - **Branch name** — matches detected convention; topic portion ≤50 chars, kebab-case. Example: `feat/parse-multipart-upload`, `jsmith/fix-login-redirect`
-- **Commit body** — short bullet list of *what changed and why*. Omit entirely for single-file one-liners.
+- **Commit body** — optional, why/impact-focused: add only when the reason isn't obvious from subject + diff; 1-2 short bullets max, no file-by-file inventory. Omit for single-file one-liners. On a single-commit MR/PR the body becomes the description verbatim — keep it clean.
 - **PR title** — same as the commit subject for single-commit PRs.
 - **PR body** — two sections:
 

@@ -47,7 +47,6 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | Skill | What it does |
 | --- | --- |
 | `apple-mail-query` | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). |
-| `changelog-setup` | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). |
 | `claude-allow-home` | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. |
 | `claude-version-check` | Check the current Claude Code CLI version and compare it to the latest published release. |
 | `council` | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. |
@@ -84,6 +83,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `rewrite` | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. Improve mode loads the write-like-human ruleset first so default output reads human. |
 | `seo-keyword-generator` | Generate a categorized SEO keyword strategy for a side project via a questionnaire. |
 | `setup-adrs` | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed ADR-0001, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. |
+| `setup-changelog` | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |

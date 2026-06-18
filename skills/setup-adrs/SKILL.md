@@ -72,13 +72,30 @@ already using ADRs.
 
 Read the full policy from [references/policy-template.md](references/policy-template.md).
 
-Find the target file in this priority order:
+**Pick the target file** (where `## ADRs` goes) — first match wins; root files come first so a
+project that uses `CLAUDE.md` is honored:
 1. `AGENTS.md` at project root
-2. `.claude/CLAUDE.md`
-3. `CLAUDE.md` at project root
+2. `CLAUDE.md` at project root
+3. `.claude/CLAUDE.md`
 
-If a target exists, append the `## ADRs` section. If none exist, create `AGENTS.md` at root
-with the policy.
+If a target exists, append the `## ADRs` section to it. If **none** exist, create `AGENTS.md` at
+root with the policy (`AGENTS.md` is the cross-tool canonical file).
+
+**Keep `AGENTS.md` and `CLAUDE.md` resolving to one file.** After choosing/creating the target,
+**if `AGENTS.md` is the real policy file at root AND no `CLAUDE.md` exists at root**, create a
+relative symlink at the project root so Claude Code (which reads `CLAUDE.md`) sees the same file:
+
+```bash
+ln -s AGENTS.md CLAUDE.md   # run at project root
+```
+
+This one condition covers both cases that need it: none-existed (you just created `AGENTS.md`)
+and `AGENTS.md`-only. Guards:
+- Only when **no `CLAUDE.md` exists** — never overwrite a real `CLAUDE.md`, or any existing file, with a symlink.
+- If a real `CLAUDE.md` exists **separately** from `AGENTS.md`, inject into `AGENTS.md`, leave both as-is, and tell the user `CLAUDE.md` is a separate file they may want to reconcile.
+- If the project uses `CLAUDE.md` or `.claude/CLAUDE.md` and has **no `AGENTS.md`**, just inject there — do NOT introduce `AGENTS.md` or a symlink.
+- If `CLAUDE.md` is already a symlink to `AGENTS.md`, they are the same file — inject once into `AGENTS.md`.
+- Symlinks need `core.symlinks=true` on Windows checkouts; macOS/Linux work out of the box.
 
 **Before injecting**: if a `## ADRs` section already exists in the target, ask the user
 whether to replace or skip.
@@ -93,7 +110,7 @@ Confirm to the user:
 - ADR directory created at `docs/adr/` (or the reused path) with `0000-template.md`
 - Seed `0001-record-architecture-decisions.md` created (or skipped — already in use)
 - `ARCHITECTURE.md` — drafted from the codebase, blank template, or left untouched (already existed)
-- Policy injected into `[target file]`
+- Policy injected into `[target file]`; `CLAUDE.md → AGENTS.md` symlink created (if applicable)
 
 ## ADR format (quick reference)
 
@@ -124,6 +141,10 @@ independent of work size. Full criteria live in the policy template.
   section in real files and never invent.
 - Do not overwrite an existing `ARCHITECTURE.md` or an existing `## ADRs` policy section
   without asking.
+- Inject into the project's existing agent file — `AGENTS.md`, root `CLAUDE.md`, or
+  `.claude/CLAUDE.md` (first match). If none exists, create `AGENTS.md` and symlink
+  `CLAUDE.md → AGENTS.md`; also add that symlink when only `AGENTS.md` exists. Never overwrite a
+  real `CLAUDE.md` with a symlink.
 
 ## References
 

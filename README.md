@@ -83,6 +83,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `reddit-post` | Create high-engagement Reddit posts (title + body) from a guided questionnaire. |
 | `rewrite` | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. Improve mode loads the write-like-human ruleset first so default output reads human. |
 | `seo-keyword-generator` | Generate a categorized SEO keyword strategy for a side project via a questionnaire. |
+| `setup-adrs` | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed ADR-0001, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |

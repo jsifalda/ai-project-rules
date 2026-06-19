@@ -91,6 +91,7 @@ type: "always_apply"
 - Subject: imperative, ≤72 chars, no trailing period. Reference the task/issue ID when there is one.
 - **Body is optional and why-focused.** Add one only when the reason or impact isn't obvious from subject + diff. Keep to 1-2 short bullets of *why/impact*. Never list file-by-file what changed — the diff already shows that.
 - **A single-commit MR/PR uses the commit body verbatim as its description (GitLab, GitHub).** Write the body as a clean MR description, not a change inventory — no noise.
+- **MR/PR description = `## Summary` only** (or clean commit body verbatim). Never add a `## Test plan` / `## Testing` section unless I explicitly ask for one. No checklists, no "how to verify" boilerplate by default.
 - Good: `git commit -m "feat(module): add payment validation logic, #ISSUE-ID"`.
 
 ## Error Handling

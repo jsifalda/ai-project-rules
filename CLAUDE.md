@@ -24,6 +24,11 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
 - **README lists are manually maintained — keep them in sync.** The `## Skills` table in `README.md` has one row per skill. When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`). Likewise, when you add or remove a `gemini-cli/commands/*.toml`, update the "Current commands" list in `README.md`. There is no generator — drift only stays out if every skill/command change touches the README too.
+- **New skills → consider `setup-aiengineering`.** When you add a skill under `skills/`, ask the user one question: is this a repo-bootstrapping or engineering-standards concern a project should adopt as part of its baseline setup (like ADRs, changelog, verification gates)? Most skills are not. Content, writing, research, persona, and one-off tool skills answer no and move on. If yes, fold it into `skills/setup-aiengineering/SKILL.md` as a module:
+  - Add a row to its `## Modules` table with the delivery type: **inject** (a policy block → add a `references/<name>.md`, substitute placeholders in Step 5), **delegate** (it is its own `setup-*` skill → invoke in Step 6), or **scaffold** (copies a file or hook → Step 7).
+  - Add it to the Step 4 module menu (default-selected) so users can opt out per project.
+  - Wire it into the matching step (5, 6, or 7) and add it to the Step 8 report line.
+  - Re-run `python skills/create-skill/scripts/quick_validate.py skills/setup-aiengineering/` after editing.
 
 ## Key Rules
 

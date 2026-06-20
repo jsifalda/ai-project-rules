@@ -103,6 +103,8 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
 
+_The four `team-*` skills (an agent dev team — a writer, a reviewer, a tester, and a `team-ship` lead that runs them) are adapted from [@zodchiii's post on X](https://x.com/zodchiii/status/2067552428627484853)._
+
 ## Gemini CLI commands
 
 TOML slash commands under `gemini-cli/commands/`. Format:

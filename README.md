@@ -88,13 +88,13 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `setup-aiengineering` | Bootstrap a repo's AI-engineering baseline — inject verification/git/file-org policy blocks into AGENTS.md/CLAUDE.md, delegate ADRs/changelog/user-scenarios to their setup skills, and scaffold a worktree bootstrap hook. Stack-agnostic. |
 | `setup-changelog` | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
+| `setup-user-scenarios` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |
 | `summarise-url` | Fetch a link's content and return a structured summary. |
 | `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |
 | `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
 | `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
-| `user-scenarios-setup` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
 | `write-like-human` | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_

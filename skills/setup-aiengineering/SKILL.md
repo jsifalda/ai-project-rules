@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and user-scenarios-setup skills, and scaffolds a worktree auto-bootstrap hook. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -23,7 +23,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | File organization | inject (`references/file-organization.md`) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
-| User scenarios (BDD) | delegate → `user-scenarios-setup` |
+| User scenarios (BDD) | delegate → `setup-user-scenarios` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook) |
 
 ## Workflow
@@ -83,7 +83,7 @@ For each chosen inject module (verification, git policy, file organization):
 For each chosen doc-system module, invoke the dedicated skill against the same repo:
 - ADRs → `setup-adrs`
 - Changelog → `setup-changelog`
-- User scenarios → `user-scenarios-setup`
+- User scenarios → `setup-user-scenarios`
 
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).

@@ -94,10 +94,10 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `summarise-url` | Fetch a link's content and return a structured summary. |
 | `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |
 | `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
-| `team-reviewer` | Blind code-reviewer role for an agent dev team — read-only, hunts bugs, security, and convention issues and reports findings without fixing them. |
-| `team-ship` | Lead orchestrator for an agent dev team — turns a one-line task into a brief, spawns writer/reviewer/tester subagents in their own lanes via `handoff.md`, and presents one summary you approve before any merge. |
-| `team-tester` | Spec-first tester role for an agent dev team — writes tests from the brief, never from the implementation, scoped to its `tests/` territory. |
-| `team-writer` | Code-writer role for an agent dev team — implements from a shared brief inside its `src/` territory, recording cross-area impact in `handoff.md` instead of touching other lanes. |
+| `team-code-writer` | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. |
+| `team-reviewer` | Reviewer role for an agent dev team — read-only, runs `git diff` and reports Critical/Important/Nitpick findings with file:line, never edits. |
+| `team-ship` | Lead orchestrator — `/team-ship <task>` writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. |
+| `team-tester` | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. |
 | `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
 | `write-like-human` | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. |
 

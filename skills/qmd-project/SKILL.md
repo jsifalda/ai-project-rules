@@ -1,5 +1,6 @@
 ---
 name: qmd-project
+disable-model-invocation: true
 description: Turn the current folder into a local on-device qmd knowledge base, a private semantic index over all its nested .md files that only this folder can query. The index DB and config are stored inside the folder (isolated from the global qmd index) while the 2.1GB embedding models stay shared globally. Sets up a folder-scoped qmd MCP server, an auto-reindex-on-session-start hook, and a folder CLAUDE.md so Claude answers questions from the index instead of reading files one by one. Use when the user says "index this folder for qmd", "make this folder a qmd project", "set up local qmd search here", "build a queryable knowledge base from these notes", or runs /qmd-project. Do NOT use to search an already-indexed folder (just query it), or to add a folder to the global qmd index.
 ---
 

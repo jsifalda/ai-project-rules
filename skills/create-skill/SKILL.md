@@ -365,7 +365,16 @@ python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/
 
 `quick_validate.py` catches both pitfalls (PyYAML rejects `": "` with `mapping values are not allowed here` plus the offending column; the 1024 check is explicit). The repo's pre-commit hook also runs the validator on every staged `SKILL.md`, but running it manually during authoring gives a faster feedback loop.
 
-Do not include any other fields in YAML frontmatter.
+###### Optional: `disable-model-invocation`
+
+Set `disable-model-invocation: true` to make a skill slash-only. It stays invocable through its `/command`, but Claude will not auto-trigger it from a description match. Reach for it when auto-firing on a loose natural-language match would be harmful or wasteful:
+
+- Destructive, hard-to-reverse, or outward-facing actions (opening PRs/MRs, pushing, deleting, publishing, external sync).
+- Heavy setup or bootstrap ops that scaffold files or mutate repo or global config (the `setup-*` family, `qmd-project`, `claude-allow-home`, `sync-obsidian-skills`).
+
+Default: leave it unset so auto-invocation stays on. Most skills (writers, summarizers, generators, research, personas, modes) should auto-trigger, because that is their whole value.
+
+Beyond `name`, `description`, `disable-model-invocation`, `license`, `allowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
 
 ##### Body
 

@@ -1,5 +1,6 @@
 ---
 name: setup-aiengineering
+disable-model-invocation: true
 description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and user-scenarios-setup skills, and scaffolds a worktree auto-bootstrap hook. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 

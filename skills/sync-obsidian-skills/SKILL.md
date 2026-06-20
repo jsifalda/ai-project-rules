@@ -1,5 +1,6 @@
 ---
 name: sync-obsidian-skills
+disable-model-invocation: true
 description: Sync Obsidian-related skills (defuddle, json-canvas, obsidian-bases, obsidian-cli, obsidian-markdown) from the kepano/obsidian-skills GitHub repo. Use when the user wants to update, sync, or pull the latest Obsidian skill definitions from the upstream repository.
 ---
 

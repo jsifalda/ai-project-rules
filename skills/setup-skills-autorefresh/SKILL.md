@@ -1,5 +1,6 @@
 ---
 name: setup-skills-autorefresh
+disable-model-invocation: true
 description: Set up auto-refresh syncing of agent skills into Claude Code on this machine. Registers a SessionStart hook in ~/.claude/settings.json that, at every session start, symlinks each skill folder (any subfolder holding a SKILL.md) from a source folder you choose into ~/.claude/skills/ so they auto-load, and prunes ones you removed. Takes the source folder as a parameter, and if you don't give one it asks and recommends this repo's own skills/ dir, then verifies the path exists and holds at least one skill first. Idempotent — re-running re-points the source and migrates any older hook registration. Use when the user says "set up skills auto-refresh", "install the skills sync hook", "auto-sync my skills into Claude Code", "make my skills folder auto-load every session", or runs /setup-skills-autorefresh. Do NOT use for unrelated settings.json changes (permissions, env, model, other hooks) or one-off manual skill copying.
 ---
 

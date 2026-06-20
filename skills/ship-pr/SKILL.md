@@ -1,5 +1,6 @@
 ---
 name: ship-pr
+disable-model-invocation: true
 description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke when the user explicitly types the literal slash command `/ship-pr`. Natural-language phrasing such as "ship this", "ship these changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT cause this skill to load; handle those with standard commit + push tools instead and, if helpful, ask whether to run `/ship-pr`. When (and only when) explicitly invoked — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab) in one shot. Auto-detects provider via `git remote`, auto-derives branch name, commit message, and PR title/body from the diff and existing repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
 ---
 

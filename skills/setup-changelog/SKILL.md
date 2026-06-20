@@ -1,5 +1,6 @@
 ---
 name: setup-changelog
+disable-model-invocation: true
 description: Bootstrap a per-session changelog system in any project. Creates changelog/ directory, adds policy to AGENTS.md or CLAUDE.md, and optionally freezes an existing changelog.md. Use when setting up changelogs, initializing project change tracking, or the user mentions "changelog setup".
 ---
 

@@ -1,5 +1,6 @@
 ---
 name: claude-allow-home
+disable-model-invocation: true
 description: Mark a folder as trusted in Claude Code by setting hasTrustDialogAccepted in ~/.claude.json, skipping the interactive "Do you trust the files in this folder?" prompt — useful when provisioning a fresh server or running Claude Code non-interactively. Use when the user asks to "trust this folder in Claude Code", "skip the trust dialog/prompt", "allow my home folder", "make /root trusted", "pre-trust a directory", or invokes /claude-allow-home. Do NOT use to change tool permissions, allowlists, env vars, hooks, or any other Claude Code setting (use update-config for those) — this only flips the per-directory trust flag.
 ---
 

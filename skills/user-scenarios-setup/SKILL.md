@@ -1,5 +1,6 @@
 ---
 name: user-scenarios-setup
+disable-model-invocation: true
 description: Bootstrap a BDD-formatted user-scenarios inventory in any project. Creates `docs/user-scenarios.md` with a Conventions section, frozen domain prefixes, seeded example scenarios, and a Coverage Matrix, then injects a doc-sync policy into `AGENTS.md` or `CLAUDE.md` so future agents must keep the doc in sync with user-visible changes. Use when the user asks to "set up user scenarios", "bootstrap a user-scenarios doc", "add a scenarios inventory", "scenarios setup", or wants to replicate the pattern in a new repo. Do NOT use for one-off scenario edits in an existing doc, for generating end-to-end tests, for changelog setup (see `setup-changelog`), or for PRD breakdown into stories (see `prd-breakdown`).
 ---
 

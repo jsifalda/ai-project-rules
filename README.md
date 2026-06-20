@@ -94,10 +94,16 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `summarise-url` | Fetch a link's content and return a structured summary. |
 | `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |
 | `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
+| `team-code-writer` | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. |
+| `team-reviewer` | Reviewer role for an agent dev team — read-only, runs `git diff` and reports Critical/Important/Nitpick findings with file:line, never edits. |
+| `team-ship` | Lead orchestrator — `/team-ship <task>` records the agent territories in the project's AGENTS.md/CLAUDE.md, writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. |
+| `team-tester` | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. |
 | `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
 | `write-like-human` | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
+
+_The four `team-*` skills (an agent dev team — a writer, a reviewer, a tester, and a `team-ship` lead that runs them) are adapted from [@zodchiii's post on X](https://x.com/zodchiii/status/2067552428627484853)._
 
 ## Gemini CLI commands
 

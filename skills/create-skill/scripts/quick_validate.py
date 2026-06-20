@@ -39,7 +39,13 @@ def validate_skill(skill_path):
         return False, f"Invalid YAML in frontmatter: {e}"
 
     # Define allowed properties
-    ALLOWED_PROPERTIES = {'name', 'description', 'license', 'allowed-tools', 'metadata', 'disable-model-invocation'}
+    # 'argument-hint' and 'disable-model-invocation' are Claude Code skill keys
+    # (manual-invocation control, slash-arg hints); allowed so third-party skills
+    # synced verbatim (e.g. via sync-mattpocock-skills) pass without mutation.
+    ALLOWED_PROPERTIES = {
+        'name', 'description', 'license', 'allowed-tools', 'metadata',
+        'argument-hint', 'disable-model-invocation',
+    }
 
     # Check for unexpected properties (excluding nested keys under metadata)
     unexpected_keys = set(frontmatter.keys()) - ALLOWED_PROPERTIES

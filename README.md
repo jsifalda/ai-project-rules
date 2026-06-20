@@ -62,6 +62,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `frontend-design` | Create distinctive, production-grade frontend UI that avoids generic AI aesthetics. |
 | `generate-prd-tasks` | Turn a PRD into a step-by-step developer task list (parent tasks + sub-tasks). |
 | `grill-me` | Interview the user relentlessly about a plan or design until reaching shared understanding. |
+| `handoff` | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) |
 | `highlight-key-takeaways` | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |
 | `json-canvas` | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. |
 | `landing-page-copy` | Generate high-converting landing page copy in markdown from a short product description. |
@@ -77,6 +78,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `persona-stanier` | Channel James Stanier as an engineering-leadership advisor, grounded in his blog posts and frameworks. |
 | `prd-creator` | Generate detailed PRDs in Markdown via a clarifying-questions interview. |
 | `prompt-enhancer` | Transform a simple prompt into a high-quality, structured one for better AI results. |
+| `prototype` | Build a throwaway prototype to flesh out a design, as a runnable terminal app or several toggleable UI variations. (synced from `mattpocock/skills`) |
 | `qmd-project` | Turn any folder into a folder-local qmd semantic index over its nested `.md` files (isolated from the global index, shared models) and ship a project-local `qmd-ask` skill that answers questions from it. |
 | `radical-feedback` | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. |
 | `reddit-post` | Create high-engagement Reddit posts (title + body) from a guided questionnaire. |
@@ -89,6 +91,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR in one pass. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |
 | `summarise-url` | Fetch a link's content and return a structured summary. |
+| `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |
 | `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
 | `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
 | `user-scenarios-setup` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |

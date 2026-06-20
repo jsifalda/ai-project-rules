@@ -96,7 +96,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `sync-obsidian-skills` | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. |
 | `team-code-writer` | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. |
 | `team-reviewer` | Reviewer role for an agent dev team — read-only, runs `git diff` and reports Critical/Important/Nitpick findings with file:line, never edits. |
-| `team-ship` | Lead orchestrator — `/team-ship <task>` writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. |
+| `team-ship` | Lead orchestrator — `/team-ship <task>` records the agent territories in the project's AGENTS.md/CLAUDE.md, writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. |
 | `team-tester` | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. |
 | `translate-to-czech` | Translate English text to Czech while preserving accuracy. |
 | `write-like-human` | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. |

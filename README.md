@@ -75,6 +75,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `obsidian-markdown` | Create and edit Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties). |
 | `obsidian-task-extractor` | Extract atomic tasks from a note and add them to `To Remember.md`. |
 | `pdf` | PDF toolkit — extract text/tables, create, merge/split, and fill forms at scale. |
+| `persona-levelsio` | Channel Pieter Levels (levelsio) as a solo bootstrapped indie-hacker advisor, grounded in his frameworks and build-in-public voice. |
 | `persona-luca` | Channel Luca Rossi (Refactoring newsletter) as an engineering-leadership advisor, grounded in his articles and named mental models. |
 | `persona-stanier` | Channel James Stanier as an engineering-leadership advisor, grounded in his blog posts and frameworks. |
 | `prd-creator` | Generate detailed PRDs in Markdown via a clarifying-questions interview. |

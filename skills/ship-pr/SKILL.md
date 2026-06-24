@@ -1,7 +1,7 @@
 ---
 name: ship-pr
 disable-model-invocation: true
-description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke when the user explicitly types the literal slash command `/ship-pr`. Natural-language phrasing such as "ship this", "ship these changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT cause this skill to load; handle those with standard commit + push tools instead and, if helpful, ask whether to run `/ship-pr`. When (and only when) explicitly invoked — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab) in one shot. Auto-detects provider via `git remote`, auto-derives branch name, commit message, and PR title/body from the diff and existing repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
+description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke when the user explicitly types the literal slash command `/ship-pr`. Natural-language phrasing such as "ship this", "ship these changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT cause this skill to load; handle those with standard commit + push tools instead and, if helpful, ask whether to run `/ship-pr`. When (and only when) explicitly invoked — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab), self-assigned to you, in one shot. Auto-detects provider via `git remote`, auto-derives branch name, commit message, and PR title/body from the diff and existing repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
 ---
 
 # Ship PR
@@ -116,6 +116,7 @@ Decide:
   ```
 
   Add a `## Test plan` section ONLY if the user explicitly asks for one. Not by default.
+- **Assignee** — the new PR/MR is self-assigned to the authenticated CLI user (you). Best-effort, never blocks the ship — see Phase 5e.
 
 ### Attribution policy (hard rule)
 
@@ -211,6 +212,7 @@ GitHub:
 ```bash
 gh pr create \
   --base "$DEFAULT_BRANCH" \
+  --assignee "@me" \
   --title "<title>" \
   --body "$(cat <<'EOF'
 ## Summary
@@ -219,7 +221,9 @@ EOF
 )"
 ```
 
-GitHub — fork fallback (only when Phase 5d forked): target the upstream repo explicitly and set the head to your fork. Without `--repo`/`--head`, `gh pr create` prompts interactively, which breaks the one-shot flow.
+`--assignee "@me"` self-assigns the PR to you (resolved server-side). In the normal write-access path this always succeeds.
+
+GitHub — fork fallback (only when Phase 5d forked): target the upstream repo explicitly and set the head to your fork. Without `--repo`/`--head`, `gh pr create` prompts interactively, which breaks the one-shot flow. Do NOT pass `--assignee` here — you typically lack assign rights on a repo you can't push to, and it would fail the create. Self-assign best-effort after creation instead.
 
 ```bash
 gh pr create \
@@ -232,13 +236,19 @@ gh pr create \
 - ...
 EOF
 )"
+
+# best-effort self-assign — silently ignored if you lack assign rights on the upstream repo
+gh pr edit --repo "$ORIGIN_SLUG" --add-assignee "@me" 2>/dev/null || true
 ```
 
-GitLab:
+GitLab: resolve your username first and self-assign. The `${GLAB_USER:+…}` guard drops the flag if the lookup returns empty, so a failed lookup can't block the MR.
 
 ```bash
+GLAB_USER=$(glab api user | jq -r '.username')   # self-assign target
+
 glab mr create \
   --target-branch "$DEFAULT_BRANCH" \
+  ${GLAB_USER:+--assignee "$GLAB_USER"} \
   --title "<title>" \
   --description "$(cat <<'EOF'
 ## Summary
@@ -283,6 +293,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 - Never push to the default branch.
 - Never push to a remote other than `origin` — the only exception is the GitHub fork fallback (remote `fork`) after an access-denied push. Even then, never `--force`.
 - Never include Claude / Anthropic / AI-generated attribution anywhere.
+- Self-assignment is best-effort — never let it abort the ship. Opening the PR/MR is the critical step; a failed or empty assignee lookup is a no-op, not a failure.
 
 ## Failure modes (abort with a one-line reason)
 

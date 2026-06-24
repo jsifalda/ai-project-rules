@@ -241,10 +241,10 @@ EOF
 gh pr edit --repo "$ORIGIN_SLUG" --add-assignee "@me" 2>/dev/null || true
 ```
 
-GitLab: resolve your username first and self-assign. The `${GLAB_USER:+…}` guard drops the flag if the lookup returns empty, so a failed lookup can't block the MR.
+GitLab: resolve your username first and self-assign. `.username // empty` yields an empty string on any lookup failure (error/401 response, missing field), so `$GLAB_USER` is never the literal `null`; the `${GLAB_USER:+…}` guard then drops the flag and the MR is created without an assignee. A failed lookup can't block the MR.
 
 ```bash
-GLAB_USER=$(glab api user | jq -r '.username')   # self-assign target
+GLAB_USER=$(glab api user 2>/dev/null | jq -r '.username // empty') || GLAB_USER=""   # self-assign target (best-effort)
 
 glab mr create \
   --target-branch "$DEFAULT_BRANCH" \

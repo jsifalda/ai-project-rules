@@ -1,6 +1,6 @@
 ---
 name: distill-notes
-description: Distill raw notes into a sharp set of standalone maxims — distillation, not summarization. Keeps the vital few, drops 40-60% of ideas, compresses survivors to maxims of 8 words or fewer, promotes the most foundational idea to a headline, and sharpens contrasts into antithesis ("Give problems, not answers") or couplets ("Fewer tasks, bigger impact"). Returns flat, loosely clustered bullets in chat and also saves them as a .md file in an outputs/ folder. Use when the user says "distill these notes", "turn my notes into maxims", "compress this to principles", "boil this down to maxims", or wants raw notes reduced to a vital few transferable principles. Accepts pasted text, a local file path, or an Obsidian note reference. Do NOT use to summarize while keeping all the ideas, to highlight key takeaways inside a note in place, or to build a reusable advisor persona from interview transcripts.
+description: Distill raw notes into a sharp set of standalone maxims — distillation, not summarization. Keeps the vital few, drops 40-60% of ideas, compresses survivors to maxims of 8 words or fewer, promotes the most foundational idea to a headline, and sharpens contrasts into antithesis ("Give problems, not answers") or couplets ("Fewer tasks, bigger impact"). Returns flat, loosely clustered bullets in chat, then asks whether to also save them to a new .md file. Use when the user says "distill these notes", "turn my notes into maxims", "compress this to principles", "boil this down to maxims", or wants raw notes reduced to a vital few transferable principles. Accepts pasted text, a local file path, or an Obsidian note reference. Do NOT use to summarize while keeping all the ideas, to highlight key takeaways inside a note in place, or to build a reusable advisor persona from interview transcripts.
 ---
 
 # Distill Notes
@@ -81,16 +81,18 @@ Classify the contrast before sharpening. Competing moves, or two dials on one sy
 
 ### Step 8 — Output
 
-Do both:
+**Print the distilled set in chat** — the headline followed by the clustered bullets.
 
-1. **Print the distilled set in chat** — the headline followed by the clustered bullets.
-2. **Save it as a file** — write the same content to `outputs/<slug>-distilled.md`, creating
-   `outputs/` in the current working directory if it does not exist.
-   - `<slug>` = the source note or file name in kebab-case when the input came from a file or
-     vault note; otherwise a short kebab-case slug from the headline.
-   - If that file already exists, append a numeric suffix (`-2`, `-3`, ...) so nothing is
-     overwritten.
-   - Report the saved path in chat.
+Then ask once whether to also save it to a new .md file. Do not save unless the user says yes.
+
+- **On yes** — write the same content to `outputs/<slug>-distilled.md`, creating `outputs/` in the
+  current working directory if it does not exist.
+  - `<slug>` = the source note or file name in kebab-case when the input came from a file or
+    vault note; otherwise a short kebab-case slug from the headline.
+  - If that file already exists, append a numeric suffix (`-2`, `-3`, ...) so nothing is
+    overwritten.
+  - Report the saved path in chat.
+- **On no** — stop. Leave nothing on disk.
 
 ## Known limit
 

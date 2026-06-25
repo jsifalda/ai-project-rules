@@ -116,7 +116,7 @@ Decide:
   ```
 
   Add a `## Test plan` section ONLY if the user explicitly asks for one. Not by default.
-- **Assignee** — the new PR/MR is self-assigned to the authenticated CLI user (you). Best-effort, never blocks the ship — see Phase 5e.
+- **Assignee** — the new PR/MR is self-assigned to the authenticated CLI user (you). On GitLab this is a dedicated post-create step (the create-time flag fails silently); the result is read back and reported, never fired blind. Best-effort, never blocks the ship — see Phase 5e.
 
 ### Attribution policy (hard rule)
 
@@ -241,14 +241,11 @@ EOF
 gh pr edit --repo "$ORIGIN_SLUG" --add-assignee "@me" 2>/dev/null || true
 ```
 
-GitLab: resolve your username first and self-assign. `.username // empty` yields an empty string on any lookup failure (error/401 response, missing field), so `$GLAB_USER` is never the literal `null`; the `${GLAB_USER:+…}` guard then drops the flag and the MR is created without an assignee. A failed lookup can't block the MR.
+GitLab: create the MR first, then self-assign in a **separate** step. Do NOT pass `--assignee` to `glab mr create` — it is a known silent no-op (glab injects a `/assignee` quick-action into the description instead of setting the assignee field, and when that doesn't process you get `ok created` with an empty assignee and no warning — glab issues #974/#878/#358). `glab mr update --assignee` writes the assignee field directly via the PUT update endpoint, so it actually sticks.
 
 ```bash
-GLAB_USER=$(glab api user 2>/dev/null | jq -r '.username // empty') || GLAB_USER=""   # self-assign target (best-effort)
-
 glab mr create \
   --target-branch "$DEFAULT_BRANCH" \
-  ${GLAB_USER:+--assignee "$GLAB_USER"} \
   --title "<title>" \
   --description "$(cat <<'EOF'
 ## Summary
@@ -256,6 +253,17 @@ glab mr create \
 EOF
 )" \
   --fill=false
+```
+
+Then self-assign and verify. `.username // empty` yields an empty string on any lookup failure (error/401 response, missing field), so a failed lookup just skips the assign and can't block the MR. The read-back makes a silent failure visible in the Phase 6 report instead of surfacing later as a manual surprise. `glab mr update`/`glab mr view` with no IID target the MR for the current branch — you are still on the feature branch here, so they resolve correctly.
+
+```bash
+GLAB_USER=$(glab api user 2>/dev/null | jq -r '.username // empty') || GLAB_USER=""   # self-assign target (best-effort)
+if [ -n "$GLAB_USER" ]; then
+  glab mr update --assignee "$GLAB_USER" >/dev/null 2>&1 || true   # dedicated assign step — never blocks the ship
+fi
+# Verify it stuck. Empty/missing -> warn in the Phase 6 report; never abort.
+GLAB_ASSIGNEES=$(glab mr view -F json 2>/dev/null | jq -r '[.assignees[].username] | join(",")')
 ```
 
 If creation fails because a PR/MR already exists for this branch, retrieve and return the existing URL instead of creating a new one:
@@ -267,18 +275,24 @@ glab mr view -F json | jq -r .web_url    # GitLab
 
 ## Phase 6 — Report
 
-Print exactly three lines to chat:
+Print these lines to chat:
 
 ```
-branch:  <branch-name>
-commit:  <short-sha>  <subject>
-pr:      <url>
+branch:    <branch-name>
+commit:    <short-sha>  <subject>
+pr:        <url>
+assignee:  <you>            # or:  NOT set — assign manually
 ```
 
-If the GitHub fork fallback (Phase 5d) was used, add a fourth line so the user sees where the branch lives:
+The `assignee:` line is mandatory and must reflect the read-back, not the intent — so a silent assign failure is visible here, not discovered later:
+
+- GitLab — use `$GLAB_ASSIGNEES` from Phase 5e: if `$GLAB_USER` is in it, print `assignee: <GLAB_USER>`; otherwise print `assignee: NOT set — assign manually`.
+- GitHub — read back once: `gh pr view --json assignees -q '[.assignees[].login] | join(",")'` (add `--repo "$ORIGIN_SLUG"` on the fork path). If your login is in it, print it; otherwise print `assignee: NOT set — assign manually`.
+
+If the GitHub fork fallback (Phase 5d) was used, add a line so the user sees where the branch lives:
 
 ```
-fork:    <your-login>/<repo>
+fork:      <your-login>/<repo>
 ```
 
 Nothing else. No trailing summary, no narrative paragraph.
@@ -293,7 +307,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 - Never push to the default branch.
 - Never push to a remote other than `origin` — the only exception is the GitHub fork fallback (remote `fork`) after an access-denied push. Even then, never `--force`.
 - Never include Claude / Anthropic / AI-generated attribution anywhere.
-- Self-assignment is best-effort — never let it abort the ship. Opening the PR/MR is the critical step; a failed or empty assignee lookup is a no-op, not a failure.
+- Self-assignment is best-effort — never let it abort the ship. Opening the PR/MR is the critical step; a failed or empty assignee lookup is a no-op, not a failure. But it must be a dedicated post-create step whose result is read back and reported (Phase 6) — never silently skipped. On GitLab, never rely on `glab mr create --assignee` (silent no-op); assign with `glab mr update --assignee`.
 
 ## Failure modes (abort with a one-line reason)
 

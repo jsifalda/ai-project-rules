@@ -77,7 +77,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `obsidian-cli` | Interact with Obsidian vaults via the Obsidian CLI (read/create/search notes; plugin/theme dev + debug). |
 | `obsidian-markdown` | Create and edit Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties). |
 | `obsidian-task-extractor` | Extract atomic tasks from a note and add them to `To Remember.md`. |
-| `opusplan` | Route each task in a plan to the cheapest capable Claude model (Haiku/Sonnet/Opus), then execute by dispatching tasks as subagents on their assigned model. |
+| `op` | Route each task in a plan to the cheapest capable Claude model (Haiku/Sonnet/Opus), then execute by dispatching tasks as subagents on their assigned model. |
 | `pdf` | PDF toolkit — extract text/tables, create, merge/split, and fill forms at scale. |
 | `persona-levelsio` | Channel Pieter Levels (levelsio) as a solo bootstrapped indie-hacker advisor, grounded in his frameworks and build-in-public voice. |
 | `persona-luca` | Channel Luca Rossi (Refactoring newsletter) as an engineering-leadership advisor, grounded in his articles and named mental models. |

@@ -3,3 +3,4 @@ _prds
 _tickets
 changelog.md
 scripts/universality-denylist.txt
+.claude/worktrees/

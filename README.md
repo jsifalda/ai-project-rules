@@ -47,6 +47,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | Skill | What it does |
 | --- | --- |
 | `apple-mail-query` | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). |
+| `apple-mail-thread-export` | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. |
 | `claude-allow-home` | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. |
 | `claude-version-check` | Check the current Claude Code CLI version and compare it to the latest published release. |
 | `council` | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. |

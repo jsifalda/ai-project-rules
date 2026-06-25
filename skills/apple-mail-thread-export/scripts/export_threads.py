@@ -292,6 +292,12 @@ def main():
                     help="strip quoted/forwarded history, keep only each message's new text")
     ap.add_argument("--keep-quotes", dest="trim", action="store_const", const=False,
                     help="keep full bodies including quoted history (default)")
+    ap.add_argument("--honor-deletions", dest="honor_del", action="store_const", const=True, default=None,
+                    help="if a thread's .md was deleted from --out, tombstone it: never re-download "
+                         "it. New activity on a tombstoned thread is reported, not restored. "
+                         "Persisted in the manifest.")
+    ap.add_argument("--no-honor-deletions", dest="honor_del", action="store_const", const=False,
+                    help="re-create files deleted from --out (default).")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
@@ -319,16 +325,38 @@ def main():
     manifest.setdefault("threads", {})
     # trim choice: explicit flag wins, else inherit the archive's stored choice, else keep.
     trim = args.trim if args.trim is not None else manifest.get("trim_quotes", False)
+    # honor-deletions: same inherit-from-manifest rule. excluded_threads maps cid -> {file, msg_rowids}.
+    honor_del = args.honor_del if args.honor_del is not None else manifest.get("honor_deletions", False)
+    excluded = manifest.get("excluded_threads", {})
     used = {v.get("file") for v in manifest["threads"].values() if v.get("file")}
-    created = updated = unchanged = 0
+    created = updated = unchanged = tombstoned = surfaced = 0
 
     if not args.dry_run:
         out.mkdir(parents=True, exist_ok=True)
 
     for conv in order:
+        cid = str(conv)
         messages = threads[conv]
         rowids = sorted(m["rowid"] for m in messages)
-        prev = manifest["threads"].get(str(conv))
+        if cid in excluded:
+            if rowids != sorted(excluded[cid].get("msg_rowids", [])):
+                print(f"  [tombstoned+new] {excluded[cid].get('file', '?')} has new messages — not "
+                      f"restored (delete its entry from excluded_threads in .manifest.json to restore)")
+                surfaced += 1
+                if not args.dry_run:
+                    excluded[cid]["msg_rowids"] = rowids  # report once per change
+            else:
+                unchanged += 1
+            continue
+        prev = manifest["threads"].get(cid)
+        if honor_del and prev and prev.get("file") and not (out / prev["file"]).exists():
+            print(f"  [honor-deleted] {prev['file']} (tombstoned, won't re-download)")
+            tombstoned += 1
+            if not args.dry_run:
+                excluded[cid] = {"file": prev["file"], "msg_rowids": prev.get("msg_rowids", rowids)}
+                manifest["threads"].pop(cid, None)
+                used.discard(prev["file"])
+            continue
         if prev and sorted(prev.get("msg_rowids", [])) == rowids:
             unchanged += 1
             continue
@@ -358,12 +386,14 @@ def main():
         manifest["sender"] = args.sender
         manifest["scope"] = "sender-only" if args.sender_only else "both-sides"
         manifest["trim_quotes"] = trim
+        manifest["honor_deletions"] = honor_del
+        manifest["excluded_threads"] = excluded
         manifest["generated_at"] = datetime.now().strftime("%Y-%m-%dT%H:%M")
         (out / ".manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    print(f"\n{created} created, {updated} updated, {unchanged} unchanged "
-          f"({len(order)} threads considered).")
+    print(f"\n{created} created, {updated} updated, {unchanged} unchanged, "
+          f"{tombstoned} tombstoned, {surfaced} tombstoned+new ({len(order)} threads considered).")
     print(f"Snapshot at {snap}. Run `rm -rf {snap}` when done.")
 
 

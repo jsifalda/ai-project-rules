@@ -37,6 +37,11 @@ Common flags:
 - `--trim-quotes` / `--keep-quotes` — strip quoted/forwarded history so each message shows
   only its new text, or keep full bodies. Default keeps full bodies. The choice is recorded
   in the manifest, so later re-syncs of the same folder reuse it unless overridden.
+- `--honor-deletions` / `--no-honor-deletions` — if a thread's `.md` was deleted from the output
+  folder, tombstone it: record its `conversation_id` and never re-create it, even when new messages
+  arrive (new activity prints as `[tombstoned+new]`, it is not restored). Your deletion is the
+  signal, no subject patterns to maintain. Default off. Like `--trim-quotes`, the choice is stored
+  in the manifest and reused on later runs.
 - `--dry-run` — print the create/update/skip plan without writing files.
 
 The script is self-contained and uses only the Python standard library (no installs).
@@ -70,6 +75,13 @@ conversation it stores the filename and the set of message ROWIDs. On each run:
 So re-running after new mail arrives only writes the threads that changed. The manifest lives
 with the data in the output folder, so each archive folder tracks its own state and one folder
 should hold one sender's archive.
+
+With `--honor-deletions` (stored in the manifest), a thread that is in the manifest but whose `.md`
+file is missing from the folder is **tombstoned**: its `conversation_id` plus last-seen ROWIDs move
+into `excluded_threads`, the thread is dropped from `threads`, and it is never re-created. If a
+tombstoned thread later gets new messages, the run prints `[tombstoned+new] <file>` so you can
+restore it (delete its `excluded_threads` entry), but it is not re-downloaded automatically. This
+lets you curate an archive by deleting files: what you remove stays removed.
 
 ## Closing
 

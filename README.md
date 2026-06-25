@@ -57,8 +57,8 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `create-svg-image` | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. |
 | `deep-research` | Conduct multi-source research with synthesis, citation tracking, and claim verification. |
 | `defuddle` | Extract clean markdown from web pages with the Defuddle CLI (strips clutter) to save tokens. |
-| `distill-notes` | Distill raw notes into a sharp set of standalone maxims (drop 40-60% of ideas, compress to <=8 words, sharpen into antithesis/couplets); returns them in chat and saves to an outputs/ .md file. |
-| `distill-notes-v2` | Process notes that mix facts with heuristics — organize the facts losslessly (grouped by category, deadlines flagged, every value verbatim) and distill the heuristics into sharpened maxims; returns both sections in chat and saves to an outputs/ .md file. |
+| `distill-notes` | Distill raw notes into a sharp set of standalone maxims (drop 40-60% of ideas, compress to <=8 words, sharpen into antithesis/couplets); returns them in chat, then asks whether to also save to a .md file. |
+| `distill-notes-v2` | Process notes that mix facts with heuristics — organize the facts losslessly (grouped by category, deadlines flagged, every value verbatim) and distill the heuristics into sharpened maxims; returns both sections in chat, then asks whether to also save to a .md file. |
 | `distill-persona` | Distill a leader's worldview from interview transcripts into a reusable advisor persona. |
 | `first-principles-mode` | Strip a problem back to fundamental truths and rebuild the answer from only what's verifiable. |
 | `founder-thinking-mode` | Answer in a blunt founder-operator voice — the specific decision, the trade-off, and the real risk. |

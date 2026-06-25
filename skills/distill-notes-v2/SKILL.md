@@ -1,6 +1,6 @@
 ---
 name: distill-notes-v2
-description: Split mixed raw notes into two outputs, a lossless organized reference for the facts and a sharpened set of maxims for the heuristics. Keeps every number, date, rate, threshold, condition, and obligation verbatim, groups facts by inferred category (deadlines, amounts, deductions, obligations, records), surfaces deadlines and action items, then boils transferable rules of thumb down to maxims of 8 words or fewer. Accepts pasted text, a local file path, or an Obsidian note reference, prints both sections in chat, and saves them to an outputs .md file. Use for notes that mix reference facts with judgment calls, for example tax, medical, or legal notes, meeting minutes, or research logs, or when the user says organize these notes, structure my notes, sort facts from principles, or make a clean reference. Do NOT use when the input is purely principles and you only want lossy maxims, to highlight takeaways inside a note in place, or to build a reusable advisor persona.
+description: Split mixed raw notes into two outputs, a lossless organized reference for the facts and a sharpened set of maxims for the heuristics. Keeps every number, date, rate, threshold, condition, and obligation verbatim, groups facts by inferred category (deadlines, amounts, deductions, obligations, records), surfaces deadlines and action items, then boils transferable rules of thumb down to maxims of 8 words or fewer. Accepts pasted text, a local file path, or an Obsidian note reference, prints both sections in chat, then asks whether to also save them to a new .md file. Use for notes that mix reference facts with judgment calls, for example tax, medical, or legal notes, meeting minutes, or research logs, or when the user says organize these notes, structure my notes, sort facts from principles, or make a clean reference. Do NOT use when the input is purely principles and you only want lossy maxims, to highlight takeaways inside a note in place, or to build a reusable advisor persona.
 ---
 
 # Distill Notes v2
@@ -111,15 +111,17 @@ Formatting:
   periods, commas.
 - English, no diacritics.
 
-Then save the same content to a file:
+Then ask once whether to also save the same content to a new .md file. Do not save unless the
+user says yes.
 
-- Write to `outputs/<slug>-distilled.md`, creating `outputs/` in the current working directory
-  if it does not exist.
-- `<slug>` = the source note or file name in kebab-case when the input came from a file or vault
-  note, otherwise a short kebab-case slug from the dominant topic.
-- If that file already exists, append a numeric suffix (`-2`, `-3`, ...) so nothing is
-  overwritten.
-- Report the saved path in chat.
+- **On yes** — write to `outputs/<slug>-distilled.md`, creating `outputs/` in the current working
+  directory if it does not exist.
+  - `<slug>` = the source note or file name in kebab-case when the input came from a file or vault
+    note, otherwise a short kebab-case slug from the dominant topic.
+  - If that file already exists, append a numeric suffix (`-2`, `-3`, ...) so nothing is
+    overwritten.
+  - Report the saved path in chat.
+- **On no** — stop. Leave nothing on disk.
 
 ### Step 5 — Self-test before output
 

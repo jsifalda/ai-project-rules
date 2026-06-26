@@ -1,7 +1,6 @@
 ---
 name: op
 description: Route the tasks in an implementation plan to the most cost-effective Claude model that can do each one well, then execute the plan by dispatching tasks as subagents on their assigned model. Even when Claude Code runs on Opus, mechanical tasks go to Haiku and mid-complexity tasks to Sonnet, while only deep-reasoning tasks stay on Opus. Use when the user types /op, or asks to route a plan across models, assign per-task models, split a plan by model, run a plan cheaply, or execute plan tasks on different models. Expects a plan already in context (from plan mode) or pasted by the user. Do NOT use to write the plan itself, for a single one-off task with no plan, or to change Claude Code's global model setting.
-disable-model-invocation: true
 ---
 
 # Op — per-task model routing for a plan

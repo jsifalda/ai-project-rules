@@ -67,6 +67,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `grill-me` | Interview the user relentlessly about a plan or design until reaching shared understanding. |
 | `handoff` | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) |
 | `highlight-key-takeaways` | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |
+| `indie-hacker-wrapup` | End-of-session ritual that mines the current session for X-worthy takeaways and drafts a build-in-public post, or declines when nothing clears the bar. |
 | `json-canvas` | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. |
 | `landing-page-copy` | Generate high-converting landing page copy in markdown from a short product description. |
 | `landing-page-gap-analyzer` | Audit landing page copy against a 13-section conversion blueprint and return a scored gap report. |

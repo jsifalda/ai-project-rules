@@ -165,6 +165,14 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 - If validation fails, fix the errors and re-validate — repeat until it passes
 - **Never mark a Mermaid diagram task as done without a passing validation**
 
+## Browser Automation (bot-walled sites)
+
+- Automating a login or flow on a site that runs bot detection (Reddit, and similar) → drive **real Chrome** (not bundled Chromium) via Playwright, headful, with the anti-automation config, or the site's "network security" / bot check blocks the window:
+  - `chromium.launch({ channel: "chrome", headless: false, args: ["--disable-blink-features=AutomationControlled"] })`
+  - `context.addInitScript(() => Object.defineProperty(navigator, "webdriver", { get: () => undefined }))`
+- Detect success by polling `context.cookies()` for the site's auth/session cookie (e.g. `reddit_session`), not a fixed wait. Do NOT use `page.waitForTimeout` (a redirect detaches the page) → use a plain `setTimeout`.
+- A 403 serving a "network policy" / "whoa there" block page is usually transient **IP-level rate-limiting, not a fingerprint wall** (it also blocks a real browser from the same IP). Do not probe-spam to diagnose, and do not reach for `curl-impersonate` or a paid scraper. Stop, wait for the IP block to clear (minutes, up to ~1h), then retry.
+
 # Agent Mode
 
 - ALWAYS read AGENTS.md file first

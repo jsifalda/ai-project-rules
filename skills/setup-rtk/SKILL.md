@@ -1,7 +1,7 @@
 ---
 name: setup-rtk
 disable-model-invocation: true
-description: Install and wire up RTK (Rust Token Killer, a CLI proxy that compresses dev-command output to cut LLM token use) on the current machine for a single Claude Code profile. Installs the rtk binary if missing (Homebrew) and registers RTK's PreToolUse Bash hook in settings.json by running RTK's own installer (rtk init), so commands like git status and cat are transparently compacted. Idempotent, detects an existing hook and stops. Use when the user says "set up rtk", "install rtk", "get the token killer on this machine", "replicate my rtk setup", or runs /setup-rtk. Do NOT use for per-project rtk filters, for editing unrelated settings.json keys (permissions, env, model, other hooks), or for any dual-profile sync, this targets one profile only.
+description: Install and wire up RTK (Rust Token Killer, a CLI proxy that compresses dev-command output to cut LLM token use) on the current machine for a single Claude Code profile. Installs the rtk binary if missing (Homebrew, or the official install script when Homebrew is absent) and registers RTK's PreToolUse Bash hook in settings.json by running RTK's own installer (rtk init), so commands like git status and cat are transparently compacted. Idempotent, detects an existing hook and stops. Use when the user says "set up rtk", "install rtk", "get the token killer on this machine", "replicate my rtk setup", or runs /setup-rtk. Do NOT use for per-project rtk filters, for editing unrelated settings.json keys (permissions, env, model, other hooks), or for any dual-profile sync, this targets one profile only.
 ---
 
 ## What this does
@@ -31,11 +31,15 @@ multi-profile logic.
    If it is, you are done.
 
 2. **Install the binary (only if `rtk --version` failed).** Confirm with the user before
-   installing, then use the channel that fits the machine:
-   - macOS or Linux with Homebrew: `brew install rtk` (RTK is in homebrew-core).
-   - No Homebrew available: do not guess a channel. Point the user to the RTK docs at
-     https://www.rtk-ai.app and the homebrew-core formula, and ask which install method they
-     want before proceeding.
+   installing. Prefer Homebrew when it is available, otherwise fall back to RTK's official
+   install script:
+   - Homebrew present (`command -v brew` succeeds): `brew install rtk` (RTK is in
+     homebrew-core).
+   - No Homebrew: run the official installer.
+
+     ```bash
+     curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+     ```
 
    Verify: `rtk --version` and `which rtk`.
 

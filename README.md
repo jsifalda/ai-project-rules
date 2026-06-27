@@ -94,6 +94,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `setup-adrs` | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed ADR-0001, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. |
 | `setup-aiengineering` | Bootstrap a repo's AI-engineering baseline — inject verification/git/file-org policy blocks into AGENTS.md/CLAUDE.md, delegate ADRs/changelog/user-scenarios to their setup skills, and scaffold a worktree bootstrap hook. Stack-agnostic. |
 | `setup-changelog` | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). |
+| `setup-rtk` | Install RTK (Rust Token Killer) on a machine for a single Claude Code profile — Homebrew binary + the `rtk hook claude` PreToolUse hook in settings.json, via RTK's own `rtk init`. |
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `setup-user-scenarios` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR (self-assigned to you) in one pass. |

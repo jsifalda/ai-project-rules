@@ -99,6 +99,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `setup-user-scenarios` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR (self-assigned to you) in one pass. |
+| `ship-v1` | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |
 | `summarise-url` | Fetch a link's content and return a structured summary. |
 | `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |

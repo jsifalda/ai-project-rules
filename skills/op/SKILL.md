@@ -29,6 +29,14 @@ So "run this task on a different model" = spawn it as a subagent with the chosen
 6. **Execute by dispatch.** Spawn each task as a subagent via the Agent tool with its assigned `model`. Fire all ready independent tasks in one message so they run concurrently. Hold dependents until their inputs finish, then dispatch them with those results in the prompt.
 7. **Integrate and verify.** The main loop collects results, resolves conflicts between parallel edits, and runs the plan's verification. Keep integration and final verification on the orchestrator (Opus), not a small model.
 
+   After all dispatches resolve, verify that each subagent actually ran on its assigned model tier. The orchestrator cannot see each subagent's `resolvedModel` from its own in-context tool results. That ground truth is written to the session transcript file. By step 7, all dispatch results are flushed to it. Run:
+
+   ```
+   python3 "<skill-base-dir>/scripts/verify-models.py"
+   ```
+
+   No arguments reads the newest transcript for the current project. `<skill-base-dir>` is the base directory for this skill, injected by the harness when the skill loads. Print the script output to the user before closing the session.
+
 ## Model rubric (summary)
 
 | Model | Use for | Signal |
@@ -46,6 +54,7 @@ When unsure between two tiers, drop one tier and flag it. Orchestration, integra
 - **Use a coding-capable subagent type** (e.g. `general-purpose`) for tasks that edit files, since they need Edit/Write. Use a read-only type for pure research tasks.
 - **Avoid parallel edits to the same file.** If two independent tasks touch one file, either serialize them or merge them into one task to prevent clobbering.
 - **Keep the orchestrator on Opus.** Routing decisions, conflict resolution, and the final verification pass are themselves Opus-tier work. Do not dispatch them to a small model.
+- **Never execute a routed task inline.** A task not dispatched via an `Agent` call with a `model` parameter was not routed. Running it inline on the orchestrator (Opus) is exactly the failure op exists to prevent.
 
 ## Annotated-plan output format
 

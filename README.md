@@ -64,6 +64,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `founder-thinking-mode` | Answer in a blunt founder-operator voice — the specific decision, the trade-off, and the real risk. |
 | `frontend-design` | Create distinctive, production-grade frontend UI that avoids generic AI aesthetics. |
 | `generate-prd-tasks` | Turn a PRD into a step-by-step developer task list (parent tasks + sub-tasks). |
+| `goal-breakdown` | Break a big finite goal into a sharp end state, ordered milestones (riskiest first), and one-day tasks with a single clear next action; re-plans as milestones complete. |
 | `grill-me` | Interview the user relentlessly about a plan or design until reaching shared understanding. |
 | `handoff` | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) |
 | `highlight-key-takeaways` | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |

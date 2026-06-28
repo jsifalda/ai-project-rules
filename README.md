@@ -64,6 +64,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `founder-thinking-mode` | Answer in a blunt founder-operator voice — the specific decision, the trade-off, and the real risk. |
 | `frontend-design` | Create distinctive, production-grade frontend UI that avoids generic AI aesthetics. |
 | `generate-prd-tasks` | Turn a PRD into a step-by-step developer task list (parent tasks + sub-tasks). |
+| `goal-breakdown` | Break a big finite goal into a sharp end state, ordered milestones (riskiest first), and one-day tasks with a single clear next action; re-plans as milestones complete. |
 | `grill-me` | Interview the user relentlessly about a plan or design until reaching shared understanding. |
 | `handoff` | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) |
 | `highlight-key-takeaways` | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |
@@ -98,6 +99,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | `setup-skills-autorefresh` | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. |
 | `setup-user-scenarios` | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. |
 | `ship-pr` | Manual `/ship-pr` only — go from a dirty working tree to an open PR/MR (self-assigned to you) in one pass. |
+| `ship-v1` | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. |
 | `summarise-text` | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. |
 | `summarise-url` | Fetch a link's content and return a structured summary. |
 | `sync-mattpocock-skills` | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. |

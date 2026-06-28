@@ -1,6 +1,6 @@
 ---
 name: indie-hacker-wrapup
-description: End-of-session ritual that mines the current conversation for genuinely interesting, X/Twitter-worthy takeaways and drafts a build-in-public post that gives value to readers. First asks whether you want to draft a learning from this session. On yes, scans the session against a quality bar (non-obvious lessons, concrete tool or automation wins, failures and what they taught, counterintuitive calls, before/after results, reusable mental models), filters out anything employer-confidential or personally identifying, and refuses to force a post when nothing clears the bar. Surfaces a shortlist of angles, then drafts the chosen one as a copy-paste-ready post. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
+description: End-of-session ritual that mines the current conversation for genuinely interesting, X/Twitter-worthy takeaways and drafts a build-in-public post that gives value to readers. Runs directly on invocation — no permission question — scanning the session against a quality bar (non-obvious lessons, concrete tool or automation wins, failures and what they taught, counterintuitive calls, before/after results, reusable mental models), filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a shortlist of angles, then drafts the chosen one as a copy-paste-ready post. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
 ---
 
 # Indie Hacker Wrapup
@@ -9,16 +9,9 @@ An end-of-session ritual. Mine the current session for takeaways worth sharing w
 
 This skill reads the conversation you are already in. It needs no files or transcripts.
 
-## Step 1 — Ask first
+Run it directly. Invoking the skill is the go-ahead, so skip any "want to draft a learning?" question and go straight to scanning the session for angles. The willingness to decline in Step 2 is the safety valve, not an upfront permission gate.
 
-Ask one question and wait for the answer:
-
-> Want to draft a learning from this session for X?
-
-- No → acknowledge in one line and stop. Do not analyze.
-- Yes → continue.
-
-## Step 2 — Scan the session against the bar
+## Step 1 — Scan the session against the bar
 
 Review what actually happened in this session. A takeaway qualifies only if it is at least one of these:
 
@@ -36,12 +29,12 @@ Two hard filters, applied before anything becomes a candidate:
 
 Lean toward builder, shipping, AI-workflow, and automation angles. That is the audience.
 
-## Step 3 — Decide, and be willing to decline
+## Step 2 — Decide, and be willing to decline
 
 - Nothing clears the bar → say so plainly, in a line or two, and stop. Do not force a weak post. A skipped post beats a generic one.
 - One or more clear it → present a shortlist of 2 to 4 angles. For each, give the angle in one line plus one line on why it would land with X readers. Let the user pick. If they defer, take the strongest.
 
-## Step 4 — Draft the chosen post
+## Step 3 — Draft the chosen post
 
 Draft the picked angle as a single X post, applying the `write-like-human` skill's ruleset (active voice, vary sentence length, no em-dashes, semicolons, asterisks, emojis, no hype or AI-filler).
 

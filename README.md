@@ -68,7 +68,7 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | [`grill-me`](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding. |
 | [`handoff`](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) |
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. |
-| [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the current session for X-worthy takeaways and drafts a build-in-public post, or declines when nothing clears the bar. |
+| [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the current session for X-worthy takeaways and drafts a build-in-public post (or declines when nothing clears the bar), remembering past angles so it never repeats one. |
 | [`json-canvas`](skills/json-canvas/SKILL.md) | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. |
 | [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Generate high-converting landing page copy in markdown from a short product description. |
 | [`landing-page-gap-analyzer`](skills/landing-page-gap-analyzer/SKILL.md) | Audit landing page copy against a 13-section conversion blueprint and return a scored gap report. |

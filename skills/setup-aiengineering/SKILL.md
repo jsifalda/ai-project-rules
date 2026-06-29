@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -24,7 +24,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) | delegate → `setup-user-scenarios` |
-| Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook) |
+| Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
 
 ## Workflow
 
@@ -95,6 +95,23 @@ If chosen:
 2. Register a `SessionStart` / `startup` hook in the target `.claude/settings.json` running
    `bash scripts/setup-worktree.sh`. Create the file if missing; merge into existing `hooks` if
    present (don't clobber other hooks).
+3. Generate a `.worktreeinclude` so Claude-created worktrees also get non-regenerable gitignored
+   config. The hook reinstalls derivable deps; `.worktreeinclude` carries over secrets/config that
+   can't be rebuilt (`.env` and friends), so together a fresh worktree is runnable.
+   - **WorktreeCreate guard (first):** if the target `.claude/settings.json` already has a
+     `hooks.WorktreeCreate` entry, Claude ignores `.worktreeinclude` — warn the user to copy local
+     config inside that hook instead, and skip the rest of this substep.
+   - **Probe** the repo root for gitignored config: `.env`, `.env.local`, `.env.*` (excluding
+     `*.example` / `*.sample`), `config/secrets*`, `*.local`. Run `git check-ignore <path>` on each
+     match — Claude copies a file only when it is gitignored *and* matched.
+   - **Ask** "any other local files to carry over?" — ask even when the probe finds nothing, so a
+     repo-specific file isn't missed.
+   - **Propose + confirm:** show the proposed `.worktreeinclude` (`.gitignore` syntax), let the user
+     adjust, then write it once at the repo root. If the file already exists, append only missing
+     lines and preserve existing order/comments — never clobber. `.worktreeinclude` lists paths, not
+     secrets, so it is committed and tracked like `.gitignore`.
+   - Monorepo package envs (e.g. `packages/*/.env`) are a manual add.
+   - Empty result (no matches, nothing added) → skip; note no `.worktreeinclude` was needed.
 
 ### Step 8: Verify and report
 
@@ -103,6 +120,8 @@ Confirm in one short message:
 - Policy modules injected (with which gates were dropped for missing tools).
 - Doc-system skills delegated (or skipped).
 - Worktree hook scaffolded (or skipped).
+- `.worktreeinclude` created/updated (with which files), skipped (no gitignored config or user
+  declined), or N/A (a `WorktreeCreate` hook is present).
 - Whether `AGENTS.md` / `ARCHITECTURE.md` were backfilled from the implementation or left as
   templates.
 
@@ -115,6 +134,8 @@ Confirm in one short message:
 - Never duplicate a `##` section — detect the heading and ask before replacing.
 - Backfill only for working repos, only on user opt-in, and only grounded in real files.
 - Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
+- `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
+  `WorktreeCreate` hook is present or no gitignored config is found.
 
 ## References
 

@@ -50,7 +50,6 @@ Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `
 | [`apple-mail-thread-export`](skills/apple-mail-thread-export/SKILL.md) | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. |
 | [`better-plan`](skills/better-plan/SKILL.md) | Chained planning ritual: build a plan (plan-mode rigor), stress-test it via grill-me, then cost-route tasks via op; presents the routed plan and executes on approval. Slash-only. |
 | [`claude-allow-home`](skills/claude-allow-home/SKILL.md) | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. |
-| [`claude-version-check`](skills/claude-version-check/SKILL.md) | Check the current Claude Code CLI version and compare it to the latest published release. |
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. |
 | [`create-implementation-plan`](skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. |

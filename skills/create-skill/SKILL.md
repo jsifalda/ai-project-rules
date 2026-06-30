@@ -47,6 +47,8 @@ This gate is per-reference: confirm each one, not once per skill.
 
 **Why:** skill-to-skill references create hidden coupling. If the referenced skill is renamed, moved, or changed, the reference breaks silently and the consumer has no way to know. Keeping skills decoupled keeps them portable across tools (Claude Code, Copilot, Gemini).
 
+Once the user confirms a reference that makes this skill invoke or require another skill, record it in the `Depends on` column of the README `## Skills` table (see the README "Contributing" / add-a-skill note) so the coupling is visible to anyone reading the repo.
+
 ### Set Appropriate Degrees of Freedom
 
 Match the level of specificity to the task's fragility and variability:

@@ -56,6 +56,8 @@ type: "always_apply"
 - always read the file in full, do not be lazy
 - before making any code changes, start by finding & reading ALL of the relevant files
 - never make changes without reading the entire file
+- before modifying a function, grep for ALL its callers/usages first → understand every call site before changing its signature or behavior
+- research before you edit: read the file plus its callers/usages first, never edit blind
 
 # EGO
 

@@ -43,7 +43,7 @@ A wrong call is expensive, or the path itself is unclear.
 - Security-sensitive code (auth, crypto, input trust boundaries)
 - The orchestration, integration, and final verification of the whole plan
 
-`fable` (claude-fable-5) is also available. Treat it as a user-discretion option, do not auto-route to it unless the user asks.
+`fable` is also available, as a separate model line rather than a Claude tier. Treat it as a user-discretion option, do not auto-route to it unless the user asks.
 
 ## Signals that move a task up or down a tier
 

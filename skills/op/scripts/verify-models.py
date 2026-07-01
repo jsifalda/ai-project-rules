@@ -5,11 +5,8 @@ Reads a Claude Code session transcript JSONL and reports whether each Agent/Task
 dispatch landed on the requested model tier.
 
 Usage:
-  python3 verify-models.py [FILE]           # explicit transcript path
-  python3 verify-models.py --session UUID   # locate by session id
-  python3 verify-models.py                  # newest transcript for current project
-  python3 verify-models.py --json           # JSON output
-  python3 verify-models.py --all            # all transcripts for current project
+  python3 verify-models.py [FILE]   # explicit transcript path
+  python3 verify-models.py          # newest transcript for current project
 
 Exit codes: 0 = ok, 1 = mismatch(es), 2 = no dispatches / transcript not found.
 """
@@ -46,20 +43,7 @@ def _find_transcript(args):
             sys.exit(2)
         return path
 
-    # 2) --session UUID
-    if args.session:
-        uuid = args.session
-        slug = _cwd_slug()
-        primary = os.path.join(root, slug, f"{uuid}.jsonl")
-        if os.path.isfile(primary):
-            return primary
-        # fallback: search every project subdirectory
-        for candidate in glob.glob(os.path.join(root, "*", f"{uuid}.jsonl")):
-            return candidate
-        print(f"error: session {uuid!r} not found under {root}/", file=sys.stderr)
-        sys.exit(2)
-
-    # 3) default: newest *.jsonl in <root>/<cwd-slug>/
+    # 2) default: newest *.jsonl in <root>/<cwd-slug>/
     project_dir = os.path.join(root, _cwd_slug())
     if not os.path.isdir(project_dir):
         print(f"error: project transcript directory not found: {project_dir}", file=sys.stderr)
@@ -88,17 +72,13 @@ def _total_tokens(usage):
 
 
 def parse_transcript(path):
-    """Parse a JSONL transcript and return four dicts.
+    """Parse a JSONL transcript and return two dicts.
 
     dispatches : {tool_use_id: {id, requested_model, description, subagent_type}}
-    results    : {tool_use_id: {resolved_model, total_tokens, duration_ms}}
-    orch_usage : {model_id: {tokens}}
-    sub_usage  : {resolved_model: {tokens, duration_ms}}
+    results    : {tool_use_id: {resolved_model, total_tokens}}
     """
     dispatches = {}
     results = {}
-    orch_usage = {}
-    sub_usage = {}
 
     with open(path, "r", encoding="utf-8") as fh:
         for raw_line in fh:
@@ -116,16 +96,8 @@ def parse_transcript(path):
             rec_type = record.get("type")
             message = record.get("message") or {}
 
-            # --- assistant records: dispatches and orchestrator usage ---
+            # --- assistant records: dispatches ---
             if rec_type == "assistant":
-                model = message.get("model")
-                usage = message.get("usage")
-                if model and usage:
-                    tokens = _total_tokens(usage)
-                    if model not in orch_usage:
-                        orch_usage[model] = {"tokens": 0}
-                    orch_usage[model]["tokens"] += tokens
-
                 content = message.get("content") or []
                 if not isinstance(content, list):
                     continue
@@ -173,20 +145,13 @@ def parse_transcript(path):
                 total = tool_use_result.get("totalTokens") or 0
                 if total == 0:
                     total = _total_tokens(tool_use_result.get("usage") or {})
-                duration = tool_use_result.get("totalDurationMs") or 0
 
                 results[linked_id] = {
                     "resolved_model": resolved,
                     "total_tokens": total,
-                    "duration_ms": duration,
                 }
 
-                if resolved not in sub_usage:
-                    sub_usage[resolved] = {"tokens": 0, "duration_ms": 0}
-                sub_usage[resolved]["tokens"] += total
-                sub_usage[resolved]["duration_ms"] += duration
-
-    return dispatches, results, orch_usage, sub_usage
+    return dispatches, results
 
 
 # ---------------------------------------------------------------------------
@@ -242,7 +207,7 @@ def build_rows(dispatches, results):
 # Human report
 # ---------------------------------------------------------------------------
 
-def human_report(path, rows, orch_usage, sub_usage):
+def human_report(path, rows, results):
     lines = []
     dispatch_count = len(rows)
     mismatch_count = sum(1 for r in rows if r["mismatch"])
@@ -271,47 +236,20 @@ def human_report(path, rows, orch_usage, sub_usage):
         lines.append(f"  {r['requested']:<{col_req}}  {r['actual']:<{col_act}}  {r['task']}{suffix}")
     lines.append("")
 
-    # C) model usage
-    all_tokens = (
-        sum(v["tokens"] for v in orch_usage.values())
-        + sum(v["tokens"] for v in sub_usage.values())
-    )
-    lines.append("MODEL USAGE")
-    for model, v in orch_usage.items():
-        if v["tokens"] <= 0:
-            continue  # skip empty buckets (e.g. <synthetic> placeholder turns)
-        pct = int(round(v["tokens"] / all_tokens * 100)) if all_tokens else 0
-        lines.append(f"  {model}  {v['tokens']} tokens  {pct}%  (orchestrator)")
-    for model, v in sub_usage.items():
-        lines.append(f"  {model}  {v['tokens']} tokens  (subagent)")
-    lines.append("")
+    # C) per-model token tally (subagents only)
+    tally = {}
+    for r in results.values():
+        model = r["resolved_model"]
+        tally[model] = tally.get(model, 0) + r["total_tokens"]
+    if tally:
+        lines.append("MODEL USAGE")
+        for model, tokens in tally.items():
+            lines.append(f"  {model}  {tokens} tokens")
+        lines.append("")
 
     # D) summary
     lines.append(f"Dispatches: {dispatch_count}  Mismatches: {mismatch_count}")
     return "\n".join(lines)
-
-
-# ---------------------------------------------------------------------------
-# JSON report
-# ---------------------------------------------------------------------------
-
-def json_report(rows, orch_usage, sub_usage):
-    usage = []
-    for model, v in orch_usage.items():
-        if v["tokens"] <= 0:
-            continue  # skip empty buckets (e.g. <synthetic> placeholder turns)
-        usage.append({"model": model, "role": "orchestrator", "tokens": v["tokens"], "duration_ms": 0})
-    for model, v in sub_usage.items():
-        usage.append({"model": model, "role": "subagent", "tokens": v["tokens"], "duration_ms": v["duration_ms"]})
-    mismatch_count = sum(1 for r in rows if r["mismatch"])
-    return {
-        "dispatches": [
-            {"requested": r["requested"], "actual": r["actual"], "task": r["task"], "mismatch": r["mismatch"]}
-            for r in rows
-        ],
-        "usage": usage,
-        "summary": {"dispatch_count": len(rows), "mismatch_count": mismatch_count},
-    }
 
 
 # ---------------------------------------------------------------------------
@@ -327,44 +265,6 @@ def _exit_code(rows):
 
 
 # ---------------------------------------------------------------------------
-# --all mode
-# ---------------------------------------------------------------------------
-
-def run_all(args):
-    root = _projects_root()
-    project_dir = os.path.join(root, _cwd_slug())
-    if not os.path.isdir(project_dir):
-        print(f"error: project transcript directory not found: {project_dir}", file=sys.stderr)
-        sys.exit(2)
-    candidates = sorted(glob.glob(os.path.join(project_dir, "*.jsonl")), key=os.path.getmtime)
-    if not candidates:
-        print(f"error: no *.jsonl transcripts in {project_dir}", file=sys.stderr)
-        sys.exit(2)
-
-    # A mismatch anywhere (exit 1) must win over a no-dispatch transcript
-    # (exit 2). A plain numeric max would let 2 mask 1, hiding routing
-    # failures the moment any transcript lacks dispatches.
-    any_mismatch = False
-    all_zero = True
-    for path in candidates:
-        dispatches, results, orch_usage, sub_usage = parse_transcript(path)
-        rows = build_rows(dispatches, results)
-        code = _exit_code(rows)
-        if code == 1:
-            any_mismatch = True
-        if code != 2:
-            all_zero = False
-        if args.json:
-            obj = json_report(rows, orch_usage, sub_usage)
-            obj["file"] = path
-            print(json.dumps(obj))
-        else:
-            print(f"=== {os.path.basename(path)} ===")
-            print(human_report(path, rows, orch_usage, sub_usage))
-    sys.exit(1 if any_mismatch else 2 if all_zero else 0)
-
-
-# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -373,24 +273,13 @@ def main():
         description="Verify that op-routed subagents ran on their assigned model tiers."
     )
     parser.add_argument("file", nargs="?", help="Path to a .jsonl transcript file")
-    parser.add_argument("--session", metavar="UUID", help="Session UUID to locate in the projects directory")
-    parser.add_argument("--json", action="store_true", help="Output JSON instead of human-readable text")
-    parser.add_argument("--all", dest="all", action="store_true", help="Scan all transcripts for the current project")
     args = parser.parse_args()
 
-    if args.all:
-        run_all(args)
-        return
-
     path = _find_transcript(args)
-    dispatches, results, orch_usage, sub_usage = parse_transcript(path)
+    dispatches, results = parse_transcript(path)
     rows = build_rows(dispatches, results)
 
-    if args.json:
-        print(json.dumps(json_report(rows, orch_usage, sub_usage)))
-    else:
-        print(human_report(path, rows, orch_usage, sub_usage))
-
+    print(human_report(path, rows, results))
     sys.exit(_exit_code(rows))
 
 

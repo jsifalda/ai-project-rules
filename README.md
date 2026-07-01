@@ -50,7 +50,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | --- | --- | --- |
 | [`apple-mail-query`](skills/apple-mail-query/SKILL.md) | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). | — |
 | [`apple-mail-thread-export`](skills/apple-mail-thread-export/SKILL.md) | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. | — |
-| [`better-plan`](skills/better-plan/SKILL.md) | Chained planning ritual: build a plan (plan-mode rigor), stress-test it via grill-me, then cost-route tasks via op; presents the routed plan and executes on approval. Slash-only. | `grill-me`, `op` |
+| [`better-plan`](skills/better-plan/SKILL.md) | Chained planning ritual: enhance the request via prompt-enhancer, build a plan (plan-mode rigor), stress-test it via grill-me, then cost-route tasks via op; presents the routed plan, executes on approval, and recaps the run. Slash-only. | `grill-me`, `op`, `prompt-enhancer` |
 | [`claude-allow-home`](skills/claude-allow-home/SKILL.md) | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. | — |
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. | — |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — |

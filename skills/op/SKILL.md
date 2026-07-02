@@ -55,7 +55,7 @@ When unsure between two tiers, drop one tier and flag it. Orchestration, integra
 - **Avoid parallel edits to the same file.** If two independent tasks touch one file, either serialize them or merge them into one task to prevent clobbering.
 - **Keep the orchestrator on Opus.** Routing decisions, conflict resolution, and the final verification pass are themselves Opus-tier work. Do not dispatch them to a small model.
 - **Never execute a routed task inline.** A task not dispatched via an `Agent` call with a `model` parameter was not routed. Running it inline on the orchestrator (Opus) is exactly the failure op exists to prevent.
-- **Never pass a dated model ID to `model`.** Always dispatch with the bare tier alias (`haiku` / `sonnet` / `opus` / `fable`), never a specific version string like `claude-sonnet-4-6`. The alias is what guarantees the subagent lands on the current, highest release for that tier — a hardcoded ID would defeat that and risk pinning to a superseded version.
+- **Never pass a dated model ID to `model`.** Always dispatch with the bare tier alias (`haiku` / `sonnet` / `opus` / `fable`), never a specific version string like `claude-sonnet-4-x`. The alias is what guarantees the subagent lands on the current, highest release for that tier — a hardcoded ID would defeat that and risk pinning to a superseded version.
 
 ## Annotated-plan output format
 

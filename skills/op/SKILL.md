@@ -15,7 +15,7 @@ This generalizes Claude Code's built-in `opusplan` setting (Opus to plan, Sonnet
 
 ## The mechanism (the one non-obvious fact)
 
-Claude Code's Agent tool takes a `model` parameter. A subagent spawned with `model: "haiku"` runs on Haiku even though the main session runs on Opus. Verified: dispatching `haiku` / `sonnet` / `opus` yields subagents reporting `claude-haiku-4-5`, `claude-sonnet-4-6`, `claude-opus-4-8` respectively.
+Claude Code's Agent tool takes a `model` parameter. A subagent spawned with `model: "haiku"` runs on Haiku even though the main session runs on Opus. `haiku`, `sonnet`, `opus`, and `fable` are tier aliases, not dated model IDs — the Agent tool's `model` parameter only accepts these four values and always resolves each to Anthropic's current, highest release for that tier. Verified: a dispatched subagent's `resolvedModel` always contains its requested tier name as a substring (e.g. requesting `sonnet` produces a `resolvedModel` containing `sonnet`) — this is exactly the check `scripts/verify-models.py` performs.
 
 So "run this task on a different model" = spawn it as a subagent with the chosen `model`. The main loop (Opus) stays the orchestrator. Available tiers: `haiku`, `sonnet`, `opus`, `fable`.
 
@@ -55,6 +55,7 @@ When unsure between two tiers, drop one tier and flag it. Orchestration, integra
 - **Avoid parallel edits to the same file.** If two independent tasks touch one file, either serialize them or merge them into one task to prevent clobbering.
 - **Keep the orchestrator on Opus.** Routing decisions, conflict resolution, and the final verification pass are themselves Opus-tier work. Do not dispatch them to a small model.
 - **Never execute a routed task inline.** A task not dispatched via an `Agent` call with a `model` parameter was not routed. Running it inline on the orchestrator (Opus) is exactly the failure op exists to prevent.
+- **Never pass a dated model ID to `model`.** Always dispatch with the bare tier alias (`haiku` / `sonnet` / `opus` / `fable`), never a specific version string like `claude-sonnet-4-x`. The alias is what guarantees the subagent lands on the current, highest release for that tier — a hardcoded ID would defeat that and risk pinning to a superseded version.
 
 ## Annotated-plan output format
 

@@ -55,6 +55,7 @@ If no criteria were passed at all, stop and ask the user for them before doing a
 
 - Load `references/scoring-rubric.md`. Score every shortlisted candidate on its four weighted dimensions, apply the hard-constraint disqualification rule, rank the candidates, and pick one winner.
 - Produce the report using the template in that reference file. Fill every applicable placeholder.
+- Linking rule (mandatory). Every video named anywhere in the report — winner, runner-up, candidates, and any prose mention — must carry its canonical YouTube watch URL as a clickable link. Never name a video by title without its link.
 - Output. Always print the report in the chat. Also save it as a markdown file when the current working directory sits inside a repo that has an `outputs/` directory, writing to `outputs/youtube-pick-<short-topic-slug>-<YYYY-MM-DD>.md`. If there is no `outputs/` directory, print to chat only and say that it was not saved.
 
 ## Notes and robustness

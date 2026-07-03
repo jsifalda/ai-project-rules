@@ -104,6 +104,8 @@ This candidate scores 4.5 out of 5.
 
 Fill in the placeholders below. Drop a section if it doesn't apply, for example skip "Runner-up" when only one candidate turned up.
 
+Linking rule: every named video must be a clickable link to its canonical YouTube watch URL. Wherever a placeholder names a video, pair it with the URL, and carry links through any prose mention too.
+
 ```markdown
 # YouTube pick: {topic}
 
@@ -123,8 +125,7 @@ Fill in the placeholders below. Drop a section if it doesn't apply, for example 
 
 ## Winner
 
-{winner_title}, by {winner_channel}
-{winner_url}
+[{winner_title}]({winner_url}), by {winner_channel}
 
 {winner_reasoning}
 
@@ -143,7 +144,7 @@ Fill in the placeholders below. Drop a section if it doesn't apply, for example 
 
 ## Runner-up
 
-{runnerup_title} came in second. {runnerup_reason_lost}
+[{runnerup_title}]({runnerup_url}) came in second. {runnerup_reason_lost}
 
 ## Verdict
 

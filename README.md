@@ -112,6 +112,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`team-tester`](skills/team-tester/SKILL.md) | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. | — |
 | [`translate-to-czech`](skills/translate-to-czech/SKILL.md) | Translate English text to Czech while preserving accuracy. | — |
 | [`write-like-human`](skills/write-like-human/SKILL.md) | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. | — |
+| [`yt-video-finder`](skills/yt-video-finder/SKILL.md) | Drive a real Chrome browser via Playwright to search YouTube, shortlist and rate candidates by engagement + comments, then pick the single best video for the user's criteria and write it up. | — |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
 

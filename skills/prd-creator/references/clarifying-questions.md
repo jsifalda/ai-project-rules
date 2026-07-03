@@ -1,34 +1,37 @@
 # Clarifying Questions Guide
 
-Adapt these questions based on the user's initial prompt. Group them logically and provide options where possible.
+Adapt these questions based on the user's initial prompt. Keep it lean. Group them logically and provide options where possible.
 
 ## Key Areas to Explore
 
 ### 1. Problem & Goal
-- What specific problem does this feature solve?
-- What is the primary business or user goal?
+- What specific problem does this solve?
+- What is the main goal for you and the user?
+- Why is it worth building now?
 
 ### 2. Target User
-- Who is the primary persona using this feature?
-- Are there secondary users or administrative users involved?
+- Who is this for? (be specific, not "everyone")
 
 ### 3. Core Functionality
 - What are the "must-have" actions a user should perform?
 - Describe the ideal user flow from start to finish.
 
-### 4. Constraints & Scope
-- Are there any specific things this feature should NOT do?
-- What are the boundaries of this release (MVP vs. Future)?
+### 4. Scope (In & Out)
+- What is IN scope for this version?
+- What is explicitly OUT or a non-goal for now?
 
 ### 5. Data & UI
-- What data needs to be captured, stored, or displayed?
-- Are there specific UI elements or existing patterns to follow?
-- What is the desired "feel" of the interaction?
+- What data does it capture, store, or display?
+- Any existing UI pattern to follow, or a mockup to link?
 
-### 6. Success & Metrics
-- How will we define success for this feature?
-- What specific metrics should we track?
+### 6. Success & Signals
+- How will you know it worked?
+- Any 1-2 signals you'll watch? (signups, first paying user, activation) — optional
 
-### 7. Edge Cases
+### 7. Risks & Assumptions
+- What are you assuming is true? (people want this, they'll pay, an API does X)
+- What could sink it? (no demand, you won't finish, a key dependency breaks)
+
+### 8. Edge Cases
 - What happens if the user provides invalid data?
-- Are there connectivity or permission issues to consider?
+- Are there connectivity or permission gotchas?

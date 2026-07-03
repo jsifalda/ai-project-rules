@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage gates, dual-track code review, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -21,6 +21,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Verification protocol (lint → typecheck → test → coverage → code review) | inject (`references/verification-protocol.md`) |
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
+| PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) | delegate → `setup-user-scenarios` |
@@ -66,12 +67,14 @@ Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 
 ### Step 4: Module menu
 
-Present the seven modules (default all selected) and let the user deselect per project. If the
-repo has no build tooling, flag the verification module as degraded and let them keep or skip it.
+Present the eight modules and let the user pick per project. Seven default to selected —
+deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
+wants PRD-first enforcement. If the repo has no build tooling, flag the verification module as
+degraded and let them keep or skip it.
 
 ### Step 5: Inject the policy modules
 
-For each chosen inject module (verification, git policy, file organization):
+For each chosen inject module (verification, git policy, file organization, PRD gate):
 1. Read the matching `references/*.md`.
 2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool and
    renumber** (verification only).
@@ -118,6 +121,7 @@ If chosen:
 Confirm in one short message:
 - Agent file created/located; `CLAUDE.md → AGENTS.md` symlink (if created).
 - Policy modules injected (with which gates were dropped for missing tools).
+- PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped).
 - Worktree hook scaffolded (or skipped).
 - `.worktreeinclude` created/updated (with which files), skipped (no gitignored config or user
@@ -136,12 +140,14 @@ Confirm in one short message:
 - Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
 - `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
   `WorktreeCreate` hook is present or no gitignored config is found.
+- PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
 
 ## References
 
 - `references/verification-protocol.md` — verification block + stack-detection table + placeholders.
 - `references/git-policy.md` — git policy block.
 - `references/file-organization.md` — file organization block.
+- `references/prd-gate.md` — PRD-gate policy block (opt-in; require a PRD before substantial features).
 - `references/backfill-guide.md` — greenfield-vs-working heuristic, survey + grounding rules.
 
 ## Assets

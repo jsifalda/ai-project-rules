@@ -1,11 +1,11 @@
 ---
 name: prd-creator
-description: "Generate a Product Requirements Document (PRD) in Markdown from a feature idea, through a structured clarifying-questions interview. Problem-first and metric-driven, following a best-practice template (summary, problem and context, users and use cases, goals and success metrics, scope in and out, solution outline with explicit functional requirements, risks and dependencies, rollout). Targets 1-2 pages yet stays detailed enough for a junior developer to implement. Saves each PRD to docs/prds/ and links it from the project README. Use when transforming a feature idea into a spec, gathering requirements through clarifying questions, or documenting a feature for a developer to build."
+description: "Generate a lean Product Requirements Document (PRD) in Markdown from a feature idea, through a structured clarifying-questions interview. Built for planning your own indie side-hustle features, not corporate sign-off. Problem-first and outcome-focused, following a lean template (summary, problem and context, users and use cases, goals and success signals, scope in and out, solution outline with explicit functional requirements, risks and assumptions, open questions). Targets about one page yet stays detailed enough for you or an AI coding agent to build from. Saves each PRD to docs/prds/ and links it from the project README. Use when turning a feature idea into a buildable spec, gathering requirements through clarifying questions, or documenting a side-project feature."
 ---
 
 # Product Requirements Document (PRD) Creator
 
-This skill guides you through creating clear, actionable PRDs. Each PRD is problem-first and metric-driven, yet detailed enough for a junior developer to implement.
+This skill guides you through creating lean, buildable PRDs for your own side-hustle features. Each PRD is problem-first, yet detailed enough for you or an AI coding agent to build from.
 
 ## Core Workflow
 
@@ -26,12 +26,12 @@ This skill guides you through creating clear, actionable PRDs. Each PRD is probl
 
 ## Quality Standards
 
-- **Outcome-first**: Start from the user problem and measurable goals, not from UI ideas.
-- **Behavior, not pixels**: Describe what the system does. Keep visual design in Figma and link it.
-- **Metrics**: Every primary metric needs a baseline and a target direction. Add guardrail metrics where relevant.
-- **Length**: Target 1-2 pages, using minimal words. Link details out (design, tech design, tracking) rather than inlining them.
-- **Target Audience**: Write for a **junior developer**. Be explicit and unambiguous.
-- **Tone**: Professional, technical, and objective.
+- **Lean**: Target ~1 page. This is for planning your own indie projects, not corporate sign-off. Cut any section that doesn't earn its place.
+- **Outcome-first**: Start from the problem and who it's for, not from UI ideas.
+- **Behavior, not pixels**: Describe what the system does. Keep visual design in a mockup and link it.
+- **Success signals**: Define what "good" looks like. Add 1-2 signals only if useful. No baseline required.
+- **Target Audience**: Write so you (or an AI coding agent) can build from it. Be explicit and unambiguous.
+- **Tone**: Clear and concrete.
 - **Independence**: Do NOT start implementing the feature; focus exclusively on the specification.
 
 ## Refinement

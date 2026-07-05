@@ -87,7 +87,7 @@ For each surviving angle, give the angle in one line plus one line on why it wou
 
 ## Step 4 — Draft the chosen post
 
-Draft the picked angle as a single X post, applying the `write-like-human` skill's ruleset (active voice, vary sentence length, no em-dashes, semicolons, asterisks, emojis, no hype or AI-filler).
+Draft the picked angle as a single X post. Load the `write-like-human` skill and apply its full 17-rule ruleset to every line (do not rely on the summary here). Before you output, re-read the draft against those rules and strip any violation.
 
 X-native craft:
 

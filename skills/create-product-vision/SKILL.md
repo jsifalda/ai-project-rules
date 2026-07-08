@@ -1,6 +1,6 @@
 ---
 name: create-product-vision
-description: "Turn a short product or project description into a motivating vision doc covering three angles: motivation (why it matters and the shift it creates), practical (what actually happens day to day and over time), and product (what it is, what it does, what you get, so the reader knows what to expect). Use whenever the user wants a vision, mission, or why-this-matters framing for a product, project, side project, tool, or workflow. Triggers: 'write a vision', 'draft a vision for X', 'product vision from this description', 'vision for this project', 'give this a vision statement', or when the user pastes a short description of something they are building and wants it framed compellingly. Produces one tight vision doc (tagline, what it is, what it does, what you get, the shift, success signal), not marketing copy, a pitch deck, or a full plan. Do NOT use to summarise existing text (use summarise-url or summarise-text), to break a goal into tasks (use goal-breakdown), or to plan an MVP launch (use ship-v1)."
+description: "Turn a short product or project description into a motivating vision doc covering three angles — motivation (the why and the shift it creates), practical (what using it actually looks like), and product (what it is and what to expect). The tagline ships in three wordings, a motivational main plus practical and product-descriptive alternatives. Use whenever the user wants a vision, mission, or why-this-matters framing for a product, project, tool, or workflow. Triggers — 'write a vision', 'draft a vision for X', 'give this a vision statement', or when the user pastes a short description of something they are building. Produces one tight vision doc (tagline wordings, what it is, what it does, what you get, the shift, success signal), not marketing copy or a pitch deck. Do NOT use to summarise existing text (use summarise-url or summarise-text), to break a goal into tasks (use goal-breakdown), or to plan an MVP launch (use ship-v1)."
 ---
 
 # Product Vision
@@ -16,11 +16,11 @@ Turn a short description of something being built into one tight, motivating vis
 
 ## The three angles
 
-Every vision must land all three. They map onto the template sections, so you rarely label them explicitly.
+Every vision must land all three. They map onto the template sections, so you rarely label them explicitly. The tagline is the exception: it ships in three wordings, one per angle. A motivational main line plus two labeled alternatives (practical, product), each a single line, so the reader can pick the framing that fits.
 
-1. **Motivation** → why anyone should care. The status quo it replaces and the shift it creates. Carried by the tagline and the "shift" section.
-2. **Practical** → what actually happens when someone uses it, day to day and over time. Carried by "what it does" and "what you get".
-3. **Product** → what the thing is and what to expect. Its category and mechanism, so the reader pictures the real object, not a vibe. Carried by "what it is".
+1. **Motivation** → why anyone should care. The status quo it replaces and the shift it creates. Carried by the main tagline and the "shift" section.
+2. **Practical** → what actually happens when someone uses it, day to day and over time. Carried by "what it does", "what you get", and the practical alt tagline.
+3. **Product** → what the thing is and what to expect. Its category and mechanism, so the reader pictures the real object, not a vibe. Carried by "what it is" and the product alt tagline.
 
 ## Before writing: check the input
 
@@ -40,7 +40,10 @@ Use this exact shape. Drop a section only if it genuinely does not apply.
 ```markdown
 ## Vision
 
-[Tagline. One line. The hook or the shift, sharp enough to remember.]
+[Tagline. One line. Motivational wording, the hook or the shift, sharp enough to remember.]
+
+> Alt (practical): [one line, what actually happens when someone uses it]
+> Alt (product): [one line, what the thing is, so the reader knows what to expect]
 
 **What it is**
 - [Category and mechanism. What kind of thing this is.]
@@ -74,6 +77,9 @@ Keep bullets to a phrase or short sentence. Cut any line that repeats another.
 
 Follow the people worth reading, keep everything they post, build on it.
 
+> Alt (practical): new posts from your chosen accounts arrive on your terms and land in Supabase. You never open X.
+> Alt (product): an n8n pipeline that watches chosen X accounts, sends you their new posts, and archives every tweet to Supabase.
+
 **What it is**
 - An automated n8n pipeline, not an app you log into. Runs on its own, in the background.
 - You give it a list of accounts. It does the rest.
@@ -99,3 +105,4 @@ You'll know it works when you stop visiting X timelines, and the archive is rich
 - One vision doc per request. Do not pad into a pitch deck, roadmap, or marketing landing page.
 - Match the author's register. A dev tool vision reads different from a consumer app vision, but both stay concrete.
 - If the user asks for a specific angle only ("just the motivation part"), give that section well rather than forcing the full template.
+- If the user asks for a single tagline wording only, give that one and drop the alt block.

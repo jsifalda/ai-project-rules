@@ -26,12 +26,13 @@ This skill guides you through creating lean, buildable PRDs for your own side-hu
 
 ## Quality Standards
 
-- **Lean**: Target ~1 page. This is for planning your own indie projects, not corporate sign-off. Cut any section that doesn't earn its place.
+- **Terse by default**: Fragments over sentences. Bullet points are the default format for every section (prose only when a bullet can't carry the point). One idea per line. Follow the per-section budgets in [references/prd-structure.md](references/prd-structure.md).
+- **No filler**: Ban corporate buzzwords (leverage, robust, seamless, synergy, stakeholder, best-in-class, deliverable). No em-dashes, semicolons, or emojis. Use periods, commas, or arrows.
+- **Lean**: ~1 page is the ceiling, not the target. This is for planning your own indie projects, not corporate sign-off. Cut any section that doesn't earn its place.
 - **Outcome-first**: Start from the problem and who it's for, not from UI ideas.
 - **Behavior, not pixels**: Describe what the system does. Keep visual design in a mockup and link it.
 - **Success signals**: Define what "good" looks like. Add 1-2 signals only if useful. No baseline required.
 - **Target Audience**: Write so you (or an AI coding agent) can build from it. Be explicit and unambiguous.
-- **Tone**: Clear and concrete.
 - **Independence**: Do NOT start implementing the feature; focus exclusively on the specification.
 
 ## Refinement

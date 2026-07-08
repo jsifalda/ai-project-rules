@@ -55,6 +55,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. | — |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — |
 | [`create-implementation-plan`](skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — |
+| [`create-product-vision`](skills/create-product-vision/SKILL.md) | Turn a short product or project description into one tight, motivating vision doc covering three angles (motivation, practical, product), with the tagline offered in three wordings (motivational main, practical and product-descriptive alternatives). | `write-like-human` |
 | [`create-skill`](skills/create-skill/SKILL.md) | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. | — |
 | [`create-svg-image`](skills/create-svg-image/SKILL.md) | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. | — |
 | [`deep-research`](skills/deep-research/SKILL.md) | Conduct multi-source research with synthesis, citation tracking, and claim verification. | — |

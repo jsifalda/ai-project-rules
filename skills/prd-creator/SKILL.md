@@ -23,6 +23,12 @@ This skill guides you through creating lean, buildable PRDs for your own side-hu
     - Ensure a `README.md` exists at the project root; create a minimal one if it does not.
     - Maintain a `## PRDs` section: create it if missing, then add `- [Feature name](docs/prds/prd-feature-name.md)` with a short one-line summary.
     - Be idempotent: if an entry for this PRD already exists, update it rather than adding a duplicate.
+6.  **Optional: Pressure-test with grill-me**: After the PRD is saved and linked, offer to stress-test it.
+    - Only if the `grill-me` skill is available in this environment. If it is not, skip this step silently. The PRD is already complete.
+    - Ask the user (yes/no) whether they want to stress-test the PRD. If they decline, stop here.
+    - If yes, invoke the `grill-me` skill, handing it the just-saved PRD as the plan to interrogate. Let the user iterate through the interview until they reach shared understanding.
+    - When the interview concludes, draft the resulting PRD edits (scope, requirements, risks, answered open questions), show them to the user, and wait for approval before writing.
+    - On approval, update the saved `docs/prds/prd-[feature-name].md` in place, keeping the terse structure and quality standards. Sync the README `## PRDs` summary if the one-line summary changed.
 
 ## Quality Standards
 
@@ -37,6 +43,6 @@ This skill guides you through creating lean, buildable PRDs for your own side-hu
 
 ## Refinement
 
-After generating the initial PRD, ask the user if they want any adjustments. Use their feedback to improve the document.
+After generating the initial PRD, ask the user if they want any adjustments. Use their feedback to improve the document. The optional grill-me pass (step 6) is a deeper version of this loop.
 
-Treat the PRD as a living document — it is the single source of truth for the feature. Update it as decisions change instead of leaving it stale.
+Treat the PRD as a living document. It is the single source of truth for the feature. Update it in place as decisions change (whether from manual feedback or a grill-me pass) instead of leaving it stale. Confirm the edits with the user before overwriting the file.

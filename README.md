@@ -86,7 +86,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`persona-levelsio`](skills/persona-levelsio/SKILL.md) | Channel Pieter Levels (levelsio) as a solo bootstrapped indie-hacker advisor, grounded in his frameworks and build-in-public voice. | — |
 | [`persona-luca`](skills/persona-luca/SKILL.md) | Channel Luca Rossi (Refactoring newsletter) as an engineering-leadership advisor, grounded in his articles and named mental models. | — |
 | [`persona-stanier`](skills/persona-stanier/SKILL.md) | Channel James Stanier as an engineering-leadership advisor, grounded in his blog posts and frameworks. | — |
-| [`prd-creator`](skills/prd-creator/SKILL.md) | Generate detailed PRDs in Markdown via a clarifying-questions interview. | — |
+| [`prd-creator`](skills/prd-creator/SKILL.md) | Generate lean, scannable PRDs in Markdown via a clarifying-questions interview. | `grill-me` (optional) |
 | [`prompt-enhancer`](skills/prompt-enhancer/SKILL.md) | Transform a simple prompt into a high-quality, structured one for better AI results. | — |
 | [`prototype`](skills/prototype/SKILL.md) | Build a throwaway prototype to flesh out a design, as a runnable terminal app or several toggleable UI variations. (synced from `mattpocock/skills`) | — |
 | [`qmd-project`](skills/qmd-project/SKILL.md) | Turn any folder into a folder-local qmd semantic index over its nested `.md` files (isolated from the global index, shared models) and ship a project-local `qmd-ask` skill that answers questions from it. | — |

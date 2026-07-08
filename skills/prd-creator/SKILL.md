@@ -23,19 +23,26 @@ This skill guides you through creating lean, buildable PRDs for your own side-hu
     - Ensure a `README.md` exists at the project root; create a minimal one if it does not.
     - Maintain a `## PRDs` section: create it if missing, then add `- [Feature name](docs/prds/prd-feature-name.md)` with a short one-line summary.
     - Be idempotent: if an entry for this PRD already exists, update it rather than adding a duplicate.
+6.  **Optional: Pressure-test with grill-me**: After the PRD is saved and linked, offer to stress-test it.
+    - Only if the `grill-me` skill is available in this environment. If it is not, skip this step silently. The PRD is already complete.
+    - Ask the user (yes/no) whether they want to stress-test the PRD. If they decline, stop here.
+    - If yes, invoke the `grill-me` skill, handing it the just-saved PRD as the plan to interrogate. Let the user iterate through the interview until they reach shared understanding.
+    - When the interview concludes, draft the resulting PRD edits (scope, requirements, risks, answered open questions), show them to the user, and wait for approval before writing.
+    - On approval, update the saved `docs/prds/prd-[feature-name].md` in place, keeping the terse structure and quality standards. Sync the README `## PRDs` summary if the one-line summary changed.
 
 ## Quality Standards
 
-- **Lean**: Target ~1 page. This is for planning your own indie projects, not corporate sign-off. Cut any section that doesn't earn its place.
+- **Terse by default**: Fragments over sentences. Bullet points are the default format for every section (prose only when a bullet can't carry the point). One idea per line. Follow the per-section budgets in [references/prd-structure.md](references/prd-structure.md).
+- **No filler**: Ban corporate buzzwords (leverage, robust, seamless, synergy, stakeholder, best-in-class, deliverable). No em-dashes, semicolons, or emojis. Use periods, commas, or arrows.
+- **Lean**: ~1 page is the ceiling, not the target. This is for planning your own indie projects, not corporate sign-off. Cut any section that doesn't earn its place.
 - **Outcome-first**: Start from the problem and who it's for, not from UI ideas.
 - **Behavior, not pixels**: Describe what the system does. Keep visual design in a mockup and link it.
 - **Success signals**: Define what "good" looks like. Add 1-2 signals only if useful. No baseline required.
 - **Target Audience**: Write so you (or an AI coding agent) can build from it. Be explicit and unambiguous.
-- **Tone**: Clear and concrete.
 - **Independence**: Do NOT start implementing the feature; focus exclusively on the specification.
 
 ## Refinement
 
-After generating the initial PRD, ask the user if they want any adjustments. Use their feedback to improve the document.
+After generating the initial PRD, ask the user if they want any adjustments. Use their feedback to improve the document. The optional grill-me pass (step 6) is a deeper version of this loop.
 
-Treat the PRD as a living document — it is the single source of truth for the feature. Update it as decisions change instead of leaving it stale.
+Treat the PRD as a living document. It is the single source of truth for the feature. Update it in place as decisions change (whether from manual feedback or a grill-me pass) instead of leaving it stale. Confirm the edits with the user before overwriting the file.

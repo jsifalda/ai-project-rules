@@ -8,7 +8,7 @@ guessed command. Keep numbering contiguous after omissions (renumber the remaini
 ## Stack detection
 
 Detect each gate independently from the repo. A gate with no tool is dropped from the injected
-block. Code review (last gate) is tool-agnostic and always kept.
+block. Code review and docs alignment (the last two gates) are tool-agnostic and always kept.
 
 | Gate | JS/TS | Python | Go | Rust | Config / IaC |
 |------|-------|--------|----|------|--------------|
@@ -21,7 +21,8 @@ block. Code review (last gate) is tool-agnostic and always kept.
 - `{{DEFAULT_BRANCH}}` = the repo's default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`
   stripped of `origin/`, or `git branch --show-current`; fall back to `main`).
 - **No lint/typecheck/test tool at all** (e.g. a config-only repo) → inject only the **Code review**
-  gate plus the "no automated gates found" note at the bottom, and tell the user.
+  and **Docs & instructions alignment** gates plus the "no automated gates found" note at the
+  bottom, and tell the user.
 
 ---
 
@@ -59,6 +60,13 @@ says otherwise.
        approval (each costs credits).
    - **Merge** — deduplicate findings across 5a and 5b, present one combined "Code review findings"
      section.
+6. **Docs & instructions alignment** — before marking the task done, check whether this session's
+   changes made any documentation stale:
+   - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale
+     docs are part of the change, like a failing test: update them now and list what was updated.
+   - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
+     updated wording and **ask the user** before applying. Never silently edit instruction files.
+   - Nothing stale → say so explicitly in one line; do not invent updates.
 
 If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
 
@@ -66,5 +74,6 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 
 **Note for skill user**: Substitute `{{LINT_CMD}}`, `{{TYPECHECK_CMD}}`, `{{TEST_CMD}}`,
 `{{DEFAULT_BRANCH}}` from detection. Drop any gate whose tool is absent and renumber. If the project
-has no lint/typecheck/test tooling, keep only gate 5 (code review) and append: *"No automated lint/
-typecheck/test gates were detected for this repo. Add them here when build tooling lands."*
+has no lint/typecheck/test tooling, keep only gates 5–6 (code review, docs & instructions alignment;
+renumbered 1–2) and append: *"No automated lint/typecheck/test gates were detected for this repo.
+Add them here when build tooling lands."*

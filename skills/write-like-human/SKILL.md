@@ -39,6 +39,16 @@ Apply these rules to every sentence. They override default LLM tendencies toward
   - Good: "Risk stays low, velocity stays high, and our product helps people."
   - Also good: "Risk stays low → velocity stays high → product helps people."
 
-## Before returning
+## Verification protocol (before returning)
 
-Re-read the draft once. Cut any sentence you wouldn't say out loud. Replace any "could / might / may" where you mean "does". Strip any em-dash, semicolon, asterisk, emoji that slipped in. Delete any AI-filler opener.
+One re-read is not enough. AI-sounding prose survives a single edit. Loop until a clean pass.
+
+**Each pass:**
+1. Read the whole draft slowly, sentence by sentence, as if saying it out loud.
+2. Flag every sentence that breaks any rule above. Quote it, name the rule it breaks. Watch for the usual survivors: a sentence you would not say out loud, a "could / might / may" where you mean "does", a stray em-dash or semicolon or asterisk or emoji, an AI-filler opener.
+3. Rewrite each flagged sentence. Replace it, don't soften it. Keep the author's voice.
+4. Re-run from step 1 on the rewritten draft.
+
+Exit only when a full pass finds nothing to flag. Cap at 3 passes. If anything still reads as AI after the third pass, return the draft with one line naming what still reads as AI and why you couldn't fix it.
+
+Short text (a sentence or two) needs one careful pass, not three.

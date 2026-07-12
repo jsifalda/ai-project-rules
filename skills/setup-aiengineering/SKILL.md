@@ -129,6 +129,25 @@ Confirm in one short message:
 - Whether `AGENTS.md` / `ARCHITECTURE.md` were backfilled from the implementation or left as
   templates.
 
+### Step 9: Offer the Claude GitHub App (Claude Code + GitHub only)
+
+Runs last, as a closing suggestion. Fires only when ALL of these hold — otherwise skip:
+
+1. **Host is Claude Code.** `/install-github-app` is a Claude Code built-in slash command; no
+   other agent has it. Detect by reading the `CLAUDECODE` env var (`printenv CLAUDECODE`) —
+   Claude Code sets it to `1`. Unset/empty (Copilot CLI, Gemini CLI, Cursor, any other host) →
+   skip this step silently.
+2. **Repo is GitHub-hosted.** `git remote -v` (or `git remote get-url origin`) points at
+   `github.com`. No remote or a non-GitHub host (GitLab/Bitbucket) → skip.
+3. **Not already wired.** Neither `.github/workflows/claude.yml` nor
+   `.github/workflows/claude-code-review.yml` exists. If either is present, note "GitHub App
+   workflows already present" and skip the nudge.
+
+When all pass, do NOT run anything (the skill can't invoke a user slash command). End with a
+one-line suggestion: the user can set up the Claude GitHub App — `@claude` on issues/PRs plus
+automatic PR review — by typing `/install-github-app` (needs repo admin + the `gh` CLI). It is a
+suggestion only; the user runs it.
+
 ## Rules
 
 - Inject into the project's existing agent file (first match: `AGENTS.md` → root `CLAUDE.md` →
@@ -141,6 +160,9 @@ Confirm in one short message:
 - `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
   `WorktreeCreate` hook is present or no gitignored config is found.
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
+- The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
+  It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
+  silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.
 
 ## References
 

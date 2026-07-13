@@ -9,14 +9,13 @@ metadata:
   argument-hint: "[PR URL, branch, or file paths]"
   keywords: [nuclear, code judo, maintainability audit, harsh review, deep code review]
 license: MIT
-allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # Nuclear Code Review
 
 An unusually strict review focused on structural quality, architectural health, abstraction cleanliness, and codebase maintainability. This is not a correctness review — it asks whether the code is making the codebase *better* or *worse*.
 
-> Adapted from [intercom/2x-skills](https://github.com/intercom/2x-skills/tree/main/plugins/code-review-tools/skills/thermo-nuclear-code-review) (MIT). Generalized to stay stack-agnostic — every framework, linter, or layer named below is an example to adapt, not an assumed stack.
+> This skill originates from [intercom/2x-skills](https://github.com/intercom/2x-skills/tree/main/plugins/code-review-tools/skills/thermo-nuclear-code-review) (MIT), where it is named `thermo-nuclear-code-review`. Generalized to stay stack-agnostic — every framework, linter, or layer named below is an example to adapt, not an assumed stack.
 
 The guiding principle is **code judo**: actively search for restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant. Do not stop at "this could be a bit cleaner." Look for moves where whole branches, helpers, modes, conditionals, or layers disappear entirely. Prefer the solution that feels inevitable in hindsight.
 

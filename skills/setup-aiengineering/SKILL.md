@@ -105,8 +105,13 @@ If chosen:
      `hooks.WorktreeCreate` entry, Claude ignores `.worktreeinclude` — warn the user to copy local
      config inside that hook instead, and skip the rest of this substep.
    - **Probe** the repo root for gitignored config: `.env`, `.env.local`, `.env.*` (excluding
-     `*.example` / `*.sample`), `config/secrets*`, `*.local`. Run `git check-ignore <path>` on each
-     match — Claude copies a file only when it is gitignored *and* matched.
+     `*.example` / `*.sample`), `config/secrets*`, `*.local`, and `.mcp.json`. Run
+     `git check-ignore <path>` on each match — Claude copies a file only when it is gitignored *and*
+     matched. `.mcp.json` (local MCP servers, e.g. Playwright MCP) is host-local and usually
+     gitignored, so worktrees silently lose it unless carried over — always include it when found.
+   - **`.mcp.json` fallback (when absent):** if the repo has no `.mcp.json`, do NOT add it to
+     `.worktreeinclude`; instead inject a one-line reminder into the target agent-instructions file
+     (see Step 7b) so the next person who adds one gitignores it and carries it over.
    - **Ask** "any other local files to carry over?" — ask even when the probe finds nothing, so a
      repo-specific file isn't missed.
    - **Propose + confirm:** show the proposed `.worktreeinclude` (`.gitignore` syntax), let the user
@@ -115,6 +120,13 @@ If chosen:
      secrets, so it is committed and tracked like `.gitignore`.
    - Monorepo package envs (e.g. `packages/*/.env`) are a manual add.
    - Empty result (no matches, nothing added) → skip; note no `.worktreeinclude` was needed.
+4. **Step 7b — MCP-config reminder (only when no `.mcp.json` exists).** If the probe found a gitignored
+   `.mcp.json`, it is already covered above — do nothing here. If the repo has **no** `.mcp.json`, add a
+   one-line note to the target agent-instructions file (under a small "MCP config" note or the file-
+   organization section) so the gap can't reopen later:
+   > If you add a project `.mcp.json` (local MCP servers, e.g. Playwright MCP), gitignore it and add it
+   > to `.worktreeinclude` so new worktrees inherit it.
+   Skip if such a note already exists (idempotent).
 
 ### Step 8: Verify and report
 
@@ -124,8 +136,9 @@ Confirm in one short message:
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped).
 - Worktree hook scaffolded (or skipped).
-- `.worktreeinclude` created/updated (with which files), skipped (no gitignored config or user
-  declined), or N/A (a `WorktreeCreate` hook is present).
+- `.worktreeinclude` created/updated (with which files, noting whether a gitignored `.mcp.json` was
+  carried over — or, if absent, that the MCP-config reminder was added to the agent instructions),
+  skipped (no gitignored config or user declined), or N/A (a `WorktreeCreate` hook is present).
 - Whether `AGENTS.md` / `ARCHITECTURE.md` were backfilled from the implementation or left as
   templates.
 
@@ -159,6 +172,9 @@ suggestion only; the user runs it.
 - Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
 - `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
   `WorktreeCreate` hook is present or no gitignored config is found.
+- Always carry a gitignored `.mcp.json` into `.worktreeinclude` when present (local MCP servers are
+  otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
+  instructions instead (Step 7b).
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
 - The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
   It suggests the built-in `/install-github-app` — never an action the skill performs. Skip

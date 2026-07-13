@@ -1,5 +1,5 @@
 ---
-name: thermo-nuclear-code-review
+name: code-review-nuclear
 description: >
   Run an extremely strict structural and architectural quality review on a diff, branch,
   or file set, hunting for "code judo" moves that dramatically simplify the implementation
@@ -7,12 +7,12 @@ description: >
 metadata:
   user-invocable: true
   argument-hint: "[PR URL, branch, or file paths]"
-  keywords: [thermonuclear, code judo, maintainability audit, harsh review, deep code review]
+  keywords: [nuclear, code judo, maintainability audit, harsh review, deep code review]
 license: MIT
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
-# Thermo-Nuclear Code Quality Review
+# Nuclear Code Review
 
 An unusually strict review focused on structural quality, architectural health, abstraction cleanliness, and codebase maintainability. This is not a correctness review — it asks whether the code is making the codebase *better* or *worse*.
 

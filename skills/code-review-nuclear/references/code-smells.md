@@ -1,6 +1,6 @@
 # Structural Code Smell Baseline (Fowler)
 
-An always-on baseline of structural "Bad Smells in Code" (Martin Fowler, _Refactoring_, ch. 3), curated for the thermo-nuclear review. This baseline applies even when a file or repo documents no standards of its own — it is the structural floor every diff is measured against, alongside the Non-Negotiable Standards.
+An always-on baseline of structural "Bad Smells in Code" (Martin Fowler, _Refactoring_, ch. 3), curated for the nuclear code review. This baseline applies even when a file or repo documents no standards of its own — it is the structural floor every diff is measured against, alongside the Non-Negotiable Standards.
 
 ## Two binding rules
 

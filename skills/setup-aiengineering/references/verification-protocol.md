@@ -15,11 +15,15 @@ block. Code review and docs alignment (the last two gates) are tool-agnostic and
 | Lint `{{LINT_CMD}}` | `<pm> run lint` (lint script) or `<pm> exec eslint .` | `ruff check .` / `flake8` | `go vet ./...` / `golangci-lint run` | `cargo clippy` | `hadolint <Dockerfile>`, `yamllint .`, `shellcheck <scripts>`, `terraform fmt -check` / `tflint` — only if the tool is on PATH |
 | Typecheck `{{TYPECHECK_CMD}}` | `<pm> exec tsc --noEmit` (needs `tsconfig.json`) | `mypy .` (if configured) | — | — | — |
 | Test `{{TEST_CMD}}` | `<pm> test` / `<pm> exec vitest run` | `pytest` | `go test ./...` | `cargo test` | — |
+| Coverage `{{COVERAGE_CMD}}` | `<pm> exec vitest run --coverage` (or `jest --coverage`) with the threshold set in config (`coverage.thresholds` / `coverageThreshold`) — the runner enforces `{{COVERAGE_THRESHOLD}}` | `pytest --cov --cov-fail-under={{COVERAGE_THRESHOLD}}` | `go test -coverprofile=coverage.out ./...` then a threshold check on the total (e.g. `go tool cover -func=coverage.out`, fail if total < `{{COVERAGE_THRESHOLD}}`) | `cargo llvm-cov --fail-under-lines {{COVERAGE_THRESHOLD}}` (or `cargo tarpaulin --fail-under {{COVERAGE_THRESHOLD}}`) | — |
 
 - `<pm>` = detected package manager: `pnpm` (`pnpm-lock.yaml`), `yarn` (`yarn.lock`), `npm`
   (`package-lock.json`). Default `npm` if a `package.json` exists with no lockfile.
 - `{{DEFAULT_BRANCH}}` = the repo's default branch (`git symbolic-ref --short refs/remotes/origin/HEAD`
   stripped of `origin/`, or `git branch --show-current`; fall back to `main`).
+- `{{COVERAGE_THRESHOLD}}` defaults to `90` and is user-adjustable at setup time. A repo's current
+  real coverage may sit below it — the gate is aspirational for future changes, so the user may pick
+  a lower starting number and raise it later.
 - **No lint/typecheck/test tool at all** (e.g. a config-only repo) → inject only the **Code review**
   and **Docs & instructions alignment** gates plus the "no automated gates found" note at the
   bottom, and tell the user.
@@ -43,7 +47,11 @@ says otherwise.
    must cover (1) the main business goal, (2) the main user flow, and (3) error/edge cases (failure
    paths, empty/invalid inputs). Updating existing mocks is necessary but **not** sufficient — new
    logic needs dedicated tests. Exempt: pure type-only files, generated code, trivial re-exports,
-   config.
+   config. On top of that, overall repository coverage must stay at or above `{{COVERAGE_THRESHOLD}}%`
+   — run `{{COVERAGE_CMD}}`, which fails the build itself when the total drops below the threshold.
+   New tests for new code are necessary but not sufficient either: if the run reports the overall
+   percentage under `{{COVERAGE_THRESHOLD}}%`, the gate fails and more tests are needed before
+   proceeding.
 5. **Code review** — run **all three** in parallel on this session's changes:
    - **5a. Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
      `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
@@ -81,10 +89,14 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 ---
 
 **Note for skill user**: Substitute `{{LINT_CMD}}`, `{{TYPECHECK_CMD}}`, `{{TEST_CMD}}`,
-`{{DEFAULT_BRANCH}}` from detection. Drop any gate whose tool is absent and renumber. If the project
-has no lint/typecheck/test tooling, keep only gates 5–6 (code review, docs & instructions alignment;
-renumbered 1–2) and append: *"No automated lint/typecheck/test gates were detected for this repo.
-Add them here when build tooling lands."*
+`{{COVERAGE_CMD}}`, `{{COVERAGE_THRESHOLD}}`, `{{DEFAULT_BRANCH}}` from detection. Drop any gate whose
+tool is absent and renumber. The quantitative coverage requirement in gate 4 is dropped alongside the
+test gate when no test framework/coverage tool exists — a repo with no tests has no coverage number
+to gate on. If the project has no lint/typecheck/test tooling, keep only gates 5–6 (code review, docs
+& instructions alignment; renumbered 1–2) and append: *"No automated lint/typecheck/test gates were
+detected for this repo. Add them here when build tooling lands."* If a source repo has a test
+framework but no coverage tooling, the skill wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is
+chosen — see `references/test-setup.md`.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.4), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

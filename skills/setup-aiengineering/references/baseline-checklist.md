@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v1**
+**Skill version: v2**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -20,6 +20,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Stack detection (package manager, lint/typecheck/test, default branch) | detect | 2 | v1 |
 | Backfill grounded body for working repos (opt-in) | scaffold | 3 | v1 |
 | Verification protocol (lint, typecheck, test, coverage) | inject | 5 | v1 |
+| Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt | inject | 5 | v2 |
 | Code review lens 5a — harness-native | inject | 5 | v1 |
 | Code review lens 5b — CodeRabbit CLI | inject | 5 | v1 |
 | Code review lens 5c — nuclear structural (optional) | inject | 5 | v1 |

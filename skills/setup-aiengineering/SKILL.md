@@ -18,7 +18,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 
 | Module | Delivery |
 |--------|----------|
-| Verification protocol (lint → typecheck → test → coverage → code review → docs alignment) | inject (`references/verification-protocol.md`) |
+| Verification protocol (lint → typecheck → test → coverage ≥90% → code review → docs alignment) | inject (`references/verification-protocol.md`; no-framework branch → `references/test-setup.md`) |
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
@@ -59,11 +59,16 @@ Detect, read-only:
 - **Package manager** — `pnpm-lock.yaml`→pnpm, `yarn.lock`→yarn, `package-lock.json`→npm.
 - **Lint / typecheck / test commands** — per the detection table in
   `references/verification-protocol.md` (each gate independent; some or all may be absent).
+- **Coverage command** (`{{COVERAGE_CMD}}`) — per the detection table in
+  `references/verification-protocol.md` (the test runner's coverage mode with a fail-under threshold).
+- **Test framework present at all?** — whether the repo has any test runner. **Source code but no
+  test framework** is the trigger for the Step 5 no-framework branch (ask the user to set one up).
+  A **config/no-source repo** means the test + coverage gates are N/A.
 - **Default branch** — `git symbolic-ref --short refs/remotes/origin/HEAD` (strip `origin/`), else
   `git branch --show-current`, else `main`.
 
 If no lint/typecheck/test tool exists at all (e.g. a Docker-config repo), note that the verification
-module will degrade to code-review-only.
+module will degrade to code-review-only and the test + coverage gates are N/A.
 
 ### Step 3: Backfill from implementation (working repos — prompt the user)
 
@@ -81,7 +86,14 @@ Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 Present the eight modules and let the user pick per project. Seven default to selected —
 deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
 wants PRD-first enforcement. If the repo has no build tooling, flag the verification module as
-degraded and let them keep or skip it. Flag the **worktree auto-bootstrap** module as Claude-Code-only
+degraded and let them keep or skip it.
+
+On repos with source code the verification module now includes a required overall-repo coverage gate
+(default ≥90%, user-adjustable) alongside the test gate — no separate checkbox, it rides with the
+verification module. On a config/no-source repo the test + coverage portion is N/A (the module
+degrades to code-review-only, same as the test gate does today).
+
+Flag the **worktree auto-bootstrap** module as Claude-Code-only
 (it scaffolds a `.claude/settings.json` hook and a `.worktreeinclude`); on any other host it will be
 skipped in Step 7 regardless of selection.
 
@@ -92,9 +104,23 @@ For each chosen inject module (verification, git policy, file organization, PRD 
 2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool and
    renumber** (verification only).
    - **Validate before writing.** A wrong-detected command ships silently into a mandatory gate.
-     Echo the exact resolved commands (lint / typecheck / test) and have the user confirm they are
-     right. Optionally dry-run the fast, non-mutating gates (lint, typecheck) to catch a bad command
-     — **never auto-run the test command** during setup. Drop or flag any command that errors.
+     Echo the exact resolved commands (lint / typecheck / test / coverage) and have the user confirm
+     they are right. Optionally dry-run the fast, non-mutating gates (lint, typecheck) to catch a bad
+     command — **never auto-run the test or coverage command** during setup. Drop or flag any command
+     that errors.
+   - **Coverage gate (source repos).** Substitute `{{COVERAGE_CMD}}` and `{{COVERAGE_THRESHOLD}}`
+     alongside the lint/typecheck/test placeholders. Prompt the user to confirm or adjust the
+     threshold (**default 90**) and echo the resolved coverage command for confirmation like the
+     others — a repo's current coverage may be below the threshold, that is fine. Then branch:
+     - **Source repo WITH a test framework** → wire `{{COVERAGE_CMD}}` + `{{COVERAGE_THRESHOLD}}`
+       (the runner's fail-under mechanism, scope = overall repository %) into the injected
+       verification block.
+     - **Source repo WITHOUT a test framework** → follow `references/test-setup.md`: ask the user
+       which runner + coverage tool to adopt, scaffold minimal config (**confirm before writing**),
+       emit the install command for the user to run (**never install**), then wire `{{COVERAGE_CMD}}`
+       + `{{COVERAGE_THRESHOLD}}`.
+     - **Config/no-source repo** → drop the test + coverage gates and renumber, exactly as the
+       existing no-tool degradation above already says.
 3. Append the `##` section to the target file. If its heading already exists, **ask** before
    replacing — never silently duplicate.
 4. **Provenance note (once, versioned).** Above the first injected policy `##` section, add a single
@@ -174,6 +200,9 @@ Confirm in one short message:
   added or refreshed.
 - Policy modules injected (with which gates were dropped for missing tools), and that the detected
   lint/typecheck/test commands were confirmed with the user.
+- Coverage gate: whether it was wired (with the chosen `{{COVERAGE_THRESHOLD}}` and `{{COVERAGE_CMD}}`),
+  or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that it was
+  N/A (config/no-source repo).
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
@@ -222,8 +251,14 @@ suggestion only; the user runs it.
   `.claude/CLAUDE.md`). If none, create `AGENTS.md` and symlink `CLAUDE.md → AGENTS.md`. Never
   overwrite a real `CLAUDE.md` with a symlink.
 - Never inject an empty or guessed command — drop the gate instead. Confirm the detected
-  lint/typecheck/test commands with the user before they ship into a mandatory gate; never auto-run
-  the test command during setup.
+  lint/typecheck/test/coverage commands with the user before they ship into a mandatory gate; never
+  auto-run the test or coverage command during setup.
+- Coverage threshold is user-adjustable (default 90) and enforced overall via the runner's fail-under
+  mechanism (scope = overall repository %). A repo's current coverage may be below it — that is fine.
+- Never auto-install test dependencies. When a source repo has no test framework, offer to set one up
+  via `references/test-setup.md` (ask for a runner + coverage tool, scaffold minimal config, emit the
+  install command for the user to run) rather than silently dropping coverage; a config/no-source repo
+  makes the test + coverage gates N/A.
 - Never duplicate a `##` section — detect the heading and ask before replacing.
 - Stamp one visible italic provenance note above the injected policy sections naming the
   `setup-aiengineering` skill, stamping the current **Skill version** (from `baseline-checklist.md`),
@@ -254,7 +289,10 @@ suggestion only; the user runs it.
 
 ## References
 
-- `references/verification-protocol.md` — verification block + stack-detection table + placeholders.
+- `references/verification-protocol.md` — verification block + stack-detection table + placeholders
+  (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`).
+- `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
+  scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.
 - `references/file-organization.md` — file organization block.
 - `references/prd-gate.md` — PRD-gate policy block (opt-in; require a PRD before substantial features).

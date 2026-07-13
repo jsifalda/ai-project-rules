@@ -57,12 +57,19 @@ Formula: emotional promise + rational delivery.
 - Match ICP demographics
 - Position right before pricing
 
-## 9. About
+## 9. Vision / Manifesto
+- The bigger change / movement the product is part of — world- or category-level, beyond one user's Point B
+- Ties the reader's personal transformation to that larger purpose ("you + us → this future")
+- Short: 1 aspirational headline + 2–3 belief lines
+- Grounded belief, not hype — no "we are passionate about…" fluff (see anti-patterns)
+- Visual note: aspirational future-state image
+
+## 10. About
 - 2–3 short storytelling paragraphs + founder face note
 - What you've built before
 - Press / community mentions
 
-## 10. Pricing
+## 11. Pricing
 - 2–3 plans: downsell · main (highlighted "Most popular") · upsell
 - Anchor the main plan visually
 - 3–5 plan bullets, benefit-led
@@ -73,18 +80,18 @@ Formula: emotional promise + rational delivery.
 - CTA under every plan
 - Default: no refund guarantee
 
-## 11. FAQ
+## 12. FAQ
 - 5–7 conversion-blocking objections
 - Order: setup → billing → support → safety
 - Straightforward, no BS
 - Include safety questions (cancel, trial, guarantee if offered)
 
-## 12. Final CTA
+## 13. Final CTA
 - Repeat the core promise (one line)
 - Big CTA — same label as hero/pricing CTAs
 - Optional micro-proof line under button
 
-## 13. Footer
+## 14. Footer
 - Simple nav (legal, contact, support)
 - Trust badges / certifications
 - Repeated CTA

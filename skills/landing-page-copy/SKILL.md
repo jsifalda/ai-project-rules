@@ -11,8 +11,11 @@ Turn a short product description into a complete, conversion-focused landing pag
 
 1. **Read the input**. Extract whatever is already given.
 2. **Map to schema**. See [references/input-schema.md](references/input-schema.md) for required vs optional fields.
-3. **Ask one question at a time** for each missing *required* field, in the order listed in the schema. Do not batch. Do not proceed until all required fields are answered.
-4. **Apply smart defaults** for missing *optional* fields and flag them inline in the output as `> ⚠️ assumed:` notes the user can revise.
+3. **Clarify gate — do not generate until it passes.** Confirm nothing needed is missing before writing a single line of copy:
+   - **Ask one question at a time** for each missing *required* field, in the order listed in the schema. Do not batch. Do not proceed until all required fields are answered.
+   - **Ask for the `vision`** — the bigger mission, the change the product is part of beyond the individual user's Point B. If the user has none, offer to draft one with the `create-product-vision` skill, or proceed with a default derived from `transformation` + `one_line_pitch` and flag it inline. Never block on vision.
+   - **Confirm the structure-changing optional flags** (`icp_technicality`, `offer_guarantee`, `urgency_basis`) with a single yes/no each, only when the answer would change output.
+4. **Apply smart defaults** for the remaining missing *optional* fields and flag them inline in the output as `> ⚠️ assumed:` notes the user can revise.
 5. **Generate the page** by filling [assets/output-template.md](assets/output-template.md), guided by [references/blueprint.md](references/blueprint.md).
 6. **Apply copy rules** from [references/copy-rules.md](references/copy-rules.md) — voice, anti-patterns, conflict-resolution defaults.
 7. **Run the self-check** (5 questions in copy-rules.md). If any section fails, rewrite that section once before returning.
@@ -31,14 +34,14 @@ Required (skill blocks until provided):
 - `pricing_model` + `price_points`
 
 Optional (defaults applied + flagged):
-- `founder_story`, `testimonials`, `trust_logos`, `icp_technicality`, `offer_guarantee`, `urgency_basis`
+- `vision` (the bigger mission — always asked, since it adds a section), `founder_story`, `testimonials`, `trust_logos`, `icp_technicality`, `offer_guarantee`, `urgency_basis`
 
 Full prompts and defaults: [references/input-schema.md](references/input-schema.md).
 
 ## Output
 
 Markdown only. Sections in order:
-Navbar · Hero · Trust Logos · Problem · How It Works · Features · Benefits Recap · Testimonials · About · Pricing · FAQ · Final CTA · Footer.
+Navbar · Hero · Trust Logos · Problem · How It Works · Features · Benefits Recap · Testimonials · Vision · About · Pricing · FAQ · Final CTA · Footer.
 
 Section requirements: [references/blueprint.md](references/blueprint.md).
 Skeleton: [assets/output-template.md](assets/output-template.md).

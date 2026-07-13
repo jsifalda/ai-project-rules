@@ -105,6 +105,17 @@
 
 ---
 
+## {{vision_headline}}
+
+{{vision_statement}}
+
+- {{vision_belief_1}}
+- {{vision_belief_2}}
+
+> Visual: {{vision_visual_note}}
+
+---
+
 ## Why I Built This
 
 {{founder_story_paragraph_1}}

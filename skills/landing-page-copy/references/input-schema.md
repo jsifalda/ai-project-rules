@@ -21,6 +21,7 @@ If the user's initial product description already answers some of these, **skip 
 
 | Field | Default if missing | Inline flag |
 |---|---|---|
+| `vision` | One-line vision derived from `transformation` + `one_line_pitch` (the bigger change this points toward) | `> ⚠️ assumed vision — replace with your real mission, or run create-product-vision to draft one` |
 | `founder_story` | Generic "built it because I lived this problem" placeholder | `> ⚠️ assumed founder story — replace with your real "why"` |
 | `testimonials` | 5 placeholder cards `[Name, Role]` with templated specific-outcome quotes | `> ⚠️ placeholders — swap in real quotes ASAP` |
 | `trust_logos` | Generic "Trusted by 500+ teams" line + logo slots | `> ⚠️ placeholder — add real logos / press mentions` |
@@ -30,7 +31,10 @@ If the user's initial product description already answers some of these, **skip 
 
 ## Order of Operations
 
+This is the **clarify gate** — nothing gets generated until it passes.
+
 1. Parse what's already given.
 2. Walk fields 1→8. For each missing one: ask, wait, restate.
-3. Confirm optional fields with a single yes/no per field *only if* the answer would change output structure (e.g. "Is your ICP technical?" / "Do you offer a money-back guarantee?" / "Any authentic scarcity to use — limited seats, launch window, cohort close?").
-4. Generate.
+3. Ask for `vision` — "What's the bigger mission here? The change you want to be part of, beyond what one user gets." If the user has none, offer to draft one with the `create-product-vision` skill, or proceed with the default (derived from `transformation` + `one_line_pitch`) and flag it inline. Never block on vision.
+4. Confirm optional fields with a single yes/no per field *only if* the answer would change output structure (e.g. "Is your ICP technical?" / "Do you offer a money-back guarantee?" / "Any authentic scarcity to use — limited seats, launch window, cohort close?").
+5. Generate.

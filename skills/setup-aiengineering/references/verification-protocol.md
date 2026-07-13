@@ -44,7 +44,7 @@ says otherwise.
    paths, empty/invalid inputs). Updating existing mocks is necessary but **not** sufficient — new
    logic needs dedicated tests. Exempt: pure type-only files, generated code, trivial re-exports,
    config.
-5. **Code review** — run **both** in parallel on this session's changes:
+5. **Code review** — run **all three** in parallel on this session's changes:
    - **5a. Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
      `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
      bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
@@ -58,7 +58,15 @@ says otherwise.
        `info` → do **not** auto-apply; list them for the user (file:line + suggested fix).
      - **Re-review budget** — at most one extra `cr review` after auto-fixes; further loops need user
        approval (each costs credits).
-   - **Merge** — deduplicate findings across 5a and 5b, present one combined "Code review findings"
+   - **5c. Nuclear structural review** — if the `code-review-nuclear` skill is available, spawn a
+     subagent that runs it on this session's diff (Claude Code: `Task`/`Agent` tool → a subagent
+     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
+     maintainability "code judo" only — NOT correctness, security, tests, or lint (5a and gates 1–4
+     cover those). Surface its findings for the user; never auto-apply. If the skill isn't
+     available, **tell the user and skip 5c** — label it `skipped (nuclear review unavailable)`;
+     never skip silently.
+   - **Merge** — wait for all three (5a, 5b, 5c) to finish — a `skipped` 5b or 5c still counts as
+     done — then deduplicate findings across them and present one combined "Code review findings"
      section.
 6. **Docs & instructions alignment** — before marking the task done, check whether this session's
    changes made any documentation stale:

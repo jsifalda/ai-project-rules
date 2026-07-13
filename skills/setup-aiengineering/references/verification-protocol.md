@@ -85,3 +85,9 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 has no lint/typecheck/test tooling, keep only gates 5–6 (code review, docs & instructions alignment;
 renumbered 1–2) and append: *"No automated lint/typecheck/test gates were detected for this repo.
 Add them here when build tooling lands."*
+
+**Version / drift.** This block's version is recorded by the versioned provenance note the skill
+stamps (SKILL.md Step 5.4), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step
+1), when the stamped version is older than the current **Skill version**
+(`references/baseline-checklist.md`), refresh a drifted injected block by diffing it against this
+current template — diff-and-ask, preserve local edits, never clobber.

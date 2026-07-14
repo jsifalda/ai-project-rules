@@ -80,8 +80,6 @@ says otherwise.
    changes made any documentation stale:
    - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale
      docs are part of the change, like a failing test: update them now and list what was updated.
-     In `README.md` specifically, check the goal statement still describes what the project does and
-     that the `## Documentation` index links every doc this change added.
    - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
      updated wording and **ask the user** before applying. Never silently edit instruction files.
    - Nothing stale → say so explicitly in one line; do not invent updates.

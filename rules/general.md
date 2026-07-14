@@ -51,6 +51,13 @@ type: "always_apply"
 - **Prefer no-install paths first:** before treating anything as "needed," check whether a tool already available does the job — e.g. the native `Read` tool reads PDFs directly (no `poppler`/`pypdf`), plus built-in CLIs, `git`, and the `node`/`python` stdlib. Only when none works do you reach the ask-first step below. Default is to install nothing.
 - **Ask-first protocol (any package, library, or binary):** if something — a binary (e.g. `docker`, `glab`, `gh`, `kubectl`, `terraform`) OR a one-off library (e.g. `pypdf` to read a PDF) — is genuinely needed to finish the job and is not already present, **STOP and ask the user in chat first**. State: (1) what, (2) why it is needed, (3) the suggested install command. **On the user's explicit approval, run that one specific install command** (and only that one).
 
+# SECRETS & ENV FILES
+
+- NEVER open — read / `cat` / `grep` / `source` / edit — global env, shell-config, or credential files: `~/.zshenv`, `~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, `~/.profile`, `~/.netrc`, `~/.npmrc`, `~/.aws/credentials`, `~/.ssh/*`, `~/.config/**/credentials*`, any `.env*`. Listing names (`ls`) is fine. **Overrides `# READING FILES`.**
+- NEVER print a secret value (key, token, password, connection string) to the transcript — from ANY source: env files, `printenv`/`env`, keychain, MCP responses, logs, error dumps. No masked/partial values either — a `sk-ant-abc…` prefix still leaks entropy and shape. **Why:** anything read is in the transcript; the transcript is not a secret store.
+- Presence-check, never value-check: `[ -n "$FOO" ] && echo set`. Names only: `env | cut -d= -f1`.
+- Need a global env file changed → STOP, hand the user the exact line to add themselves (ask-first, same shape as installs in `# RESTRICTIONS`).
+
 # READING FILES
 
 - always read the file in full, do not be lazy

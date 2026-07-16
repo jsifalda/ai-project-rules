@@ -77,7 +77,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`json-canvas`](skills/json-canvas/SKILL.md) | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. | — |
 | [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Generate high-converting landing page copy in markdown from a short product description. | `create-product-vision` |
 | [`landing-page-gap-analyzer`](skills/landing-page-gap-analyzer/SKILL.md) | Audit landing page copy against a 13-section conversion blueprint and return a scored gap report. | `defuddle` |
-| [`landing-page-viral-grill`](skills/landing-page-viral-grill/SKILL.md) | Audit a landing page for shareability against a 28-criterion rubric, return a gap report, and propose a remediation plan. | `grill-me`, `defuddle` |
+| [`landing-page-viral-grill`](skills/landing-page-viral-grill/SKILL.md) | Audit a landing page against a viral checklist file, one verdict per check, then grill the gaps and plan the fixes. | `grill-me`, `defuddle` |
 | [`markdown`](skills/markdown/SKILL.md) | Create, refine, or convert content into strictly formatted, export-ready Markdown. | — |
 | [`microsoft-clarity`](skills/microsoft-clarity/SKILL.md) | Add Microsoft Clarity analytics (heatmaps, session recordings) to a Next.js app. | — |
 | [`nextjs-ga-tracking`](skills/nextjs-ga-tracking/SKILL.md) | Add GA4 tracking with GDPR-compliant Silktide cookie consent to a Next.js project. | — |

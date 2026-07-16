@@ -52,7 +52,7 @@ says otherwise.
    New tests for new code are necessary but not sufficient either: if the run reports the overall
    percentage under `{{COVERAGE_THRESHOLD}}%`, the gate fails and more tests are needed before
    proceeding.
-5. **Code review** — run **all three** in parallel on this session's changes:
+5. **Code review** — run **every lens below** in parallel on this session's changes:
    - **5a. Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
      `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
      bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
@@ -73,9 +73,18 @@ says otherwise.
      cover those). Surface its findings for the user; never auto-apply. If the skill isn't
      available, **tell the user and skip 5c** — label it `skipped (nuclear review unavailable)`;
      never skip silently.
-   - **Merge** — wait for all three (5a, 5b, 5c) to finish — a `skipped` 5b or 5c still counts as
-     done — then deduplicate findings across them and present one combined "Code review findings"
-     section.
+   - **5d. Security review** — if your harness provides a security-review capability (Claude Code:
+     the built-in `/security-review` skill; Copilot CLI: its built-in security review), spawn a
+     subagent that runs it against `{{DEFAULT_BRANCH}}...HEAD`. Vulnerability classes only —
+     injection, XSS, SSRF, hardcoded secrets, IDOR, auth bypass, unsafe deserialization, and path
+     traversal. Structural and correctness concerns belong to 5a and 5c, not here.
+     - **Triage** — `critical`/`major` → auto-apply the fix, then re-run gates 1–3.
+       `minor`/`trivial`/`info` → do **not** auto-apply; list them for the user (file:line +
+       suggested fix).
+     - If your harness provides no security-review capability, **tell the user and skip 5d** —
+       label it `skipped (security review unavailable)`; never skip silently.
+   - **Merge** — wait for **every lens** to finish — a `skipped` lens still counts as done — then
+     deduplicate findings across them and present one combined "Code review findings" section.
 6. **Docs & instructions alignment** — before marking the task done, check whether this session's
    changes made any documentation stale:
    - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale
@@ -96,7 +105,9 @@ to gate on. If the project has no lint/typecheck/test tooling, keep only gates 5
 & instructions alignment; renumbered 1–2) and append: *"No automated lint/typecheck/test gates were
 detected for this repo. Add them here when build tooling lands."* If a source repo has a test
 framework but no coverage tooling, the skill wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is
-chosen — see `references/test-setup.md`.
+chosen — see `references/test-setup.md`. Lens 5d ships only when the security review module is
+selected in Step 4; when it is not, omit the 5d bullet — gate 5's wording is count-agnostic, so no
+renumbering or count edit is needed.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.4), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

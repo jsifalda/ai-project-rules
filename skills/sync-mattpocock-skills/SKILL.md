@@ -66,7 +66,7 @@ The script derives the local directory from the **upstream** skill name. It has 
 
 **`grill-me` vs `grilling`.** Local `grill-me` carries the upstream `grilling` body verbatim (one question at a time, look up facts but always ask the user for decisions, don't act until shared understanding is confirmed). Only the frontmatter differs — `name: grill-me` and a description keeping the explicit `"grill me"` trigger, in place of upstream's vaguer `'grill' trigger phrases`.
 
-The name is load-bearing, not cosmetic. Other skills in this repo declare a dependency on `grill-me` by that exact name, so renaming the directory to `grilling` would silently break them.
+The name is load-bearing, not cosmetic. `better-plan` and `prd-creator` both declare a dependency on `grill-me` by that exact name (see the `Depends on` column in `README.md`), so renaming the directory to `grilling` would silently break both. Re-check that column before touching the name — the dependent set may have grown.
 
 Therefore:
 

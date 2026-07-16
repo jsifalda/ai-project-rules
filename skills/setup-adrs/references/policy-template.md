@@ -12,6 +12,26 @@ Record meaningful technical decisions as ADRs in `docs/adr/`. ADRs inject judgme
 future agents read them, stay true to past choices, and supersede what's stale — instead of
 re-deriving the same reasoning each time.
 
+### Read the ADRs before you plan
+
+ADRs only pay off if they get read. **Before starting any implementation plan:**
+
+1. Read `ARCHITECTURE.md`. It is the current-state recap of every cross-cutting decision.
+2. Scan the filenames in `docs/adr/`. The slugs are the index. Open the ADRs that touch the
+   area you are about to change, plus any ADR that `ARCHITECTURE.md` links from the sections
+   you are touching.
+
+Open the ADR itself, not just the recap, when you need the *why*. The recap tells you what the
+current state is. The ADR tells you which alternatives were discarded and on what grounds,
+which is what stops you proposing one of them again.
+
+A plan that contradicts an accepted ADR without superseding it is a bug. If the ADR is
+genuinely stale, say so and supersede it (see *How to create one*). Never silently work
+around it.
+
+Tiered on purpose, not "read every ADR": ADR count grows without a cap, and `ARCHITECTURE.md`
+was built to spare exactly that read.
+
 ### When to create an ADR
 
 Create one when the decision is worth remembering the next time a similar problem comes up —
@@ -37,6 +57,9 @@ novelty of the decision, not the size of the ticket. When in doubt, skip the noi
 
 1. Copy `docs/adr/0000-template.md` → `docs/adr/NNNN-short-slug.md`, where `NNNN` is the next
    zero-padded sequential number and the slug is a 2–5 word kebab-case summary.
+   Re-check `docs/adr/` against the default branch when you land the change. Two branches that
+   each took "the next number" in parallel will both claim it. If the number is already taken on
+   the default branch, renumber the ADR with fewer inbound links and fix those links.
 2. Fill in Context (why), Decision (what), Options considered (incl. discarded + why),
    Consequences, and Supersedes/Superseded-by.
 3. Set Status (Proposed → Accepted). If it replaces an older ADR, mark that one
@@ -55,5 +78,6 @@ Individual ADRs hold the *why* and the discarded options; `ARCHITECTURE.md` hold
 ---
 
 **Note for skill user**: If the project does not want the recap doc, drop the
-`### Recap doc (ARCHITECTURE.md)` subsection. If the ADR directory is not `docs/adr/`,
-substitute the chosen path in every reference above.
+`### Recap doc (ARCHITECTURE.md)` subsection and step 1 of `### Read the ADRs before you plan`
+(scanning `docs/adr/` stands alone). If the ADR directory is not `docs/adr/`, substitute the
+chosen path in every reference above.

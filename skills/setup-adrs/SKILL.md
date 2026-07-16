@@ -103,7 +103,7 @@ whether to replace or skip.
 
 **If the ADR directory is not `docs/adr/`**, substitute the chosen path everywhere in the
 policy before injecting. **If the user declined the recap doc**, drop the
-`### Recap doc (ARCHITECTURE.md)` subsection.
+`### Recap doc (ARCHITECTURE.md)` subsection and step 1 of `### Read the ADRs before you plan`.
 
 ### Step 6: Verify
 
@@ -123,6 +123,9 @@ independent of work size. Full criteria live in the policy template.
 **Filename**: `docs/adr/NNNN-short-slug.md`
 - `NNNN`: next zero-padded sequential number (ADRs cross-reference and supersede each other, so
   numbering is sequential, not timestamped)
+- Re-check `docs/adr/` against the default branch when you land the change — two branches that
+  each took "the next number" in parallel will both claim it. If it is already taken, renumber
+  the ADR with fewer inbound links and fix those links.
 - Slug: 2–5 word kebab-case (e.g. `0007-use-postgres-for-events`)
 
 **Status lifecycle**: Proposed → Accepted → Superseded by ADR-NNNN / Deprecated
@@ -133,6 +136,9 @@ independent of work size. Full criteria live in the policy template.
 ## Rules
 
 - Sequential numbering, never timestamps — ADRs reference each other by number.
+- Re-check the number against the default branch when landing an ADR — parallel branches each
+  taking "the next number" both claim it, which leaves references-by-number unresolvable.
+  Renumber the ADR with fewer inbound links and fix those links.
 - Never delete or rewrite an accepted ADR — supersede it with a new one and mark the old one.
 - Keep ADRs concise. Focus on **why** over how.
 - `ARCHITECTURE.md` holds only current state, derived from the ADRs — update it after an ADR

@@ -70,7 +70,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`frontend-design`](skills/frontend-design/SKILL.md) | Create distinctive, production-grade frontend UI that avoids generic AI aesthetics. | — |
 | [`generate-prd-tasks`](skills/generate-prd-tasks/SKILL.md) | Turn a PRD into a step-by-step developer task list (parent tasks + sub-tasks). | — |
 | [`goal-breakdown`](skills/goal-breakdown/SKILL.md) | Break a big finite goal into a sharp end state, ordered milestones (riskiest first), and one-day tasks with a single clear next action; re-plans as milestones complete. | — |
-| [`grill-me`](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan or design until reaching shared understanding. | — |
+| [`grill-me`](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan, design, or decision until reaching shared understanding, one question at a time. (body synced from `mattpocock/skills` `productivity/grilling`) | — |
 | [`handoff`](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to pick up. (synced from `mattpocock/skills`) | — |
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. | — |
 | [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the session on two lenses (the product built and the craft behind it), scores angles against a resonance bar, and drafts the strongest build-in-public post (or declines when nothing clears it), tracking past angles to repeat one only on stronger evidence. | `write-like-human` |

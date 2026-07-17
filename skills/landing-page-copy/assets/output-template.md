@@ -3,6 +3,7 @@
 ## Navbar
 - Links: [Features] [Pricing] [FAQ] [Login]
 - CTA: [{{cta_label}}]
+> Sticky on scroll
 
 ---
 
@@ -25,10 +26,16 @@
 
 ---
 
+<!--
+Real logos only. No real logos means cut this section — an empty row of
+[logo] [logo] is scaffolding the user must delete, and it scores as absent.
+-->
+
 ## Trusted By
 
 {{trust_logos_line}}
 `[logo] [logo] [logo] [logo] [logo]`
+> Monochrome
 
 ---
 
@@ -86,25 +93,6 @@
 
 ---
 
-## Loved By {{audience_plural}}
-
-> "{{testimonial_1_quote}}"
-> — **[{{testimonial_1_name}}]**, [{{testimonial_1_role}}]
-
-> "{{testimonial_2_quote}}"
-> — **[{{testimonial_2_name}}]**, [{{testimonial_2_role}}]
-
-> "{{testimonial_3_quote}}"
-> — **[{{testimonial_3_name}}]**, [{{testimonial_3_role}}]
-
-> "{{testimonial_4_quote}}"
-> — **[{{testimonial_4_name}}]**, [{{testimonial_4_role}}]
-
-> "{{testimonial_5_quote}}"
-> — **[{{testimonial_5_name}}]**, [{{testimonial_5_role}}]
-
----
-
 ## {{vision_headline}}
 
 {{vision_statement}}
@@ -122,7 +110,33 @@
 
 {{founder_story_paragraph_2}}
 
-> Founder photo here. Previously: {{founder_credentials}}. As seen in: {{press_mentions}}.
+> Founder photo here. {{founder_name}} — previously: {{founder_credentials}}. As seen in: {{press_mentions}}.
+
+---
+
+<!--
+Testimonials sit HERE, directly before Pricing. Nothing goes between them —
+the adjacency is what eases purchase anxiety at the moment of decision.
+No real quotes? Cut this section. Five placeholder cards are scaffolding the
+user has to delete, and the blueprint scores them as absent, not as proof.
+-->
+
+## Loved By {{audience_plural}}
+
+> "{{testimonial_1_quote}}"
+> — **[{{testimonial_1_name}}]**, [{{testimonial_1_role}}]
+
+> "{{testimonial_2_quote}}"
+> — **[{{testimonial_2_name}}]**, [{{testimonial_2_role}}]
+
+> "{{testimonial_3_quote}}"
+> — **[{{testimonial_3_name}}]**, [{{testimonial_3_role}}]
+
+> "{{testimonial_4_quote}}"
+> — **[{{testimonial_4_name}}]**, [{{testimonial_4_role}}]
+
+> "{{testimonial_5_quote}}"
+> — **[{{testimonial_5_name}}]**, [{{testimonial_5_role}}]
 
 ---
 

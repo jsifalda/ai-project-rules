@@ -17,7 +17,8 @@ Run each check; abort immediately on failure.
 ```bash
 git rev-parse --is-inside-work-tree   # must print "true"
 git rev-parse --abbrev-ref HEAD       # must not be "HEAD" (detached)
-test ! -e .git/REBASE_HEAD && test ! -e .git/MERGE_HEAD && test ! -e .git/CHERRY_PICK_HEAD
+# resolve state files via git-path — inside a linked worktree .git is a file, not a dir
+test ! -e "$(git rev-parse --git-path REBASE_HEAD)" && test ! -e "$(git rev-parse --git-path MERGE_HEAD)" && test ! -e "$(git rev-parse --git-path CHERRY_PICK_HEAD)"
 git status --porcelain                 # must produce at least one line
 git remote get-url origin              # must succeed
 ```

@@ -75,8 +75,7 @@ The **Depends on** column lists other skills in this repo that the skill invokes
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. | — |
 | [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the session on two lenses (the product built and the craft behind it), scores angles against a resonance bar, and drafts the strongest build-in-public post (or declines when nothing clears it), tracking past angles to repeat one only on stronger evidence. | `write-like-human` |
 | [`json-canvas`](skills/json-canvas/SKILL.md) | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. | — |
-| [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Generate high-converting landing page copy in markdown from a short product description. | `create-product-vision` |
-| [`landing-page-gap-analyzer`](skills/landing-page-gap-analyzer/SKILL.md) | Audit landing page copy against a 13-section conversion blueprint and return a scored gap report. | `defuddle` |
+| [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Write a landing page from a product description, or improve an existing one (paste, file, or URL) — both driven by a scored loop over a 14-section conversion blueprint that rewrites what fails and re-scores until it converges. | `create-product-vision`, `defuddle` |
 | [`landing-page-viral-grill`](skills/landing-page-viral-grill/SKILL.md) | Audit a landing page against a viral checklist file, one verdict per check, then grill the gaps and plan the fixes. | `grill-me`, `defuddle` |
 | [`markdown`](skills/markdown/SKILL.md) | Create, refine, or convert content into strictly formatted, export-ready Markdown. | — |
 | [`microsoft-clarity`](skills/microsoft-clarity/SKILL.md) | Add Microsoft Clarity analytics (heatmaps, session recordings) to a Next.js app. | — |

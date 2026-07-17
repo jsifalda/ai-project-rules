@@ -32,7 +32,28 @@ These resolve contradictions in upstream advice. Override only when the input fl
 - Walls of text — break into bullets and short paragraphs
 - "We are passionate about…" About sections
 
-## Self-Check (run before returning)
+## The whole-page pass
+
+Criteria, not a procedure. The scoring loop in `SKILL.md` consumes these and owns all iteration — do not rewrite anything from here.
+
+**This pass is the only part of the loop that reads.** The per-section rubric counts parts: it can confirm Pricing has all seven of its must-haves and FAQ fields seven real objections, and still miss that the page never says what the free trial actually is. Structure passes, the reader still can't buy. Never skip this to save a step, and never treat the section scores as a verdict on the writing.
+
+Each round, check:
+
+1. The five reader questions below.
+2. Every row of the cross-section table in `blueprint.md` — CTA-label consistency, Testimonials adjacent to Pricing, Final CTA repeating the Hero promise, Benefits Recap not duplicating Features.
+3. `we` → `you`, superlatives, one-audience drift.
+4. Any blocked section that shipped placeholder scaffolding instead of being cut.
+5. The aftertaste.
+
+**A failing check drops each section it names by exactly 1, floor 0.** Not "to zero", not "by some amount" — one point, and name the sections explicitly. A vague magnitude here is worth several points of drift across a page and makes two honest scorers disagree on the total.
+
+**Exemption: a check that fails only because of a confirmed-missing fact does not drop the sections already capped for that fact.** Reader question 3 ("do people like me use this?") fails on a page with no testimonials — but Hero and Trust Logos are already capped for exactly that missing social proof, and docking them again is the double-punishment the whole blocking system exists to prevent. Report it as an ask, not a deduction. The exemption is narrow: it applies only when the *sole* cause is a fact the user confirmed they lack.
+
+**Item 4 is a rewrite instruction, not a deduction.** A blocked section is unscored, so no arithmetic can price its scaffolding. The remedy is that step 4 of the loop *cuts* it. Naming it here is what triggers the cut.
+
+## Reader Questions
+
 The finished page must clearly answer:
 1. Why should I care about this *right now*?
 2. What changes in my life after I use it?
@@ -40,9 +61,13 @@ The finished page must clearly answer:
 4. How will I use it day-to-day?
 5. Can I try it before I buy?
 
-If any answer is fuzzy, rewrite the relevant section (Hero, Problem, Testimonials, How It Works, or Pricing/FAQ) and check again. One rewrite pass max — don't loop forever.
+A fuzzy answer is a failed check. Name the sections it implicates (Hero, Problem, Testimonials, How It Works, Pricing/FAQ) and drop each one's score — the loop rewrites them.
 
-## Bonus Gut-Checks
+Good answers sound like *"saves me X hours/week"*, *"makes me $Y more"*, *"my peers use it"*.
+
+## Aftertaste
+
+The emotional residue after closing the page. One sentence, and it must be intentional — hopeful, urgent, or calm by choice, not by accident. Part of the whole-page pass.
+
 - Does the page sound like a human, or a brochure?
-- Is the *aftertaste* hopeful, urgent, calm — and intentional?
-- Could a competitor copy-paste this page and have it still ring true? If yes, sharpen the specifics.
+- Could a competitor copy-paste this page and have it still ring true? If yes, the specifics aren't sharp enough.

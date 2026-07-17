@@ -32,13 +32,12 @@ The hook script is the source of truth for the sync behaviour — read it direct
 
 ## Rules
 
-Three always-apply files under `rules/`. Each carries `type: "always_apply"` frontmatter so AI tools that respect that convention load them on every interaction.
+Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
 - `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style, git commit format.
-- `rules/builder.md` — defaults for spinning up new applications (tech stack picks, scaffolding flow, verification protocol).
-- `rules/design.md` — frontend design thinking and aesthetics guidelines (originally from the Anthropic `frontend-design` plugin).
+- `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
 
-`CLAUDE.md` mandates `rules/general.md` is loaded first, before anything else.
+`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill (see the Skills table).
 
 ## Skills
 

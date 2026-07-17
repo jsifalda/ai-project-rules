@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v4**
+**Skill version: v5**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -21,10 +21,11 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Backfill grounded body for working repos (opt-in) | scaffold | 3 | v1 |
 | Verification protocol (lint, typecheck, test, coverage) | inject | 5 | v1 |
 | Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt | inject | 5 | v2 |
-| Code review lens 5a — harness-native | inject | 5 | v1 |
-| Code review lens 5b — CodeRabbit CLI | inject | 5 | v1 |
-| Code review lens 5c — nuclear structural (optional) | inject | 5 | v1 |
-| Code review lens 5d — security review (default on, deselectable) | inject | 5 | v4 |
+| Regression test for bug fixes (test-first, three-way degradation) | inject | 5 | v5 |
+| Code review lens 6a — harness-native | inject | 5 | v1 |
+| Code review lens 6b — CodeRabbit CLI | inject | 5 | v1 |
+| Code review lens 6c — nuclear structural (optional) | inject | 5 | v1 |
+| Code review lens 6d — security review (default on, deselectable) | inject | 5 | v4 |
 | Docs & instructions alignment gate | inject | 5 | v1 |
 | Git policy | inject | 5 | v1 |
 | File organization | inject | 5 | v1 |

@@ -1,4 +1,4 @@
-# ADR-0001: Record architecture decisions
+# ADR: Record architecture decisions
 
 - Status: Accepted
 - Date: YYYY-MM-DD
@@ -12,7 +12,7 @@ past choices instead of re-deriving them.
 ## Decision
 
 We will use Architecture Decision Records (ADRs), as described in the project's ADR policy.
-Each meaningful technical decision gets a numbered record in `docs/adr/`, copied from
+Each meaningful technical decision gets a dated record in `docs/adr/`, copied from
 `docs/adr/0000-template.md`. A companion `ARCHITECTURE.md` recap doc keeps the current-state
 overview derived from these ADRs.
 

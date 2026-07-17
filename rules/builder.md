@@ -1,31 +1,29 @@
 ---
-type: "always_apply"
+description: How to pick an app-build stack task-first, with the current default tools as a footnote. Load when starting a new app, adding a feature, or choosing a stack.
 ---
 
-## New Applications
+## How to pick a stack (task-first, challenge everything)
 
-**Goal:** Autonomously implement and deliver a visually appealing, substantially complete, and functional prototype. Utilize all tools at your disposal to implement the application.
+- The stack is never a given. Start from what THIS task actually needs, not from a favorite list.
+- Judge every choice on: problem constraints, expected scale, runtime/target platform, team + maintenance load, longevity, and cost. Pick the best fit for those.
+- If a better solution exists than the defaults below, say so and recommend it. Challenge the defaults ruthlessly, reason from first principles, never reach for one just because it is the default.
+- Existing repo → its established conventions win. Match what is already there instead of imposing this list.
 
-1. **Understand Requirements:** Analyze the user's request to identify core features, desired user experience (UX), visual aesthetic, application type/platform (web, mobile, desktop, CLI, library, 2D or 3D game), and explicit constraints. If critical information for initial planning is missing or ambiguous, ask concise, targeted clarification questions.
-2. **Propose Plan:** Formulate an internal development plan. Present a clear, concise, high-level summary to the user. This summary must effectively convey the application's type and core purpose, key technologies to be used, main features and how users will interact with them, and the general approach to the visual design and user experience (UX) with the intention of delivering something beautiful, modern, and polished, especially for UI-based applications. Ensure this information is presented in a structured and easily digestible manner.
+## Current defaults (starting bias only, override when the task says so)
 
-- When key technologies aren't specified, prefer the following:
-reactjs with typescript 
-- shadcn ui components with tailwind css
-- lucide lib for react-compatible icons
-- microsoft clarity for analytics
-- nextjs as server (hosted on vercel)
-- SWR lib for data fetching with nextjs, otherwise native “fetch” method
-- auth.js for authentication (nextauth.js when used with nextjs)
-- sentry for error tracking
-- jest for unit testing, together with playwright for integration tests (or simpley nodejs tests runner for api/server tests if possible)
-- eslint for static linting (with prettier)
-- husky "precommit" hooks (for linting etc)
-- resend for email sending (aka email provider)
-- Tauri if multi platforms/hybrid apps are needed (eg. mobile & desktop apps)
-- silktide consent manager for cookies banner 
-
-3. **User Approval:** Obtain user approval for the proposed plan.
-4. **Implementation:** Autonomously implement each feature and design element per the approved plan utilizing all available tools. When starting ensure you scaffold the application. Aim for full scope completion.
-5. **Verify:** Review work against the original request, the approved plan. Fix bugs, deviations, and all placeholders where feasible, or ensure placeholders are visually adequate for a prototype. Ensure styling, interactions, produce a high-quality, functional and beautiful prototype aligned with design goals. Finally, but MOST importantly, build the application and ensure there are no compile errors.
-6. **Solicit Feedback:** If still applicable, provide instructions on how to start the application and request user feedback on the prototype.
+* pnpm for dependencies (over yarn/npm)
+* React + TypeScript
+* shadcn/ui with Tailwind CSS
+* lucide for React-compatible icons
+* Microsoft Clarity for analytics (over GA)
+* Next.js as the server, hosted on Vercel
+* SWR for data fetching with Next.js, otherwise native fetch
+* Auth.js for auth (NextAuth.js with Next.js)
+* Sentry for error tracking
+* PostHog for product analytics
+* Jest for unit tests, Playwright for integration (Node.js test runner for API/server tests where simpler). Always set up coverage, aim ≥90%
+* ESLint + Prettier for linting
+* Husky pre-commit hooks (linting etc.)
+* Resend for email sending
+* Tauri when multi-platform/hybrid (mobile + desktop) is needed
+* Silktide consent manager for the cookie banner

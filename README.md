@@ -32,12 +32,12 @@ The hook script is the source of truth for the sync behaviour — read it direct
 
 ## Rules
 
-Two rule files under `rules/`, loaded via `CLAUDE.md`'s First Action. The `type: "always_apply"` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
+Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
 - `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style, git commit format.
-- `rules/builder.md` — defaults for spinning up new applications (tech stack picks, scaffolding flow, verification protocol).
+- `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
 
-`CLAUDE.md`'s First Action loads `rules/general.md` then `rules/builder.md`, before anything else. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill (see the Skills table).
+`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill (see the Skills table).
 
 ## Skills
 

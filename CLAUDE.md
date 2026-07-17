@@ -4,7 +4,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Repository Layout
 
-- `rules/` — rule files loaded via `CLAUDE.md`'s First Action (frontmatter `type: "always_apply"` is honored only by tools that name them): `general.md` (core), `builder.md` (new-app defaults). Frontend aesthetics live in the `frontend-design` skill.
+- `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session. `builder.md` (task-first stack guidance + default tools) loads on demand, only when a new-app build or stack/tooling choice is in play. Frontend aesthetics live in the `frontend-design` skill.
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).

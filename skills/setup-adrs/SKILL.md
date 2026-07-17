@@ -1,7 +1,7 @@
 ---
 name: setup-adrs
 disable-model-invocation: true
-description: Bootstrap an Architecture Decision Record (ADR) system in any project — creates an ADR directory with a template and a seed ADR-0001, scaffolds an ARCHITECTURE.md recap doc, and injects a when-to-create-an-ADR policy into AGENTS.md or CLAUDE.md. Use when setting up ADRs, adding architecture decision records, scaffolding ADR tracking, initializing decision logging, or the user mentions "setup adrs". Do NOT use to write or fill in a single ADR for one specific decision (just copy the template), to set up changelogs or PRDs, or to record non-architectural product decisions.
+description: Bootstrap an Architecture Decision Record (ADR) system in any project — creates an ADR directory with a template and a seed record ADR, scaffolds an ARCHITECTURE.md recap doc, and injects a when-to-create-an-ADR policy into AGENTS.md or CLAUDE.md. Use when setting up ADRs, adding architecture decision records, scaffolding ADR tracking, initializing decision logging, or the user mentions "setup adrs". Do NOT use to write or fill in a single ADR for one specific decision (just copy the template), to set up changelogs or PRDs, or to record non-architectural product decisions.
 ---
 
 # Setup ADRs
@@ -23,7 +23,7 @@ sessions read them, stay true to past choices, and supersede what's stale.
 
 Check the project for:
 1. An existing ADR directory — look for `docs/adr`, `doc/adr`, `adr`, `docs/architecture/decisions`. Reuse it if found; otherwise default to `docs/adr/`.
-2. The highest existing ADR number in that directory (to avoid clobbering `0001`).
+2. Whether an existing ADR directory uses **integer** (`NNNN-slug.md`) or **date-prefixed** (`YYYY-MM-DD-slug.md`) filenames. If it holds integer-numbered ADRs, offer conversion (Step 3b); if the user declines, keep appending in the existing integer scheme for that repo.
 3. An existing `ARCHITECTURE.md` at root.
 4. An existing agent-instructions file — `AGENTS.md`, `.claude/CLAUDE.md`, or `CLAUDE.md`.
 
@@ -36,14 +36,26 @@ mkdir -p docs/adr
 Copy `assets/adr-template.md` → `docs/adr/0000-template.md`. This `0000-template.md` is the
 file every future ADR is copied from. If the directory already has a `0000-template.md`, skip.
 
-### Step 3: Seed ADR-0001
+### Step 3: Seed the first ADR
 
-Copy `assets/0001-record-architecture-decisions.md` → `docs/adr/0001-record-architecture-decisions.md`
-and replace the `YYYY-MM-DD` Date placeholder with today's date. This is the classic first
-ADR recording the decision to use ADRs, so the directory isn't empty.
+Copy `assets/seed-record-architecture-decisions.md` → `docs/adr/<today>-record-architecture-decisions.md`
+(use today's date as the `YYYY-MM-DD` prefix) and replace the `YYYY-MM-DD` Date placeholder
+inside the file with the same date. This is the classic first ADR recording the decision to use
+ADRs, so the directory isn't empty.
 
-**Skip this step if any numbered ADR (`0001` or higher) already exists** — the project is
-already using ADRs.
+**Skip this step if any ADR already exists** — the project is already using ADRs.
+
+### Step 3b: Convert an existing integer scheme (only if the user accepted in Step 1)
+
+For each `NNNN-slug.md` ADR (leave `0000-template.md` as-is):
+1. Derive the date from the ADR's own `Date:` field. If it is missing or malformed, fall back to
+   the file's first git commit date (`git log --diff-filter=A --format=%ad --date=short -- <file>`).
+   If neither resolves, report the file and let the user set a date — do not guess.
+2. Rename `NNNN-slug.md` → `<date>-slug.md` (prefer `git mv` to preserve history).
+3. Rewrite every inbound reference across the repo: `ADR-NNNN` and any `NNNN-slug` link →
+   the new `<date>-slug` stem. Cover ADR bodies, `ARCHITECTURE.md`, and agent-instruction files.
+4. Build the old→new mapping first, then apply renames and rewrites together, and verify no
+   `ADR-\d` or bare `NNNN-` reference remains.
 
 ### Step 4: Scaffold the recap doc
 
@@ -109,7 +121,8 @@ policy before injecting. **If the user declined the recap doc**, drop the
 
 Confirm to the user:
 - ADR directory created at `docs/adr/` (or the reused path) with `0000-template.md`
-- Seed `0001-record-architecture-decisions.md` created (or skipped — already in use)
+- Seed `<today>-record-architecture-decisions.md` created (or skipped — already in use)
+- Existing integer ADRs converted to date-prefixed filenames (only if the user accepted)
 - `ARCHITECTURE.md` — drafted from the codebase, blank template, or left untouched (already existed)
 - Policy injected into `[target file]`; `CLAUDE.md → AGENTS.md` symlink created (if applicable)
 
@@ -120,25 +133,26 @@ with discarded alternatives, a new pattern/abstraction/dependency/direction, or 
 a past decision. Skip reused proven patterns and mechanical no-decision changes. Worthiness is
 independent of work size. Full criteria live in the policy template.
 
-**Filename**: `docs/adr/NNNN-short-slug.md`
-- `NNNN`: next zero-padded sequential number (ADRs cross-reference and supersede each other, so
-  numbering is sequential, not timestamped)
-- Re-check `docs/adr/` against the default branch when you land the change — two branches that
-  each took "the next number" in parallel will both claim it. If it is already taken, renumber
-  the ADR with fewer inbound links and fix those links.
-- Slug: 2–5 word kebab-case (e.g. `0007-use-postgres-for-events`)
+**Filename**: `docs/adr/YYYY-MM-DD-short-slug.md`
+- `YYYY-MM-DD`: the date the ADR is authored. It is the sort key and part of the ADR's identity.
+- Slug: 2–5 word kebab-case (e.g. `2026-07-18-use-postgres-for-events`). The date + slug is the
+  stable handle other ADRs reference and supersede by — so it must be unique and permanent.
+- The date prefix is **permanent once the ADR lands**. Never re-date a merged ADR — inbound
+  references point at the full `YYYY-MM-DD-slug` stem and would break. Supersede instead.
+- Two branches authoring in parallel pick different slugs, so they never collide on merge — no
+  renumbering, no re-checking the default branch.
 
-**Status lifecycle**: Proposed → Accepted → Superseded by ADR-NNNN / Deprecated
+**Status lifecycle**: Proposed → Accepted → Superseded by `YYYY-MM-DD-slug` / Deprecated
 
 **Content**: copy `0000-template.md` — Context (why), Decision (what), Options considered
 (incl. discarded + why), Consequences, Supersedes/Superseded-by.
 
 ## Rules
 
-- Sequential numbering, never timestamps — ADRs reference each other by number.
-- Re-check the number against the default branch when landing an ADR — parallel branches each
-  taking "the next number" both claim it, which leaves references-by-number unresolvable.
-  Renumber the ADR with fewer inbound links and fix those links.
+- Date-prefixed filenames (`YYYY-MM-DD-slug`) — ADRs reference each other by this stem, not by a
+  shared counter, so parallel branches never collide.
+- The date prefix is permanent once an ADR lands — supersede a stale ADR with a new one, never
+  re-date it, or inbound references break.
 - Never delete or rewrite an accepted ADR — supersede it with a new one and mark the old one.
 - Keep ADRs concise. Focus on **why** over how.
 - `ARCHITECTURE.md` holds only current state, derived from the ADRs — update it after an ADR
@@ -161,4 +175,4 @@ independent of work size. Full criteria live in the policy template.
 
 - `assets/adr-template.md` — copied into the project as `docs/adr/0000-template.md`
 - `assets/architecture-template.md` — copied into the project as `ARCHITECTURE.md`
-- `assets/0001-record-architecture-decisions.md` — copied as the seed first ADR (fill the Date)
+- `assets/seed-record-architecture-decisions.md` — copied as the seed first ADR, renamed to `<today>-record-architecture-decisions.md` (fill the Date)

@@ -15,7 +15,7 @@
 ## Cross-cutting decisions
 
 <Standing choices that shape the whole system (language, data store, auth, error handling),
-each linking the ADR that established it — see ADR-NNNN.>
+each linking the ADR that established it — see `YYYY-MM-DD-slug`.>
 
 ## Conventions
 

@@ -55,15 +55,15 @@ novelty of the decision, not the size of the ticket. When in doubt, skip the noi
 
 ### How to create one
 
-1. Copy `docs/adr/0000-template.md` → `docs/adr/NNNN-short-slug.md`, where `NNNN` is the next
-   zero-padded sequential number and the slug is a 2–5 word kebab-case summary.
-   Re-check `docs/adr/` against the default branch when you land the change. Two branches that
-   each took "the next number" in parallel will both claim it. If the number is already taken on
-   the default branch, renumber the ADR with fewer inbound links and fix those links.
+1. Copy `docs/adr/0000-template.md` → `docs/adr/YYYY-MM-DD-short-slug.md`, where `YYYY-MM-DD` is
+   today's date and the slug is a 2–5 word kebab-case summary. The `YYYY-MM-DD-slug` stem is the
+   ADR's permanent identity — other ADRs reference and supersede it by that stem.
+   Parallel branches pick different slugs, so they never collide on merge. Never re-date a merged
+   ADR — inbound references point at the full stem and would break.
 2. Fill in Context (why), Decision (what), Options considered (incl. discarded + why),
    Consequences, and Supersedes/Superseded-by.
 3. Set Status (Proposed → Accepted). If it replaces an older ADR, mark that one
-   `Superseded by ADR-NNNN`.
+   `Superseded by YYYY-MM-DD-slug` (the new ADR's stem).
 
 Keep it concise — **why** over how. Never delete an old ADR; supersede it.
 

@@ -1,6 +1,6 @@
-# ADR-NNNN: <short decision title>
+# ADR: <short decision title>
 
-- Status: Proposed | Accepted | Superseded by ADR-NNNN | Deprecated
+- Status: Proposed | Accepted | Superseded by YYYY-MM-DD-slug | Deprecated
 - Date: YYYY-MM-DD
 - Deciders: <who was involved> (optional)
 
@@ -25,5 +25,5 @@ that a future reader — human or AI — understands the situation without exter
 
 ## Supersedes / Superseded by
 
-<Link prior ADRs this replaces; when this one is later superseded, mark it and link the
-successor so the record stays consistent.>
+<Link prior ADRs this replaces by their `YYYY-MM-DD-slug` stem; when this one is later
+superseded, mark it and link the successor so the record stays consistent.>

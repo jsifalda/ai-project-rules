@@ -18,7 +18,7 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
 ## Conventions
 
 - **Skill files** follow the [agentskills.io](https://agentskills.io/specification) spec. Frontmatter requires at least `name` + `description`.
-- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing. The pre-commit hook runs the same validator on every staged `SKILL.md`. Two parser-strictness rules to know (both silently pass Claude Code but break Copilot CLI):
+- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Two parser-strictness rules to know (both silently pass Claude Code but break Copilot CLI):
   - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
   - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.

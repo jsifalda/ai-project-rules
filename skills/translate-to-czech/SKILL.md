@@ -1,5 +1,5 @@
 ---
-name: English to Czech Translator
+name: translate-to-czech
 description: Translate any english text to czech version of it, while maintaining its accuracy. Use only when you are asked to translate to czech.
 ---
 

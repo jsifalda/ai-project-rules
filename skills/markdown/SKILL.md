@@ -1,5 +1,5 @@
 ---
-name: Markdown Expert
+name: markdown
 description: Create/Refine/Convert any text or content into strictly formatted, export-ready Markdown
 ---
 

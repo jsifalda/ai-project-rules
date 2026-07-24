@@ -367,6 +367,8 @@ python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/
 
 `quick_validate.py` catches both pitfalls (PyYAML rejects `": "` with `mapping values are not allowed here` plus the offending column; the 1024 check is explicit). The repo's pre-commit hook also runs the validator on every staged `SKILL.md`, but running it manually during authoring gives a faster feedback loop.
 
+**Editing a shipped skill counts.** This class of break most often lands via an *edit* to an existing description weeks after creation, not at creation time — so re-run `quick_validate.py` after ANY change to `name` or `description`, on existing skills as well as new ones. Do not lean on the pre-commit hook to catch it: `core.hooksPath` is per-clone (active only after `bash scripts/install-hooks.sh`) and `git commit --no-verify` skips it, so an unvalidated edit can ship and only fail at load time in a stricter consumer like Copilot CLI.
+
 ###### Optional: `disable-model-invocation`
 
 Set `disable-model-invocation: true` to make a skill slash-only. It stays invocable through its `/command`, but Claude will not auto-trigger it from a description match. Reach for it when auto-firing on a loose natural-language match would be harmful or wasteful:

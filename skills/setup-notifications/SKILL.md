@@ -1,6 +1,6 @@
 ---
 name: setup-notifications
-description: Set up Claude Code push notifications via a webhook (e.g. n8n) so you get pinged when Claude needs your input or goes idle (optionally: also at the end of every turn). Use when the user says "notify me when the task is done", "send me a notification when Claude needs me", "set up notifications", or runs Claude Code in tmux / mobile SSH (Termius) where native notifications don't exist.
+description: Set up Claude Code push notifications via a webhook (e.g. n8n) so you get pinged when Claude needs your input or goes idle (optionally, also at the end of every turn). Use when the user says "notify me when the task is done", "send me a notification when Claude needs me", "set up notifications", or runs Claude Code in tmux / mobile SSH (Termius) where native notifications don't exist.
 ---
 
 # Setup notifications

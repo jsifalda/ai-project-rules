@@ -40,6 +40,10 @@ not two:
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
   A source repo with no tooling still keeps it as dormant prose; only a config / no-source repo drops
   it. Renumber whatever remains.
+- **Backlog sweep (gate 8)** has no stack signal at all — nothing here detects it from lint,
+  typecheck, or test tooling. It ships purely on whether the TODO-backlog module was selected at
+  setup, independent of stack. Selected → always gate 8, last in the list. Not selected → drop it,
+  no renumbering, since nothing follows it.
 
 ---
 
@@ -113,6 +117,16 @@ says otherwise.
    - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
      updated wording and **ask the user** before applying. Never silently edit instruction files.
    - Nothing stale → say so explicitly in one line; do not invent updates.
+8. **Backlog sweep** — run both halves of the sweep described in the `## TODO / Known issues`
+   section of the agent instructions: file what this session found and could not fix, and close the
+   entries it solved. **This gate overrides the markdown-only exemption above — it is the one gate
+   that survives it.** A defect can be found while reading, and a docs-only change can close a
+   docs-only entry, so the sweep runs on every substantive session, whether or not the session
+   touched code. **Closing an entry requires evidence the defect no longer reproduces** — a re-run,
+   a passing check, a confirmed absence — never close on "looks fixed". Report one line either way:
+   what was filed, what was closed, or that neither happened. **Ships only when the TODO-backlog
+   module was selected at setup**; when it was not selected, omit this gate entirely — it is last,
+   so omitting it renumbers nothing else.
 
 If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
 
@@ -136,7 +150,10 @@ build tooling lands."* If a
 source repo has a test framework but no coverage tooling, the skill wires `{{COVERAGE_THRESHOLD}}`
 once coverage tooling is chosen — see `references/test-setup.md`. Lens 6d ships only when the
 security review module is selected in Step 4; when it is not, omit the 6d bullet — gate 6's wording
-is count-agnostic, so no renumbering or count edit is needed.
+is count-agnostic, so no renumbering or count edit is needed. Gate 8 (Backlog sweep) follows the same
+pattern: it ships only when the TODO-backlog module is selected at setup, carries no `{{...}}`
+placeholder to substitute, and — being last — its omission when the module is not selected
+renumbers nothing else.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.4), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

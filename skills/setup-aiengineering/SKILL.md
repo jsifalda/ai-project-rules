@@ -26,6 +26,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) | delegate → `setup-user-scenarios` |
+| TODO backlog (known-issues list + two-way end-of-session sweep) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
 
 ## Workflow
@@ -84,10 +85,13 @@ Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 
 ### Step 4: Module menu
 
-Present the nine modules and let the user pick per project. Eight default to selected —
+Present the ten modules and let the user pick per project. Eight default to selected —
 deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
-wants PRD-first enforcement. If the repo has no build tooling, flag the verification module as
-degraded and let them keep or skip it.
+wants PRD-first enforcement. The **TODO backlog module is opt-in — default it OFF**, exactly like
+the PRD gate — select it only if the user wants a tracked known-issues backlog. Selecting it is
+also what enables the backlog sweep gate inside the verification module (gate 8), so choosing it
+with verification deselected is a no-op. If the repo has no build tooling, flag the verification
+module as degraded and let them keep or skip it.
 
 On repos with source code the verification module now includes a required overall-repo coverage gate
 (default ≥90%, user-adjustable) alongside the test gate — no separate checkbox, it rides with the
@@ -160,6 +164,7 @@ For each chosen doc-system module, invoke the dedicated skill against the same r
 - ADRs → `setup-adrs`
 - Changelog → `setup-changelog`
 - User scenarios → `setup-user-scenarios`
+- TODO backlog → `setup-todo-backlog`
 
 **Guard availability first (same pattern as review lens 6c).** Before invoking each delegated skill,
 confirm it is available on this machine. If it is, run it. If it is not, **tell the user and skip
@@ -230,6 +235,8 @@ Confirm in one short message:
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
+- TODO backlog delegated to `setup-todo-backlog`, or skipped since it is opt-in and was not
+  selected, or `skipped (setup-todo-backlog unavailable)`.
 - Worktree hook scaffolded (or skipped, or `N/A (host is not Claude Code)`).
 - `.worktreeinclude` created/updated (with which files, noting whether a gitignored `.mcp.json` was
   carried over — or, if absent, that the MCP-config reminder was added to the agent instructions),
@@ -331,6 +338,9 @@ it.
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
+- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`; its
+  verification gate 8 rides inside the verification module and is omitted when the backlog module
+  is not selected. Because gate 8 is last, omitting it renumbers nothing.
 - The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
   It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
   silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.
@@ -346,7 +356,8 @@ it.
 
 - `references/verification-protocol.md` — verification block + stack-detection table + placeholders
   (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`), plus the placeholder-free
-  regression-test-for-bug-fixes gate and its three-way degradation.
+  regression-test-for-bug-fixes gate and its three-way degradation, plus the conditional TODO-backlog
+  sweep gate (gate 8, included only when the TODO backlog module is selected).
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.

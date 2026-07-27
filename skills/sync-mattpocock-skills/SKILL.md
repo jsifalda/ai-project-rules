@@ -46,7 +46,7 @@ Any other upstream skill can be synced ad-hoc by name (e.g. `tdd`, `diagnosing-b
    bash scripts/sync.sh <name> --force
    ```
 
-4. **After a sync that created new skills** (this repo commits synced skills): for each new `skills/<name>/` dir, add a row to the `## Skills` table in `README.md`, then commit per the repo changelog convention.
+4. **After a sync that created new skills** (this repo commits synced skills): for each new `skills/<name>/` dir, add a row to the `## Skills` table in `README.md`, filling its `Origin` cell with a link to `https://github.com/mattpocock/skills` (the upstream repo root), then commit per the repo changelog convention.
 
 ## How re-sync decides (overwrite safety)
 

@@ -4,3 +4,5 @@ _tickets
 changelog.md
 scripts/universality-denylist.txt
 .claude/worktrees/
+.mcp.json
+.playwright-mcp

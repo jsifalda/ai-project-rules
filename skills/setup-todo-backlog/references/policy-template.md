@@ -61,8 +61,9 @@ mandatory.
 Resolved entries are never deleted. The entry is the record that the defect existed.
 
 - Move it to the `## Resolved` section at the bottom of `docs/TODO.md`, keeping its id.
-- Replace the status line with `**Status:** resolved YYYY-MM-DD.` plus one sentence on what
-  landed.
+- Replace the status line with exactly `**Status:** resolved YYYY-MM-DD` — no trailing period, no
+  appended sentence. The status line stays machine-readable.
+- Put what landed in the first bullet under it, not on the status line.
 - Collapse the body to the problem and what fixed it. Drop the evidence and the traps.
 - References from other entries keep working, because ids are stable and the heading moves with
   the entry.

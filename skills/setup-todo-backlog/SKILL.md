@@ -132,8 +132,14 @@ mapping first, apply renames and reference rewrites together, then verify.
      with no digit or letter immediately before or after it.
 
      ```bash
-     perl -pi -e "s/\\b\Q$old\E(?![0-9A-Za-z])/$new/g" "$f"
+     old="$old" new="$new" perl -pi -e 's/(?<![0-9A-Za-z])\Q$ENV{old}\E(?![0-9A-Za-z])/$ENV{new}/g' "$f"
      ```
+
+     Use a lookbehind, not `\b`. `\b` sits between a word and a non-word character, so it never
+     matches before the `#` of a `#12` handle — the rename becomes a silent no-op on exactly the
+     form Step 1 says is supported. Pass both values through the environment and single-quote the
+     program, so the shell never interpolates them into the `s///` and a handle containing a `/`
+     cannot break the delimiters.
 
    - **Flat items: rewrite the prose references too.** A flat item has no old handle, so the rule
      above never fires and the loose text quotes in docs and comments stay orphaned. Search the

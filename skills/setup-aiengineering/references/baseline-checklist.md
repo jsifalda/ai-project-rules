@@ -40,7 +40,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | GitHub App offer (Claude Code + GitHub only) | suggest | 9 | v1 |
 | Security-guidance plugin offer (Claude Code only) | suggest | 9b | v4 |
 | TODO backlog with two-way end-of-session sweep (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
-| Backlog sweep gate in the verification protocol (rides with the backlog module) | inject | 5 | v6 |
+| Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
 
 ## How the self-audit uses this (Step 8b)
 

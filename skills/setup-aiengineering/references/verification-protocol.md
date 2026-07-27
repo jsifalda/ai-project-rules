@@ -40,6 +40,16 @@ not two:
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
   A source repo with no tooling still keeps it as dormant prose; only a config / no-source repo drops
   it. Renumber whatever remains.
+- **Backlog sweep (gate 8)** has no stack signal at all — nothing here detects it from lint,
+  typecheck, or test tooling. It is independent of stack, and selection alone does not earn it:
+  the gate points at a `## TODO / Known issues` policy section that only `setup-todo-backlog`
+  installs. It ships **only after that delegation actually succeeded** (SKILL.md Step 6b), which is
+  why it is appended there rather than injected here with the rest of the block. Delegated
+  successfully → gate 8, last in the list. Not selected, or selected but the skill was
+  unavailable → no gate 8, and no renumbering, since nothing follows it.
+  **Gate 8's body below carries no meta-guidance** — every condition governing whether it ships
+  lives here and in the note at the bottom, so Step 6b can copy the gate verbatim into a repo
+  without leaking skill-authoring instructions into that repo's agent instructions.
 
 ---
 
@@ -113,6 +123,14 @@ says otherwise.
    - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
      updated wording and **ask the user** before applying. Never silently edit instruction files.
    - Nothing stale → say so explicitly in one line; do not invent updates.
+8. **Backlog sweep** — run both halves of the sweep described in the `## TODO / Known issues`
+   section of the agent instructions: file what this session found and could not fix, and close the
+   entries it solved. **This gate overrides the markdown-only exemption above — it is the one gate
+   that survives it.** A defect can be found while reading, and a docs-only change can close a
+   docs-only entry, so the sweep runs on every substantive session, whether or not the session
+   touched code. **Closing an entry requires evidence the defect no longer reproduces** — a re-run,
+   a passing check, a confirmed absence — never close on "looks fixed". Report one line either way:
+   what was filed, what was closed, or that neither happened.
 
 If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
 
@@ -136,10 +154,15 @@ build tooling lands."* If a
 source repo has a test framework but no coverage tooling, the skill wires `{{COVERAGE_THRESHOLD}}`
 once coverage tooling is chosen — see `references/test-setup.md`. Lens 6d ships only when the
 security review module is selected in Step 4; when it is not, omit the 6d bullet — gate 6's wording
-is count-agnostic, so no renumbering or count edit is needed.
+is count-agnostic, so no renumbering or count edit is needed. Gate 8 (Backlog sweep) is similar but
+strictly stronger: it carries no `{{...}}` placeholder either, but selection alone is not enough to
+ship it. Because it references the `## TODO / Known issues` policy that only `setup-todo-backlog`
+installs, it is **appended in SKILL.md Step 6b after that delegation succeeds** — do not inject it
+here with gates 1-7, or a repo whose delegation was skipped ends up with a mandatory gate pointing
+at a section that does not exist. Being last, its omission renumbers nothing else.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
-stamps (SKILL.md Step 5.4), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step
+stamps (SKILL.md Step 5.6), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step
 1), when the stamped version is older than the current **Skill version**
 (`references/baseline-checklist.md`), refresh a drifted injected block by diffing it against this
 current template — diff-and-ask, preserve local edits, never clobber.

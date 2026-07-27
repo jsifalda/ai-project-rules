@@ -1,6 +1,7 @@
 ---
 name: create-implementation-plan
 description: Generate a concise, machine‑friendly implementation-plan template for engineering work. Use to produce structured, auditable plans humans or agents can follow.
+disable-model-invocation: true
 ---
 
 Summary

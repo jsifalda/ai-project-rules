@@ -36,6 +36,7 @@ Pulls the latest versions of Obsidian-related skills from [kepano/obsidian-skill
    ```
 2. Check exit code and output for errors
 3. Report which skills were synced and any issues
+4. If this sync created a skill not yet listed in README.md's `## Skills` table, add a row for it — link its `Origin` cell to `https://github.com/kepano/obsidian-skills` (the upstream repo root) — then commit per the repo changelog convention. For already-listed skills, confirm their `Origin` cell already links there.
 
 ## Configuration
 

@@ -48,14 +48,18 @@ Repeat per URL:
 
 ## Verifying indexing
 
-- **Brave ignores the `site:` operator.** A `site:example.com` query answers with "search operators
-  were not applied" and "Too few matches were found". That output carries no information about
-  whether the site is indexed. Do not read it as a failure.
-- Query the bare domain as plain text (`example.com`) and look for the domain's own page among the
-  results. Third-party pages that merely mention the domain do not count.
+- Check with a `site:example.com` query on Brave. Indexed answers with a "Only showing results from
+  example.com" filter chip above real results from the domain.
+- Not indexed answers with "search operators were not applied" and "Too few matches were found".
+  That is Brave's fallback when the filtered query returns zero hits, so read it as not indexed yet.
+  The operator is supported and did run.
+- Do not fall back to querying the bare domain as plain text. It ranks lookalike domains and
+  third-party mentions, neither of which says anything about the target site.
 - Crawling takes days to weeks. An empty result minutes after submitting is the expected state.
   Report it as pending and stop. Do not resubmit on a loop, and do not wait for the index inside the
   same session.
+- Brave's crawler sends no distinctive user agent, so server logs cannot confirm its visit. It also
+  skips whatever Googlebot is blocked from, making Googlebot-crawlability a precondition.
 
 ## Gotchas
 

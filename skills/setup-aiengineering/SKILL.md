@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap a project's AI-engineering best practices in any repo — injects genericized agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, and setup-user-scenarios skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", "apply my engineering standards here", "bootstrap agent instructions", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -25,7 +25,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
-| User scenarios (BDD) | delegate → `setup-user-scenarios` |
+| User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
 | TODO backlog (known-issues list + two-way end-of-session sweep) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
 
@@ -147,12 +147,13 @@ For each chosen inject module (verification, git policy, file organization, PRD 
    the security review module was selected in Step 4; when it was not, omit that bullet. Gate 6's
    wording is count-agnostic, so nothing needs renumbering. 6d invokes the harness's own
    security-review capability — it does not depend on the `security-guidance` plugin (see Step 9b).
-4. **Backlog sweep (gate 8) — always hold it back here.** Inject gates 1-7 only, even when the
-   TODO backlog module was selected. Gate 8 points at a `## TODO / Known issues` policy section that
-   only `setup-todo-backlog` installs, and this step runs *before* Step 6 delegates to it — so
-   injecting it now would ship a mandatory gate referencing a section that may never exist (the
-   Step 6 availability guard can skip the delegation). Step 6b appends gate 8 after a successful
-   delegation. Gate 8 is last, so leaving it out here renumbers nothing.
+4. **Tail gates (user-scenarios sync, backlog sweep) — always hold both back here.** Inject gates
+   1-7 only, even when the user-scenarios or TODO backlog modules were selected. Each tail gate
+   points at something only its delegated skill installs — the BDD scenario doc, the
+   `## TODO / Known issues` policy — and this step runs *before* Step 6 delegates, so injecting
+   either now would ship a mandatory gate referencing something that may never exist (the Step 6
+   availability guard can skip a delegation). Step 6b appends each one after its own delegation
+   succeeds. Both are last, so leaving them out here renumbers nothing.
 5. Append the `##` section to the target file. If its heading already exists, **ask** before
    replacing — never silently duplicate.
 6. **Provenance note (once, versioned).** Above the first injected policy `##` section, add a single
@@ -181,19 +182,22 @@ silently and never half-apply.
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).
 
-**Step 6b — append backlog sweep gate 8 (only after `setup-todo-backlog` succeeded).** Step 5 held
-this gate back on purpose. Append it now, and only when **all** of these hold:
+**Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held both
+back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
+— **user-scenarios sync, then backlog sweep** — giving each the next free number as it lands. Append
+a tail gate only when **all** of these hold for it:
 
-1. The TODO backlog module was selected in Step 4.
-2. The verification module was also selected — gate 8 lives inside that block, so with no injected
-   verification block there is nothing to append to.
-3. `setup-todo-backlog` was available and actually ran, installing the `## TODO / Known issues`
-   policy section it references.
+1. Its module was selected in Step 4 (user scenarios / TODO backlog).
+2. The verification module was also selected — the tail gates live inside that block, so with no
+   injected verification block there is nothing to append to.
+3. Its delegated skill (`setup-user-scenarios` / `setup-todo-backlog`) was available and actually
+   ran, installing the doc or policy section the gate references.
 
-Any one of them failing → **do not append gate 8**, and say so in the Step 8 report. Never leave a
-mandatory gate pointing at a policy section that was never installed. Copy gate 8 verbatim from
-`references/verification-protocol.md`; it carries no `{{...}}` placeholders and it is last in the
-list, so appending or omitting it renumbers nothing.
+Any one failing → **do not append that gate**, and say so in the Step 8 report. Never leave a
+mandatory gate pointing at a doc or section that was never installed. Copy each gate verbatim from
+`references/verification-protocol.md`; neither carries `{{...}}` placeholders, and nothing follows
+them, so appending or omitting either renumbers nothing above it. A repo that ships only the backlog
+sweep numbers it 8.
 
 ### Step 7: Worktree auto-bootstrap
 
@@ -256,9 +260,12 @@ Confirm in one short message:
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
+- User-scenarios sync gate: appended after a successful `setup-user-scenarios` delegation, or
+  omitted — naming which condition failed (module not selected, verification module not selected,
+  or the delegation was skipped).
 - TODO backlog delegated to `setup-todo-backlog`, or skipped since it is opt-in and was not
   selected, or `skipped (setup-todo-backlog unavailable)`.
-- Backlog sweep gate 8: appended after a successful delegation, or omitted — naming which condition
+- Backlog sweep gate: appended after a successful delegation, or omitted — naming which condition
   failed (module not selected, verification module not selected, or the delegation was skipped).
 - Worktree hook scaffolded (or skipped, or `N/A (host is not Claude Code)`).
 - `.worktreeinclude` created/updated (with which files, noting whether a gitignored `.mcp.json` was
@@ -361,13 +368,18 @@ it.
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
-- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`. Its
-  verification gate 8 lives inside the verification block but is **appended in Step 6b after the
-  delegation succeeds, never injected in Step 5** — Step 5 runs before Step 6, so injecting it
-  early would point a mandatory gate at a `## TODO / Known issues` policy the availability guard
-  may have skipped installing. Omit gate 8 unless the module was selected, the verification module
-  was selected, and the delegation actually ran. Because gate 8 is last, omitting it renumbers
-  nothing.
+- Both verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
+  verification block but are **appended in Step 6b after their own delegation succeeds, never
+  injected in Step 5**. Step 5 runs before Step 6, so injecting either early would point a mandatory
+  gate at a doc or policy the availability guard may have skipped installing. Omit a tail gate
+  unless its module was selected, the verification module was selected, and its delegation actually
+  ran. Append in the fixed order (user-scenarios sync, then backlog sweep), each taking the next
+  free number; nothing follows them, so omitting either renumbers nothing.
+- The user-scenarios sync gate makes the scenario doc blocking: a user-visible change left with a
+  stale scenario doc fails verification exactly like a failing test, and is reported every time as
+  `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
+  user-scenarios module, so selecting that module with verification deselected is a no-op.
+- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`.
 - The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
   It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
   silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.
@@ -383,9 +395,9 @@ it.
 
 - `references/verification-protocol.md` — verification block + stack-detection table + placeholders
   (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`), plus the placeholder-free
-  regression-test-for-bug-fixes gate and its three-way degradation, plus the conditional TODO-backlog
-  sweep gate (gate 8 — held back in Step 5 and appended in Step 6b only after `setup-todo-backlog`
-  successfully runs).
+  regression-test-for-bug-fixes gate and its three-way degradation, plus the two conditional tail
+  gates (user-scenarios sync, then backlog sweep — both held back in Step 5 and appended in Step 6b,
+  each only after its own delegated skill successfully runs).
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.

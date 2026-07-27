@@ -40,15 +40,18 @@ not two:
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
   A source repo with no tooling still keeps it as dormant prose; only a config / no-source repo drops
   it. Renumber whatever remains.
-- **Backlog sweep (gate 8)** has no stack signal at all — nothing here detects it from lint,
-  typecheck, or test tooling. It is independent of stack, and selection alone does not earn it:
-  the gate points at a `## TODO / Known issues` policy section that only `setup-todo-backlog`
-  installs. It ships **only after that delegation actually succeeded** (SKILL.md Step 6b), which is
-  why it is appended there rather than injected here with the rest of the block. Delegated
-  successfully → gate 8, last in the list. Not selected, or selected but the skill was
-  unavailable → no gate 8, and no renumbering, since nothing follows it.
-  **Gate 8's body below carries no meta-guidance** — every condition governing whether it ships
-  lives here and in the note at the bottom, so Step 6b can copy the gate verbatim into a repo
+- **The two tail gates (8 and 9) have no stack signal at all** — nothing here detects them from
+  lint, typecheck, or test tooling. Both are stack-independent, and selection alone earns neither:
+  each points at a doc or policy section that only its own delegated skill installs — the
+  user-scenarios gate at the BDD scenario doc (`setup-user-scenarios`), the backlog sweep at the
+  `## TODO / Known issues` policy (`setup-todo-backlog`). Each ships **only after its own delegation
+  actually succeeded** (SKILL.md Step 6b), which is why both are appended there rather than injected
+  here with gates 1-7. Append them in the order written below — user-scenarios sync, then backlog
+  sweep — giving each the next free number as it lands. A repo that ships only the backlog sweep
+  numbers it 8; a repo that ships neither stops at 7. Nothing follows them, so omitting either
+  renumbers nothing above it.
+  **Neither gate's body below carries meta-guidance** — every condition governing whether they ship
+  lives here and in the note at the bottom, so Step 6b can copy each gate verbatim into a repo
   without leaking skill-authoring instructions into that repo's agent instructions.
 
 ---
@@ -123,7 +126,17 @@ says otherwise.
    - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
      updated wording and **ask the user** before applying. Never silently edit instruction files.
    - Nothing stale → say so explicitly in one line; do not invent updates.
-8. **Backlog sweep** — run both halves of the sweep described in the `## TODO / Known issues`
+8. **User scenarios in sync** — every user-visible change ships a matching scenario in the BDD
+   scenario doc named by the `## User Scenarios` section of these instructions. A change is
+   user-visible when it alters a page, an endpoint's response, a flow, a business rule, an
+   entitlement, an email, or an error a user can see. Add or update the scenario, point its
+   `Verified by:` line at a real test file, and sync its row in the Coverage Matrix. **This gate
+   binds exactly like the test gate: an unsynced scenario doc means the task is not done.** Never
+   present the work as complete while the doc is stale, and never defer the scenario to a follow-up.
+   Report it every time — `passed`, `failed (what is missing)`, or `n/a (not user-visible)`. There
+   is no silent skip. Unsure whether a change is user-visible → treat it as user-visible; a
+   redundant scenario costs less than a coverage hole.
+9. **Backlog sweep** — run both halves of the sweep described in the `## TODO / Known issues`
    section of the agent instructions: file what this session found and could not fix, and close the
    entries it solved. **This gate overrides the markdown-only exemption above — it is the one gate
    that survives it.** A defect can be found while reading, and a docs-only change can close a
@@ -154,12 +167,15 @@ build tooling lands."* If a
 source repo has a test framework but no coverage tooling, the skill wires `{{COVERAGE_THRESHOLD}}`
 once coverage tooling is chosen — see `references/test-setup.md`. Lens 6d ships only when the
 security review module is selected in Step 4; when it is not, omit the 6d bullet — gate 6's wording
-is count-agnostic, so no renumbering or count edit is needed. Gate 8 (Backlog sweep) is similar but
-strictly stronger: it carries no `{{...}}` placeholder either, but selection alone is not enough to
-ship it. Because it references the `## TODO / Known issues` policy that only `setup-todo-backlog`
-installs, it is **appended in SKILL.md Step 6b after that delegation succeeds** — do not inject it
-here with gates 1-7, or a repo whose delegation was skipped ends up with a mandatory gate pointing
-at a section that does not exist. Being last, its omission renumbers nothing else.
+is count-agnostic, so no renumbering or count edit is needed. Gates 8 (User scenarios in sync) and 9
+(Backlog sweep) are similar but strictly stronger: neither carries a `{{...}}` placeholder either,
+but selection alone is not enough to ship either one. Each references something only its delegated
+skill installs — the BDD scenario doc from `setup-user-scenarios`, the `## TODO / Known issues`
+policy from `setup-todo-backlog` — so both are **appended in SKILL.md Step 6b after their own
+delegation succeeds**. Do not inject either here with gates 1-7, or a repo whose delegation was
+skipped ends up with a mandatory gate pointing at something that does not exist. Append in the order
+written above and give each the next free number, so a repo shipping only the backlog sweep numbers
+it 8. Nothing follows them, so omitting either renumbers nothing else.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.6), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v6**
+**Skill version: v7**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -41,6 +41,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Security-guidance plugin offer (Claude Code only) | suggest | 9b | v4 |
 | TODO backlog with two-way end-of-session sweep (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
 | Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
+| User-scenarios sync gate in the verification protocol (appended only after the user-scenarios delegation succeeds) | inject | 6b | v7 |
 
 ## How the self-audit uses this (Step 8b)
 

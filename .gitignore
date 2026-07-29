@@ -6,4 +6,4 @@ scripts/universality-denylist.txt
 .claude/worktrees/
 .mcp.json
 .playwright-mcp
-skills/*/state/dests/
+skills/*/state/

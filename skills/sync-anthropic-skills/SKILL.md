@@ -17,7 +17,7 @@ The upstream repo is a **plugin marketplace**. Skills live at `<plugin>/skills/<
 
 ## Default set (bare run)
 
-`state/synced.txt` seeds the set re-synced when the script runs with no args: `design-critique`. It is not yet present in `skills/`, so a bare run lands it as a **new** skill needing a README row (step 4). Name skills explicitly to avoid this.
+`state/synced.txt` holds the set re-synced when the script runs with no args. It is **local-only and never committed**, so a fresh clone starts empty and a bare run errors out pointing you at `--list`. The set grows on its own as you sync.
 
 ## Instructions
 
@@ -67,14 +67,9 @@ bash scripts/sync.sh design-critique --dest ~/some-project/skills
 - The resolved destination is echoed at the start and repeated in the summary. Check it before trusting a run.
 - Every other flag behaves the same. `--dest=<dir>` also works.
 
-**State is per-destination**, so two folders never share a synced-set or an overwrite baseline:
+**State is per-destination**, so two folders never share a synced-set or an overwrite baseline. The default target uses `state/synced.txt` and `state/manifest.txt`; any `--dest` target uses its own pair under `state/dests/<slug>/`. Neither is tracked in git, the whole `state/` tree is gitignored.
 
-| Destination | State lives in | Tracked in git |
-|---|---|---|
-| default (this repo's `skills/`) | `state/synced.txt`, `state/manifest.txt` | yes |
-| any `--dest` | `state/dests/<slug>/` | no, gitignored |
-
-The slug is the first 8 chars of a sha256 of the absolute destination path. Only the hash is stored, never the path itself, so a local folder name can never leak into this public repo. A `--dest` that resolves to the default folder (e.g. `--dest .` from the repo root) uses the tracked state, not a second copy.
+The slug is the first 8 chars of a sha256 of the absolute destination path. Only the hash is stored, never the path itself, so a local folder name can never leak into this public repo. A `--dest` that resolves to the default folder (e.g. `--dest .` from the repo root) uses the default state, not a second copy.
 
 Step 4 above (the `README.md` row) is about **this** repo's catalog, so skip it on a `--dest` run and follow the target project's own conventions instead.
 
@@ -86,6 +81,8 @@ The script keeps a per-file sha256 baseline in `state/manifest.txt` (or the matc
 - local copy edited (hash differs) or no baseline (a native skill of the same name) → skipped with a warning, needs `--force`
 
 So a legitimate upstream update still applies without `--force`, but your local edits and native skills are never clobbered silently.
+
+**On a fresh clone there is no baseline at all**, because `state/` is gitignored. The first re-sync of a skill that is already committed here reports `[skipped: locally modified]` for every one of its files. That is expected, not a bug — the script cannot tell an untouched copy from an edited one without a baseline, so it fails safe. When you know the local copy is untouched, `--force` is the right response, and it rebuilds the baseline as it writes.
 
 The baseline is the hash of **what the script wrote**, not of the raw upstream bytes. That is what lets the context fixes below coexist with safe re-syncing: the transform is deterministic and runs before the hash is taken, so an untouched local copy still matches its baseline on the next run.
 
@@ -105,8 +102,10 @@ Upstream skills often depend on plugin-level `.mcp.json` and `CONNECTORS.md` fil
 
 - `scripts/sync.sh` — `REPO_OWNER`, `REPO_NAME`, `BRANCH` to change the upstream source.
 - `scripts/contextualize.py` — the context-fix rules applied to each staged skill. Add a rule here when a new upstream-ism shows up.
-- `state/synced.txt` — the set re-synced when run with no args. Grows as you sync.
-- `state/dests/<slug>/` — per-destination state for `--dest` runs. Gitignored, safe to delete (the next run rebuilds it, treating every existing file as unbaselined).
+- `state/` — all sync state, gitignored and never committed. Machine-local by design, so it describes only what *this* checkout has synced.
+  - `synced.txt` — the set re-synced when run with no args. Empty on a fresh clone, grows as you sync.
+  - `manifest.txt` — the overwrite baseline for the default destination.
+  - `dests/<slug>/` — the same pair per `--dest` target. Safe to delete (the next run rebuilds it, treating every existing file as unbaselined).
 - Set `GITHUB_TOKEN` for higher GitHub API rate limits.
 - `--force` (or `FORCE=1`) overwrites locally-modified skills; `--list` prints the catalog and exits.
 - `--dest <dir>` (or `--dest=<dir>`) writes into another skills folder instead of this repo's.

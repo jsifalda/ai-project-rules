@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Scans for content that violates the universality policy in rules/universality.md.
+# Scans for content that violates the universality policy in CLAUDE.md
+# (see its "## Universality requirement" section).
 # Usage:
 #   scripts/check-universality.sh                    # scan tracked files in the repo
 #   scripts/check-universality.sh path1 path2 ...    # scan specific files and/or directories (used by pre-commit)
@@ -14,7 +15,6 @@ DENYLIST="${REPO_ROOT}/scripts/universality-denylist.txt"
 
 # Files & paths that are allowed to contain forbidden patterns (policy, scanner, denylist itself).
 SKIP_REL=(
-  "rules/universality.md"
   "scripts/check-universality.sh"
   "scripts/universality-denylist.txt"
   "scripts/universality-denylist.txt.example"
@@ -138,7 +138,7 @@ fi
 
 if [[ $violations -gt 0 ]]; then
   printf '\nuniversality check: %d violation(s) found.\n' "$violations" >&2
-  printf 'see rules/universality.md for the policy.\n' >&2
+  printf 'see the "## Universality requirement" section in CLAUDE.md for the policy.\n' >&2
   exit 1
 fi
 

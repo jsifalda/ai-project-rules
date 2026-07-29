@@ -13,7 +13,9 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
 | `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
-| `changelog.md` | Manually-maintained log of notable changes |
+| `changelog/` | One entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md` |
+| `changelog.md` | **Frozen archive** of pre-`changelog/` entries — do not edit or append |
+| `scripts/`, `.githooks/` | Universality scanner, hook installer, and the tracked `pre-commit` hook |
 | `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
 
 ## How it gets into Claude Code & Copilot CLI
@@ -163,7 +165,7 @@ Personal repo, but PRs welcome if something here is genuinely useful elsewhere. 
 - A **rule**: add `rules/<name>.md` with `type: "always_apply"` frontmatter.
 - A **Gemini command**: add `gemini-cli/commands/<name>.toml`. Add it to the Current commands list above.
 
-**Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: [`rules/universality.md`](rules/universality.md). After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
+**Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: the [`## Universality requirement`](CLAUDE.md#universality-requirement) section of `CLAUDE.md`. After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
 
-Log notable changes in `changelog.md` using the existing `YYYYMMDDTHHMM — Title` format.
+Log notable changes as a new file in `changelog/`, named `YYYYMMDDHHMMSS-short-slug.md`. The root `changelog.md` is a frozen archive — never append to it.
 

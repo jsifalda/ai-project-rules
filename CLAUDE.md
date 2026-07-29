@@ -8,8 +8,11 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
+- `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone).
+- `.githooks/` — tracked `pre-commit` hook; runs the universality scanner + skill validator on staged files. Activated by `install-hooks.sh` setting `core.hooksPath`.
 - `AGENTS.md` — symlink to `CLAUDE.md`.
-- `changelog.md` — manually-maintained log; format: `YYYYMMDDTHHMM — Title` with `Why / What / How` bullets.
+- `changelog/` — one entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md`. See `## Changelog` below.
+- `changelog.md` — **frozen archive** of pre-`changelog/` entries. Do not edit or append.
 
 ## Skills Sync
 
@@ -47,9 +50,50 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
 
 This repo is **public and reusable**. Every file added here — skill, rule, script, command — must work for any reader without modification. No personal data, secrets, employer names, internal URLs, or hardcoded identities. If something is machine- or person-specific, take it from an env var, a runtime prompt, or the agent's private memory — not from a file checked into this tree.
 
-- Full policy with examples: [rules/universality.md](rules/universality.md).
-- Activate the pre-commit scanner once per clone: `bash scripts/install-hooks.sh`.
-- Run the scanner on demand: `bash scripts/check-universality.sh`.
+### What "non-universal" means
+
+| Category | Forbidden | Use instead |
+|---|---|---|
+| Filesystem paths | `/Users/<name>/...`, `/home/<name>/...`, `C:\Users\<name>\...` | `~`, `${HOME}`, repo-relative paths, or `$(dirname "$0")`-derived paths |
+| People | Real personal names, handles, emails, account/mention IDs | `<your-name>`, `<USER>`, generic placeholders, or "the user" |
+| Employer / org | Company names, team names, internal product codenames | `<your-company>`, `<team>`, or omit entirely |
+| Internal URLs | `*.internal`, internal Confluence space slugs, intranet hosts | Public docs links, or instruct the reader to set their own |
+| Project IDs | Specific JIRA project keys (`ABC-`), Linear slugs, Notion DB IDs | `<PROJECT-KEY>` placeholder + a "configure this" note |
+| Secrets | API keys, tokens, OAuth client IDs/secrets, passwords | `$ENV_VAR` references; never literal values, even fake-looking ones |
+| Account IDs | Atlassian accountIds, Slack user IDs, GitHub user numeric IDs | "lookup at runtime" or `<account-id>` |
+| Personal directories | Obsidian vault paths, dotfile locations specific to one machine | Ask the user at runtime, or read from a config var |
+| Personal preferences as universal rules | "We always do X here" without justification | Either justify universally, or move to the user's private global memory |
+
+Generic engineering preferences with universal rationale (e.g. "prefer pnpm because of lockfile speed") are fine — these are advice, not identity.
+
+Bad → good, inline:
+
+- `bash /Users/<name>/instructions/skills/foo/scripts/sync.sh` → `bash "$(dirname "$0")/scripts/sync.sh"`
+- `Search the ACME Confluence space` → `Search the configured space ($CONFLUENCE_SPACE)`
+- `api_key: "sk-live-…"` → `api_key: "$OPENAI_API_KEY"`
+
+### The scanner
+
+```bash
+bash scripts/check-universality.sh                      # whole repo (tracked files)
+bash scripts/check-universality.sh path/to/a path/to/b  # specific files or dirs (used by pre-commit)
+```
+
+It flags absolute `/Users/<name>/`, `/home/<name>/`, `C:\Users\<name>\` paths; names in `scripts/universality-denylist.txt` (clone-local, gitignored — each contributor adds their own name + employer); common secret shapes (`api_key="…"`, `AKIA…`, `ghp_…`, `xox[baprs]-`); and `*.internal` / `*.corp` hostnames. Exit 0 = clean, non-zero = commit blocked.
+
+**Never add a file to the scanner's `SKIP_REL` allowlist to silence a hit** — fix the content instead. The allowlist exists only for the scanner and denylist files, which must quote the patterns they forbid.
+
+### Setup for new clones
+
+```bash
+bash scripts/install-hooks.sh                    # sets core.hooksPath=.githooks; idempotent, installs nothing
+cp scripts/universality-denylist.txt.example scripts/universality-denylist.txt
+# then edit the denylist to add your own name, employer, internal team names
+```
+
+### When you find a violation
+
+Don't bypass — fix the source. Replace the leaked value with a placeholder, env var, or runtime lookup. If the content genuinely belongs in *some* file, it belongs in the agent's private global memory, not in this public repo.
 
 ## Changelog
 

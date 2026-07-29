@@ -1,3 +1,7 @@
+## First Action (MANDATORY)
+
+- Before anything else, read `rules/general.md`, then follow the rules below.
+
 ## Project Overview
 
 Personal monorepo of AI-tool instructions: rules, skills, and slash commands used by Claude Code, Copilot CLI, Gemini CLI, Cursor, and any other agent that reads markdown. Tool-agnostic where possible.
@@ -16,7 +20,11 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Skills Sync
 
-Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The canonical hook script lives in this repo at `skills/setup-skills-autorefresh/scripts/sync-skills.js`; it symlinks every skill from a **source folder passed as an argument** into `~/.claude/skills/` and prunes removed ones. Install/register it on a machine with the `setup-skills-autorefresh` skill (`bash skills/setup-skills-autorefresh/scripts/install.sh <skills-dir>`), which bakes the source folder into the hook command in `~/.claude/settings.json`. A parallel script at `~/.copilot/hooks/sync-skills.js` copies (not symlinks, due to a Copilot CLI bug) skills into `~/.copilot/skills/`. The hook script is the source of truth — read it for sync behaviour.
+- Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook.
+- **Canonical hook script**, in this repo: `skills/setup-skills-autorefresh/scripts/sync-skills.js`. It symlinks every skill from a **source folder passed as an argument** into `~/.claude/skills/`, and prunes removed ones.
+- **Install/register on a machine** with the `setup-skills-autorefresh` skill: `bash skills/setup-skills-autorefresh/scripts/install.sh <skills-dir>`. That bakes the source folder into the hook command in `~/.claude/settings.json`.
+- **Copilot CLI** uses a parallel script at `~/.copilot/hooks/sync-skills.js` that copies (not symlinks, due to a Copilot CLI bug) skills into `~/.copilot/skills/`.
+- The hook script is the source of truth — read it for sync behaviour.
 
 ## Conventions
 
@@ -26,7 +34,12 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
   - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
-- **README lists are manually maintained — keep them in sync.** The `## Skills` table in `README.md` has one row per skill with four columns: skill name, one-line summary, `Depends on`, and `Origin`. When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`) **and fill its `Depends on` and `Origin` cells**. `Depends on`: list every other repo skill this one invokes/requires to function, or `—` if none — disambiguation pointers ("use X instead") and sync-provenance are not dependencies, leave this cell `—` for those. `Origin`: if the skill was synced from an upstream repo (see `sync-mattpocock-skills`, `sync-obsidian-skills`), link the cell to that upstream repo's root (e.g. `mattpocock/skills`, `kepano/obsidian-skills`); `—` for skills native to this repo. Likewise, when you add or remove a `gemini-cli/commands/*.toml`, update the "Current commands" list in `README.md`. There is no generator — drift only stays out if every skill/command change touches the README too.
+- **README lists are manually maintained — keep them in sync.** There is no generator — drift only stays out if every skill/command change touches the README too.
+  - The `## Skills` table in `README.md` has one row per skill with four columns: skill name, one-line summary, `Depends on`, and `Origin`.
+  - When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`) **and fill its `Depends on` and `Origin` cells**.
+  - `Depends on`: list every other repo skill this one invokes/requires to function, or `—` if none — disambiguation pointers ("use X instead") and sync-provenance are not dependencies, leave this cell `—` for those.
+  - `Origin`: if the skill was synced from an upstream repo (see `sync-mattpocock-skills`, `sync-obsidian-skills`), link the cell to that upstream repo's root (e.g. `mattpocock/skills`, `kepano/obsidian-skills`); `—` for skills native to this repo.
+  - Likewise, when you add or remove a `gemini-cli/commands/*.toml`, update the "Current commands" list in `README.md`.
 - **New skills → consider `setup-aiengineering`.** When you add a skill under `skills/`, ask the user one question: is this a repo-bootstrapping or engineering-standards concern a project should adopt as part of its baseline setup (like ADRs, changelog, verification gates)? Most skills are not. Content, writing, research, persona, and one-off tool skills answer no and move on. If yes, fold it into `skills/setup-aiengineering/SKILL.md` as a module:
   - Add a row to its `## Modules` table with the delivery type: **inject** (a policy block → add a `references/<name>.md`, substitute placeholders in Step 5), **delegate** (it is its own `setup-*` skill → invoke in Step 6), or **scaffold** (copies a file or hook → Step 7).
   - Add it to the Step 4 module menu (default-selected) so users can opt out per project.
@@ -44,7 +57,7 @@ Skills are auto-synced into `~/.claude/skills/` by a `SessionStart` hook. The ca
 ## Restrictions
 
 - Never push to remote git unless user explicitly says to.
-- Never install global dependencies.
+- Never install anything, anywhere — no global, `--user`, venv, or one-off installs, for any purpose. Ask first. Full policy + ask-first protocol: RESTRICTIONS in `rules/general.md`.
 
 ## Universality requirement
 

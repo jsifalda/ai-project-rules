@@ -299,7 +299,7 @@ When editing the (newly-generated or existing) skill, remember that the skill is
 
 #### Universality Pre-flight (MANDATORY for this repo)
 
-If you are authoring this skill inside the `~/instructions` repo (or any public/shared instruction repo), the skill MUST be **universal** — usable by any reader on any machine, with zero personal data, secrets, employer-specific names, internal URLs, or hardcoded identities. Read the full policy at [`rules/universality.md`](../../rules/universality.md) before writing any content.
+If you are authoring this skill inside the `~/instructions` repo (or any public/shared instruction repo), the skill MUST be **universal** — usable by any reader on any machine, with zero personal data, secrets, employer-specific names, internal URLs, or hardcoded identities. Read the full policy in the [`## Universality requirement`](../../CLAUDE.md#universality-requirement) section of `CLAUDE.md` before writing any content.
 
 Common pitfalls to avoid while drafting:
 

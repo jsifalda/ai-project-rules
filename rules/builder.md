@@ -1,5 +1,8 @@
 ---
 description: How to pick an app-build stack task-first, with the current default tools as a footnote. Load when starting a new app, adding a feature, or choosing a stack.
+applyTo: '**'
+paths:
+  - '**'
 ---
 
 ## How to pick a stack (task-first, challenge everything)

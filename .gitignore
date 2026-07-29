@@ -1,7 +1,6 @@
 _tasks
 _prds
 _tickets
-changelog.md
 scripts/universality-denylist.txt
 .claude/worktrees/
 .mcp.json

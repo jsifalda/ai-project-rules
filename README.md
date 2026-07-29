@@ -112,6 +112,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`ship-v1`](skills/ship-v1/SKILL.md) | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. | — | — |
 | [`summarise-text`](skills/summarise-text/SKILL.md) | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. | — | — |
 | [`summarise-url`](skills/summarise-url/SKILL.md) | Fetch a link's content and return a structured summary. | — | — |
+| [`sync-anthropic-skills`](skills/sync-anthropic-skills/SKILL.md) | Sync skills from the `anthropics/knowledge-work-plugins` GitHub repo, flattening its plugin and partner-built dirs into the top-level `skills/` folder; adapts each staged copy to this repo and lints the synced description. | — | — |
 | [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. | — | — |
 | [`sync-obsidian-skills`](skills/sync-obsidian-skills/SKILL.md) | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. | — | — |
 | [`team-code-writer`](skills/team-code-writer/SKILL.md) | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. | — | — |

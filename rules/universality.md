@@ -1,5 +1,8 @@
 ---
 type: "always_apply"
+applyTo: '**'
+paths:
+  - '**'
 ---
 
 # Universality requirement

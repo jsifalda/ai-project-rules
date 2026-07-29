@@ -22,7 +22,7 @@ Used when the user names nothing (the seed in `state/synced.txt`):
 | prototype | engineering/prototype | Build a throwaway prototype to flesh out a design |
 | handoff | productivity/handoff | Compact the conversation into a handoff doc for another agent |
 
-Any other upstream skill can be synced ad-hoc by name (e.g. `tdd`, `diagnosing-bugs`, `domain-modeling`, `to-prd`, `to-issues`). Bare names are searched across all categories; if a name exists in more than one, qualify it as `category/name`.
+Any other upstream skill can be synced ad-hoc by name (e.g. `tdd`, `diagnosing-bugs`, `domain-modeling`, `to-spec`, `to-tickets`). Bare names are searched across all categories; if a name exists in more than one, qualify it as `category/name`.
 
 ## Instructions
 

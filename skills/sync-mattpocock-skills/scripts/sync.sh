@@ -79,7 +79,7 @@ if [ "${#REQUESTED[@]}" -eq 0 ]; then
   done < "$STATE_FILE"
   if [ "${#REQUESTED[@]}" -eq 0 ]; then
     echo "ERROR: no skills named and state/synced.txt is empty."
-    echo "Pass one or more skill names, e.g.:  bash scripts/sync.sh to-prd handoff"
+    echo "Pass one or more skill names, e.g.:  bash scripts/sync.sh to-spec handoff"
     exit 1
   fi
   echo "No skills named — using previously-synced set: ${REQUESTED[*]}"

@@ -17,28 +17,59 @@ BRANCH="main"
 # =============================================================================
 
 FORCE="${FORCE:-0}"
+DEST=""
 REQUESTED=()
-for arg in "$@"; do
-  case "$arg" in
+while [ "$#" -gt 0 ]; do
+  case "$1" in
     --force|-f) FORCE=1 ;;
-    -*) echo "ERROR: unknown flag: $arg"; exit 2 ;;
-    *) REQUESTED+=("$arg") ;;
+    --dest)     shift; [ "$#" -gt 0 ] && [ -n "$1" ] || { echo "ERROR: --dest needs a directory"; exit 2; }; DEST="$1" ;;
+    --dest=*)   DEST="${1#--dest=}"; [ -n "$DEST" ] || { echo "ERROR: --dest needs a directory"; exit 2; } ;;
+    -*)         echo "ERROR: unknown flag: $1"; exit 2 ;;
+    *)          REQUESTED+=("$1") ;;
   esac
+  shift
 done
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOCAL_SKILLS_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"   # the repo's skills/ folder
-STATE_DIR="$SCRIPT_DIR/../state"
+command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is required"; exit 1; }
+SHASUM=(shasum -a 256)
+command -v shasum >/dev/null 2>&1 || SHASUM=(sha256sum)
+command -v "${SHASUM[0]}" >/dev/null 2>&1 || { echo "ERROR: shasum/sha256sum is required"; exit 1; }
+
+# Resolve physically (-P): the skill dir is reached through a symlink from
+# ~/.claude/skills, and a logical ".." would walk up the symlinked path
+# instead of the repo, writing synced skills outside it.
+SCRIPT_DIR="$(cd -P "$(dirname "$0")" && pwd -P)"
+DEFAULT_DEST="$(cd -P "$SCRIPT_DIR/../.." && pwd -P)"   # the repo's skills/ folder
+
+# --dest points the sync at any other skills folder; missing dirs are created.
+if [ -n "$DEST" ]; then
+  if [ ! -d "$DEST" ]; then
+    mkdir -p "$DEST" || { echo "ERROR: cannot create --dest: $DEST"; exit 2; }
+    echo "[created] $DEST"
+  fi
+  LOCAL_SKILLS_DIR="$(cd -P "$DEST" && pwd -P)"
+else
+  LOCAL_SKILLS_DIR="$DEFAULT_DEST"
+fi
+[ -w "$LOCAL_SKILLS_DIR" ] || { echo "ERROR: destination is not writable: $LOCAL_SKILLS_DIR"; exit 2; }
+
+# State is per-destination. The default dest keeps the repo-tracked state/ files;
+# any other dest gets its own baseline under state/dests/<slug>/ (gitignored), so
+# two targets never share a synced-set or an overwrite baseline. The slug is a
+# hash, not the path, so no local directory name is ever written into the repo.
+if [ "$LOCAL_SKILLS_DIR" = "$DEFAULT_DEST" ]; then
+  STATE_DIR="$SCRIPT_DIR/../state"
+else
+  DEST_SLUG="$(printf '%s' "$LOCAL_SKILLS_DIR" | "${SHASUM[@]}" | cut -c1-8)"
+  STATE_DIR="$SCRIPT_DIR/../state/dests/$DEST_SLUG"
+fi
 STATE_FILE="$STATE_DIR/synced.txt"
 MANIFEST="$STATE_DIR/manifest.txt"
 mkdir -p "$STATE_DIR"
 [ -f "$STATE_FILE" ] || : > "$STATE_FILE"
 [ -f "$MANIFEST" ] || : > "$MANIFEST"
 
-command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is required"; exit 1; }
-SHASUM=(shasum -a 256)
-command -v shasum >/dev/null 2>&1 || SHASUM=(sha256sum)
-command -v "${SHASUM[0]}" >/dev/null 2>&1 || { echo "ERROR: shasum/sha256sum is required"; exit 1; }
+echo "Destination: $LOCAL_SKILLS_DIR"
 
 # If no skills were named, fall back to the previously-synced set (state file).
 if [ "${#REQUESTED[@]}" -eq 0 ]; then
@@ -48,7 +79,7 @@ if [ "${#REQUESTED[@]}" -eq 0 ]; then
   done < "$STATE_FILE"
   if [ "${#REQUESTED[@]}" -eq 0 ]; then
     echo "ERROR: no skills named and state/synced.txt is empty."
-    echo "Pass one or more skill names, e.g.:  bash scripts/sync.sh to-prd handoff"
+    echo "Pass one or more skill names, e.g.:  bash scripts/sync.sh to-spec handoff"
     exit 1
   fi
   echo "No skills named — using previously-synced set: ${REQUESTED[*]}"
@@ -294,6 +325,7 @@ fi
 
 echo ""
 echo "=== Sync Complete ==="
+echo "Destination: $LOCAL_SKILLS_DIR"
 echo "Requested:  ${REQUESTED[*]}"
 echo "Applied:    ${#applied_skills[@]} ($(IFS=', '; echo "${applied_skills[*]:-none}"))"
 echo "Files:      $downloaded written, $removed removed"

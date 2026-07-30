@@ -18,15 +18,15 @@ paths:
 * React + TypeScript
 * shadcn/ui with Tailwind CSS
 * lucide for React-compatible icons
-* Microsoft Clarity for analytics (over GA)
 * Next.js as the server, hosted on Vercel
 * SWR for data fetching with Next.js, otherwise native fetch
 * Auth.js for auth (NextAuth.js with Next.js)
+* Microsoft Clarity for analytics (over GA)
 * Sentry for error tracking
 * PostHog for product analytics
 * Jest for unit tests, Playwright for integration (Node.js test runner for API/server tests where simpler). Always set up coverage, aim ≥90%
 * ESLint + Prettier for linting
-* Husky pre-commit hooks (linting etc.)
+* Husky pre-commit hooks  - linting, typing etc. (over git hooks)
 * Resend for email sending
 * Tauri when multi-platform/hybrid (mobile + desktop) is needed
 * Silktide consent manager for the cookie banner

@@ -4,7 +4,7 @@
 
 ### Rules
 
-- **Stable IDs**: `<DOMAIN>-<NN>` (e.g. `AUTH-01`). IDs are immutable. When a scenario is removed, retire the ID — **never reuse retired IDs**.
+- **Stable IDs**: `<DOMAIN>-YYYY-MM-DD-slug` (e.g. `AUTH-2026-07-30-login-with-google`). IDs are immutable. When a scenario is removed, retire the ID — **never reuse retired IDs**. The slug is 2-5 words, kebab-case, derived from the scenario's user-visible behavior; two scenarios filed the same day in the same domain need different slugs, since domain + date + slug is the identity.
 - **One scenario per ID** — edge cases and error paths get their own IDs, not extra Given/When/Then bodies under one ID.
 - **Every scenario has Given / When / Then steps** plus a `Verified by:` line pointing to a real test file (or `TODO` when no test exists yet). `TODO` entries are gaps that become follow-up tasks.
 - **User-facing voice in bodies** — Given/When/Then describes what the user perceives, not the code. No function names, error class names, HTTP verbs, route paths, status codes, or DB identifiers in the body. Full rules: `docs/user-scenarios.md` → Conventions → Scenario voice.
@@ -13,7 +13,7 @@
 
 ### When adding or modifying user-facing behavior
 
-1. Add or update a scenario in `docs/user-scenarios.md` with a stable `<DOMAIN>-<NN>` ID and Given/When/Then steps **written in user-facing voice** (see Conventions → Scenario voice).
+1. Add or update a scenario in `docs/user-scenarios.md` with a stable `<DOMAIN>-YYYY-MM-DD-slug` ID (today's date, plus a 2-5 word kebab-case slug for the behavior) and Given/When/Then steps **written in user-facing voice** (see Conventions → Scenario voice).
 2. Add a `Verified by:` line pointing to a real test file under the project's source tree, or `TODO` if no test exists yet (then create a follow-up task).
 3. Append (or update) the matching row in the Coverage Matrix.
 

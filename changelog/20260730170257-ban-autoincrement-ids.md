@@ -1,0 +1,6 @@
+# Ban counter-based IDs; require date-slugs for parallel-safe identifiers
+
+- Added `## Identifiers` rule to `CLAUDE.md`: forbids sequential and counter-based IDs for anything authored in this repo or in repos that a skill from this repo sets up. Replacement is `YYYY-MM-DD-slug`, or `YYYYMMDDHHMMSS-slug` when multiple artifacts can land the same day. Rule carves out ordinary ordinals (numbered list steps, citation markers).
+- `setup-user-scenarios` skill: switched scenario IDs from counter scheme (`AUTH-01`, `AUTH-02`) to dated scheme (`AUTH-2026-07-30-login-validation`), matching what `setup-adrs` and `setup-todo-backlog` already do. Added guard to preserve existing scenario ID schemes in kept-as-is docs rather than claiming dated IDs.
+- `setup-aiengineering` skill: removed numbers entirely from verification gates and code-review lenses — gates and lenses are now addressed by name. Deleted every renumbering instruction the skill carried. Skill version bumped v7 → v8 so re-run upgrade mode refreshes older repos.
+- Why: counter IDs require reading every existing item to pick the next number, so two agents on two branches pick the same one and collide at merge. Date plus slug are chosen from local information only, so parallel authors never collide.

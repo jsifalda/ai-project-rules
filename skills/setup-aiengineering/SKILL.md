@@ -19,7 +19,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Module | Delivery |
 |--------|----------|
 | Verification protocol (lint → typecheck → test → coverage ≥90% → regression → code review → docs alignment) | inject (`references/verification-protocol.md`; no-framework branch → `references/test-setup.md`) |
-| Security review lens (6d) — harness security review inside verification gate 6 | inject (rides with `references/verification-protocol.md`) |
+| Security review lens — harness security review inside the Code review verification gate | inject (rides with `references/verification-protocol.md`) |
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
@@ -89,7 +89,7 @@ Present the ten modules and let the user pick per project. Eight default to sele
 deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
 wants PRD-first enforcement. The **TODO backlog module is opt-in — default it OFF**, exactly like
 the PRD gate — select it only if the user wants a tracked known-issues backlog. Selecting it is
-what makes the backlog sweep gate (gate 8) *eligible*, but not what ships it: the gate is appended
+what makes the **Backlog sweep** gate *eligible*, but not what ships it: the gate is appended
 in Step 6b only after `setup-todo-backlog` actually runs, so selecting it with verification
 deselected is a no-op, and so is selecting it on a machine where the skill is unavailable. If the
 repo has no build tooling, flag the verification module as degraded and let them keep or skip it.
@@ -103,18 +103,18 @@ Flag the **worktree auto-bootstrap** module as Claude-Code-only
 (it scaffolds a `.claude/settings.json` hook and a `.worktreeinclude`); on any other host it will be
 skipped in Step 7 regardless of selection.
 
-The **security review lens (6d)** defaults to **ON** — deselect to opt out. It has no standalone
-block: it rides inside the verification module's gate 6, so selecting it with verification
-deselected is a no-op. It self-gates on availability — if the host provides no security-review
-capability, the injected lens tells the user and labels itself `skipped (security review
-unavailable)`. Selecting it is also what enables the Step 9b plugin offer.
+The **Security review** lens defaults to **ON** — deselect to opt out. It has no standalone
+block: it rides inside the verification module's **Code review** gate, so selecting it with
+verification deselected is a no-op. It self-gates on availability — if the host provides no
+security-review capability, the injected lens tells the user and labels itself `skipped (security
+review unavailable)`. Selecting it is also what enables the Step 9b plugin offer.
 
 ### Step 5: Inject the policy modules
 
 For each chosen inject module (verification, git policy, file organization, PRD gate):
 1. Read the matching `references/*.md`.
-2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool and
-   renumber** (verification only).
+2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool**
+   (verification only).
    - **Validate before writing.** A wrong-detected command ships silently into a mandatory gate.
      Echo the exact resolved commands (lint / typecheck / test / coverage) and have the user confirm
      they are right. Optionally dry-run the fast, non-mutating gates (lint, typecheck) to catch a bad
@@ -131,8 +131,8 @@ For each chosen inject module (verification, git policy, file organization, PRD 
        which runner + coverage tool to adopt, scaffold minimal config (**confirm before writing**),
        emit the install command for the user to run (**never install**), then wire `{{COVERAGE_CMD}}`
        + `{{COVERAGE_THRESHOLD}}`.
-     - **Config/no-source repo** → drop the test + coverage gates and renumber, exactly as the
-       existing no-tool degradation above already says.
+     - **Config/no-source repo** → drop the test + coverage gates, exactly as the existing no-tool
+       degradation above already says.
    - **Regression gate (bug-fix test-first).** Unlike the coverage gate, there is no `{{...}}`
      placeholder to substitute — the gate is tool-agnostic prose, so the branch below decides only
      whether it is enforced, kept dormant, or dropped, never what command it runs. Branch on the
@@ -141,19 +141,19 @@ For each chosen inject module (verification, git policy, file organization, PRD 
      - **Source repo WITHOUT a test framework** → keep the gate but mark it **dormant, unenforced
        prose** — it sets the intent for when tests land, and pairs with the
        `references/test-setup.md` offer.
-     - **Config/no-source repo** → **drop the gate and renumber**, alongside the test and coverage
-       gates it already drops with.
-3. **Security review lens (6d).** Include the 6d bullet in the injected verification block only when
-   the security review module was selected in Step 4; when it was not, omit that bullet. Gate 6's
-   wording is count-agnostic, so nothing needs renumbering. 6d invokes the harness's own
-   security-review capability — it does not depend on the `security-guidance` plugin (see Step 9b).
-4. **Tail gates (user-scenarios sync, backlog sweep) — always hold both back here.** Inject gates
-   1-7 only, even when the user-scenarios or TODO backlog modules were selected. Each tail gate
-   points at something only its delegated skill installs — the BDD scenario doc, the
-   `## TODO / Known issues` policy — and this step runs *before* Step 6 delegates, so injecting
-   either now would ship a mandatory gate referencing something that may never exist (the Step 6
-   availability guard can skip a delegation). Step 6b appends each one after its own delegation
-   succeeds. Both are last, so leaving them out here renumbers nothing.
+     - **Config/no-source repo** → **drop the gate**, alongside the test and coverage gates it
+       already drops with.
+3. **Security review lens.** Include the **Security review** bullet in the injected verification
+   block only when the security review module was selected in Step 4; when it was not, omit that
+   bullet. It invokes the harness's own security-review capability — it does not depend on the
+   `security-guidance` plugin (see Step 9b).
+4. **Tail gates (user-scenarios sync, backlog sweep) — always hold both back here.** Inject the
+   standard gates only, even when the user-scenarios or TODO backlog modules were selected; hold
+   both tail gates back for Step 6b. Each tail gate points at something only its delegated skill
+   installs — the BDD scenario doc, the `## TODO / Known issues` policy — and this step runs
+   *before* Step 6 delegates, so injecting either now would ship a mandatory gate referencing
+   something that may never exist (the Step 6 availability guard can skip a delegation). Step 6b
+   appends each one after its own delegation succeeds.
 5. Append the `##` section to the target file. If its heading already exists, **ask** before
    replacing — never silently duplicate.
 6. **Provenance note (once, versioned).** Above the first injected policy `##` section, add a single
@@ -174,18 +174,18 @@ For each chosen doc-system module, invoke the dedicated skill against the same r
 - User scenarios → `setup-user-scenarios`
 - TODO backlog → `setup-todo-backlog`
 
-**Guard availability first (same pattern as review lens 6c).** Before invoking each delegated skill,
-confirm it is available on this machine. If it is, run it. If it is not, **tell the user and skip
-that module** — label it `skipped (setup-adrs unavailable)` (or the matching skill name); never fail
-silently and never half-apply.
+**Guard availability first (same pattern as the Nuclear structural review lens).** Before invoking
+each delegated skill, confirm it is available on this machine. If it is, run it. If it is not,
+**tell the user and skip that module** — label it `skipped (setup-adrs unavailable)` (or the
+matching skill name); never fail silently and never half-apply.
 
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).
 
 **Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held both
 back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
-— **user-scenarios sync, then backlog sweep** — giving each the next free number as it lands. Append
-a tail gate only when **all** of these hold for it:
+— **user-scenarios sync, then backlog sweep**. Append a tail gate only when **all** of these hold
+for it:
 
 1. Its module was selected in Step 4 (user scenarios / TODO backlog).
 2. The verification module was also selected — the tail gates live inside that block, so with no
@@ -195,9 +195,8 @@ a tail gate only when **all** of these hold for it:
 
 Any one failing → **do not append that gate**, and say so in the Step 8 report. Never leave a
 mandatory gate pointing at a doc or section that was never installed. Copy each gate verbatim from
-`references/verification-protocol.md`; neither carries `{{...}}` placeholders, and nothing follows
-them, so appending or omitting either renumbers nothing above it. A repo that ships only the backlog
-sweep numbers it 8.
+`references/verification-protocol.md` — neither carries `{{...}}` placeholders. A repo that ships
+only one of them gets just that one.
 
 ### Step 7: Worktree auto-bootstrap
 
@@ -251,7 +250,7 @@ Confirm in one short message:
   added or refreshed.
 - Policy modules injected (with which gates were dropped for missing tools), and that the detected
   lint/typecheck/test commands were confirmed with the user.
-- Security review lens (6d): injected, or skipped (user opted out).
+- **Security review** lens: injected, or skipped (user opted out).
 - Coverage gate: whether it was wired (with the chosen `{{COVERAGE_THRESHOLD}}` and `{{COVERAGE_CMD}}`),
   or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that it was
   N/A (config/no-source repo).
@@ -322,9 +321,9 @@ otherwise skip silently:
 When all pass, do NOT install anything — the skill never installs. End with a one-line suggestion:
 the user can add always-on security hooks (pattern warnings on `Edit`/`Write`, an LLM diff review
 when a turn ends, and an agentic reviewer on `git commit`) by running
-`/plugin install security-guidance@claude-plugins-official`. It complements lens 6d — 6d is
-on-demand and per-change, the plugin is automatic and machine-wide. Suggestion only; the user runs
-it.
+`/plugin install security-guidance@claude-plugins-official`. It complements the **Security review**
+lens — that lens is on-demand and per-change, the plugin is automatic and machine-wide. Suggestion
+only; the user runs it.
 
 ## Rules
 
@@ -342,8 +341,8 @@ it.
   makes the test + coverage gates N/A.
 - Regression gate for bug fixes has no `{{...}}` placeholder — it is tool-agnostic prose, and it
   degrades on three paths keyed off source code, not tooling: **enforced** in a source repo with a
-  test framework; kept as **dormant, unenforced prose** in a source repo without one; **dropped and
-  renumbered** only in a config/no-source repo, alongside the test and coverage gates.
+  test framework; kept as **dormant, unenforced prose** in a source repo without one; **dropped**
+  only in a config/no-source repo, alongside the test and coverage gates.
 - Never duplicate a `##` section — detect the heading and ask before replacing.
 - Stamp one visible italic provenance note above the injected policy sections naming the
   `setup-aiengineering` skill, stamping the current **Skill version** (from `baseline-checklist.md`),
@@ -356,8 +355,9 @@ it.
   bumping the version, not by patching one repo.
 - Always end with the Step 8b coverage self-audit against `baseline-checklist.md`; surface every
   `not covered` concern explicitly, never omit one silently.
-- Guard every delegated skill (Step 6) and the optional review lens 6c for availability; if a skill
-  is absent, label it `skipped (... unavailable)` and tell the user, never fail silently.
+- Guard every delegated skill (Step 6) and the optional **Nuclear structural review** lens for
+  availability; if a skill is absent, label it `skipped (... unavailable)` and tell the user, never
+  fail silently.
 - Backfill only for working repos, only on user opt-in, and only grounded in real files.
 - Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
 - The worktree module (Step 7) is Claude-Code-only (gated on `CLAUDECODE=1`); on any other host skip
@@ -373,8 +373,8 @@ it.
   injected in Step 5**. Step 5 runs before Step 6, so injecting either early would point a mandatory
   gate at a doc or policy the availability guard may have skipped installing. Omit a tail gate
   unless its module was selected, the verification module was selected, and its delegation actually
-  ran. Append in the fixed order (user-scenarios sync, then backlog sweep), each taking the next
-  free number; nothing follows them, so omitting either renumbers nothing.
+  ran. Append in the fixed order (user-scenarios sync, then backlog sweep); nothing follows them, so
+  omitting either leaves the rest of the block untouched.
 - The user-scenarios sync gate makes the scenario doc blocking: a user-visible change left with a
   stale scenario doc fails verification exactly like a failing test, and is reported every time as
   `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
@@ -383,8 +383,8 @@ it.
 - The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
   It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
   silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.
-- The security review lens (6d) rides inside verification gate 6, defaults ON, and self-gates on
-  the host's security-review capability; when absent the injected lens labels itself `skipped
+- The **Security review** lens rides inside the **Code review** gate, defaults ON, and self-gates
+  on the host's security-review capability; when absent the injected lens labels itself `skipped
   (security review unavailable)` — never skip silently. It invokes the harness built-in (Claude
   Code: `/security-review`) and does not require the `security-guidance` plugin.
 - The security-guidance plugin offer (Step 9b) is Claude-Code-only, fires only when the security

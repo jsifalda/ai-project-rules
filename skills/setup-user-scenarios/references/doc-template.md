@@ -6,8 +6,11 @@
 
 ## Conventions
 
-- **Stable IDs**: `<DOMAIN>-<NN>` (e.g. `AUTH-01`, `BILLING-04`). IDs are
-  immutable. When a scenario is removed, retire the ID — never reuse.
+- **Stable IDs**: `<DOMAIN>-YYYY-MM-DD-slug` (e.g. `AUTH-2026-07-30-login-with-google`,
+  `BILLING-2026-07-30-upgrade-plan-mid-cycle`). IDs are immutable. When a scenario is
+  removed, retire the ID — never reuse. The slug is 2-5 words, kebab-case, derived from
+  the scenario's user-visible behavior. Two scenarios filed on the same day in the same
+  domain need different slugs, since domain + date + slug is the identity.
 - **One scenario per ID** — don't bundle multiple Given/When/Then bodies.
   Edge cases and error paths get their own IDs.
 - **`Verified by:`** — every scenario carries a pointer to the test that
@@ -56,6 +59,6 @@ ACTIVE or tier names like STARTER are allowed.
 
 ## Coverage Matrix
 
-| ID            | Verified by                                                                       |
-| ------------- | --------------------------------------------------------------------------------- |
+| ID                             | Verified by                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------- |
 {{COVERAGE_MATRIX_ROWS}}

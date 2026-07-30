@@ -46,6 +46,15 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
   - Wire it into the matching step (5, 6, or 7) and add it to the Step 8 report line.
   - Re-run `python skills/create-skill/scripts/quick_validate.py skills/setup-aiengineering/` after editing.
 
+## Identifiers
+
+- **No sequential or counter-based ids for anything authored in this repo, or in a repo a skill from this repo sets up.** Banned: `adr-01`, `ADR-002`, `TODO-3`, `AUTH-05` — and any instruction telling an agent to take "the next free number" / "the next number", or to increment/renumber a set of ids.
+- **Use date + slug instead**: `YYYY-MM-DD-slug` when one artifact per day is enough; `YYYYMMDDHHMMSS-slug` when two can land the same day (this repo's `changelog/` already uses the timestamp form). Slug is 2–5 words, kebab-case. The date-plus-slug pair *is* the identity — no separate counter needed.
+- **Why**: "next number" needs a global read of every existing item first. Two agents on two branches or worktrees read the same state and pick the same number, and the collision only shows up at merge — after inbound references already point at the wrong item. Date-plus-slug is chosen from local information only, so parallel authors never collide.
+- **Copy these in-repo precedents**, don't reinvent: `setup-adrs` (`YYYY-MM-DD-slug`), `setup-todo-backlog` (`TODO-YYYY-MM-DD-slug`), `changelog/` (`YYYYMMDDHHMMSS-slug`).
+- **Ids are immutable once landed.** Supersede, never re-date or renumber an existing one — renumbering breaks every inbound reference silently.
+- **Not covered by this rule** — ordinary ordinals aren't identifiers, leave them alone: numbered list steps, hierarchical PRD task ordinals (`1.0` / `1.1` / `2.0`), citation markers (`[1]`, `[2]`), semver versions, and filenames an external CLI produces. Also explicitly out of scope: `create-implementation-plan`'s within-document ids (`REQ-001`, `TASK-001`, etc.) — that document is single-author with no cross-file handles, so a counter there is fine.
+
 ## Key Rules
 
 - **Simplicity first**: minimal code changes, no side effects.

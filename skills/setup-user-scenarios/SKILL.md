@@ -6,7 +6,7 @@ description: Bootstrap a BDD-formatted user-scenarios inventory in any project. 
 
 # User Scenarios Setup
 
-Bootstrap a canonical user-scenarios inventory in any project. The output is a `docs/user-scenarios.md` file in BDD (Given/When/Then) format, keyed by stable IDs (`<DOMAIN>-<NN>`), plus a policy block in the project's agent instructions that requires every user-visible change to add or update a scenario.
+Bootstrap a canonical user-scenarios inventory in any project. The output is a `docs/user-scenarios.md` file in BDD (Given/When/Then) format, keyed by stable IDs (`<DOMAIN>-YYYY-MM-DD-slug`), plus a policy block in the project's agent instructions that requires every user-visible change to add or update a scenario.
 
 ## When to use
 
@@ -43,8 +43,8 @@ Read [references/doc-template.md](references/doc-template.md) and write it to `d
 
 - Replace every occurrence of `{{PROJECT_NAME}}` with the project name from Step 2.
 - Replace `{{DOMAIN_LIST}}` with the comma-separated domain prefixes in backticks: `` `AUTH`, `BILLING`, `ADMIN` ``.
-- Replace the `{{SEEDED_SCENARIOS}}` block with one seeded scenario per domain — for each domain `D`, emit a `### D-01: User performs a <D> action` block with placeholder Given/When/Then steps and `Verified by: TODO`. Use the literal domain name in the title; never invent product-specific copy. The user replaces these titles with real user-visible behaviors after setup.
-- Replace `{{COVERAGE_MATRIX_ROWS}}` with one table row per seeded scenario: `| D-01        | TODO |` (pad the ID column to match the header).
+- Replace the `{{SEEDED_SCENARIOS}}` block with one seeded scenario per domain — for each domain `D`, emit a `### D-YYYY-MM-DD-example-scenario: User performs a <D> action` block, using today's date, with placeholder Given/When/Then steps and `Verified by: TODO`. Use the literal domain name in the title; never invent product-specific copy. The user replaces these titles with real user-visible behaviors after setup.
+- Replace `{{COVERAGE_MATRIX_ROWS}}` with one table row per seeded scenario, using the same dated ID as its heading: `| D-YYYY-MM-DD-example-scenario | TODO |` (pad the ID column to match the header, widening both if a real ID runs longer).
 
 If `docs/user-scenarios.md` already exists, **ask the user** before overwriting. Options to offer: (a) back up the existing file to `docs/user-scenarios.md.bak` and replace, (b) skip Step 3 entirely (still run Step 4), or (c) abort.
 
@@ -53,6 +53,8 @@ If the `docs/` directory does not exist, create it.
 ### Step 4: Inject the doc-sync policy
 
 Read [references/policy-template.md](references/policy-template.md). Replace `{{DOMAIN_LIST}}` with the same backticked domain list from Step 3.
+
+**If Step 3 was skipped because an existing `docs/user-scenarios.md` was kept as-is**, check the ID scheme that existing doc actually uses. If it is not the dated `<DOMAIN>-YYYY-MM-DD-slug` scheme this skill produces, do not inject a policy that claims dated ids. Substitute the scheme the existing doc actually uses into the policy's id wording instead, and state which scheme was used in the Step 5 report, so nobody later assumes the ids are dated when they are not.
 
 Append the substituted block to the target instructions file from Step 1. If none of `AGENTS.md`, `.claude/CLAUDE.md`, `CLAUDE.md` exist, create `AGENTS.md` at project root containing only the policy block (with a top-level title heading).
 
@@ -64,6 +66,7 @@ Confirm to the user, in a single short message:
 
 - `docs/user-scenarios.md` created (or skipped if user chose to)
 - Policy injected into `<target file path>` (or replaced / skipped)
+- If `docs/user-scenarios.md` already existed and was kept as-is, which ID scheme the injected policy documents — so nobody later assumes dated ids when the repo doesn't use them
 - Frozen domains seeded: `<comma-separated domain list from Step 2>`
 - Next step the user should take: add real `Verified by:` test paths to the seeded scenarios as tests land, and replace the placeholder titles with real user-visible behaviors.
 
@@ -74,6 +77,7 @@ Optionally mention that a follow-up the user can request separately is a doc-sha
 - Never invent product- or domain-specific scenario copy. Stick to generic placeholders in seeded scenarios. The user fills in real behaviors after setup.
 - Never modify scenarios in an existing `docs/user-scenarios.md` — only overwrite the whole file (with backup) or skip.
 - Domain prefixes are all-caps letters only. Reject `Auth`, `BILLING-CORE`, numeric prefixes.
+- IDs are date-based and immutable: `<DOMAIN>-YYYY-MM-DD-slug`. A counter-based numeric tail forces scanning the whole doc for the highest number already in use, so two agents on two branches can land on the same next number and the collision only surfaces at merge. A date plus a slug is chosen from local information only, so parallel authors never collide.
 - Retired scenario IDs must never be reused — this is stated in the doc template and the policy. The skill itself does not need to enforce it at setup time, only document it.
 - Policy block uses `## User Scenarios` as its heading — fixed, so future runs can detect duplicates.
 

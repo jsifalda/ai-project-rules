@@ -129,27 +129,18 @@ $$
 $$
 ```
 
-## Diagrams
+## Diagrams (Mermaid)
 
 ````markdown
-```text
-┌───────┐
-│ Start │
-└───┬───┘
-    │
-    ▼
-┌──────────┐
-│ Decision │
-└─┬──────┬─┘
-  │      │
- Yes    No
-  │      │
-  ▼      ▼
-┌─────────┐ ┌─────────┐
-│ Do this │ │ Do that │
-└─────────┘ └─────────┘
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Do this]
+    B -->|No| D[Do that]
 ```
 ````
+
+To link Mermaid nodes to Obsidian notes, add `class NodeName internal-link;`.
 
 ## Footnotes
 

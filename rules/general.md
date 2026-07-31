@@ -163,9 +163,10 @@ paths:
 
 - Diagram when a picture beats words on something complex. Do not force one onto simple things.
 - Default to inline ASCII / unicode box-drawing: trees, boxes and arrows, flows. Renders in a terminal, a diff, a code comment, and every markdown viewer. No tool, no build step, no asset to keep in sync.
+- **Exception, where the target renders it natively.** A fenced ` ```mermaid ` block is correct when the output lands somewhere that renders it with no extra tooling — GitHub markdown, Obsidian — and a skill calls for it. Do NOT convert those to ASCII. The ASCII default governs terminal and chat output, where nothing renders.
 - One idea per diagram, roughly 15 nodes maximum. Split rather than cram.
 - Label every edge. An unlabelled arrow says things connect, not why.
-- Do not author standalone diagram-definition source files and do not reach for a rendering library. If a diagram genuinely needs interactivity or a rendered image, stop and ask first per RESTRICTIONS.
+- What is banned is the toolchain, not the syntax: no standalone `.mmd` files, and never install a renderer or parser to preview or validate a diagram. A fenced block inside a markdown file is not that. If a diagram genuinely needs interactivity or a rendered image, stop and ask first per RESTRICTIONS.
 
 ## Browser Automation (bot-walled sites)
 

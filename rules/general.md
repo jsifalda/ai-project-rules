@@ -123,7 +123,7 @@ paths:
 ## Testing
 
 - Write unit tests a lot (aim at least for covering all user scenarios)!
-- Prefer the Jest runner if possible (if not possible, ask the user to choice different runner - provide the best possible options to run tests in the context for the codebase)
+- Prefer the Jest runner if possible (if not possible, ask the user to choose a different runner - provide the best possible options to run tests in the context for the codebase)
 - Never ever remove any tests if they are failing (only if there are no longer needed)
 
 ### TDD (mandatory)
@@ -159,23 +159,13 @@ paths:
 
 # TOOLS
 
-## Mermaid Diagrams
+## Diagrams
 
-When creating or editing Mermaid diagrams (`.mmd` files):
-
-### Syntax Rules
-
-- Never mix bracket types — `{...}` (diamond) must close with `}`, `[...]` (box) must close with `]`
-- Avoid special characters (`[`, `]`, `{`, `}`, `(`, `)`) inside node labels — use `<br/>` for line breaks, and rephrase to avoid brackets
-- Use `"quoted titles"` for subgraph labels containing special characters or emoji
-- Pipe labels on edges must be closed: `-->|label text|` (pipe on both sides)
-
-### Mandatory Validation
-
-- After creating or editing any `.mmd` file, **always validate** it using the mermaid parser before marking the task as done
-- Validation method (requires `jsdom` and `mermaid` npm packages in `/tmp`)
-- If validation fails, fix the errors and re-validate — repeat until it passes
-- **Never mark a Mermaid diagram task as done without a passing validation**
+- Diagram when a picture beats words on something complex. Do not force one onto simple things.
+- Default to inline ASCII / unicode box-drawing: trees, boxes and arrows, flows. Renders in a terminal, a diff, a code comment, and every markdown viewer. No tool, no build step, no asset to keep in sync.
+- One idea per diagram, roughly 15 nodes maximum. Split rather than cram.
+- Label every edge. An unlabelled arrow says things connect, not why.
+- Do not author standalone diagram-definition source files and do not reach for a rendering library. If a diagram genuinely needs interactivity or a rendered image, stop and ask first per RESTRICTIONS.
 
 ## Browser Automation (bot-walled sites)
 
@@ -193,7 +183,7 @@ When creating or editing Mermaid diagrams (`.mmd` files):
 
 ## Implementation Verification Protocol
 
-After completing any code changes, perform a three-phase verification before considering the task complete:
+After completing any code changes, perform a four-phase verification before considering the task complete:
 
 ### Phase 1: Build Verification
 
@@ -212,13 +202,13 @@ After completing any code changes, perform a three-phase verification before con
 
 ### Phase 3: Visual/Browser Verification
 
-- Use the agent-browser skill and its tools to visually verify your changes in the running application
+- Use your harness's browser automation tooling (e.g. a Playwright MCP server) to visually verify your changes in the running application
 - Navigate to the affected pages/components and confirm:
   - The UI renders correctly without visual regressions
   - Interactive elements (buttons, forms, links) function as expected
   - No console errors appear in the browser
   - The user flow works end-to-end as intended
-- Take screenshots when your observe any inconsistncies
+- Take screenshots when you observe any inconsistencies
 
 ### Phase 4: Code Review
 
@@ -226,4 +216,4 @@ After completing any code changes, perform a three-phase verification before con
 - Fix the findings from the review, if that makes a sense
 - Present to the user what review returned and how it was addressed
 
-CRITICAL: Do not mark implementation as complete until all three verification phases pass. If any phase fails, fix the issues and re-run all phases.
+CRITICAL: Do not mark implementation as complete until all four verification phases pass. If any phase fails, fix the issues and re-run all phases.

@@ -16,19 +16,33 @@ Think: "If I were explaining this to a smart friend who's never seen the code, w
 
 ## Architecture Overview
 
-High-level description of how the system is structured. Follow with a Mermaid diagram.
+High-level description of how the system is structured. Follow with an ASCII / Unicode diagram.
 
 ### System Diagram
 
-Use flowchart TD or C4-style diagrams. Label clearly.
+Use a top-down flow or C4-style layout. Label every edge clearly.
 
-` ` `mermaid
-flowchart TD
-    A[Client] --> B[API Gateway]
-    B --> C[Service A]
-    B --> D[Service B]
-    C --> E[(Database)]
-    D --> E
+` ` `text
+                 ┌──────────┐
+                 │  Client  │
+                 └────┬─────┘
+                      │ HTTPS request
+                      ▼
+              ┌───────────────┐
+              │  API Gateway  │
+              └───────┬───────┘
+                      │ routes by path
+           ┌──────────┴──────────┐
+           ▼                     ▼
+    ┌─────────────┐       ┌─────────────┐
+    │  Service A  │       │  Service B  │
+    └──────┬──────┘       └──────┬──────┘
+           │ reads/writes        │ reads/writes
+           └──────────┬──────────┘
+                      ▼
+               ┌─────────────┐
+               │  Database   │
+               └─────────────┘
 ` ` `
 
 ### Key Components
@@ -132,7 +146,7 @@ Quick reference for things developers do regularly:
 - **Questions**: Use rhetorical questions to guide the reader ("Why not just use a single database?")
 - **Humor**: Light humor is welcome — avoid forced jokes
 - **Honesty**: Admit tradeoffs and mistakes. It builds trust and prevents repeat errors
-- **Diagrams**: At least one Mermaid diagram. More for complex systems. Keep them readable (max 15 nodes per diagram, split if needed)
+- **Diagrams**: At least one ASCII / Unicode diagram. More for complex systems. Keep them readable (max 15 nodes per diagram, split if needed)
 
 ## Section Priority
 

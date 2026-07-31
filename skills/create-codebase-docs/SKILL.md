@@ -1,6 +1,6 @@
 ---
 name: create-codebase-docs
-description: Generate an engaging STARTHERE.md codebase guide that explains architecture, decisions, and lessons in plain language with Mermaid diagrams. Also wires up auto-update checks in the project's agent instructions file and links from README.md. Use when onboarding to a project, documenting a codebase, or when user says "create codebase docs", "write STARTHERE", "explain the project", or "document the codebase".
+description: Generate an engaging STARTHERE.md codebase guide that explains architecture, decisions, and lessons in plain language with ASCII / Unicode diagrams. Also wires up auto-update checks in the project's agent instructions file and links from README.md. Use when onboarding to a project, documenting a codebase, or when user says "create codebase docs", "write STARTHERE", "explain the project", or "document the codebase".
 ---
 
 ## Purpose
@@ -39,7 +39,7 @@ Write the file following the template in `references/template.md`. Key rules:
 
 - **Engaging tone** — use analogies, anecdotes, and conversational language
 - **Plain language** — a new team member should understand it without prior context
-- **Mermaid diagrams** — include at least one architecture diagram (flowchart or C4-style)
+- **ASCII / Unicode diagrams** — include at least one architecture diagram drawn in ASCII / Unicode box-drawing (flowchart or C4-style)
 - **Lessons & pitfalls** — real bugs encountered, why decisions were made, what to watch out for
 - **No fluff** — every section must earn its place
 

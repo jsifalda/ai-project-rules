@@ -60,7 +60,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`code-review-nuclear`](skills/code-review-nuclear/SKILL.md) | Strict single-axis structural/architectural review of a diff or branch — hunts "code judo" moves that delete whole branches, layers, or abstractions, scored against Fowler smells and 9 non-negotiable standards. Not a correctness, style, or security review. | — | — |
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. | — | — |
 | [`council-v2`](skills/council-v2/SKILL.md) | Run a decision through a routed 5-7 seat council of reasoning modes and personas that analyze, peer-review, and synthesize a verdict. | `first-principles-mode`, `founder-thinking-mode`, `persona-stanier`, `persona-levelsio` | — |
-| [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — | — |
+| [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, ASCII diagrams) and wire up auto-update checks. | — | — |
 | [`create-implementation-plan`](skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — | — |
 | [`create-product-vision`](skills/create-product-vision/SKILL.md) | Turn a short product or project description into one tight, motivating vision doc covering three angles (motivation, practical, product), with the tagline offered in three wordings (motivational main, practical and product-descriptive alternatives). | `write-like-human` | — |
 | [`create-skill`](skills/create-skill/SKILL.md) | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. | — | — |
@@ -167,6 +167,8 @@ Personal repo, but PRs welcome if something here is genuinely useful elsewhere. 
 - A **Gemini command**: add `gemini-cli/commands/<name>.toml`. Add it to the Current commands list above.
 
 **Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: the [`## Universality requirement`](CLAUDE.md#universality-requirement) section of `CLAUDE.md`. After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
+
+**Verification gate:** every change here runs the repo's verification gate before it is reported done — the universality scanner, the skill validator, then a CodeRabbit review and the harness's built-in code review, with `critical` and `major` *factual* findings (broken commands, dead links, wrong references) fixed automatically and everything else brought to you. Anything that would change what a rule requires always asks first, whatever its severity. Full policy: the [`## Verification Protocol (MANDATORY)`](CLAUDE.md#verification-protocol-mandatory) section of `CLAUDE.md`.
 
 Log notable changes as a new file in `changelog/`, named `YYYYMMDDHHMMSS-short-slug.md`. The root `changelog.md` is a frozen archive — never append to it.
 

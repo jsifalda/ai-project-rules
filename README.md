@@ -168,5 +168,7 @@ Personal repo, but PRs welcome if something here is genuinely useful elsewhere. 
 
 **Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: the [`## Universality requirement`](CLAUDE.md#universality-requirement) section of `CLAUDE.md`. After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.
 
+**Verification gate:** every change here runs the repo's verification gate before it is reported done — the universality scanner, the skill validator, then a CodeRabbit review and the harness's built-in code review, with `critical` and `major` *factual* findings (broken commands, dead links, wrong references) fixed automatically and everything else brought to you. Anything that would change what a rule requires always asks first, whatever its severity. Full policy: the [`## Verification Protocol (MANDATORY)`](CLAUDE.md#verification-protocol-mandatory) section of `CLAUDE.md`.
+
 Log notable changes as a new file in `changelog/`, named `YYYYMMDDHHMMSS-short-slug.md`. The root `changelog.md` is a frozen archive — never append to it.
 

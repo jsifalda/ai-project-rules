@@ -91,7 +91,7 @@ says otherwise.
     `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
     conventions.
-  - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}} --type all`. Collect every
+  - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}}`. Collect every
     `type: "finding"` event; wait for `type: "complete"`.
     - **Prerequisites** — `cr` on `PATH` (`which cr`) and authenticated (`cr auth status`). If either
       fails, **tell the user and skip the CodeRabbit CLI lens** — label it `skipped (CodeRabbit

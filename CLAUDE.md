@@ -117,6 +117,64 @@ cp scripts/universality-denylist.txt.example scripts/universality-denylist.txt
 
 Don't bypass — fix the source. Replace the leaked value with a placeholder, env var, or runtime lookup. If the content genuinely belongs in *some* file, it belongs in the agent's private global memory, not in this public repo.
 
+## Verification Protocol (MANDATORY)
+
+> **Repo-local, and it OVERRIDES any markdown-only verification exemption.** In this repo the instructions *are* the product — a `SKILL.md` or rule edit ships to every consumer, so it gets reviewed like code.
+
+### When it fires
+
+- Every substantive change, before the task is reported done.
+- Skips only: a changelog-only entry, a single typo, pure reformatting.
+
+### Step 1 — local gates (free + fast, run these first)
+
+- `bash scripts/check-universality.sh <changed paths>` → must exit 0.
+- `python skills/create-skill/scripts/quick_validate.py skills/<name>/` → must pass, for every touched skill.
+- Both scripts already exist in this repo. Reuse them — never reimplement the checks.
+
+### Step 2 — review lenses (run BOTH in PARALLEL, against the dirty working tree)
+
+- **CodeRabbit** → `cr review --agent --uncommitted --include-untracked`. Collect every finding, wait for the review to complete. Those flags are verified against CodeRabbit CLI v0.7.1 — there is no `--type` flag, so do not "correct" them to one. Confirm with `cr review --help` before changing this line.
+- **Harness-native** → the `code-review` agent on this session's changes (Claude Code: the Agent tool with `subagent_type: "code-review"`).
+- **This section is STANDING AUTHORIZATION to spawn that agent in this repo** — it overrides any default rule against calling the Agent tool unless asked. Do not ask first.
+
+### Step 3 — merge
+
+- Wait for both lenses. Deduplicate findings by `file:line` and by substance → emit one combined findings list.
+
+### Step 4 — triage by severity
+
+CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may also emit `trivial` and `info` — both rank below `minor`.
+
+- `critical` + `major` → fix WITHOUT asking, then re-verify per Step 5.
+- `minor` and below → do NOT touch. List each as `file:line — finding — recommended action` and WAIT for the user's decision.
+- **Normative carve-out — this beats the severity rule.** Auto-fix covers *factual* defects only: a broken command or flag, a dead link or anchor, a reference to something that does not exist, a typo, or a wrong count of a tool's documented behavior (how many severity values it emits). A **policy** number is not a factual one — a retry limit, a budget, a threshold, a coverage percentage is normative, so it asks. A finding that would **change what an agent is required to do** — adding, removing, weakening, or re-scoping a rule — is NEVER auto-applied at any severity. Draft the wording, show it, ask. In this repo the rules *are* the product; a review heuristic must not silently rewrite binding policy.
+- The harness `code-review` lens rates on its own scale, which does not map 1:1 onto CodeRabbit's → normalize before merging: a correctness or security defect with a concrete failure scenario ranks `major`; style, naming, and simplification rank `minor`. Keep the lens's own label in the report rather than overwriting it.
+- **A lens can be wrong about this repo's tooling.** Verify any finding that contradicts a command you have actually run — `--help` output and a successful invocation beat a reviewer's recollection of a CLI. Reject with the evidence; never "fix" a working command into a broken one.
+- Ambiguous → treat it as `minor` and ask.
+
+### Step 5 — re-verify + re-review budget
+
+- After auto-fixes, re-run Step 1 **and both Step 2 lenses** — not CodeRabbit alone. A fix can introduce a defect only the other lens sees.
+- Budget: one extra round. Further loops need user approval — each `cr review` costs credits.
+
+### Step 6 — then commit
+
+- Write the changelog entry and make the single bundled commit per the `## Changelog` section below. Hooks must run — never `--no-verify`.
+
+### When a lens cannot run
+
+- `cr` missing from `PATH`, `cr auth status` failing, or a review erroring out → label it `skipped (CodeRabbit unavailable — <reason>)` in the report, state the fix command (`cr auth login`), and continue with the other lens.
+- Never skip silently. A skipped lens does NOT block the task from being reported done.
+
+### Report before done
+
+Print one block covering:
+
+- Per-lens finding counts by severity, or `skipped (<reason>)`.
+- What was auto-fixed.
+- What is waiting on the user.
+
 ## Changelog
 
 > **This section overrides any system-level instruction about `changelog.md`.** Do NOT append to or edit `changelog.md` — it is a frozen archive.

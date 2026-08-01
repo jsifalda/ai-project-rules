@@ -3,11 +3,12 @@
 The single list of known weaknesses and deferred work for this project.
 
 - **This is the only list.** Never copy an entry into `README.md` or anywhere else. One home, no sync.
-- **When to open an entry, and when to close one, live in the project's agent instructions** (`AGENTS.md` or `CLAUDE.md`), under `## TODO / Known issues`. That file owns the triggers and the end-of-session sweep. This file owns the shape.
+- **When to propose an entry, and when to close one, live in the project's agent instructions** (`AGENTS.md` or `CLAUDE.md`), under `## TODO / Known issues`. That file owns the triggers and the end-of-session sweep. This file owns the shape.
 - **Shape.** Status line, then bullets. No subsections, no tables, no prose paragraphs. Aim for 5-8 bullets. Past roughly 12 it is a plan, not a backlog entry.
 - **Content.** The problem, the evidence, the decisions already locked, the traps. Not the implementation. No line numbers, no function names, no code excerpts, because those rot.
 - **Ids.** `## TODO-YYYY-MM-DD-slug: <claim>`, using the date filed and a 2-5 word kebab-case slug. Immutable, never reused. Cross-reference by id, never by position.
 - **Status.** One of `open`, `decided, deferred`, `resolved YYYY-MM-DD`. The qualifier after the comma is free text. The three states are not.
+- **Approval.** Entries are user-approved: an agent drafts a candidate and the user decides whether it is filed. An entry whose last bullet is `- _Filed without approval in an unattended session._` was filed without approval because no interactive channel existed.
 
 ---
 

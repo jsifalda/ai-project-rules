@@ -39,7 +39,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | MCP-config reminder (when no `.mcp.json`) | inject | 7b | v1 |
 | GitHub App offer (Claude Code + GitHub only) | suggest | 9 | v1 |
 | Security-guidance plugin offer (Claude Code only) | suggest | 9b | v4 |
-| TODO backlog with two-way end-of-session sweep (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
+| TODO backlog with two-way end-of-session sweep, filing user-approved (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
 | Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
 | User-scenarios sync gate in the verification protocol (appended only after the user-scenarios delegation succeeds) | inject | 6b | v7 |
 
@@ -73,3 +73,11 @@ When a new baseline gap is found, do not patch it as a one-off in a target repo.
 
 That is the loop this checklist exists to close: gaps propagate through re-runs, not through a PR
 per repo.
+
+**Changing an existing concern's shipped text is not covered by this loop.** A wording or mechanism
+change with no new row does not reach a repo already stamped at the current version — the
+drifted-block refresh only fires on a version gap, and a `delegate`-delivery concern is not an
+injected block at all. Such a change is **forward-only**: new setups get it, and an existing repo
+picks it up only when someone re-runs the owning skill by hand. Do not bump the version to force it,
+because a bump refreshes the injected half while leaving the delegated half stale, and a
+self-contradicting agent-instructions file is worse than a uniformly outdated one.

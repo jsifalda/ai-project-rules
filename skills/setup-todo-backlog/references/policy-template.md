@@ -10,14 +10,15 @@ other than `docs/TODO.md`, substitute the chosen path everywhere before injectin
 ## TODO / Known issues
 
 `docs/TODO.md` is the backlog of known weaknesses. It exists so a defect found mid-task outlives
-the session that found it. Maintain it from both ends: open an entry when you notice a weakness,
+the session that found it. Maintain it from both ends: propose an entry when you notice a weakness,
 close one when you fix it. Skipping the closing half is worse than skipping the opening half,
 because a stale entry gets trusted.
 
 ### When to create an entry
 
-File it the moment you notice it. Mid-task counts. So does a defect you will never fix yourself,
-and one nowhere near what you were asked to do.
+Note it the moment you notice it and keep working. Do not write it to `docs/TODO.md` — no entry is
+filed without the user's approval, per **Approval gate** below. Mid-task counts. So does a defect
+you will never fix yourself, and one nowhere near what you were asked to do.
 
 - A bug or limitation you found and are not fixing now.
 - A workaround chosen over the real fix.
@@ -39,12 +40,53 @@ and one nowhere near what you were asked to do.
 
 When in doubt, skip the noise. Never skip a defect a reader can actually hit.
 
+### Approval gate
+
+An agent never files a backlog entry on its own. The backlog is the user's record of what is wrong
+with their project, so the user decides what goes in it.
+
+- **Collect, do not write.** A trigger firing mid-task means note the candidate and carry on.
+  Nothing touches `docs/TODO.md` until the sweep, so a trigger never interrupts the work in flight.
+- **Present the full draft, not a summary.** Show every candidate exactly as it would be written:
+  the `## TODO-YYYY-MM-DD-slug: <claim>` heading, the status line, and every bullet. "Found a flaky
+  test, file it?" is not a draft. Nobody can approve wording they have not seen.
+- **One decision per candidate.** Three candidates get three answers, not one blanket yes. They are
+  independent findings, and the user may want one in the backlog and the other two forgotten.
+- **Write only what was approved**, verbatim or with the edits the user asked for. A declined
+  candidate is never written, never softened into a code comment or a note somewhere else, and never
+  re-proposed later in the same session. A decline is a decision, not a delay.
+- **Report the declines.** Say what you proposed and what the user turned down, so the finding
+  survives in the session transcript even though it never reached the backlog.
+- **Closing is not gated.** Moving a resolved entry to `## Resolved` needs evidence, not approval.
+  Closing retires a claim the user is already carrying, so the evidence rule is the check that
+  matters there. Never conflate the two halves: creating asks, closing proves.
+
+**The one exception, and it is narrow.** When a top-level session has no interactive channel at
+all — a headless run, a scheduled or cron job — there is nobody to ask, and a lost finding is
+worse than an entry the user deletes later. File it, and make this its last bullet, verbatim:
+
+`- _Filed without approval in an unattended session._`
+
+The marker is a bullet, not a status. The vocabulary stays `open`, `decided, deferred`, and
+`resolved YYYY-MM-DD`.
+
+**A subagent never files an entry.** It returns its candidates to whoever spawned it, and the
+parent session runs the sweep, because the parent holds the user channel. Only a top-level session
+decides whether a channel exists. A subagent having no way to reach the user says nothing about
+whether the user is reachable, because the parent can ask.
+
+The exception is about capability, not convenience. It does NOT fire because the user seems busy,
+because asking would break the flow, because the session has run long, because you are running as
+a subagent, because the finding is obviously worth filing, or because the user is slow to reply. If
+a question can reach the user at all, ask it.
+
 ### Backlog sweep before you finish
 
 Run this on every substantive session, read-only investigation included. Both halves are
 mandatory.
 
-- **Open what you found.** File per the triggers above.
+- **Propose what you found.** Draft every candidate from the triggers above and present it per the
+  **Approval gate**. File the approved ones. Drop the declined ones.
 - **Close what you solved.** Re-read `docs/TODO.md` and ask of every open entry whether this
   session resolved it. A session that fixes something rarely remembers an entry described it,
   which is how a backlog rots into a list of work already done.
@@ -53,8 +95,8 @@ mandatory.
 - Partial resolution is not resolution. Leave the entry open and narrow its problem statement to
   what remains.
 - A change that makes an entry moot also closes it. Say which it was, fixed or obsolete.
-- Say one line either way: what you filed, what you closed, or that neither happened. Never skip
-  this silently.
+- Say one line either way: what you proposed, what the user approved and you filed, what was
+  declined, what you closed, or that none of it happened. Never skip this silently.
 
 ### How an entry is closed
 

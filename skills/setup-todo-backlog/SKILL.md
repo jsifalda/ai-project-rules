@@ -1,15 +1,16 @@
 ---
 name: setup-todo-backlog
 disable-model-invocation: true
-description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a file-it-when-you-find-it policy into AGENTS.md or CLAUDE.md. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
+description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a propose-then-file policy into AGENTS.md or CLAUDE.md, where agents draft candidate entries and file them only once the user approves at an end-of-session sweep. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
 ---
 
 # Setup TODO Backlog
 
-Set up a known-issues backlog in any project. Every weakness found mid-task gets a dated,
-immutable id in `docs/TODO.md`, and a policy in the agent-instructions file makes future
-sessions maintain it from both ends. Open an entry when you notice a defect, close it when you
-fix it. The point is that a defect outlives the session that found it.
+Set up a known-issues backlog in any project. Every weakness found mid-task becomes a candidate
+entry, drafted and presented for approval at the end-of-session sweep, then filed with a dated,
+immutable id in `docs/TODO.md` once approved, and a policy in the agent-instructions file makes
+future sessions maintain it from both ends. Propose an entry when you notice a defect, close it
+when you fix it. The point is that a defect outlives the session that found it.
 
 ## When to use
 
@@ -250,6 +251,10 @@ no line numbers, no function names, no code excerpts, because those rot and misl
 **Closing**: move the entry to `## Resolved` at the bottom of the same file, keep the id, swap
 the status line, and collapse the body to the problem plus what fixed it.
 
+**Unattended marker**: a last bullet reading
+`- _Filed without approval in an unattended session._` means the entry skipped the approval gate
+because no interactive channel existed.
+
 ## Rules
 
 - **One home.** The backlog file is the only list of known issues. Never copy an entry into
@@ -262,6 +267,21 @@ the status line, and collapse the body to the problem plus what fixed it.
 - **Entries are bullets under a status line.** Never subsections, never tables, never prose.
 - **Conversion is offer-then-honor-decline.** Never force a repo off its existing scheme. On a
   decline, inject the policy and adapt its id wording to what the repo uses.
+- **Filing is approval-gated, drafting is not.** An agent may notice and draft a candidate entry
+  mid-task, but never writes it without the user's approval. Drafts collect silently and surface
+  once, as full drafts, at the end-of-session sweep, one decision per candidate. The backlog is
+  the user's record of what is wrong with their project, so what enters it is the user's call.
+- **Closing stays evidence-gated, not approval-gated.** Closing an entry already requires proof
+  the defect no longer reproduces. That gate is separate from filing, and the two never merge.
+- **The unattended-session exception is about capability, not convenience.** When a top-level
+  session has no interactive channel at all (a headless run, a scheduled job), file the entry
+  autonomously and append this exact bullet last:
+  `- _Filed without approval in an unattended session._`
+  A busy user, an interrupted flow, an obviously-right finding, or running as a subagent do not
+  qualify. Only the absence of a channel does.
+- **A subagent never files an entry.** It returns its candidates to whoever spawned it, and the
+  parent session runs the sweep, because the parent holds the user channel. A subagent having no
+  way to reach the user says nothing about whether the user is reachable.
 - **Never clobber an existing `## TODO / Known issues` policy section.** Always ask first.
 - **Never overwrite an existing backlog file.** Convert it or leave it, do not replace it.
 - **Dates come from git or from the user.** Never guess a date, and never quietly stamp today

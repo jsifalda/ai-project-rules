@@ -26,7 +26,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
-| TODO backlog (known-issues list + two-way end-of-session sweep) — opt-in | delegate → `setup-todo-backlog` |
+| TODO backlog (known-issues list + two-way end-of-session sweep, entry filing user-approved) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
 
 ## Workflow
@@ -379,7 +379,11 @@ only; the user runs it.
   stale scenario doc fails verification exactly like a failing test, and is reported every time as
   `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
   user-scenarios module, so selecting that module with verification deselected is a no-op.
-- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`.
+- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`; its injected
+  policy makes entry **filing** user-approved (drafted mid-task, filed only at the end-of-session
+  sweep) while **closing stays evidence-gated, not approval-gated**. The one exception is a
+  **top-level** session with no interactive channel, which files directly and **must** flag the
+  entry as filed without approval; a subagent never files, it returns candidates to its caller.
 - The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
   It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
   silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.

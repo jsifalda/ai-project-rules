@@ -1,6 +1,7 @@
 ---
 name: goal-breakdown
 description: "Break a big finite goal, project, or idea into a sharp end state, ordered milestones, and one-day tasks with a single clear next action. Use whenever the user wants to decompose, break down, or plan a project into actionable steps, asks 'where do I start' on something they want to ship, build, learn, or launch, says 'make a plan to achieve X', 'turn this goal into tasks', '1% better every day toward X', or feels stuck because a goal is too big to begin. Also use to continue a plan already in progress: when the user finished a milestone and asks what is next, says 'continue', 're-plan from here', or 'update the plan', re-decompose the remaining work from where they actually landed. Handles finite projects with an end state only. Do NOT use for ongoing habits or systems with no finish line (there is no streak or habit tracking here), for pure scheduling or calendar work, for summarising web pages or text, or for distilling raw notes into maxims (a different job)."
+disable-model-invocation: true
 ---
 
 # Goal Breakdown

@@ -24,7 +24,7 @@ paths:
 * Microsoft Clarity for analytics (over GA)
 * Sentry for error tracking
 * PostHog for product analytics
-* Jest for unit tests, Playwright for integration (Node.js test runner for API/server tests where simpler). Always set up coverage, aim ≥90%
+* Vitest for unit tests (instead of the Jest), Playwright for integration (Node.js test runner for API/server tests where simpler). Always set up coverage, aim ≥90%
 * ESLint + Prettier for linting
 * Husky pre-commit hooks  - linting, typing etc. (over git hooks)
 * Resend for email sending

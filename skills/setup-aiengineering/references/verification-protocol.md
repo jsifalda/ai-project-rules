@@ -86,7 +86,14 @@ says otherwise.
   This gate is not covered by the **Test coverage for new code** percentage — a bug fixed on an
   already-covered line does not move the coverage number, so `{{COVERAGE_CMD}}` cannot detect a
   missing regression test. Coverage measures executed lines, not asserted behavior.
-- **Code review** — run **every lens below** in parallel on this session's changes:
+- **Code review** — **Exempt:** an integration-only session — a merge, rebase, cherry-pick, or
+  revert of already-reviewed work that authored no new lines — skips this gate and only this gate;
+  every other gate still runs. Writing one line neither side had voids it. Report the skip with the
+  diff proving nothing was authored (`git show --cc --format="" <integration-sha>` for a merge,
+  `git range-diff` for a rebase or cherry-pick) **plus** `git diff <integration-sha>..HEAD`, where
+  `<integration-sha>` is the merge commit or the replayed tip — that pairing is what proves nothing
+  landed after the integration commit, which neither command before it can see. Never skip silently.
+  Otherwise run **every lens below** in parallel on this session's changes:
   - **Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
     `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
@@ -181,7 +188,9 @@ whatever remains: *"No automated lint/typecheck/test gates were detected for thi
 when build tooling lands."* If a source repo has a test framework but no coverage tooling, the skill
 wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is chosen — see `references/test-setup.md`. The
 **Security review** lens ships only when the security review module is selected in Step 4; when it is
-not, omit that lens bullet. The **User scenarios in sync** and **Backlog sweep** gates are similar but
+not, omit that lens bullet. The **integration-only exemption** on the **Code review** gate ships
+with that gate and is dropped with it — a repo that does not get the code review gate does not get
+the exemption either. The **User scenarios in sync** and **Backlog sweep** gates are similar but
 strictly stronger: neither carries a `{{...}}` placeholder either, but selection alone is not enough
 to ship either one. Each references something only its delegated skill installs — the BDD scenario
 doc from `setup-user-scenarios`, the `## TODO / Known issues` policy from `setup-todo-backlog` — so

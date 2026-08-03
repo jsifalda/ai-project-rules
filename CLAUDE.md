@@ -125,6 +125,20 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 
 - Every substantive change, before the task is reported done.
 - Skips only: a changelog-only entry, a single typo, pure reformatting.
+- **Integration-only exemption — Step 2 lenses only.** When the session's only change is integrating
+  already-reviewed work — a merge, rebase, cherry-pick, or revert — and it authored no new lines
+  beyond selecting among existing sides, skip Step 2 entirely (both lenses). Everything else still
+  runs: Step 1's local gates, plus whatever tests or checks the change warrants.
+  - **Void the moment you write a line neither side had** — a semantic conflict resolution, a
+    reconciling fix-up, a post-merge adjustment. Then both lenses run, scoped to what you wrote.
+  - **Show the evidence, never skip silently.** Report the skip alongside the diff proving nothing
+    was authored — `git show --cc --format="" <integration-sha>` (empty output) for a merge,
+    `git range-diff <old-base>..<old-tip> <new-base>..<new-tip>` for a rebase or cherry-pick. That
+    only proves the integration commit itself is clean, so pair it with
+    `git diff <integration-sha>..HEAD` (also empty), where `<integration-sha>` is the merge commit or
+    the replayed tip — a later commit that authored lines is exactly what voids the exemption, and
+    neither command above can see it. A non-empty result is not a formality — it is the diff the
+    lenses must review.
 
 ### Step 1 — local gates (free + fast, run these first)
 

@@ -9,7 +9,7 @@ paths:
 
 ## Core Principles
 
-- **Simplicity First:** Make every change as simple as possible. Impact minimal code.
+- **Simplicity First:** Make every change as simple as possible. Impact minimal code. Choose the simplest implementation that fully meets the **current** requirements — no speculative abstraction, configuration, or indirection for a need nobody has stated yet.
 - **No Laziness:** Find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact:** Only touch what's necessary. No side effects with new bugs.
 
@@ -23,6 +23,13 @@ paths:
 - Fulfill the user's request thoroughly, including reasonable, directly implied follow-up actions.
 - Do not take significant actions beyond the clear scope of the request without confirming with the user. If asked _how_ to do something, explain first, don't just do it.
 - Prioritize simplicity and minimalism in your solutions.
+
+# ARCHITECTURE
+
+- **Decide for the long term.** Pick the design you would still stand behind in a year. Never accept a stopgap that only works for now and is meant to be swapped out later — that is the "No Laziness" rule applied to structure, not just to bug fixes.
+- **Long-term direction, minimal implementation.** When the two pull apart, make the *interface and the boundary* durable and keep the *implementation behind it* the smallest thing that meets today's requirements. A durable decision is never a licence to build for imagined future needs.
+- **Grow the system in layers.** Ship the smallest version that works end to end, then stack each new capability on top of something that already works. Never trade a working product for half-finished complexity — at every step there is a product that runs.
+- **Separate concerns, enforce boundaries.** Explicit interfaces between layers, no reaching across them, no shared mutable state as a back channel. Sizing and single-purpose guidance lives in `# FILE LENGTH`.
 
 # SELF IMPROVEMENT LOOP
 
@@ -42,6 +49,7 @@ paths:
 - If something goes sideways, STOP and re-plan immediately
 - Use plan mode for verification steps, not just building
 - Write detailed specs upfront to reduce ambiguity
+- **Study prior art before designing.** Look at how established products solve this problem and start from their proven patterns, naming, and conventions rather than inventing one. Name the reference in the plan. This is a starting bias, not the answer — challenge it from first principles the same way `builder.md` says to challenge a default stack, and say why when you deviate.
 
 # RESTRICTIONS
 
@@ -138,6 +146,10 @@ paths:
 
 ## Dependency Management
 
+- **Preference order, before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. This is a bias, not a ranking to obey — take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default is inverted, see "Small enough to write?" below. An existing dependency never overrides a named prohibition in these rules (e.g. `fetch` over `axios`) or the repo's own conventions.
+- **Check capability before you conclude a gap.** Distinct from the availability check in `## Core Guidelines`: once a library is in play, read its docs and its types before deciding it cannot do what you need. "It probably can't do X" is not a finding — grep the types, check the changelog, then decide.
+- **Small enough to write? Write it.** Option (3) costs a user round-trip (ask-first, RESTRICTIONS), so propose a new package only when the self-written alternative is non-trivial or correctness-sensitive — auth, crypto, parsing, dates, timezones. Otherwise write it. Default stays: install nothing.
+- **Do not reimplement common functionality without a stated reason.** Where a library is warranted, prefer an established, well-maintained one. Judge on maintenance, security, and bundle cost, not on popularity alone. Adding a *new* package is still governed by the ask-first protocol in RESTRICTIONS — propose it, do not install it.
 - use local package manager (respect existing lockfile; if none present, prefer pnpm, then yarn, then npm)
 - Always use the latest stable version of dependencies
 - Avoid using deprecated, outdated and unsecured libraries

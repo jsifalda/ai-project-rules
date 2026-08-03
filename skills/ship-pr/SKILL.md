@@ -1,10 +1,30 @@
 ---
 name: ship-pr
-disable-model-invocation: true
-description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke when the user explicitly types the literal slash command `/ship-pr`. Natural-language phrasing such as "ship this", "ship these changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT cause this skill to load; handle those with standard commit + push tools instead and, if helpful, ask whether to run `/ship-pr`. When (and only when) explicitly invoked — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab), self-assigned to you, in one shot. Auto-detects provider via `git remote`, auto-derives branch name, commit message, and PR title/body from the diff and existing repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
+description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. Two entry points only, the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency (such as the final stage of a `/better-plan` run). Phrasing like "ship this", "create a PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the diff and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
 ---
 
 # Ship PR
+
+## Invocation (check this first)
+
+Exactly two entry points are allowed:
+
+1. The user types the literal slash command `/ship-pr`.
+2. A skill that declares `ship-pr` as a dependency reaches its ship step — currently
+   `better-plan` (Stage 5) and `loop-todos` (its per-entry PR step).
+
+Anything else is an anti-trigger. None of these load this skill — "ship this", "ship these
+changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for
+review", "push this up", or any other paraphrase. Commit and push with ordinary git tools
+instead, and offer `/ship-pr` if it seems useful. This skill opens a real PR against a real
+remote with no per-step confirmation, so a wrong trigger is outward-facing and awkward to
+walk back.
+
+This rule is prompt-enforced, not harness-enforced. This skill deliberately carries no
+`disable-model-invocation` flag, because that flag is a binary block with no per-caller
+allowlist — it removes the skill from the Skill tool entirely, so a dependent skill's ship
+step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
+without first removing every dependent skill's ship step.
 
 Go from a dirty working tree to an open PR/MR in one pass. Auto-derive everything from the diff and the repo's own conventions. No per-step confirmations.
 

@@ -1,14 +1,16 @@
 ---
 name: better-plan
-description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor (explore, design, draft). Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes the refined plan through the op skill, assigning each task the cheapest capable model and mapping dependencies. It runs in plan mode, so the routed plan lands in a plan file you approve natively before op dispatches the subagents. It closes with a recap of the original and enhanced prompts and what each stage did. Slash-only. Use when you type /better-plan and want a plan enhanced, hardened, and cost-routed in one go. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
+description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor (explore, design, draft). Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes the refined plan through the op skill, assigning each task the cheapest capable model and mapping dependencies. It runs in plan mode, so the routed plan lands in a plan file you approve before op dispatches the subagents. It recaps the run, then by default ships the result as a PR via ship-pr, once execution is verified and nothing awaits you. Slash-only. Use when you type /better-plan and want a plan enhanced, hardened, cost-routed, and shipped. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
 disable-model-invocation: true
 ---
 
 # Better Plan — build, grill, route, in one pass
 
 Turn a request into a plan that has been stress-tested and cost-routed before any
-code is written. Run the preface, then four stages, then the recap, in order. Do not
-skip any. Stop and surface a blocker rather than guessing.
+code is written, then ship the result. Run the preface, then five stages, in order.
+Stages 1-4 are mandatory and none may be skipped. Stage 5 is conditional — it ships only
+when its own gate passes, and skips cleanly when it does not. Stop and surface a blocker
+rather than guessing.
 
 ## Preface — Enter plan mode, then enhance the request
 
@@ -93,6 +95,39 @@ subagent did and on which model.
 
 If the user only wants the routed plan and not execution, stop after presenting it.
 
+## Stage 5 — Ship the work (default)
+
+Once execution is done, open a PR for it. This is the last thing the flow does — nothing
+follows the ship report, not even the recap.
+
+Ship when **all four** of these hold:
+
+- Every routed task from Stage 3 actually executed.
+- Verification is green — op's model-verification step, plus whatever gates the project
+  defines for itself.
+- No question is still outstanding to the user.
+- No finding or decision is sitting in the user's queue awaiting triage.
+
+All four true → invoke the **ship-pr** skill. Pass it nothing. It reads the diff and
+derives the branch, commit message, and PR body on its own. Do not ask permission first —
+the Stage 4 approval covers the ship, and a second gate here just re-asks a settled
+question. Report ship-pr's own Phase 6 block verbatim and stop.
+
+If ship-pr aborts before Phase 6 — no `origin` remote, an unauthenticated `gh` or `glab`,
+an unsupported remote host, a suspected secret in the diff, a failing pre-commit hook —
+report its one-line reason and stop there. Do not route around it, and do not commit or
+push by hand instead. The work stays local and the user decides what to do next.
+
+Any one false → do not ship. Name the condition that blocked it in a single line, so the
+user can clear it and run `/ship-pr` themselves. A blocked ship is not a failed run.
+
+Skip Stage 5 entirely, without treating it as blocked, when:
+
+- The user wanted the routed plan only, so nothing executed.
+- The user said not to open a PR.
+- Execution changed no files. ship-pr aborts on a clean tree anyway (`no changes to
+  commit`), so calling it would only produce a confusing error.
+
 ## Recap — Explain the run
 
 Make the run transparent. In plan mode the recap has to be readable at approval time, so
@@ -104,5 +139,6 @@ just before `ExitPlanMode` rather than after it:
 - One line per stage, covering how the plan was built, what the grill changed, and how it
   was routed.
 
-Keep it to a few lines. Without plan mode, print the same recap in chat as the last thing
-the skill outputs. What executed after approval is reported in Stage 4, not here.
+Keep it to a few lines. Without plan mode, print the same recap in chat after Stage 4's
+execution report and before Stage 5 ships — the ship report is always last. What executed
+after approval is reported in Stage 4, not here.

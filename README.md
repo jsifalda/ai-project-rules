@@ -32,6 +32,24 @@ bash skills/setup-skills-autorefresh/scripts/install.sh ~/instructions/skills
 
 The hook script is the source of truth for the sync behaviour — read it directly if you need to debug.
 
+## How it gets into Claude's chat surfaces
+
+The symlink hook only reaches CLI tools that read the filesystem. To use these skills in Claude on iOS, Desktop, or the web, they have to be served over a remote MCP connector instead.
+
+The companion `skills-mcp` server does that: it clones a repo laid out like this one, parses each `SKILL.md` frontmatter, and exposes **one MCP tool per skill** — the tool description is the skill's `description`, so Claude can pick a skill implicitly rather than you naming it. It polls the tracked branch, so a skill edited and pushed here reaches connected clients without any client-side step. It is read-only and serves nothing outside the skills tree.
+
+You host it yourself — there is no shared instance. Point it at your own fork and connect it with your own domain and credentials.
+
+### Running it on your own server
+
+The shape of a working deployment, if you want to reproduce it:
+
+- A small service speaking **MCP over Streamable HTTP**, bound to **loopback only** and never exposed directly. It keeps a clone of the skills repo on disk and re-reads it when the tracked branch moves.
+- Configuration entirely through environment variables: the git URL and branch to track, a bearer token, the credentials for the login gate in front of the OAuth flow, and the `Host` / `Origin` allowlists the MCP transport enforces. Both allowlists must name the public hostname and the client's origin, or every MCP call is rejected (`421` / `403`) while the discovery endpoints keep answering normally — a failure that looks like a working server.
+- A **TLS reverse proxy** in front. Leave the discovery and OAuth endpoints reachable, since clients need them to authenticate; the MCP and token endpoints can additionally be restricted to your client's egress range for defence in depth.
+- Give the connector the **full endpoint URL, ending in `/mcp`**. With a bare origin, OAuth still completes and the client reports *connected* — then every MCP call `404`s and the tool list is silently empty.
+- Keep it **read-only**: register no write tools, and resolve every requested file against the skill's own directory, rejecting `..`, absolute paths, and symlinks that escape the tree.
+
 ## Rules
 
 Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.

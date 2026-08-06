@@ -6,5 +6,8 @@
 - Why: the README described only the filesystem hook, so a reader had no idea the second
   delivery path existed or that skill frontmatter `description` is what drives implicit
   tool selection there.
-- No hostname, credential, or machine-specific detail is included — the section points at
-  the separate `skills-mcp` project and states that self-hosting is required.
+- Included a brief description of the deployment shape so a reader can stand up their own
+  instance — transport, configuration surface, reverse-proxy placement, and the two traps
+  that fail silently (allowlists, and a connector URL missing the `/mcp` path).
+- No hostname, credential, or machine-specific detail is included — the section describes
+  the setup rather than pointing at a repo, and states that self-hosting is required.

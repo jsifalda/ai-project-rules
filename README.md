@@ -40,6 +40,16 @@ The companion `skills-mcp` server does that: it clones a repo laid out like this
 
 You host it yourself — there is no shared instance. Point it at your own fork and connect it with your own domain and credentials.
 
+### Running it on your own server
+
+The shape of a working deployment, if you want to reproduce it:
+
+- A small service speaking **MCP over Streamable HTTP**, bound to **loopback only** and never exposed directly. It keeps a clone of the skills repo on disk and re-reads it when the tracked branch moves.
+- Configuration entirely through environment variables: the git URL and branch to track, a bearer token, the credentials for the login gate in front of the OAuth flow, and the `Host` / `Origin` allowlists the MCP transport enforces. Both allowlists must name the public hostname and the client's origin, or every MCP call is rejected (`421` / `403`) while the discovery endpoints keep answering normally — a failure that looks like a working server.
+- A **TLS reverse proxy** in front. Leave the discovery and OAuth endpoints reachable, since clients need them to authenticate; the MCP and token endpoints can additionally be restricted to your client's egress range for defence in depth.
+- Give the connector the **full endpoint URL, ending in `/mcp`**. With a bare origin, OAuth still completes and the client reports *connected* — then every MCP call `404`s and the tool list is silently empty.
+- Keep it **read-only**: register no write tools, and resolve every requested file against the skill's own directory, rejecting `..`, absolute paths, and symlinks that escape the tree.
+
 ## Rules
 
 Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.

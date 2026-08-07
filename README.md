@@ -112,6 +112,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`obsidian-markdown`](skills/obsidian-markdown/SKILL.md) | Create and edit Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties). | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) |
 | [`obsidian-task-extractor`](skills/obsidian-task-extractor/SKILL.md) | Extract atomic tasks from a note and add them to `To Remember.md`. | — | — |
 | [`op`](skills/op/SKILL.md) | Route each task in a plan to the cheapest capable Claude model (Haiku/Sonnet/Opus), then execute by dispatching tasks as subagents on their assigned model. | — | — |
+| [`optimize-my-cv`](skills/optimize-my-cv/SKILL.md) | Audit a CV against a two-track rubric (tech IC or engineering leadership) and return a severity-ranked gap analysis plus an ordered remediation plan — it never rewrites the CV. | — | — |
 | [`pdf`](skills/pdf/SKILL.md) | PDF toolkit — extract text/tables, create, merge/split, and fill forms at scale. | — | — |
 | [`pdf-to-md`](skills/pdf-to-md/SKILL.md) | Convert a text-based PDF into one clean, structured Markdown file — layout-aware extraction, auto-strips page furniture, reflows paragraphs, maps structure to headings. | — | — |
 | [`persona-levelsio`](skills/persona-levelsio/SKILL.md) | Channel Pieter Levels (levelsio) as a solo bootstrapped indie-hacker advisor, grounded in his frameworks and build-in-public voice. | — | — |

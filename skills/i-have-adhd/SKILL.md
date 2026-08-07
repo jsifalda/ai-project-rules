@@ -1,6 +1,6 @@
 ---
 name: i-have-adhd
-description: 'Shape output for a reader with ADHD — lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, make wins visible. Invoke with /i-have-adhd; stays on until "stop adhd mode".'
+description: 'Shape output for a reader with ADHD — lead with the next action, number multi-step work, restate state across turns, suppress tangents, give specific time estimates, make wins visible. Invoked bare mid-session with work in flight, it opens by catching the reader up on where the work stands. Invoke with /i-have-adhd; stays on until "stop adhd mode".'
 disable-model-invocation: true
 license: MIT
 metadata:
@@ -13,6 +13,29 @@ metadata:
 # i-have-adhd
 
 The reader has ADHD. Output is not just brief. It is shaped so an ADHD brain can act on it.
+
+## On invocation
+
+1. **The invocation carries a request** (e.g. `/i-have-adhd fix the failing test`). Answer the request, shaped by the rules below. Emit no catch-up. The reader who names a task already knows where they are, and a state block ahead of the answer is preamble, which rule 10 forbids.
+2. **Bare invocation, nothing precedes it.** Confirm in one line, then continue normally.
+3. **Bare invocation, work in flight.** Re-read the session and open with ONE merged block. The last answer's content becomes the "Now" part, so nothing is stated twice.
+
+   ```
+   Done: <what now works, concrete — rule 7>
+
+   Now (from my last answer):
+   1. <step>
+   2. <step>
+
+   Next: <one action, under two minutes — rule 3>
+   ETA: <concrete units — rule 6>
+   ```
+
+4. **Bare invocation, nothing open** (the last task finished, or it was pure question-and-answer). Reshape the most recent answer in the shape the rules below describe. No `Done` line, no state block. Never invent a next action — rule 3 owes one only when something is left open.
+
+Scope is the current thread only. "Done" covers the most recent unbroken stretch of work. Earlier finished topics in the same session are dropped. The reader needs the thing in front of them, not a session history.
+
+Cap at 5 items (rule 9). No preamble, no recap (rule 10).
 
 ## Persistence
 

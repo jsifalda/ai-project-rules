@@ -18,9 +18,80 @@ SKILLS=(
   "obsidian-markdown"
 )
 
-# Local skills directory (resolved relative to this script's location)
+# =============================================================================
+# Args
+# =============================================================================
+
+for arg in "$@"; do
+  case "$arg" in
+    --help|-h)
+      cat <<'EOF'
+Sync the five Obsidian skills from kepano/obsidian-skills into this repo's
+skills/ folder.
+
+Usage:
+  sync-obsidian-skills.sh [--help]
+
+This script takes no skill names. It always syncs a fixed set, the same
+five skills every run:
+  - defuddle
+  - json-canvas
+  - obsidian-bases
+  - obsidian-cli
+  - obsidian-markdown
+
+Destination:
+  This repo's own skills/ folder.
+
+OVERWRITE HAZARD (read this before running):
+  This script has no safety net at all. Unlike the sibling sync scripts,
+  there is no sha256 baseline, no manifest, and no --force gate. Every run
+  deletes local files that are not present upstream and overwrites every
+  remaining file unconditionally. Any local edit you made to one of the
+  five skills above is lost, with no warning and no prompt.
+  Commit or stash local changes to those skills before running this.
+
+Changing the skill set:
+  Edit the SKILLS array near the top of this script.
+
+Rate limits:
+  Set GITHUB_TOKEN in the environment for higher GitHub API rate limits.
+
+New skills:
+  Each NEW skill this script creates needs a row added to the '## Skills'
+  table in README.md.
+EOF
+      exit 0
+      ;;
+    -*)
+      echo "ERROR: unknown flag: $arg" >&2
+      exit 2
+      ;;
+    *)
+      echo "ERROR: this script takes no skill names. It syncs a fixed set. See --help." >&2
+      exit 2
+      ;;
+  esac
+done
+
+# Local skills directory (resolved relative to this script's location).
+# Default target is this repo's own skills/ folder.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-LOCAL_SKILLS_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LOCAL_SKILLS_DIR="$(cd "$SCRIPT_DIR/../skills" && pwd)" || {
+  echo "ERROR: cannot resolve the repo's skills/ folder" >&2
+  exit 1
+}
+
+# Capture which skills are new (no local dir yet) before anything downloads,
+# so the closing report can tell you which ones need a README row.
+new_skills=()
+for skill in "${SKILLS[@]}"; do
+  [ -d "$LOCAL_SKILLS_DIR/$skill" ] || new_skills+=("$skill")
+done
+
+echo "WARNING: this sync overwrites the five Obsidian skills unconditionally." >&2
+echo "         There is no baseline and no --force gate. Local edits to them are lost." >&2
+echo "         Commit or stash changes to those skills first if you want to keep them." >&2
 
 # =============================================================================
 # Setup
@@ -30,10 +101,18 @@ TMPFILE=$(mktemp)
 HEADER_FILE=$(mktemp)
 trap 'rm -f "$TMPFILE" "$HEADER_FILE"' EXIT
 
-# Optional GitHub token for higher rate limits
+# Optional GitHub token for higher rate limits.
+# CURL_OPTS is for file downloads, where -f is right: a 404 must fail rather than
+# write an error page into a skill file.
 CURL_OPTS=(-fsSL)
+# API_OPTS is for the tree request, which inspects the HTTP status itself and so
+# must NOT use -f. With -f curl exits non-zero, the "|| echo 000" fallback appends
+# to the captured code, and a 403 arrives as "403000". That never matches the
+# rate-limit branch below, so the GITHUB_TOKEN hint would never print.
+API_OPTS=(-sSL)
 if [ -n "${GITHUB_TOKEN:-}" ]; then
   CURL_OPTS+=(-H "Authorization: token $GITHUB_TOKEN")
+  API_OPTS+=(-H "Authorization: token $GITHUB_TOKEN")
 fi
 
 downloaded=0
@@ -49,7 +128,7 @@ echo "Fetching file tree from $REPO_OWNER/$REPO_NAME@$BRANCH..."
 TREE_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/trees/$BRANCH?recursive=1"
 
 HTTP_CODE=$(curl -sS -D "$HEADER_FILE" -o "$TMPFILE" -w "%{http_code}" \
-  "${CURL_OPTS[@]}" "$TREE_URL" 2>/dev/null || echo "000")
+  "${API_OPTS[@]}" "$TREE_URL" 2>/dev/null || echo "000")
 
 if [ "$HTTP_CODE" != "200" ]; then
   echo "ERROR: GitHub API returned HTTP $HTTP_CODE"
@@ -152,6 +231,30 @@ echo "Skills:     ${#SKILLS[@]} ($(IFS=', '; echo "${SKILLS[*]}"))"
 echo "Downloaded: $downloaded files"
 echo "Removed:    $removed files"
 echo "Errors:     $errors"
+
+if [ "${#new_skills[@]}" -gt 0 ]; then
+  echo ""
+  echo "=== NEW SKILLS — REGISTER THESE in the '## Skills' table in README.md ==="
+  echo "(Hand-maintained catalog, rows alphabetical. Add one row per skill:"
+  echo "   [\`<name>\`](skills/<name>/SKILL.md) | What it does | Depends on | Origin"
+  echo " Origin = https://github.com/kepano/obsidian-skills"
+  echo " Curate the one-liner from each description below — don't paste it whole.)"
+  python3 -c "
+import sys, re, os
+base = sys.argv[1]
+for skill in sys.argv[2:]:
+    p = os.path.join(base, skill, 'SKILL.md')
+    desc = ''
+    if os.path.isfile(p):
+        text = open(p, encoding='utf-8', errors='replace').read()
+        m = re.match(r'^---\s*\n(.*?)\n---\s*\n', text, re.DOTALL)
+        if m:
+            dm = re.search(r'^description:\s*(.*?)(?=^\S|\Z)', m.group(1) + '\n', re.DOTALL | re.MULTILINE)
+            if dm:
+                desc = re.sub(r'\s+', ' ', dm.group(1).lstrip('>|-').strip())
+    print('  - %s: %s' % (skill, (desc[:300] + '...') if len(desc) > 300 else desc))
+" "$LOCAL_SKILLS_DIR" "${new_skills[@]}"
+fi
 
 if [ "$errors" -gt 0 ]; then
   exit 1

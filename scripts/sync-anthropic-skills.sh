@@ -24,6 +24,7 @@ BRANCH="main"
 FORCE="${FORCE:-0}"
 LIST=0
 DEST=""
+HELP=0
 REQUESTED=()
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -31,22 +32,81 @@ while [ "$#" -gt 0 ]; do
     --list|-l)  LIST=1 ;;
     --dest)     shift; [ "$#" -gt 0 ] && [ -n "$1" ] || { echo "ERROR: --dest needs a directory"; exit 2; }; DEST="$1" ;;
     --dest=*)   DEST="${1#--dest=}"; [ -n "$DEST" ] || { echo "ERROR: --dest needs a directory"; exit 2; } ;;
+    --help|-h)  HELP=1 ;;
     -*)         echo "ERROR: unknown flag: $1"; exit 2 ;;
     *)          REQUESTED+=("$1") ;;
   esac
   shift
 done
 
+if [ "$HELP" -eq 1 ]; then
+  cat <<'EOF'
+Sync skills from anthropics/knowledge-work-plugins into a flat skills folder.
+
+Upstream is a plugin marketplace: each skill lives nested under a plugin dir
+(marketing, engineering, ...) or under partner-built/<vendor>/. This script
+flattens that nesting into a plain skills/<name>/ layout locally.
+
+Usage:
+  sync-anthropic-skills.sh [<name> ...] [--list] [--force] [--dest <dir>]
+
+Flags:
+  <name> ...       One or more skill names to sync.
+  --list, -l       Print the full upstream catalog, grouped by plugin, and exit.
+  --force, -f      Overwrite local edits instead of skipping them.
+  --dest <dir>     Sync into <dir> instead of the default destination.
+                    Also accepts --dest=<dir>.
+  --help, -h       Show this help and exit.
+
+No names given:
+  Re-syncs the previously-synced set recorded in the state file. Errors if
+  that set is empty (nothing has been synced here yet).
+
+Ambiguous names:
+  A name that exists in more than one plugin must be qualified as
+  <plugin>/<name>, e.g. marketing/standup.
+
+Default destination:
+  This repo's skills/ folder.
+
+State file location:
+  scripts/.sync-state/anthropic/ (default destination)
+  scripts/.sync-state/anthropic/dests/<hash>/ (for a --dest run)
+
+Rate limits:
+  Set GITHUB_TOKEN in the environment for higher GitHub API rate limits.
+
+Overwrite safety:
+  Local edits are detected against a sha256 baseline recorded at sync time,
+  and are skipped with a warning until you pass --force. On a fresh clone
+  there is no baseline yet, so every existing skill reports as locally
+  modified. That is expected. --force is the correct response.
+
+New skills:
+  Each NEW skill synced into this repo needs a row added to the '## Skills'
+  table in README.md.
+
+Examples:
+  sync-anthropic-skills.sh --list
+  sync-anthropic-skills.sh standup incident-response
+  sync-anthropic-skills.sh marketing/standup --force
+  sync-anthropic-skills.sh --dest ../other-project/skills incident-response
+EOF
+  exit 0
+fi
+
 command -v python3 >/dev/null 2>&1 || { echo "ERROR: python3 is required"; exit 1; }
 SHASUM=(shasum -a 256)
 command -v shasum >/dev/null 2>&1 || SHASUM=(sha256sum)
 command -v "${SHASUM[0]}" >/dev/null 2>&1 || { echo "ERROR: shasum/sha256sum is required"; exit 1; }
 
-# Resolve physically (-P): the skill dir is reached through a symlink from
-# ~/.claude/skills, and a logical ".." would walk up the symlinked path
-# instead of the repo, writing synced skills outside it.
+# Resolve physically (-P) so the default target is always the repo's own
+# skills/ folder, regardless of how this script was invoked.
 SCRIPT_DIR="$(cd -P "$(dirname "$0")" && pwd -P)"
-DEFAULT_DEST="$(cd -P "$SCRIPT_DIR/../.." && pwd -P)"   # the repo's skills/ folder
+DEFAULT_DEST="$(cd -P "$SCRIPT_DIR/../skills" && pwd -P)" || {
+  echo "ERROR: cannot resolve the repo's skills/ folder"
+  exit 1
+}
 
 # --dest points the sync at any other skills folder; missing dirs are created.
 if [ -n "$DEST" ]; then
@@ -60,15 +120,17 @@ else
 fi
 [ -w "$LOCAL_SKILLS_DIR" ] || { echo "ERROR: destination is not writable: $LOCAL_SKILLS_DIR"; exit 2; }
 
-# State is per-destination. The default dest keeps the repo-tracked state/ files;
-# any other dest gets its own baseline under state/dests/<slug>/ (gitignored), so
-# two targets never share a synced-set or an overwrite baseline. The slug is a
-# hash, not the path, so no local directory name is ever written into the repo.
+# State is per-destination, gitignored. The default dest keeps its baseline
+# directly under STATE_BASE; any other dest gets its own baseline under
+# STATE_BASE/dests/<slug>/, so two targets never share a synced-set or an
+# overwrite baseline. The slug is a hash, not the path, so no local directory
+# name is ever written into the repo.
+STATE_BASE="$SCRIPT_DIR/.sync-state/anthropic"
 if [ "$LOCAL_SKILLS_DIR" = "$DEFAULT_DEST" ]; then
-  STATE_DIR="$SCRIPT_DIR/../state"
+  STATE_DIR="$STATE_BASE"
 else
   DEST_SLUG="$(printf '%s' "$LOCAL_SKILLS_DIR" | "${SHASUM[@]}" | cut -c1-8)"
-  STATE_DIR="$SCRIPT_DIR/../state/dests/$DEST_SLUG"
+  STATE_DIR="$STATE_BASE/dests/$DEST_SLUG"
 fi
 STATE_FILE="$STATE_DIR/synced.txt"
 MANIFEST="$STATE_DIR/manifest.txt"
@@ -87,15 +149,23 @@ HEADER_FILE=$(mktemp)
 STAGE_DIR=$(mktemp -d)
 trap 'rm -rf "$TMPFILE" "$HEADER_FILE" "$STAGE_DIR"' EXIT
 
+# CURL_OPTS is for file downloads, where -f is right: a 404 must fail rather than
+# write an error page into a skill file.
 CURL_OPTS=(-fsSL)
+# API_OPTS is for the tree request, which inspects the HTTP status itself and so
+# must NOT use -f. With -f curl exits non-zero, the "|| echo 000" fallback appends
+# to the captured code, and a 403 arrives as "403000". That never matches the
+# rate-limit branch below, so the GITHUB_TOKEN hint would never print.
+API_OPTS=(-sSL)
 if [ -n "${GITHUB_TOKEN:-}" ]; then
   CURL_OPTS+=(-H "Authorization: token $GITHUB_TOKEN")
+  API_OPTS+=(-H "Authorization: token $GITHUB_TOKEN")
 fi
 
 echo "Fetching file tree from $REPO_OWNER/$REPO_NAME@$BRANCH..." >&2
 TREE_URL="https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/git/trees/$BRANCH?recursive=1"
 HTTP_CODE=$(curl -sS -D "$HEADER_FILE" -o "$TMPFILE" -w "%{http_code}" \
-  "${CURL_OPTS[@]}" "$TREE_URL" 2>/dev/null || echo "000")
+  "${API_OPTS[@]}" "$TREE_URL" 2>/dev/null || echo "000")
 
 if [ "$HTTP_CODE" != "200" ]; then
   echo "ERROR: GitHub API returned HTTP $HTTP_CODE"
@@ -166,9 +236,9 @@ if [ "${#REQUESTED[@]}" -eq 0 ]; then
     [ -n "$line" ] && REQUESTED+=("$line")
   done < "$STATE_FILE"
   if [ "${#REQUESTED[@]}" -eq 0 ]; then
-    echo "ERROR: no skills named and state/synced.txt is empty."
+    echo "ERROR: no skills named and scripts/.sync-state/anthropic/synced.txt is empty."
     echo "Run with --list to see what's available, then pass one or more names:"
-    echo "  bash scripts/sync.sh standup incident-response"
+    echo "  bash scripts/sync-anthropic-skills.sh standup incident-response"
     exit 1
   fi
   echo "No skills named — re-syncing previously-synced set: ${REQUESTED[*]}" >&2
@@ -274,8 +344,8 @@ for skill in $TARGET_NAMES; do
   # --- Adapt the staged copy to this repo (drop pointers to things absent here) ---
   # Must run BEFORE the modified-check and copy below: the manifest records the hash
   # of what we WRITE, so transforming first keeps the baseline self-consistent and
-  # re-sync idempotent. See "How re-sync decides" in SKILL.md.
-  ctx_out=$(python3 "$SCRIPT_DIR/contextualize.py" "$STAGE_DIR/$skill" "$skill" 2>/dev/null || true)
+  # re-sync idempotent. See the overwrite-safety notes under --help.
+  ctx_out=$(python3 "$SCRIPT_DIR/sync-anthropic-contextualize.py" "$STAGE_DIR/$skill" "$skill" 2>/dev/null || true)
   [ -n "$ctx_out" ] && ctx_reports+=("$ctx_out")
 
   local_skill_dir="$LOCAL_SKILLS_DIR/$skill"

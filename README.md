@@ -15,7 +15,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
 | `changelog/` | One entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md` |
 | `changelog.md` | **Frozen archive** of pre-`changelog/` entries — do not edit or append |
-| `scripts/`, `.githooks/` | Universality scanner, hook installer, and the tracked `pre-commit` hook |
+| `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, and the three upstream skill-sync scripts (see [Upstream skill sync](#upstream-skill-sync)) |
 | `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
 
 ## How it gets into Claude Code & Copilot CLI
@@ -136,9 +136,6 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`ship-v1`](skills/ship-v1/SKILL.md) | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. | — | — |
 | [`summarise-text`](skills/summarise-text/SKILL.md) | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. | — | — |
 | [`summarise-url`](skills/summarise-url/SKILL.md) | Fetch a link's content and return a structured summary, plus a distilled set of maxims from the same content, in one reply. | `defuddle`, `distill-notes` | — |
-| [`sync-anthropic-skills`](skills/sync-anthropic-skills/SKILL.md) | Sync skills from the `anthropics/knowledge-work-plugins` GitHub repo, flattening its plugin and partner-built dirs into the top-level `skills/` folder; adapts each staged copy to this repo and lints the synced description. | — | — |
-| [`sync-mattpocock-skills`](skills/sync-mattpocock-skills/SKILL.md) | Sync a curated subset of skills from the `mattpocock/skills` GitHub repo, flattening its category dirs into the top-level `skills/` folder. | — | — |
-| [`sync-obsidian-skills`](skills/sync-obsidian-skills/SKILL.md) | Sync the Obsidian-related skills from the `kepano/obsidian-skills` GitHub repo. | — | — |
 | [`team-code-writer`](skills/team-code-writer/SKILL.md) | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. | — | — |
 | [`team-reviewer`](skills/team-reviewer/SKILL.md) | Reviewer role for an agent dev team — read-only, runs `git diff` and reports Critical/Important/Nitpick findings with file:line, never edits. | — | — |
 | [`team-ship`](skills/team-ship/SKILL.md) | Lead orchestrator — `/team-ship <task>` records the agent territories in the project's AGENTS.md/CLAUDE.md, writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. | `team-code-writer`, `team-tester`, `team-reviewer` | — |
@@ -150,6 +147,67 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
 
 _The four `team-*` skills (an agent dev team — a writer, a reviewer, a tester, and a `team-ship` lead that runs them) are adapted from [@zodchiii's post on X](https://x.com/zodchiii/status/2067552428627484853)._
+
+## Upstream skill sync
+
+Some skills in the table above started life in someone else's repo. Three scripts pull them in, one per upstream. They are run by hand from the command line, not through an agent, because the work they do (fetch a tree, diff it against a baseline, write files) is fully deterministic and needs no judgment call. Each one flattens the upstream's nested layout (skills grouped under a plugin, category, or vendor directory) into this repo's flat `skills/<name>/`.
+
+### `scripts/sync-anthropic-skills.sh`
+
+Pulls from `anthropics/knowledge-work-plugins`, upstream a plugin marketplace where each skill lives nested under a plugin directory (`marketing`, `engineering`, and so on) or under `partner-built/<vendor>/`.
+
+Flags:
+- `<name> ...`: one or more skill names to sync
+- `--list`, `-l`: print the full upstream catalog grouped by plugin, then exit
+- `--force`, `-f`: overwrite local edits instead of skipping them
+- `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
+- `--help`, `-h`: show usage and exit
+
+Run with no names and it re-syncs the previously-synced set recorded in its state file, erroring if that set is empty. A name that exists in more than one plugin needs qualifying as `<plugin>/<name>`. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
+
+```bash
+bash scripts/sync-anthropic-skills.sh --list
+bash scripts/sync-anthropic-skills.sh standup incident-response
+bash scripts/sync-anthropic-skills.sh marketing/standup --force
+```
+
+Before writing a staged skill, this script also runs `scripts/sync-anthropic-contextualize.py` over it: the helper strips links pointing at files that don't exist in this repo and marks unwired connector placeholders. One limitation worth knowing: upstream skills sometimes assume MCP connectors configured at the plugin level, and flattening leaves those behind, so a synced skill that needs external data may need its connector wired up separately.
+
+### `scripts/sync-mattpocock-skills.sh`
+
+Pulls from `mattpocock/skills`, upstream nesting every skill under a category directory (`engineering`, `productivity`, `misc`, `deprecated`, `in-progress`).
+
+Flags:
+- `--list`, `-l`: print the upstream catalog grouped by category, then exit
+- `--force`, `-f`: overwrite locally-modified skills instead of skipping them
+- `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
+- `--help`, `-h`: show usage and exit
+
+This repo carries a curated default set, `prototype` (engineering) and `handoff` (productivity). A fresh clone has an empty state file, so name both explicitly the first time.
+
+```bash
+bash scripts/sync-mattpocock-skills.sh --list
+bash scripts/sync-mattpocock-skills.sh prototype handoff
+bash scripts/sync-mattpocock-skills.sh productivity/handoff --force
+```
+
+Two names are refused outright, exit code 2, and `--force` does not bypass either refusal: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.
+
+### `scripts/sync-obsidian-skills.sh`
+
+Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a fixed set of five: `defuddle`, `json-canvas`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`. Passing a name, or any unknown flag, is an error, exit code 2. Change the set by editing the `SKILLS` array near the top of the script. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
+
+```bash
+bash scripts/sync-obsidian-skills.sh
+```
+
+> **Warning:** this script has no safety net. Unlike the other two, there is no sha256 baseline, no manifest, and no `--force` gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of the five skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
+
+### Overwrite safety and registering new skills
+
+The anthropic and mattpocock scripts (not the obsidian one, see the warning above) record every file they write in a sha256 baseline. Once a local edit makes a file diverge from that baseline, the script reports the skill as locally modified and skips it instead of clobbering your changes. `scripts/.sync-state/` is gitignored, so a fresh clone starts with no baseline at all, and everything already on disk reports as locally modified on the first run. That's expected, not a bug. Reach for `--force` once you know the local copy is actually untouched.
+
+The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. All three scripts print a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root.
 
 ## Gemini CLI commands
 

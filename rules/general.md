@@ -89,10 +89,37 @@ paths:
 
 # WRITING STYLE
 
-- each long sentence should be followed by two newline characters
-- use simple & easy-to-understand language.
-- be concise, use short sentences
-- make sure to clearly explain your assumptions (if you make any), and your conclusions
+- **Write all prose in ASD-STE100 Simplified Technical English.** This is the default mode. It does not expire during a long task.
+- **Applies to:** chat replies to the user, documentation, plans, summaries, prose files, commit message BODIES, and pull-request BODIES.
+- **Does not apply to:** code, code comments, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, `feat:` or `fix:` prefix, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
+
+## STE core rules
+
+- Use approved words only. One word, one meaning. One meaning, one word.
+- Use the active voice. Name the agent of each action.
+- Keep procedural sentences to 20 words or fewer. Keep descriptive sentences to 25 words or fewer.
+- Put one instruction in one sentence.
+- Use the same word for the same thing every time. Do not use synonyms for variety.
+- Use simple verb tenses (present, past, future). Do not use the `-ing` form as a noun.
+- Start each instruction with the verb.
+- Use articles (`a`, `the`) and full sentences. Do not use telegraphic style.
+- Do not use idioms, jargon, or figures of speech.
+- Keep paragraphs to 6 sentences or fewer.
+- Put two newline characters after each long sentence.
+- State your assumptions and your conclusions clearly.
+
+## STE bans and exceptions
+
+- Do not use emojis.
+- Do not use semicolons.
+- Do not use filler openers such as "Great question" or "Certainly".
+- Do not use hype or marketing language.
+- Do not use cliches.
+- Em-dashes stay allowed. Keep them.
+
+## STE precedence
+
+- STE is the default mode for all prose. The `write-like-human` skill overrides it. When that skill runs, it replaces STE for that one piece of text only. STE resumes for everything after it.
 
 # CODING STANDARDS
 
@@ -109,6 +136,7 @@ paths:
 
 - Conventional commit format (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`), optional `(scope)`.
 - Subject: imperative, ≤72 chars, no trailing period. Reference the task/issue ID when there is one.
+- **The subject line is exempt from `# WRITING STYLE`.** It keeps the conventional-commit format above. The commit body and the MR/PR body follow `# WRITING STYLE`.
 - **Body is optional and why-focused.** Add one only when the reason or impact isn't obvious from subject + diff. Keep to 1-2 short bullets of *why/impact*. Never list file-by-file what changed — the diff already shows that.
 - **A single-commit MR/PR uses the commit body verbatim as its description (GitLab, GitHub).** Write the body as a clean MR description, not a change inventory — no noise.
 - **MR/PR description = `## Summary` only** (or clean commit body verbatim). Never add a `## Test plan` / `## Testing` section unless I explicitly ask for one. No checklists, no "how to verify" boilerplate by default.

@@ -22,6 +22,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Security review lens — harness security review inside the Code review verification gate | inject (rides with `references/verification-protocol.md`) |
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
+| Writing style (ASD-STE100 Simplified Technical English) | inject (`references/writing-style.md`) |
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
@@ -85,7 +86,7 @@ Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 
 ### Step 4: Module menu
 
-Present the ten modules and let the user pick per project. Eight default to selected —
+Present the eleven modules and let the user pick per project. Nine default to selected —
 deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
 wants PRD-first enforcement. The **TODO backlog module is opt-in — default it OFF**, exactly like
 the PRD gate — select it only if the user wants a tracked known-issues backlog. Selecting it is
@@ -109,9 +110,12 @@ verification deselected is a no-op. It self-gates on availability — if the hos
 security-review capability, the injected lens tells the user and labels itself `skipped (security
 review unavailable)`. Selecting it is also what enables the Step 9b plugin offer.
 
+The **Writing style (ASD-STE100)** module defaults to **ON** — deselect to opt out. It is
+injected verbatim, like the PRD gate, with no `{{...}}` placeholders to substitute.
+
 ### Step 5: Inject the policy modules
 
-For each chosen inject module (verification, git policy, file organization, PRD gate):
+For each chosen inject module (verification, git policy, file organization, writing style, PRD gate):
 1. Read the matching `references/*.md`.
 2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool**
    (verification only).
@@ -257,6 +261,7 @@ Confirm in one short message:
 - Regression gate: enforced, kept as dormant prose (source repo, no test framework), or N/A
   (config/no-source repo).
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
+- Writing-style block injected, or skipped (user deselected it).
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
 - User-scenarios sync gate: appended after a successful `setup-user-scenarios` delegation, or
@@ -367,6 +372,9 @@ only; the user runs it.
 - Always carry a gitignored `.mcp.json` into `.worktreeinclude` when present (local MCP servers are
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).
+- Writing style (ASD-STE100) module defaults to **ON** (deselectable) and is injected verbatim —
+  it has no `{{...}}` placeholders. The injected block names no skill, so it stays valid in a
+  target repo where no style skill is installed.
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
 - Both verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
   verification block but are **appended in Step 6b after their own delegation succeeds, never
@@ -406,6 +414,8 @@ only; the user runs it.
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.
 - `references/file-organization.md` — file organization block.
+- `references/writing-style.md` — writing-style policy block (ASD-STE100 Simplified Technical
+  English; default-on).
 - `references/prd-gate.md` — PRD-gate policy block (opt-in; require a PRD before substantial features).
 - `references/backfill-guide.md` — greenfield-vs-working heuristic, survey + grounding rules.
 - `references/baseline-checklist.md` — canonical baseline concerns + skill version; drives the Step 8b

@@ -8,7 +8,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 
 | Path | Purpose |
 | --- | --- |
-| `rules/` | Always-apply rule files (`type: "always_apply"` frontmatter) — coding standards, restrictions, writing style |
+| `rules/` | Always-apply rule files (`type: "always_apply"` frontmatter) — coding standards, restrictions, writing style (ASD-STE100) |
 | `skills/` | Agent skills following the [agentskills.io](https://agentskills.io/specification) spec. Each subdir has a `SKILL.md` |
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
 | `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
@@ -54,7 +54,7 @@ The shape of a working deployment, if you want to reproduce it:
 
 Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
-- `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style, git commit format.
+- `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style (ASD-STE100 Simplified Technical English), git commit format.
 - `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
 
 `CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill (see the Skills table).

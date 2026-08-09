@@ -55,6 +55,15 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Ids are immutable once landed.** Supersede, never re-date or renumber an existing one — renumbering breaks every inbound reference silently.
 - **Not covered by this rule** — ordinary ordinals aren't identifiers, leave them alone: numbered list steps, hierarchical PRD task ordinals (`1.0` / `1.1` / `2.0`), citation markers (`[1]`, `[2]`), semver versions, and filenames an external CLI produces. Also explicitly out of scope: `create-implementation-plan`'s within-document ids (`REQ-001`, `TASK-001`, etc.) — that document is single-author with no cross-file handles, so a counter there is fine.
 
+## Writing Style
+
+All prose this repo produces uses **ASD-STE100 Simplified Technical English**. The commit subject
+line and the PR title are exempt and keep the conventional-commit format.
+
+`rules/general.md` under `# WRITING STYLE` is the single source of truth. It holds the full scope,
+the core rules, the sentence caps, the ban list, and the precedence against `write-like-human`.
+Read the rules there. Do not restate or re-scope them in this file — a second copy drifts.
+
 ## Key Rules
 
 - **Simplicity first**: minimal code changes, no side effects.

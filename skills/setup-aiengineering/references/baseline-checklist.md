@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v9**
+**Skill version: v10**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -29,6 +29,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Docs & instructions alignment gate | inject | 5 | v1 |
 | Git policy | inject | 5 | v1 |
 | File organization | inject | 5 | v1 |
+| Writing style (ASD-STE100 Simplified Technical English) | inject | 5 | v10 |
 | PRD gate (opt-in, default off) | inject | 5 | v1 |
 | Provenance note (versioned) | inject | 5 | v1 |
 | ADRs | delegate → `setup-adrs` | 6 | v1 |

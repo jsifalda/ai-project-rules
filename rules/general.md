@@ -93,7 +93,7 @@ paths:
 - **Applies to:** chat replies to the user, documentation, plans, summaries, prose files, commit message BODIES, and pull-request BODIES.
 - **Does not apply to:** code, code comments, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, `feat:` or `fix:` prefix, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
 
-## STE core rules
+## STE Core Rules
 
 - Use approved words only. One word, one meaning. One meaning, one word.
 - Use the active voice. Name the agent of each action.
@@ -108,7 +108,7 @@ paths:
 - Put two newline characters after each long sentence.
 - State your assumptions and your conclusions clearly.
 
-## STE bans and exceptions
+## STE Bans and Exceptions
 
 - Do not use emojis.
 - Do not use semicolons.
@@ -117,7 +117,7 @@ paths:
 - Do not use cliches.
 - Em-dashes stay allowed. Keep them.
 
-## STE precedence
+## STE Precedence
 
 - STE is the default mode for all prose. The `write-like-human` skill overrides it. When that skill runs, it replaces STE for that one piece of text only. STE resumes for everything after it.
 

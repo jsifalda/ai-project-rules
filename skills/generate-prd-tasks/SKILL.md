@@ -7,7 +7,7 @@ description: Generates a detailed, step-by-step developer task list in Markdown 
 
 ## Overview
 
-This skill guides you through transforming a PRD into an actionable task list for developers. It follows a two-phase process: high-level parent tasks first, then detailed sub-tasks upon confirmation.
+This skill guides you through transforming a PRD into an actionable task list for developers. It follows a phased process: high-level parent tasks first, then detailed sub-tasks upon confirmation.
 
 ## Workflow
 

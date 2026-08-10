@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Better Plan — build, grill, route, in one pass
 
 Turn a request into a plan that has been stress-tested and cost-routed before any
-code is written, then ship the result. Run the preface, then five stages, in order.
+code is written, then ship the result. Run the preface, then every stage, in order.
 Stages 1-4 are mandatory and none may be skipped. Stage 5 is conditional — it ships only
 when its own gate passes, and skips cleanly when it does not. Stop and surface a blocker
 rather than guessing.
@@ -100,7 +100,7 @@ If the user only wants the routed plan and not execution, stop after presenting 
 Once execution is done, open a PR for it. This is the last thing the flow does — nothing
 follows the ship report, not even the recap.
 
-Ship when **all four** of these hold:
+Ship when **every one** of these holds:
 
 - Every routed task from Stage 3 actually executed.
 - Verification is green — op's model-verification step, plus whatever gates the project
@@ -108,7 +108,7 @@ Ship when **all four** of these hold:
 - No question is still outstanding to the user.
 - No finding or decision is sitting in the user's queue awaiting triage.
 
-All four true → invoke the **ship-pr** skill. Pass it nothing. It reads the diff and
+All true → invoke the **ship-pr** skill. Pass it nothing. It reads the diff and
 derives the branch, commit message, and PR body on its own. Do not ask permission first —
 the Stage 4 approval covers the ship, and a second gate here just re-asks a settled
 question. Report ship-pr's own Phase 6 block verbatim and stop.

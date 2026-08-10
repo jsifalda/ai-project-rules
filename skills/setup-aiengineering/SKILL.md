@@ -27,7 +27,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
-| TODO backlog (known-issues list + two-way end-of-session sweep, entry filing user-approved) — opt-in | delegate → `setup-todo-backlog` |
+| TODO backlog (known-issues list + a propose-and-close end-of-session sweep, entry filing user-approved) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
 
 ## Workflow
@@ -86,8 +86,9 @@ Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 
 ### Step 4: Module menu
 
-Present the eleven modules and let the user pick per project. Nine default to selected —
-deselect to opt out. The **PRD gate is opt-in — default it OFF**, and select it only if the user
+Present the modules from the `## Modules` table above and let the user pick per project. Every
+module defaults to selected — deselect to opt out — except the opt-in ones named below, which
+default to deselected. The **PRD gate is opt-in — default it OFF**, and select it only if the user
 wants PRD-first enforcement. The **TODO backlog module is opt-in — default it OFF**, exactly like
 the PRD gate — select it only if the user wants a tracked known-issues backlog. Selecting it is
 what makes the **Backlog sweep** gate *eligible*, but not what ships it: the gate is appended
@@ -140,7 +141,8 @@ For each chosen inject module (verification, git policy, file organization, writ
    - **Regression gate (bug-fix test-first).** Unlike the coverage gate, there is no `{{...}}`
      placeholder to substitute — the gate is tool-agnostic prose, so the branch below decides only
      whether it is enforced, kept dormant, or dropped, never what command it runs. Branch on the
-     same source-code/tooling read used for coverage above, but on three paths instead of two:
+     same source-code/tooling read used for coverage above. Unlike a gate that is only kept or
+     dropped, this gate also has a dormant state:
      - **Source repo WITH a test framework** → keep the gate as written; it is **enforced**.
      - **Source repo WITHOUT a test framework** → keep the gate but mark it **dormant, unenforced
        prose** — it sets the intent for when tests land, and pairs with the
@@ -151,11 +153,11 @@ For each chosen inject module (verification, git policy, file organization, writ
    block only when the security review module was selected in Step 4; when it was not, omit that
    bullet. It invokes the harness's own security-review capability — it does not depend on the
    `security-guidance` plugin (see Step 9b).
-4. **Tail gates (user-scenarios sync, backlog sweep) — always hold both back here.** Inject the
-   standard gates only, even when the user-scenarios or TODO backlog modules were selected; hold
-   both tail gates back for Step 6b. Each tail gate points at something only its delegated skill
-   installs — the BDD scenario doc, the `## TODO / Known issues` policy — and this step runs
-   *before* Step 6 delegates, so injecting either now would ship a mandatory gate referencing
+4. **Tail gates (user-scenarios sync, backlog sweep) — always hold every tail gate back here.**
+   Inject the standard gates only, even when the user-scenarios or TODO backlog modules were
+   selected; hold every tail gate back for Step 6b. Each tail gate points at something only its
+   delegated skill installs — the BDD scenario doc, the `## TODO / Known issues` policy — and this
+   step runs *before* Step 6 delegates, so injecting one now would ship a mandatory gate referencing
    something that may never exist (the Step 6 availability guard can skip a delegation). Step 6b
    appends each one after its own delegation succeeds.
 5. Append the `##` section to the target file. If its heading already exists, **ask** before
@@ -186,8 +188,8 @@ matching skill name); never fail silently and never half-apply.
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).
 
-**Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held both
-back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
+**Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held them
+all back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
 — **user-scenarios sync, then backlog sweep**. Append a tail gate only when **all** of these hold
 for it:
 
@@ -199,8 +201,8 @@ for it:
 
 Any one failing → **do not append that gate**, and say so in the Step 8 report. Never leave a
 mandatory gate pointing at a doc or section that was never installed. Copy each gate verbatim from
-`references/verification-protocol.md` — neither carries `{{...}}` placeholders. A repo that ships
-only one of them gets just that one.
+`references/verification-protocol.md` — no tail gate carries `{{...}}` placeholders. A repo appends
+only the tail gates that qualify.
 
 ### Step 7: Worktree auto-bootstrap
 
@@ -345,7 +347,7 @@ only; the user runs it.
   install command for the user to run) rather than silently dropping coverage; a config/no-source repo
   makes the test + coverage gates N/A.
 - Regression gate for bug fixes has no `{{...}}` placeholder — it is tool-agnostic prose, and it
-  degrades on three paths keyed off source code, not tooling: **enforced** in a source repo with a
+  degrades along paths keyed off source code, not tooling: **enforced** in a source repo with a
   test framework; kept as **dormant, unenforced prose** in a source repo without one; **dropped**
   only in a config/no-source repo, alongside the test and coverage gates.
 - Never duplicate a `##` section — detect the heading and ask before replacing.
@@ -376,13 +378,13 @@ only; the user runs it.
   it has no `{{...}}` placeholders. The injected block names no skill, so it stays valid in a
   target repo where no style skill is installed.
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
-- Both verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
+- The verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
   verification block but are **appended in Step 6b after their own delegation succeeds, never
-  injected in Step 5**. Step 5 runs before Step 6, so injecting either early would point a mandatory
+  injected in Step 5**. Step 5 runs before Step 6, so injecting one early would point a mandatory
   gate at a doc or policy the availability guard may have skipped installing. Omit a tail gate
   unless its module was selected, the verification module was selected, and its delegation actually
   ran. Append in the fixed order (user-scenarios sync, then backlog sweep); nothing follows them, so
-  omitting either leaves the rest of the block untouched.
+  omitting one leaves the rest of the block untouched.
 - The user-scenarios sync gate makes the scenario doc blocking: a user-visible change left with a
   stale scenario doc fails verification exactly like a failing test, and is reported every time as
   `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
@@ -407,8 +409,8 @@ only; the user runs it.
 
 - `references/verification-protocol.md` — verification block + stack-detection table + placeholders
   (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`), plus the placeholder-free
-  regression-test-for-bug-fixes gate and its three-way degradation, plus the two conditional tail
-  gates (user-scenarios sync, then backlog sweep — both held back in Step 5 and appended in Step 6b,
+  regression-test-for-bug-fixes gate and its degradation paths, plus the conditional tail
+  gates (user-scenarios sync, then backlog sweep — held back in Step 5 and appended in Step 6b,
   each only after its own delegated skill successfully runs).
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
   scaffold minimal config, defer install, then wire the coverage gate.

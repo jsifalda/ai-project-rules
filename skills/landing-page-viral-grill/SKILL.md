@@ -57,7 +57,7 @@ Evidence rules:
 
 ### 5. Emit the gap report
 
-Fill [assets/report-template.md](assets/report-template.md). Two parts:
+Fill [assets/report-template.md](assets/report-template.md):
 - scored checks, in file order, never sorted by verdict
 - deferred checks as interview questions under their own heading, explicitly marked not-gaps
 

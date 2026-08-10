@@ -1,11 +1,11 @@
 ---
 name: council
-description: "Run any question, idea, or decision through a council of 5 AI advisors who independently analyze it, peer-review each other anonymously, and synthesize a final verdict. Based on Karpathy's LLM Council methodology. MANDATORY TRIGGERS: 'council this', 'run the council', 'war room this', 'pressure-test this', 'stress-test this', 'debate this'. STRONG TRIGGERS (use when combined with a real decision or tradeoff): 'should I X or Y', 'which option', 'what would you do', 'is this the right move', 'validate this', 'get multiple perspectives', 'I can't decide', 'I'm torn between'. Do NOT trigger on simple yes/no questions, factual lookups, or casual 'should I' without a meaningful tradeoff. DO trigger when the user presents a genuine decision with stakes, multiple options, and context that suggests they want it pressure-tested from multiple angles."
+description: "Run any question, idea, or decision through a council of AI advisors who independently analyze it, peer-review each other anonymously, and synthesize a final verdict. Based on Karpathy's LLM Council methodology. MANDATORY TRIGGERS: 'council this', 'run the council', 'war room this', 'pressure-test this', 'stress-test this', 'debate this'. STRONG TRIGGERS (use when combined with a real decision or tradeoff): 'should I X or Y', 'which option', 'what would you do', 'is this the right move', 'validate this', 'get multiple perspectives', 'I can't decide', 'I'm torn between'. Do NOT trigger on simple yes/no questions, factual lookups, or casual 'should I' without a meaningful tradeoff. DO trigger when the user presents a genuine decision with stakes, multiple options, and context that suggests they want it pressure-tested from multiple angles."
 ---
 
 # LLM Council
 
-Forces 5 AI advisors to argue about your question, anonymously peer-review each other, then a chairman synthesizes a final verdict. Based on Karpathy's LLM Council method.
+Forces the council's advisors to argue about your question, anonymously peer-review each other, then a chairman synthesizes a final verdict. Based on Karpathy's LLM Council method.
 
 ## When to Run
 
@@ -16,7 +16,7 @@ If question is too vague, ask ONE clarifying question then proceed.
 
 ---
 
-## The Five Advisors
+## The Advisors
 
 1. **The Contrarian** — Looks for what will fail. Assumes fatal flaw. Saves you from bad deals by asking questions you're avoiding.
 2. **The First Principles Thinker** — Ignores surface question, asks what you're actually solving. Strips assumptions, rebuilds from zero.
@@ -24,7 +24,7 @@ If question is too vague, ask ONE clarifying question then proceed.
 4. **The Outsider** — Zero context about you or your field. Catches curse of knowledge: obvious to you, invisible to everyone else.
 5. **The Executor** — Only cares: what do you do Monday morning? Flags brilliant plans with no path to execution.
 
-**Three natural tensions:** Contrarian vs Expansionist (downside vs upside). First Principles vs Executor (rethink everything vs just do it). Outsider sits in the middle keeping everyone honest.
+**Natural tensions:** Contrarian vs Expansionist (downside vs upside). First Principles vs Executor (rethink everything vs just do it). Outsider sits in the middle keeping everyone honest.
 
 ---
 
@@ -46,9 +46,9 @@ Then reframe the raw question as a clear neutral prompt including:
 
 Save framed question for transcript.
 
-### Step 2: Spawn 5 advisors in PARALLEL (single batch)
+### Step 2: Spawn every advisor in PARALLEL (single batch)
 
-Spawn all 5 simultaneously using your agent platform's supported mechanism for running multiple sub-agents in parallel (for example, parallel tool calls or concurrent sessions). Each gets their identity + the framed question.
+Spawn every advisor simultaneously using your agent platform's supported mechanism for running multiple sub-agents in parallel (for example, parallel tool calls or concurrent sessions). Each gets their identity + the framed question.
 
 **Sub-agent prompt template:**
 ```
@@ -72,18 +72,18 @@ Advisor descriptions to include:
 - **Outsider**: Zero context about you, your field, or your history. Catches curse of knowledge: things obvious to you but confusing to everyone else.
 - **Executor**: Can this actually be done, and what's the fastest path? Ignores theory. Every idea through the lens of "what do you do Monday morning?" If brilliant plan has no clear first step, says so.
 
-### Step 3: Peer review (5 sub-agents in PARALLEL)
+### Step 3: Peer review (one sub-agent per advisor, in PARALLEL)
 
-Collect all 5 advisor responses. **Anonymize as A–E** (randomize mapping to prevent positional bias).
+Collect every advisor response. **Anonymize as A–E** (randomize mapping to prevent positional bias).
 
-Spawn 5 reviewer sub-agents simultaneously. Each sees all 5 anonymized responses and answers:
+Spawn one reviewer sub-agent per advisor, simultaneously. Each sees every anonymized response and answers:
 1. Which response is strongest and why? (pick one)
 2. Which has the biggest blind spot and what is it?
 3. What did ALL responses miss that the council should consider?
 
 **Reviewer prompt template:**
 ```
-You are reviewing the outputs of an LLM Council. Five advisors independently answered this question:
+You are reviewing the outputs of an LLM Council. The advisors below independently answered this question:
 ---
 [framed question]
 ---
@@ -95,21 +95,21 @@ Here are their anonymized responses:
 **Response D:** [response]
 **Response E:** [response]
 
-Answer these three questions. Be specific. Reference responses by letter.
+Answer every question below. Be specific. Reference responses by letter.
 1. Which response is strongest? Why?
 2. Which response has the biggest blind spot? What is it missing?
-3. What did ALL five responses miss that the council should consider?
+3. What did ALL responses miss that the council should consider?
 
 Keep your review under 200 words. Be direct.
 ```
 
 ### Step 4: Chairman synthesis
 
-One final sub-agent gets everything: framed question + all 5 advisor responses (de-anonymized) + all 5 peer reviews.
+One final sub-agent gets everything: framed question + all advisor responses (de-anonymized) + all peer reviews.
 
 **Chairman prompt template:**
 ```
-You are the Chairman of an LLM Council. Synthesize the work of 5 advisors and their peer reviews into a final verdict.
+You are the Chairman of an LLM Council. Synthesize the work of every advisor and their peer reviews into a final verdict.
 
 The question:
 ---
@@ -124,7 +124,7 @@ ADVISOR RESPONSES:
 **The Executor:** [response]
 
 PEER REVIEWS:
-[all 5 peer reviews]
+[all peer reviews]
 
 Produce the council verdict using this exact structure:
 
@@ -165,7 +165,7 @@ Style: white background, subtle borders, system sans-serif font, soft accent col
 
 Save to: `outputs/council-transcript-[YYYY-MM-DD-HHMMSS].md`
 
-Includes: original question, framed question, all 5 advisor responses, all 5 peer reviews (with anonymization mapping revealed), chairman's full synthesis.
+Includes: original question, framed question, all advisor responses, all peer reviews (with anonymization mapping revealed), chairman's full synthesis.
 
 ---
 
@@ -180,7 +180,7 @@ After generating both files, deliver to user:
 
 ## Important Rules
 
-- **Always spawn all 5 advisors in parallel** — sequential spawning wastes time and bleeds responses
+- **Always spawn every advisor in parallel** — sequential spawning wastes time and bleeds responses
 - **Always anonymize for peer review** — prevents deference to certain thinking styles
 - **Chairman can disagree with majority** — if 1 dissenter's reasoning is strongest, side with them and explain why
 - **Don't council trivial questions** — one right answer → just answer it

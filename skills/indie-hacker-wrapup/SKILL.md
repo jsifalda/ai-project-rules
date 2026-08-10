@@ -1,6 +1,6 @@
 ---
 name: indie-hacker-wrapup
-description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session on two lenses (the product you built plus the craft behind it), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
+description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session across lenses (the product you built plus the craft behind it), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
 ---
 
 # Indie Hacker Wrapup
@@ -29,9 +29,9 @@ If it exists, hold its lines as the "already pitched" set. You weigh new candida
 
 Older legacy rows are the bare `- [YYYY-MM-DD] <angle>` shape with no tags. When you dedup against a legacy row, infer its theme best-effort from the line text so history still participates.
 
-## Step 1 — Read the session on two lenses
+## Step 1 — Read the session across lenses
 
-Review what actually happened this session, and mine it on two lenses, not one. Most weak wrap-ups happen because only the first lens ever gets used, so the post is always about engineering process and never about what was built.
+Review what actually happened this session, and mine it on multiple lenses, not one. Most weak wrap-ups happen because only the first lens ever gets used, so the post is always about engineering process and never about what was built.
 
 **Lens A — the craft (how you built it).** A takeaway qualifies if it is at least one of:
 
@@ -60,7 +60,7 @@ Lens B is repo-aware. Decide first whether this session is your own indie projec
 
 **Inside-baseball guard.** Most sessions here are meta-work on the agent setup itself — model routing, code-review agents, statusline tokens, CLAUDE.md gates, doc-sync. Those fascinate the person who did them and bore everyone else. For every candidate, ask: would this land with someone who does NOT build AI agents or use Claude Code? If no, it is niche-of-niche → demote it hard, and prefer the Lens-B product/domain angle over the Lens-A agent-config angle. An angle about the thing you built beats an angle about how you configured the tool that built it.
 
-Two hard filters, applied to every candidate on both lenses before it becomes real:
+The hard filters, applied to every candidate on both lenses before it becomes real:
 
 - **Privacy.** Drop anything employer-confidential, client- or teammate-identifying, NDA-bound, or personally sensitive. Never put private work content into a public draft.
 - **Grounded.** Every angle traces to something that happened in this session. If making it interesting needs invented detail, it does not qualify.
@@ -73,14 +73,14 @@ The strongest posts often connect two facts the session kept separate. Example s
 
 ## Step 3 — Score, dedup, decide, record
 
-**Score against an absolute bar first.** For each candidate, from either lens, check four things. All four must pass:
+**Score against an absolute bar first.** For each candidate, from either lens, check the bar below. Every check must pass:
 
 - **Usable.** Does it teach the reader something they can act on?
 - **Surprise.** Is there a concrete number, a reversal, or a genuine surprise in it?
 - **Stranger cares.** Would a stranger who does not know you stop scrolling and care?
 - **Original.** Is the core claim something the reader has NOT already seen a hundred times? An angle that reduces to a generic build-in-public maxim fails here unless this session adds a genuinely new twist. Reject on sight, no matter how specific the session detail dressed around it: "built ≠ shipped", "just ship it / ship volume", "use cheaper models for grunt work", "trust but verify", "green tests can still be wrong", "done is better than perfect", "talk to your users", "distribution is the only moat", "AI wrote 90% of my code". If your angle is one of these with a new coat of paint, it is not original. Kill it or find the twist that is actually new.
 
-An angle must clear all four to be a candidate. If nothing clears the bar → say so plainly, in a line or two, and stop. Do not force a weak post. A skipped post beats a generic one, and most sessions should yield zero or one, not five — if you are holding five, your bar slipped. Rank whatever clears the bar by how hard it clears it. That ranking, not ledger novelty, sets the shortlist order.
+An angle must clear every check to be a candidate. If nothing clears the bar → say so plainly, in a line or two, and stop. Do not force a weak post. A skipped post beats a generic one, and most sessions should yield zero or one, not five — if you are holding five, your bar slipped. Rank whatever clears the bar by how hard it clears it. That ranking, not ledger novelty, sets the shortlist order.
 
 **Diversify the shortlist by archetype.** A shortlist of five contrarian-reversal takes is one post written five ways — that monotony is what makes wrap-ups read generic. When you have more than one candidate, spread them across distinct post archetypes rather than stacking the same shape. Archetypes to draw from: specific-story-with-tension (what broke, what you did, how it turned), strong-opinion / hot-take, useful-resource or how-to (a concrete thing the reader can go use), honest-failure (what went wrong and the cost), counterintuitive-data (a real number that upends an assumption). If every survivor is the same archetype, keep only the single strongest and say so, rather than padding with clones.
 
@@ -107,7 +107,7 @@ Get today's date from `date +%F` and the profile from `basename "${CLAUDE_CONFIG
 
 ## Step 4 — Draft the chosen post
 
-Draft the picked angle as a single X post. Load the `write-like-human` skill and apply its full 17-rule ruleset to every line (do not rely on the summary here). Before you output, re-read the draft against those rules and strip any violation.
+Draft the picked angle as a single X post. Load the `write-like-human` skill and apply its full ruleset to every line (do not rely on the summary here). Before you output, re-read the draft against those rules and strip any violation.
 
 X-native craft:
 

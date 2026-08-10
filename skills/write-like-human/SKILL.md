@@ -1,6 +1,6 @@
 ---
 name: write-like-human
-description: Apply a strict 17-rule style guide for prose that reads as human, not AI-generated. Use when drafting user-facing prose — blog posts, LinkedIn/X/Reddit posts, emails, marketing copy, landing-page sections, summaries, documentation paragraphs, or any time the user asks to "write like a human", "not like AI", "humanise this", "rewrite naturally", or rephrase content to feel authentic. Do NOT use for code, code comments, commit messages, structured technical specs, JSON/YAML, terse CLI output, or quick chat replies — those follow other conventions.
+description: Apply a strict style guide for prose that reads as human, not AI-generated. Use when drafting user-facing prose — blog posts, LinkedIn/X/Reddit posts, emails, marketing copy, landing-page sections, summaries, documentation paragraphs, or any time the user asks to "write like a human", "not like AI", "humanise this", "rewrite naturally", or rephrase content to feel authentic. Do NOT use for code, code comments, commit messages, structured technical specs, JSON/YAML, terse CLI output, or quick chat replies — those follow other conventions.
 ---
 
 # Write like Human

@@ -91,7 +91,7 @@ Tier 1 probe: `target_audience` and `transformation` are both unreadable from th
 
 ## Round 1 scoring — how the bands get derived
 
-Three sections, to show the mechanics. Every verdict carries its quote or says `absent`.
+The sections below show the mechanics. Every verdict carries its quote or says `absent`.
 
 **Hero → 1/3**
 
@@ -173,7 +173,7 @@ Pricing repriced `$10/$50/$100` → `$9/$19/$49`, `$19 Pro` anchored *"Most popu
 
 Benefits Recap → **2/3**, capped. The must-have wants numbers and there are no real ones. It ships `[X% faster]`, not an invented `30% faster`. **The cap is the correct outcome here — a plausible number would be a lie shipped to the user's customers.**
 
-Trust Logos, Testimonials, and About are **cut, not scaffolded**. The user confirmed they have none, so the page ships without them rather than with three blocks of `[logo]` and `[Name, Role]` for the user to delete. They are unscored and appear in the trail as asks.
+Trust Logos, Testimonials, and About are **cut, not scaffolded**. The user confirmed they have none, so the page ships without them rather than with blocks of `[logo]` and `[Name, Role]` for the user to delete. They are unscored and appear in the trail as asks.
 
 Round 2 total: **25 / 32**.
 
@@ -196,6 +196,6 @@ The arithmetic, spelled out, because a trail whose numbers don't add up is worse
 
 ## What the trail says
 
-Blocked list, biggest lift first: real testimonials (placeholders are the weakest thing on the page, and real quotes before Pricing is the single biggest lift available), then logos, then the founder story. Eight sections carry `NEW` — they did not exist on the input page and were written from nothing. The user has to know which paragraphs are theirs and which are the skill's.
+Blocked list, biggest lift first: real testimonials (placeholders are the weakest thing on the page, and real quotes before Pricing is the single biggest lift available), then logos, then the founder story. Several sections carry `NEW` — they did not exist on the input page and were written from nothing. The user has to know which paragraphs are theirs and which are the skill's.
 
 **Read that last point twice.** This input was a 60-word stub, so "improve" is mostly invention and the `NEW` flags are the honest signal. A 900-word real page is the opposite case: off-blueprint sections (integrations, comparison table, changelog) stay verbatim and unscored, the user's section order stands unless a coupled must-have forces the move, and real attributed quotes come back byte-identical.

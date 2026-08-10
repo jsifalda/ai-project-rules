@@ -1,11 +1,11 @@
 ---
 name: distill-persona
-description: Distill a leader's worldview from their interview transcripts into a reusable advisor persona. Produces a principles markdown (principles, mental models, recurring patterns, verbatim quotes, grouped by domain), a role markdown (description, core questions, mental models, tone), and a paste-ready CLAUDE.md activation snippet — all from the five-step "Distilling Leadership Wisdom" methodology. Asks one question at a time. Use when the user says "distill a persona from these transcripts", "build a leader's advisor persona", "extract leadership principles from interviews", "turn these podcast transcripts into a CLAUDE persona", or "create an advisor role from a leader's talks". Do NOT use for summarising a single article or note (use summarise-text or summarise-url), improving a prompt (prompt-enhancer), customer or user personas for product work (this skill is for leadership advisor personas only), or fetching transcripts (skill takes already-gathered local files, not URLs).
+description: Distill a leader's worldview from their interview transcripts into a reusable advisor persona. Produces a principles markdown (principles, mental models, recurring patterns, verbatim quotes, grouped by domain), a role markdown (description, core questions, mental models, tone), and a paste-ready CLAUDE.md activation snippet — all from the "Distilling Leadership Wisdom" methodology. Asks one question at a time. Use when the user says "distill a persona from these transcripts", "build a leader's advisor persona", "extract leadership principles from interviews", "turn these podcast transcripts into a CLAUDE persona", or "create an advisor role from a leader's talks". Do NOT use for summarising a single article or note (use summarise-text or summarise-url), improving a prompt (prompt-enhancer), customer or user personas for product work (this skill is for leadership advisor personas only), or fetching transcripts (skill takes already-gathered local files, not URLs).
 ---
 
 # Distill Persona
 
-Turn a folder of interview transcripts of one leader into a structured principles document and a reusable advisor role definition, then optionally bundle the result as a self-contained persona skill. Seven interactive steps (five for the core distillation, one optional skill-packaging step, one wrap-up). Ask one question at a time. Never invent quotes — every quote must trace back verbatim to a provided transcript.
+Turn a folder of interview transcripts of one leader into a structured principles document and a reusable advisor role definition, then optionally bundle the result as a self-contained persona skill. Interactive steps cover the core distillation, an optional skill-packaging step, and a wrap-up. Ask one question at a time. Never invent quotes — every quote must trace back verbatim to a provided transcript.
 
 ## Inputs
 
@@ -31,7 +31,7 @@ Optionally written at Step 6 (if user opts in):
 
 ### Step 1 — Confirm the candidate
 
-Ask the user (one `AskUserQuestion` call) for the leader's name. Then validate the three criteria below in a single follow-up question that lets the user confirm or flag a gap:
+Ask the user (one `AskUserQuestion` call) for the leader's name. Then validate the criteria below in a single follow-up question that lets the user confirm or flag a gap:
 
 - **Sufficient source material** — multiple hours of interviews already gathered.
 - **Personal motivation** — the user actually wants this person's lens on their own work.

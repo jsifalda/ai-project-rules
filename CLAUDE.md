@@ -29,13 +29,13 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 ## Conventions
 
 - **Skill files** follow the [agentskills.io](https://agentskills.io/specification) spec. Frontmatter requires at least `name` + `description`.
-- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Two parser-strictness rules to know (both silently pass Claude Code but break Copilot CLI):
+- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Parser-strictness rules to know (each silently passes Claude Code but breaks Copilot CLI):
   - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
   - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
 - **README lists are manually maintained — keep them in sync.** There is no generator — drift only stays out if every skill/command change touches the README too.
-  - The `## Skills` table in `README.md` has one row per skill with four columns: skill name, one-line summary, `Depends on`, and `Origin`.
+  - The `## Skills` table in `README.md` has one row per skill, with these columns: skill name, one-line summary, `Depends on`, and `Origin`.
   - When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`) **and fill its `Depends on` and `Origin` cells**.
   - `Depends on`: list every other repo skill this one invokes/requires to function, or `—` if none — disambiguation pointers ("use X instead") and sync-provenance are not dependencies, leave this cell `—` for those.
   - `Origin`: if the skill was synced from an upstream repo (see the sync scripts in `scripts/`), link the cell to that upstream repo's root (e.g. `mattpocock/skills`, `kepano/obsidian-skills`); `—` for skills native to this repo.
@@ -54,6 +54,27 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Copy these in-repo precedents**, don't reinvent: `setup-adrs` (`YYYY-MM-DD-slug`), `setup-todo-backlog` (`TODO-YYYY-MM-DD-slug`), `changelog/` (`YYYYMMDDHHMMSS-slug`).
 - **Ids are immutable once landed.** Supersede, never re-date or renumber an existing one — renumbering breaks every inbound reference silently.
 - **Not covered by this rule** — ordinary ordinals aren't identifiers, leave them alone: numbered list steps, hierarchical PRD task ordinals (`1.0` / `1.1` / `2.0`), citation markers (`[1]`, `[2]`), semver versions, and filenames an external CLI produces. Also explicitly out of scope: `create-implementation-plan`'s within-document ids (`REQ-001`, `TASK-001`, etc.) — that document is single-author with no cross-file handles, so a counter there is fine.
+
+## Counts
+
+- **Do not state how many items a set holds.** Name the set instead. Write `the modules below`, not
+  `the eleven modules`. Write `every tail gate`, not `both tail gates`.
+- **The worst case is a count in a different file from the set** — a `description` or a `README` row
+  that counts sections defined elsewhere. Nothing signals the drift, and the reader trusts the wrong
+  number. This repo already shipped one: a skill claimed six categories while its reference file
+  defined eight.
+- **Why**: a count is a second copy of the set's length. One added item invalidates every copy at
+  once, and the copies sit in files the author never opens.
+- **When a count is load-bearing, rewrite it. Never delete it.** An instruction that says how many
+  agents to spawn must become `one per item in <the list>`. It must not lose the number and become
+  ambiguous.
+- **A readable instruction beats a mechanically pure one.** If removing a count makes the text worse
+  or ambiguous, keep the count and say why.
+- **Not covered by this rule** — leave these alone: thresholds and limits (coverage ≥90%, ≤1024
+  characters, 20 words, 300 LOC); step, phase, and stage ordinals (`Step 5`, `Phase 2`); version
+  numbers, dates, and exit codes; distributive phrasing (`one row per skill`); verbatim quotes; and
+  named frameworks whose number is part of the concept (Radical Candor's four quadrants, the GROW
+  model's four stages).
 
 ## Writing Style
 

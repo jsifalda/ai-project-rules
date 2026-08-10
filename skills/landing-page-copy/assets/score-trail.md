@@ -55,7 +55,7 @@ Notes column: NEW = the section did not exist on the input page (improve mode on
 </details>
 
 <!--
-Every one of the four blocks above is conditional. Emit only what fired.
+Every block above is conditional. Emit only what fired.
 Never invent a round-over-round delta to make the trail look productive.
 No P0/P1/P2 labels, no S/M/L effort estimates — the loop applies its own fixes,
 so priority tiers and effort guesses are ceremony. Order by impact and say the impact.

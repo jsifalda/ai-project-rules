@@ -224,7 +224,7 @@ paths:
 
 ## Implementation Verification Protocol
 
-After completing any code changes, perform a four-phase verification before considering the task complete:
+After completing any code changes, perform every verification phase below before considering the task complete:
 
 ### Phase 1: Build Verification
 
@@ -257,4 +257,4 @@ After completing any code changes, perform a four-phase verification before cons
 - Fix the findings from the review, if that makes a sense
 - Present to the user what review returned and how it was addressed
 
-CRITICAL: Do not mark implementation as complete until all four verification phases pass. If any phase fails, fix the issues and re-run all phases.
+CRITICAL: Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.

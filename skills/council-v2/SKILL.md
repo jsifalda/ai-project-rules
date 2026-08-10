@@ -1,12 +1,12 @@
 ---
 name: council-v2
 disable-model-invocation: true
-description: "Run a question, idea, or decision through a council of 5-7 named AI advisors who answer independently, peer-review each other, then a chairman synthesizes one verdict. Slash-only — invoke it with /council-v2, it never auto-fires. Five permanent seats — First Principles (delegates to the first-principles-mode skill), The Contrarian, The Outsider, The Expansionist, and The Founder (delegates to the founder-thinking-mode skill). Two routed seats join only when the question fits — Stanier (delegates to persona-stanier) for people, teams, orgs, hiring, coaching, 1:1s, performance, OKRs, delegation, or engineering process, and levelsio (delegates to persona-levelsio) for solo or bootstrapped products, side projects, shipping, launching, pricing, distribution, or building in public. Do NOT use for factual lookups, questions with one right answer, trivial decisions, or anything without a real tradeoff and real stakes."
+description: "Run a question, idea, or decision through a council of named AI advisors who answer independently, peer-review each other, then a chairman synthesizes one verdict. Slash-only — invoke it with /council-v2, it never auto-fires. Permanent seats — First Principles (delegates to the first-principles-mode skill), The Contrarian, The Outsider, The Expansionist, and The Founder (delegates to the founder-thinking-mode skill). Routed seats join only when the question fits — Stanier (delegates to persona-stanier) for people, teams, orgs, hiring, coaching, 1:1s, performance, OKRs, delegation, or engineering process, and levelsio (delegates to persona-levelsio) for solo or bootstrapped products, side projects, shipping, launching, pricing, distribution, or building in public. Do NOT use for factual lookups, questions with one right answer, trivial decisions, or anything without a real tradeoff and real stakes."
 ---
 
 # LLM Council v2
 
-Forces 5–7 AI advisors to argue about your question, peer-review each other, then a chairman synthesizes a final verdict. Based on Karpathy's LLM Council method.
+Forces the council's advisors to argue about your question, peer-review each other, then a chairman synthesizes a final verdict. Based on Karpathy's LLM Council method.
 
 **Slash-only.** This skill runs when the user types `/council-v2`. It deliberately carries no natural-language triggers — the `council` skill still owns those, and two auto-firing councils would collide nondeterministically. Never self-invoke this.
 
@@ -21,7 +21,7 @@ If the question is too vague, ask ONE clarifying question then proceed.
 
 ## The Roster
 
-Five permanent seats, plus up to two routed domain seats. Roster is therefore **5–7 advisors**.
+Permanent seats are always seated. Routed domain seats join only when the question fits, so the roster size varies.
 
 ### Permanent seats (always seated)
 
@@ -36,7 +36,7 @@ Five permanent seats, plus up to two routed domain seats. Roster is therefore **
 6. **Stanier** — *delegates to the `persona-stanier` skill.* Seat when the question involves managing people, teams or orgs, hiring, coaching, 1:1s, performance, OKRs, delegation, engineering process, remote work, or career/promotion.
 7. **levelsio** — *delegates to the `persona-levelsio` skill.* Seat when the question involves a solo or bootstrapped product, a side project, shipping, launching, pricing, distribution, indie monetization, or building in public.
 
-Both can seat at once — "should I quit my engineering manager job to go indie" is a two-router question. If neither fits, run the 5-seat core. Decide the routing at framing time (Step 1) and record it.
+Both can seat at once — "should I quit my engineering manager job to go indie" is a two-router question. If neither fits, run the permanent-seat core. Decide the routing at framing time (Step 1) and record it.
 
 ### Natural tensions
 
@@ -54,7 +54,7 @@ Do not resolve these tensions at spawn time. Let them collide and let the chairm
 
 ### Step 0: Resolve the skills directory ONCE
 
-Four seats delegate to other skills, and each needs an absolute path to read. Resolve it **once** here in the main agent and inject the resolved path into every advisor sub-agent prompt — don't make each sub-agent re-derive it.
+The seats that delegate to other skills each need an absolute path to read. Resolve it **once** here in the main agent and inject the resolved path into every advisor sub-agent prompt — don't make each sub-agent re-derive it.
 
 ```bash
 for d in "$(dirname "$(realpath SKILL.md)")/.." ~/.claude/skills ~/.copilot/skills; do
@@ -86,7 +86,7 @@ Save the framed question and the routing decision for the transcript.
 
 ### Step 2: Spawn every seated advisor in PARALLEL (single batch)
 
-Spawn all 5–7 simultaneously using your agent platform's mechanism for running sub-agents in parallel (for example, parallel tool calls or concurrent sessions). Sequential spawning wastes time and bleeds responses between advisors.
+Spawn every seated advisor simultaneously using your agent platform's mechanism for running sub-agents in parallel (for example, parallel tool calls or concurrent sessions). Sequential spawning wastes time and bleeds responses between advisors.
 
 **Inline seats (2, 3, 4) — prompt template:**
 ```
@@ -127,7 +127,7 @@ Keep your response between 150-300 words. No preamble. Go straight into your ana
 ```
 
 Per-seat substitutions:
-- **First Principles** → skill `first-principles-mode`. Step 2 line: *"Work the four passes and deliver its output structure, compressed to fit the word cap."*
+- **First Principles** → skill `first-principles-mode`. Step 2 line: *"Work every pass and deliver its output structure, compressed to fit the word cap."*
 - **The Founder** → skill `founder-thinking-mode`. Step 2 line: *"Open with the literal line 'Here's what I'd actually do', then the call, the trade-off, the risk, what most people miss, and the first move."*
 - **Stanier** → skill `persona-stanier`. Step 2 line: *"Read `[SKILLS_DIR]/persona-stanier/references/role.md` in full and skim `[SKILLS_DIR]/persona-stanier/references/principles.md` for the principles that map to this question. Quote verbatim only — never from memory. If nothing maps cleanly, say so and offer three named tools."*
 - **levelsio** → skill `persona-levelsio`. Step 2 line: *"Read `[SKILLS_DIR]/persona-levelsio/references/role.md` in full and skim `[SKILLS_DIR]/persona-levelsio/references/principles.md` for the principles that map to this question. Quote verbatim only — never from memory. If nothing maps cleanly, give the blunt default and the cheap next step."*
@@ -136,13 +136,13 @@ Substitute the resolved `SKILLS_DIR` from Step 0 into the prompt as an absolute 
 
 ### Step 3: Peer review (one reviewer per seated advisor, in PARALLEL)
 
-Collect every advisor response. Reviewer count scales **1:1 with seated advisors** — 5 seats means 5 reviewers, 7 means 7.
+Collect every advisor response. Reviewer count scales **1:1 with seated advisors**.
 
 **Reviewers see NAMED advisors — there is no anonymization.** v1 anonymized advisors as A–E. That does not work with this roster: levelsio's and Stanier's voices are unmistakable, so reviewers deanonymize them on the first sentence and the letters buy nothing but friction. Don't "fix" this back.
 
 **Do randomize the order** advisors appear in each reviewer's prompt, independently per reviewer. That kills positional bias at zero cost even with names visible, and it's the part of v1's anonymization that actually paid for itself.
 
-Spawn all reviewers simultaneously. Each sees every response and answers three questions.
+Spawn all reviewers simultaneously. Each sees every response and answers the questions in the template below.
 
 **Reviewer prompt template:**
 ```
@@ -156,7 +156,7 @@ Here are their responses, in no meaningful order:
 **[Advisor Name]:** [response]
 ... [all seated advisors, order randomized for this reviewer]
 
-Answer these three questions. Be specific. Reference advisors by name.
+Answer every question below. Be specific. Reference advisors by name.
 1. Which response is strongest? Why?
 2. Which response has the biggest blind spot? What is it missing?
 3. What did ALL responses miss that the council should consider?
@@ -251,7 +251,7 @@ After generating both files, deliver to user:
 - **A delegating seat that can't load its skill runs inline** — degrade the seat, never fail the council.
 - **Always spawn advisors in parallel** — sequential spawning wastes time and bleeds responses.
 - **No anonymization for peer review, but always randomize order** — the names are unmaskable here; the ordering bias isn't.
-- **Reviewers scale 1:1 with seated advisors** — 5 seats, 5 reviewers; 7 seats, 7 reviewers.
+- **Reviewers scale 1:1 with seated advisors.**
 - **The chairman dedups** — repetition is not consensus. Independent convergence is the only high-confidence signal.
 - **Chairman can disagree with the majority** — if one dissenter's reasoning is strongest, side with them and explain why.
 - **Don't council trivial questions** — one right answer → just answer it.

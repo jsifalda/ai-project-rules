@@ -148,7 +148,7 @@ mapping first, apply renames and reference rewrites together, then verify.
      to name the new id. A comment reading `see "Fix the flaky login test" in TODO.md` becomes
      `see TODO-2026-03-14-flaky-login-test in TODO.md`. Skip this and the conversion buys the repo
      nothing outside the backlog file.
-5. **Verify. Two checks, both required.**
+5. **Verify. Both checks are required.**
    - **(a) Every mapped old handle is gone.** Search the repo for each one under the same boundary
      rule the rewrite used, and expect zero hits. A plain substring search passes over a corrupted
      near-miss, because the corrupted text no longer contains the old handle.

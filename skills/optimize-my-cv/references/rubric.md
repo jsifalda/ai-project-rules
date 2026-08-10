@@ -4,7 +4,7 @@ The judgement layer of the audit. `best-practices.md` holds the craft rules (bul
 
 ## Part 1 — Severity
 
-Three buckets: `blocker`, `major`, `minor`. Every classification is a judgement call, not a measurement. Two competent reviewers will disagree on the margin, and that is expected.
+The buckets are `blocker`, `major`, `minor`. Every classification is a judgement call, not a measurement. Two competent reviewers will disagree on the margin, and that is expected.
 
 **No numeric scores.** The audit never emits "7/10", "82% ATS match", or a per-dimension rating out of five. A fabricated number reads as precision the method does not have, and it invites the candidate to optimise the number instead of the CV. Findings carry a severity label and a reason. Nothing else.
 
@@ -40,13 +40,13 @@ A borderline case, worked: bullets carry numbers, but every number counts activi
 
 Rule: **can the reader still form a judgement of the person's level?** If activity numbers at least establish scope and the reader can rank the candidate against others, it is `major`. If the numbers leave the reader unable to tell what level this person operates at, it is a `blocker`. Same defect, two severities, decided by whether the screen can still function.
 
-Three modifiers, applied after the initial classification:
+Modifiers, applied after the initial classification:
 
 - **Recency escalates.** A defect in the current role, or in the top third of page one, moves up one level. A defect confined to a role older than roughly seven years moves down one.
 - **Repetition escalates.** The same defect in one bullet is minor. In every bullet of every role it is structural, and structural defects are at least `major`.
 - **Defects do not stack.** One bullet failing three dimensions produces one finding at the worst severity, not three findings. Report the dimension that best explains the fix.
 
-## Part 2 — The seven dimensions
+## Part 2 — The dimensions
 
 Each dimension: what it measures, IC calibration, leadership calibration, and the failure signals to scan for.
 

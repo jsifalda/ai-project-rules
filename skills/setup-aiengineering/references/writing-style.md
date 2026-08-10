@@ -3,11 +3,11 @@
 Inject the section below into the project's agent instructions file. Copy it verbatim. It has no
 `{{...}}` placeholders.
 
-The block below carries the ASD-STE100 rules only. It deliberately omits two things this repo's own
-`rules/general.md` adds on top: the personal formatting preferences (blank lines after a long
-sentence, state your assumptions), and the precedence line against a named style skill. Both are
-local to this repo. A target repo does not have that skill installed, and a rule that points at a
-missing skill is a defect. Do not sync those into this template.
+The block below carries the ASD-STE100 rules only. It deliberately omits the additions this repo's
+own `rules/general.md` layers on top: the personal formatting preferences (blank lines after a long
+sentence, state your assumptions), and the precedence line against a named style skill. Each of
+those is local to this repo. A target repo does not have that skill installed, and a rule that
+points at a missing skill is a defect. Do not sync those into this template.
 
 ---
 

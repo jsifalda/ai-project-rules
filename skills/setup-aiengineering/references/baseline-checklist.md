@@ -21,7 +21,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Backfill grounded body for working repos (opt-in) | scaffold | 3 | v1 |
 | Verification protocol (lint, typecheck, test, coverage) | inject | 5 | v1 |
 | Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt | inject | 5 | v2 |
-| Regression test for bug fixes (test-first, three-way degradation) | inject | 5 | v5 |
+| Regression test for bug fixes (test-first, degrades by repo type) | inject | 5 | v5 |
 | Code review lens — harness-native | inject | 5 | v1 |
 | Code review lens — CodeRabbit CLI | inject | 5 | v1 |
 | Code review lens — nuclear structural (optional) | inject | 5 | v1 |
@@ -40,7 +40,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | MCP-config reminder (when no `.mcp.json`) | inject | 7b | v1 |
 | GitHub App offer (Claude Code + GitHub only) | suggest | 9 | v1 |
 | Security-guidance plugin offer (Claude Code only) | suggest | 9b | v4 |
-| TODO backlog with two-way end-of-session sweep, filing user-approved (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
+| TODO backlog with a propose-and-close end-of-session sweep, filing user-approved (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
 | Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
 | User-scenarios sync gate in the verification protocol (appended only after the user-scenarios delegation succeeds) | inject | 6b | v7 |
 | Integration-only exemption for the Code review gate (merge/rebase/cherry-pick/revert) | inject | 5 | v9 |

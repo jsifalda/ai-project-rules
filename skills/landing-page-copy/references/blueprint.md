@@ -2,7 +2,7 @@
 
 Source of truth for what each section must contain, what disqualifies it, and how it scores. Keep it tight; this is a checklist, not prose.
 
-14 sections. Global voice rules, conflict-resolution defaults, and the whole-page pass live in [copy-rules.md](copy-rules.md) — not here.
+The full section list is below. Global voice rules, conflict-resolution defaults, and the whole-page pass live in [copy-rules.md](copy-rules.md) — not here.
 
 **Two jobs, split on purpose.** A **blind scorer** gets the page text plus this file and copy-rules.md, and nothing else. It returns bands and whole-page verdicts. It cannot know which facts the user lacks, so it never applies caps and never computes `achievable`. The **loop** holds the clarify-gate and probe answers, so it applies the `Blockable:` caps, computes `achievable`, and runs the fabrication check. Keep the split: the scorer's ignorance is what makes its bands trustworthy, and the loop's knowledge is what makes the denominator honest.
 
@@ -32,7 +32,7 @@ Rules that make the band honest:
 - **Score from the page text alone.** What you meant is not evidence. Only what a cold reader can see counts.
 - **Quote or it fails.** "The H1 is emotional" is not a verdict. `"Finish more tasks without working more"` is.
 - **A placeholder is not evidence, and the cap only lowers.** `[logo]` does not satisfy "a row of logos" — that must-have is `absent`. `[X] customers` does not satisfy a count. Score the must-haves honestly first; *then* apply the cap: **a section holding an unresolved placeholder can never score 3.** The cap is a ceiling, never a floor. A section that is nothing but scaffolding scores 0 or 1, and must never be credited a 2 for containing well-formatted brackets.
-- **What counts as a placeholder.** Brackets are overloaded, so use the meaning, not the syntax. Three species:
+- **What counts as a placeholder.** Brackets are overloaded, so use the meaning, not the syntax. The species below:
   - **Label** — something the reader clicks or reads: `[Start free — no card needed]`, `[Privacy]`, `[Twitter]`. Resolved content. Never caps.
   - **Placeholder** — a fact the author still owes: `[X] freelancers`, `[encryption standard]`, `[Name]`, `[publication]`. Caps.
   - **Author-directed instruction** — a note telling the author what to write: `[Add your security detail — encryption standard, provider, and audits.]`. Caps, same as a placeholder, and it must never ship.
@@ -70,7 +70,7 @@ achievable = 42 − 3×(fully blocked sections) − 1×(capped-only sections)
 
 Report `X / achievable`, never `X / 42`. Raw 42 belongs in a footnote.
 
-Three distinctions that get collapsed if you are not careful:
+Distinctions that get collapsed if you are not careful:
 
 - **Blocked ≠ defaultable.** `Vision` has a derived default and is never blocked. Missing it is a flag, not a cap.
 - **Blocked ≠ stuck.** If you cannot phrase the missing fact as a concrete question the user could answer, the section is not blocked. It is stuck. Stuck sections stay in the stop test and get reported honestly.
@@ -84,7 +84,7 @@ Several must-haves want a number: a metric, a timeframe, a setup time, a custome
 
 A blind scorer reading page text cannot tell a real `~3 min` from a fabricated one. The bracket is the only tell. So a naive rubric *pays you to invent*: bracket the number honestly and the must-have fails, invent it and the must-have passes. The rule meant to resist the loop's pull toward a higher band would be the one rule the band rewards you for breaking.
 
-Two things close that gap:
+What closes that gap:
 
 1. **Every fact only the user can supply is named in a `Blockable:` line.** Once the user confirms it is missing, the section is capped and `achievable` drops to match. The honest bracketed page then scores *at its ceiling* — full marks for what was reachable. Honesty costs nothing against `achievable`, which is the only denominator that gets reported.
 2. **A section scoring above its ceiling is evidence a fact was invented.** If Benefits Recap is capped at 2 because the user has no metrics and the blind scorer returns a 3, a number got made up. **Only the loop can run this check** — the scorer doesn't know the ceiling exists. Treat a hit as a defect, not a win.

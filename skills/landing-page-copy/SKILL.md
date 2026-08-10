@@ -4,7 +4,7 @@ description: >-
   Write a landing page from a product description, or improve an existing page until it stops
   getting better. Two modes — generate (description in, full page out) and improve (pasted
   markdown, a local file path, or a URL in, rewritten page out). Both run the same scored loop
-  against a 14-section conversion blueprint, rewriting every section that fails and re-scoring
+  against a conversion blueprint, rewriting every section that fails and re-scoring
   until it converges, then return the page plus a score trail. Use when the user asks to write
   landing page copy, create a landing page, LP copy, sales page, draft a landing page, improve or
   rewrite my landing page, audit my landing page, review LP copy, gap-analyze a landing page,
@@ -47,7 +47,7 @@ Pick by input shape. A product description means generate. Page text, a file, or
 Max 3 rounds. A round is score-everything, then rewrite-what-failed.
 
 ```
-1. SCORE all 14 sections against references/blueprint.md, from the page text ALONE.
+1. SCORE every section in references/blueprint.md, from the page text ALONE.
    Per must-have: pass/fail + the verbatim quote that satisfies it, or "absent".
    Then that section's anti-patterns. Derive the band — never choose it.
    Then ONE whole-page pass: the 5 reader questions, CTA-label consistency, one-audience,
@@ -90,7 +90,7 @@ Where subagents are unavailable, score from the rendered text alone and never fr
 
 ### Why the loop is shaped this way
 
-- **Re-score everything (5), not just what changed.** `blueprint.md` ends with a cross-section table: the CTA label spans five sections, Final CTA repeats the Hero promise, Testimonials sit before Pricing. Rewrite the Hero's CTA label and four sections sitting at 3 silently drop to 2 — and never get re-checked, because they scored 3. Re-scoring is cheap next to rewriting. Skipping it is a false economy that buys inconsistency.
+- **Re-score everything (5), not just what changed.** `blueprint.md` ends with a cross-section table: the CTA label spans several sections, Final CTA repeats the Hero promise, Testimonials sit before Pricing. Rewrite the Hero's CTA label and four sections sitting at 3 silently drop to 2 — and never get re-checked, because they scored 3. Re-scoring is cheap next to rewriting. Skipping it is a false economy that buys inconsistency.
 - **Revert on tie (6).** Ties are the common case. Keeping an equal-scoring rewrite is churn: the text changes, the score doesn't, the user's voice drifts for nothing. Preferring the incumbent makes the loop monotone and gives step 7 something to mean.
 - **Dependency order, not priority order (4).** Rewrite Final CTA to match the *old* Hero label, then rewrite the Hero, and you've left them inconsistent with Final CTA already marked fixed.
 - **Three rounds.** Draft, fix, polish. Past that the loop is rewriting prose that already passes.

@@ -3,7 +3,7 @@
 Takeaways from Marc Lou's "32 Principles of a Viral Product", restated in brief.
 Source: https://x.com/marclou/status/2065385672991752210 — read the original for the full argument.
 
-32 checks across 7 sections. The auditing skill reads this file and scores a target
+The auditing skill reads this file and scores a target
 against every bullet below, in file order, adding nothing.
 
 Check IDs are derived by position, not written here: section initial + index within

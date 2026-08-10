@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 Turn one big finite goal into a plan you can start today, and re-plan it as you go. Output a sharpened end state, ordered milestones, every milestone broken into one-day tasks, and the single first action.
 
-This is decomposition, not a to-do dump. A generic list of steps is worthless. The value is an opinionated method that produces a startable plan and avoids the four ways breakdown fails: decomposing a fog, relabeling instead of splitting, task-explosion paralysis, wrong sequence.
+This is decomposition, not a to-do dump. A generic list of steps is worthless. The value is an opinionated method that produces a startable plan and avoids the ways breakdown fails: decomposing a fog, relabeling instead of splitting, task-explosion paralysis, wrong sequence.
 
 ## When this fits
 
@@ -23,7 +23,7 @@ If the goal is an ongoing system with no finish line (get fitter forever, be mor
 
 ## Method (Plan mode)
 
-Run these four steps in order. Each one kills a specific failure.
+Run these steps in order. Each one kills a specific failure.
 
 ### 1. Sharpen the goal. Gate everything on this.
 

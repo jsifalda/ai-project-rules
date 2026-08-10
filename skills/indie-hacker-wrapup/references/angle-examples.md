@@ -1,6 +1,6 @@
 # Angle examples — weak vs strong, across archetypes
 
-Calibration for Steps 1 to 3. Two things this file trains: how to lift a weak angle into a strong one, and how to keep the strong ones from all sounding the same.
+Calibration for Steps 1 to 3. This file trains: how to lift a weak angle into a strong one, and how to keep the strong ones from all sounding the same.
 
 The failure mode this skill keeps hitting: every angle comes out as the same shape — a contrarian reversal, *"X you thought was Y is actually Z."* Each one is fine alone. Five in a row read as a generic AI-thought-leader feed. So the examples below deliberately land in different archetypes. Match the archetype to what actually happened in the session, do not force everything into the reversal mold.
 
@@ -58,7 +58,7 @@ Candidate: "Built it, but never deployed it — you can max every 'done' axis an
 
 The point: session-specific detail does not buy originality. A stale idea with fresh numbers is still stale. Find the twist or drop it.
 
-## The resonance bar, worked (all four checks)
+## The resonance bar, worked (all checks)
 
 Candidate: "A migration default silently answers two questions at once, what new rows get and what existing rows get."
 
@@ -67,7 +67,7 @@ Candidate: "A migration default silently answers two questions at once, what new
 - Stranger cares? Yes. It is a trap they can now avoid.
 - Original? Yes. Not a canonical maxim, and the framing is not one you see repeated.
 
-Clears all four, so it is a candidate. Rank it against the others by how hard it clears, then dedup against the ledger by theme.
+Clears every check, so it is a candidate. Rank it against the others by how hard it clears, then dedup against the ledger by theme.
 
 Candidate: "Renamed a service file and updated its imports."
 

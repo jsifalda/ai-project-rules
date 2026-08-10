@@ -15,7 +15,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
 | `changelog/` | One entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md` |
 | `changelog.md` | **Frozen archive** of pre-`changelog/` entries — do not edit or append |
-| `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, and the three upstream skill-sync scripts (see [Upstream skill sync](#upstream-skill-sync)) |
+| `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, and the upstream skill-sync scripts (see [Upstream skill sync](#upstream-skill-sync)) |
 | `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
 
 ## How it gets into Claude Code & Copilot CLI
@@ -52,7 +52,7 @@ The shape of a working deployment, if you want to reproduce it:
 
 ## Rules
 
-Two rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
+The rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
 - `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style (ASD-STE100 Simplified Technical English), git commit format.
 - `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
@@ -75,12 +75,12 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`better-plan`](skills/better-plan/SKILL.md) | Chained planning ritual: enhance the request via prompt-enhancer, build a plan (plan-mode rigor), stress-test it via grill-me, then cost-route tasks via op; runs inside plan mode, so the routed plan lands in the plan file and goes through the native approval gate before it executes, recaps the run, then ships it as a PR via ship-pr once verification is green and nothing is left awaiting you. Slash-only. | `grill-me`, `op`, `prompt-enhancer`, `ship-pr` | — |
 | [`brave-submit-site`](skills/brave-submit-site/SKILL.md) | Submit a site URL or bare domain to Brave Search for indexing or re-fetching via the public `search.brave.com/submit-url` form, driven with Playwright; confirms the Success state and explains how to verify indexing later. | — | — |
 | [`claude-allow-home`](skills/claude-allow-home/SKILL.md) | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. | — | — |
-| [`code-review-nuclear`](skills/code-review-nuclear/SKILL.md) | Strict single-axis structural/architectural review of a diff or branch — hunts "code judo" moves that delete whole branches, layers, or abstractions, scored against Fowler smells and 9 non-negotiable standards. Not a correctness, style, or security review. | — | — |
-| [`council`](skills/council/SKILL.md) | Run a question or decision through a council of 5 AI advisors that analyze, peer-review, and synthesize a verdict. | — | — |
-| [`council-v2`](skills/council-v2/SKILL.md) | Run a decision through a routed 5-7 seat council of reasoning modes and personas that analyze, peer-review, and synthesize a verdict. | `first-principles-mode`, `founder-thinking-mode`, `persona-stanier`, `persona-levelsio` | — |
+| [`code-review-nuclear`](skills/code-review-nuclear/SKILL.md) | Strict single-axis structural/architectural review of a diff or branch — hunts "code judo" moves that delete whole branches, layers, or abstractions, scored against Fowler smells and a fixed set of non-negotiable standards. Not a correctness, style, or security review. | — | — |
+| [`council`](skills/council/SKILL.md) | Run a question or decision through a council of AI advisors that analyze, peer-review, and synthesize a verdict. | — | — |
+| [`council-v2`](skills/council-v2/SKILL.md) | Run a decision through a routed council of reasoning modes and personas that analyze, peer-review, and synthesize a verdict. | `first-principles-mode`, `founder-thinking-mode`, `persona-stanier`, `persona-levelsio` | — |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — | — |
 | [`create-implementation-plan`](skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — | — |
-| [`create-product-vision`](skills/create-product-vision/SKILL.md) | Turn a short product or project description into one tight, motivating vision doc covering three angles (motivation, practical, product), with the tagline offered in three wordings (motivational main, practical and product-descriptive alternatives). | `write-like-human` | — |
+| [`create-product-vision`](skills/create-product-vision/SKILL.md) | Turn a short product or project description into one tight, motivating vision doc covering motivation, practical, and product angles, with the tagline offered in several wordings (motivational main, practical and product-descriptive alternatives). | `write-like-human` | — |
 | [`create-skill`](skills/create-skill/SKILL.md) | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. | — | — |
 | [`create-svg-image`](skills/create-svg-image/SKILL.md) | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. | — | — |
 | [`create-svg-logo`](skills/create-svg-logo/SKILL.md) | Create professional SVG logos from a description — multiple concepts, layout lockups, colour variations, and a usage-guidelines document. | — | — |
@@ -98,9 +98,9 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`handoff`](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to pick up. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. | — | — |
 | [`i-have-adhd`](skills/i-have-adhd/SKILL.md) | Reshape every response for an ADHD reader — action first, numbered steps, restated state, concrete time estimates, no preamble or closers. Invoked bare mid-session with work in flight, it opens by catching you up on where the work stands. Manual-invoke only. | — | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
-| [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the session on two lenses (the product built and the craft behind it), scores angles against a resonance bar, and drafts the strongest build-in-public post (or declines when nothing clears it), tracking past angles to repeat one only on stronger evidence. | `write-like-human` | — |
+| [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the session across lenses (the product built and the craft behind it), scores angles against a resonance bar, and drafts the strongest build-in-public post (or declines when nothing clears it), tracking past angles to repeat one only on stronger evidence. | `write-like-human` | — |
 | [`json-canvas`](skills/json-canvas/SKILL.md) | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) |
-| [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Write a landing page from a product description, or improve an existing one (paste, file, or URL) — both driven by a scored loop over a 14-section conversion blueprint that rewrites what fails and re-scores until it converges. | `create-product-vision`, `defuddle` | — |
+| [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Write a landing page from a product description, or improve an existing one (paste, file, or URL) — both driven by a scored loop over a conversion blueprint that rewrites what fails and re-scores until it converges. | `create-product-vision`, `defuddle` | — |
 | [`landing-page-viral-grill`](skills/landing-page-viral-grill/SKILL.md) | Audit a landing page against a viral checklist file, one verdict per check, then grill the gaps and plan the fixes. | `grill-me`, `defuddle` | — |
 | [`loop-todos`](skills/loop-todos/SKILL.md) | Manual `/loop-todos` only — starts a self-cancelling recurring loop that claims one open backlog entry per firing, writes a plan for it, implements that plan, verifies it against the host project's own gates, closes it, updates stale docs, and opens one stacked pull request per entry. | `loop`, `setup-todo-backlog`, `ship-pr` | — |
 | [`markdown`](skills/markdown/SKILL.md) | Create, refine, or convert content into strictly formatted, export-ready Markdown. | — | — |
@@ -130,7 +130,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`setup-changelog`](skills/setup-changelog/SKILL.md) | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). | — | — |
 | [`setup-rtk`](skills/setup-rtk/SKILL.md) | Install RTK (Rust Token Killer) on a machine for a single Claude Code profile — binary (Homebrew or official install script) + the `rtk hook claude` PreToolUse hook in settings.json, via RTK's own `rtk init`. | — | — |
 | [`setup-skills-autorefresh`](skills/setup-skills-autorefresh/SKILL.md) | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. | — | — |
-| [`setup-todo-backlog`](skills/setup-todo-backlog/SKILL.md) | Bootstrap a known-issues backlog in any project — `docs/TODO.md` with dated immutable ids, optional checklist conversion, and a two-way end-of-session sweep injected into AGENTS.md/CLAUDE.md where filing an entry needs the user's approval and closing one needs evidence. | — | — |
+| [`setup-todo-backlog`](skills/setup-todo-backlog/SKILL.md) | Bootstrap a known-issues backlog in any project — `docs/TODO.md` with dated immutable ids, optional checklist conversion, and a propose-and-close end-of-session sweep injected into AGENTS.md/CLAUDE.md where filing an entry needs the user's approval and closing one needs evidence. | — | — |
 | [`setup-user-scenarios`](skills/setup-user-scenarios/SKILL.md) | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project. | — | — |
 | [`ship-pr`](skills/ship-pr/SKILL.md) | `/ship-pr`, or the ship step of a skill that depends on it — go from a dirty working tree to an open PR/MR (self-assigned to you) in one pass. | — | — |
 | [`ship-v1`](skills/ship-v1/SKILL.md) | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. | — | — |
@@ -141,7 +141,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`team-ship`](skills/team-ship/SKILL.md) | Lead orchestrator — `/team-ship <task>` records the agent territories in the project's AGENTS.md/CLAUDE.md, writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. | `team-code-writer`, `team-tester`, `team-reviewer` | — |
 | [`team-tester`](skills/team-tester/SKILL.md) | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. | — | — |
 | [`translate-to-czech`](skills/translate-to-czech/SKILL.md) | Translate English text to Czech while preserving accuracy. | — | — |
-| [`write-like-human`](skills/write-like-human/SKILL.md) | Apply a strict 17-rule style guide so prose reads as human, not AI-generated. | — | — |
+| [`write-like-human`](skills/write-like-human/SKILL.md) | Apply a strict style guide so prose reads as human, not AI-generated. | — | — |
 | [`yt-video-finder`](skills/yt-video-finder/SKILL.md) | Drive a real Chrome browser via Playwright to search YouTube, shortlist and rate candidates by engagement + comments, then pick the single best video for the user's criteria and write it up. | — | — |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
@@ -150,7 +150,7 @@ _The four `team-*` skills (an agent dev team — a writer, a reviewer, a tester,
 
 ## Upstream skill sync
 
-Some skills in the table above started life in someone else's repo. Three scripts pull them in, one per upstream. They are run by hand from the command line, not through an agent, because the work they do (fetch a tree, diff it against a baseline, write files) is fully deterministic and needs no judgment call. Each one flattens the upstream's nested layout (skills grouped under a plugin, category, or vendor directory) into this repo's flat `skills/<name>/`.
+Some skills in the table above started life in someone else's repo. One script per upstream pulls them in. They are run by hand from the command line, not through an agent, because the work they do (fetch a tree, diff it against a baseline, write files) is fully deterministic and needs no judgment call. Each one flattens the upstream's nested layout (skills grouped under a plugin, category, or vendor directory) into this repo's flat `skills/<name>/`.
 
 ### `scripts/sync-anthropic-skills.sh`
 
@@ -191,23 +191,23 @@ bash scripts/sync-mattpocock-skills.sh prototype handoff
 bash scripts/sync-mattpocock-skills.sh productivity/handoff --force
 ```
 
-Two names are refused outright, exit code 2, and `--force` does not bypass either refusal: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.
+These names are refused outright, exit code 2, and `--force` does not bypass the refusal: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.
 
 ### `scripts/sync-obsidian-skills.sh`
 
-Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a fixed set of five: `defuddle`, `json-canvas`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`. Passing a name, or any unknown flag, is an error, exit code 2. Change the set by editing the `SKILLS` array near the top of the script. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
+Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a fixed set: `defuddle`, `json-canvas`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`. Passing a name, or any unknown flag, is an error, exit code 2. Change the set by editing the `SKILLS` array near the top of the script. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
 
 ```bash
 bash scripts/sync-obsidian-skills.sh
 ```
 
-> **Warning:** this script has no safety net. Unlike the other two, there is no sha256 baseline, no manifest, and no `--force` gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of the five skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
+> **Warning:** this script has no safety net. Unlike the other sync scripts, there is no sha256 baseline, no manifest, and no `--force` gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of those skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
 
 ### Overwrite safety and registering new skills
 
 The anthropic and mattpocock scripts (not the obsidian one, see the warning above) record every file they write in a sha256 baseline. Once a local edit makes a file diverge from that baseline, the script reports the skill as locally modified and skips it instead of clobbering your changes. `scripts/.sync-state/` is gitignored, so a fresh clone starts with no baseline at all, and everything already on disk reports as locally modified on the first run. That's expected, not a bug. Reach for `--force` once you know the local copy is actually untouched.
 
-The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. All three scripts print a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root.
+The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. Every sync script prints a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root.
 
 ## Gemini CLI commands
 

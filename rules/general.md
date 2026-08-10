@@ -121,6 +121,14 @@ paths:
 
 - STE is the default mode for all prose. The `write-like-human` skill overrides it. When that skill runs, it replaces STE for that one piece of text only. STE resumes for everything after it.
 
+# COUNTS IN INSTRUCTIONS
+
+- Never state how many items a set holds. Name the set — "the modules below", not "the eleven modules".
+- Worst case is a count in a different file from the set. Nothing signals the drift.
+- Rewrite a load-bearing count. Never delete it. Write "one per item in <the list>", never a vague plural.
+- These are exempt: thresholds and limits, ordinals for a step, phase, or stage, versions, dates, and exit codes.
+- These are also exempt: "one per X" phrasing, verbatim quotes, and named frameworks whose number is part of the concept.
+
 # CODING STANDARDS
 
 ## General Guidelines

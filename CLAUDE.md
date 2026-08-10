@@ -57,24 +57,13 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Counts
 
-- **Do not state how many items a set holds.** Name the set instead. Write `the modules below`, not
-  `the eleven modules`. Write `every tail gate`, not `both tail gates`.
-- **The worst case is a count in a different file from the set** — a `description` or a `README` row
-  that counts sections defined elsewhere. Nothing signals the drift, and the reader trusts the wrong
-  number. This repo already shipped one: a skill claimed six categories while its reference file
-  defined eight.
-- **Why**: a count is a second copy of the set's length. One added item invalidates every copy at
-  once, and the copies sit in files the author never opens.
-- **When a count is load-bearing, rewrite it. Never delete it.** An instruction that says how many
-  agents to spawn must become `one per item in <the list>`. It must not lose the number and become
-  ambiguous.
-- **A readable instruction beats a mechanically pure one.** If removing a count makes the text worse
-  or ambiguous, keep the count and say why.
-- **Not covered by this rule** — leave these alone: thresholds and limits (coverage ≥90%, ≤1024
-  characters, 20 words, 300 LOC); step, phase, and stage ordinals (`Step 5`, `Phase 2`); version
-  numbers, dates, and exit codes; distributive phrasing (`one row per skill`); verbatim quotes; and
-  named frameworks whose number is part of the concept (Radical Candor's four quadrants, the GROW
-  model's four stages).
+`rules/general.md` under `# COUNTS IN INSTRUCTIONS` is the single source of truth. It holds the rule,
+the load-bearing carve-out, and the exemption list. Read the rule there.
+
+It binds every file here — a `SKILL.md`, a rule file, a `description`, a `README` row.
+
+`changelog/20260810085949-drop-brittle-counts.md` records a worked example. A skill advertised a
+smaller category set than its reference file defined, and nothing caught it.
 
 ## Writing Style
 

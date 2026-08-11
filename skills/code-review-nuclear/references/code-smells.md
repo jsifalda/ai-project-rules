@@ -2,9 +2,9 @@
 
 An always-on baseline of structural "Bad Smells in Code" (Martin Fowler, _Refactoring_, ch. 3), curated for the nuclear code review. This baseline applies even when a file or repo documents no standards of its own — it is the structural floor every diff is measured against, alongside the Non-Negotiable Standards.
 
-## Two binding rules
+## Binding rules
 
-These two rules keep the baseline safe and prevent it from manufacturing noise:
+These rules keep the baseline safe and prevent it from manufacturing noise:
 
 1. **The repo overrides the baseline.** A documented pattern in your team's style guide, an existing convention in the surrounding code, or an explicit team standard always wins. Where the codebase deliberately endorses something the baseline would flag (e.g. a canonical `case`/`when` dispatcher that the architecture standardizes on), suppress the smell — do not flag it.
 2. **Every smell is a judgement call, never a hard violation.** Name the smell as a labelled heuristic ("possible Feature Envy here"), quote the hunk, and explain the structural cost. Default smells to **MAJOR** or **SUGGESTION**. Escalate to **BLOCKER** only when a smell compounds a Non-Negotiable Standard — e.g. Duplicated Code that re-implements a canonical helper is also a Standard 6 (canonical layer) violation; Speculative Generality that adds a whole layer of indirection is also a Standard 4 violation.

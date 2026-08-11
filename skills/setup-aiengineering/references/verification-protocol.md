@@ -11,8 +11,8 @@ Detect each gate independently from the repo. A gate with no tool is dropped fro
 block. The **Code review** and **Docs & instructions alignment** gates are tool-agnostic and always
 kept.
 
-The **regression test for bug fixes** gate has no command of its own, so it degrades on three paths,
-not two:
+The **regression test for bug fixes** gate has no command of its own. Unlike a gate that is only
+kept or dropped, it also has a dormant state:
 
 - **Source repo with a test framework** → gate is **enforced** as written.
 - **Source repo without a test framework** → gate is **kept as prose, dormant and unenforced**. It
@@ -41,16 +41,17 @@ not two:
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
   A source repo with no tooling still keeps it as dormant prose; only a config / no-source repo drops
   it.
-- **The two tail gates (User scenarios in sync, Backlog sweep) have no stack signal at all** —
-  nothing here detects them from lint, typecheck, or test tooling. Both are stack-independent, and
-  selection alone earns neither: each points at a doc or policy section that only its own delegated
-  skill installs — the user-scenarios gate at the BDD scenario doc (`setup-user-scenarios`), the
-  backlog sweep at the `## TODO / Known issues` policy (`setup-todo-backlog`). Each ships **only
-  after its own delegation actually succeeded** (SKILL.md Step 6b), which is why both are appended
-  there rather than injected here with the other gates. Append them last, in the order written
-  below — user-scenarios sync, then backlog sweep. A repo that ships only one of them gets just that
-  one; a repo that ships neither ends at the docs & instructions alignment gate.
-  **Neither gate's body below carries meta-guidance** — every condition governing whether they ship
+- **The tail gates (User scenarios in sync, Backlog sweep) have no stack signal at all** —
+  nothing here detects them from lint, typecheck, or test tooling. Each one is stack-independent,
+  and selection alone earns none of them: each points at a doc or policy section that only its own
+  delegated skill installs — the user-scenarios gate at the BDD scenario doc
+  (`setup-user-scenarios`), the backlog sweep at the `## TODO / Known issues` policy
+  (`setup-todo-backlog`). Each ships **only after its own delegation actually succeeded** (SKILL.md
+  Step 6b), which is why they are appended there rather than injected here with the other gates.
+  Append them last, in the order written below — user-scenarios sync, then backlog sweep. A repo
+  appends only the tail gates that qualify. A repo that appends none ends at the docs & instructions
+  alignment gate.
+  **No tail gate body below carries meta-guidance** — every condition governing whether they ship
   lives here and in the note at the bottom, so Step 6b can copy each gate verbatim into a repo
   without leaking skill-authoring instructions into that repo's agent instructions.
 
@@ -147,7 +148,7 @@ says otherwise.
   Report it every time — `passed`, `failed (what is missing)`, or `n/a (not user-visible)`. There
   is no silent skip. Unsure whether a change is user-visible → treat it as user-visible; a
   redundant scenario costs less than a coverage hole.
-- **Backlog sweep** — run both halves of the sweep described in the `## TODO / Known issues`
+- **Backlog sweep** — run the complete sweep described in the `## TODO / Known issues`
   section of the agent instructions: propose what this session found and could not fix, and close
   the entries it solved. **This gate overrides the markdown-only exemption above — it is the one
   gate that survives it.** A defect can be found while reading, and a docs-only change can close a
@@ -176,28 +177,30 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 tool is absent. The quantitative coverage requirement in the **Test coverage for new code** gate is
 dropped alongside the test gate when no test framework/coverage tool exists — a repo with no tests
 has no coverage number to gate on. The **Regression test for bug fixes** gate degrades on its own
-three-way path, not with the test gate: **enforced** in a source repo with a test framework; **kept
+path, not with the test gate: **enforced** in a source repo with a test framework; **kept
 as dormant, unenforced prose** in a source repo without one (it sets the intent and pairs with the
 `references/test-setup.md` offer, and since it carries no command there is nothing empty or guessed
 to inject — same class as the tool-agnostic code review and docs gates); **dropped** only in a
 config / no-source repo, alongside the test and coverage gates. If the project has no
 lint/typecheck/test tooling, keep code review and docs & instructions alignment, plus the regression
-gate as dormant prose **when the repo has source code** — that path keys off source, not tooling, so
-a source repo with no tooling keeps three gates and a config / no-source repo keeps two. Append to
-whatever remains: *"No automated lint/typecheck/test gates were detected for this repo. Add them here
-when build tooling lands."* If a source repo has a test framework but no coverage tooling, the skill
-wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is chosen — see `references/test-setup.md`. The
+gate as dormant prose **when the repo has source code** — that path keys off source, not tooling. A
+source repo with no tooling keeps code review, docs & instructions alignment, and the dormant
+regression gate. A config / no-source repo keeps code review and docs & instructions alignment only.
+Append to whatever remains: *"No automated lint/typecheck/test gates were detected for this repo.
+Add them here when build tooling lands."* If a source repo has a test framework but no coverage
+tooling, the skill wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is chosen — see
+`references/test-setup.md`. The
 **Security review** lens ships only when the security review module is selected in Step 4; when it is
 not, omit that lens bullet. The **integration-only exemption** on the **Code review** gate ships
 with that gate and is dropped with it — a repo that does not get the code review gate does not get
 the exemption either. The **User scenarios in sync** and **Backlog sweep** gates are similar but
-strictly stronger: neither carries a `{{...}}` placeholder either, but selection alone is not enough
-to ship either one. Each references something only its delegated skill installs — the BDD scenario
+strictly stronger: no tail gate carries a `{{...}}` placeholder either, but selection alone is not
+enough to ship one. Each references something only its delegated skill installs — the BDD scenario
 doc from `setup-user-scenarios`, the `## TODO / Known issues` policy from `setup-todo-backlog` — so
-both are **appended in SKILL.md Step 6b after their own delegation succeeds**. Do not inject either
+each is **appended in SKILL.md Step 6b after its own delegation succeeds**. Do not inject a tail gate
 here with the other gates, or a repo whose delegation was skipped ends up with a mandatory gate
 pointing at something that does not exist. Append them last, in the order written above, so a repo
-that ships only one of them gets just that one.
+appends only the tail gates that qualify.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.6), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

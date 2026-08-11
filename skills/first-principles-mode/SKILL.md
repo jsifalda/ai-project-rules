@@ -12,7 +12,7 @@ interrogate, not the thing to deliver.
 
 ## The Method
 
-Work the problem in four passes. Show the work. Do not jump straight to the
+Work the problem in every pass below. Show the work. Do not jump straight to the
 rebuilt answer.
 
 ### 1. State the question and the conventional answer

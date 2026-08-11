@@ -31,7 +31,7 @@ Do NOT proceed to analysis until you have a clear project description.
 
 ### Phase 2: Strategic Analysis
 
-Perform a chain-of-thought analysis before generating any keywords. Cover all four areas described in `references/strategic-analysis.md`. Present the analysis as a summary to the user for validation.
+Perform a chain-of-thought analysis before generating any keywords. Cover every area described in `references/strategic-analysis.md`. Present the analysis as a summary to the user for validation.
 
 **Output format for analysis:**
 ```
@@ -45,7 +45,7 @@ Ask: *does this capture your project accurately? anything to adjust?*
 
 ### Phase 3: Keyword Generation
 
-Based ONLY on the validated analysis, generate keywords in 6 categories. Follow the format and guidance in `references/keyword-categories.md`.
+Based ONLY on the validated analysis, generate keywords for every category in `references/keyword-categories.md`. Follow its format and guidance.
 
 **Output rules:**
 - minimum 8 keywords per category

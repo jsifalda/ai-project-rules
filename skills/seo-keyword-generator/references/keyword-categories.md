@@ -1,6 +1,6 @@
 # Keyword Categories
 
-Generate keywords in these 6 categories. Each keyword should be specific to the project — no filler.
+Generate keywords in the categories below. Each keyword should be specific to the project — no filler.
 
 ## 1. Informational
 

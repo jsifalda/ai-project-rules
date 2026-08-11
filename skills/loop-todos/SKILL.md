@@ -115,7 +115,7 @@ in this session", and whether interval-mode `loop` registers there is an assumpt
 
 1. **`finished` is set.** A previous run ended and could not confirm its own cancel, so it left the
    ledger deliberately. Report that run's summary, say the loop may still be firing, and give the
-   two steps to clear it: cancel the job, then delete the ledger. **Start nothing and work nothing.**
+   steps to clear it: cancel the job, then delete the ledger. **Start nothing and work nothing.**
    A finished ledger is not a missing one, and reading it as a first run turns an unconfirmed cancel
    into two loops.
 2. **`inFlight` set, `session` not this session.** Another firing is mid-iteration. **Write
@@ -248,7 +248,7 @@ Cancelling over a temporarily blocked set ends a run with work still in it.
 
 ### Step 5: Claim the entry and branch
 
-Four acts, and the order is the point:
+The acts, and the order is the point:
 
 1. **Write `claim` to the ledger.** `todo`, `since` from `date -u +%Y-%m-%dT%H:%M:%SZ`, `session`,
    `step`, `plan` null, `lastFailure` null. The session handle is the first 8 characters of the
@@ -292,8 +292,8 @@ The status line, rewritten in the working tree only, reads:
 **Status:** in progress, since 2026-08-01T14:32:11Z (session a1b2c3d4)
 ```
 
-**This is a deliberate fourth value in a three-value vocabulary, and it is a breadcrumb, not the
-record.** `setup-todo-backlog` defines three states only, so a reader who knows that would otherwise
+**This is a deliberate value outside `setup-todo-backlog`'s closed status vocabulary, and it is a
+breadcrumb, not the record.** A reader who knows that vocabulary is closed would otherwise
 read this line as a bug and delete it. It exists so a human reading `git diff` sees what a worker is
 holding. No step recovers state from it, the ledger's `claim` being what this skill reads, so a PR
 carrying it is untidy rather than a lost claim. Step 10 replaces it with `resolved`, and the only
@@ -338,7 +338,7 @@ case 1 brings the answer back into the work.
 
 ### Step 7: Prepare the ground and plan the work
 
-Three things, all before any code.
+Everything here happens before any code.
 
 **Run the host's prerequisites** first. Its gates often depend on a step documented somewhere other
 than the gate list: a build the typecheck needs, an install, a generated file. Read its commands and
@@ -354,7 +354,7 @@ its figure and yours, and say so when they disagree. Without this, a gate the ho
 as red is indistinguishable from one this iteration broke.
 
 **Write the plan.** One file per entry at `plans/<todo-id>.md`, or in the host's own planning directory
-where its instructions name one. Put its path in `claim.plan`. Six sections, in this order:
+where its instructions name one. Put its path in `claim.plan`. The sections, in this order:
 
 - **Goal** — the outcome the entry is asking for, in a sentence or two.
 - **Locked decisions** — carried across from the entry's decision bullets, so implementation cannot
@@ -384,7 +384,7 @@ Anything noticed outside it is a candidate for a new backlog entry, not a second
 ### Step 9: Verify it landed
 
 **When the host defines gates, run them verbatim, in its order, with its commands.** Never substitute
-an equivalent. Four qualifications. Three are about reading a result rather than changing a command,
+an equivalent. Qualifications: most are about reading a result rather than changing a command,
 and the one that does change a command says so and is bounded to that:
 
 - **Baseline.** A gate whose `baselines` entry already failed passes when the result matches that
@@ -449,7 +449,7 @@ no longer reproduces. Never close on "looks fixed".
 
 ### Step 11: Update what the change made stale
 
-Per the host's docs policy. Where it is silent, check four things at minimum. The README, when a
+Per the host's docs policy. Where it is silent, check each of the following at minimum. The README, when a
 command, script, port, prerequisite, or limitation changed. Architecture or ADR docs, when a
 cross-cutting decision moved. Any scenario doc the host names, when user-visible behaviour changed.
 Any changelog it requires per change. Nothing stale means saying so in one line, not inventing one.
@@ -546,7 +546,7 @@ When Step 4 finds nothing left in `snapshot`:
 6. **Cancel not confirmed**, no job id or the delete failed — **leave the ledger exactly where it
    is.** Tell the user the job could not be found, that they cancel the loop themselves, and that
    deleting the ledger is the last step. Every firing until then hits guard case 1, does nothing, and
-   repeats those two instructions.
+   repeats those instructions.
 
 Archiving while the loop may still be firing is the one mistake that produces two loops: the next
 firing finds no ledger, reads a first run, starts a second.

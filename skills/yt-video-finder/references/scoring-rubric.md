@@ -77,7 +77,7 @@ The result lands on a 0 to 5 scale.
 
 ### Disqualification rule
 
-A score of 0 on constraint_fit for a HARD constraint (not a soft preference) disqualifies the candidate outright, no matter how the other three dimensions score. Don't average a hard-constraint violation into the total. Drop the candidate from the ranking entirely and note why in the report.
+A score of 0 on constraint_fit for a HARD constraint (not a soft preference) disqualifies the candidate outright, no matter how the other dimensions score. Don't average a hard-constraint violation into the total. Drop the candidate from the ranking entirely and note why in the report.
 
 ### Worked example
 

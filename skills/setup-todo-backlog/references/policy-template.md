@@ -127,7 +127,7 @@ Resolved entries are never deleted. The entry is the record that the defect exis
   entries by id, never by position. "The entry above" breaks as soon as an entry is inserted or
   resolved.
 - **Status is a closed vocabulary**: `open`, `decided, deferred`, `resolved YYYY-MM-DD`. The
-  qualifier after the comma is free text. The three states are not.
+  qualifier after the comma is free text. The states are not.
 
 ### Read the backlog before you plan
 

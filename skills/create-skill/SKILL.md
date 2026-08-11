@@ -22,9 +22,9 @@ equipped with procedural knowledge that no model can fully possess.
 3. Domain expertise - Company-specific knowledge, schemas, business logic
 4. Bundled resources - Scripts, references, and assets for complex and repetitive tasks
 
-### Two Types of Skills
+### Types of Skills
 
-Skills fall into two categories, and the distinction matters for how long they stay useful:
+Skills fall into distinct categories, and the distinction matters for how long they stay useful:
 
 - **Capability skills** — teach Claude a procedure the base model can't do reliably (e.g., PDF form filling, OOXML editing). These may become unnecessary as models improve.
 - **Preference skills** — encode team or project workflow (e.g., code-review checklist, commit-message format). These stay useful as long as the underlying process does, but must be kept in sync with how the team actually works.
@@ -130,7 +130,7 @@ The skill should only contain the information needed for an AI agent to do the j
 
 ### Progressive Disclosure Design Principle
 
-Skills use a three-level loading system to manage context efficiently:
+Skills use tiered loading to manage context efficiently:
 
 1. **Metadata (name + description)** - Always in context (~100 words)
 2. **SKILL.md body** - When skill triggers (<5k words)
@@ -351,7 +351,7 @@ Write the YAML frontmatter with `name` and `description`:
 
 ###### Frontmatter pitfalls (silently work in Claude Code, fail in Copilot CLI)
 
-Two parser-strictness rules trip up long descriptions. Both pass Claude Code's lenient frontmatter parser and fail Copilot CLI's spec-compliant one — meaning a skill can land that loads fine for the author but breaks every other consumer.
+Parser-strictness rules trip up long descriptions. Each passes Claude Code's lenient frontmatter parser and fails Copilot CLI's spec-compliant one — meaning a skill can land that loads fine for the author but breaks every other consumer.
 
 1. **No `": "` (colon + space) inside the description.** The `description` value is a YAML plain scalar (YAML 1.2 §7.3.3); `": "` is reserved as the key/value separator and terminates the value mid-string. Use ` — ` (em-dash) or `, ` instead. If `": "` is genuinely needed, switch to a folded block scalar (`description: >-` with the body indented on the next line).
    - Bad: `…via the slash command: runs end-to-end…`
@@ -424,4 +424,4 @@ After testing the skill, users may request improvements. Often this happens righ
 3. Identify how SKILL.md or bundled resources should be updated
 4. Implement changes and test again
 
-Before distributing, run a behavioral eval loop — see [references/testing.md](references/testing.md) for the 5-step process (per-prompt success criteria, mixed prompt buckets, 3–5 trials, run isolation, fix-description-first).
+Before distributing, run a behavioral eval loop — see [references/testing.md](references/testing.md) for the process (per-prompt success criteria, mixed prompt buckets, 3–5 trials, run isolation, fix-description-first).

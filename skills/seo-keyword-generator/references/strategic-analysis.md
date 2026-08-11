@@ -1,6 +1,6 @@
 # Strategic Analysis Framework
 
-Before generating keywords, perform deep analysis on these four dimensions.
+Before generating keywords, perform deep analysis on the dimensions below.
 
 ## 1. Project Definition
 

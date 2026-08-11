@@ -88,10 +88,28 @@ paths:
 
 # WRITING STYLE
 
-- each long sentence should be followed by two newline characters
-- use simple & easy-to-understand language.
-- be concise, use short sentences
-- make sure to clearly explain your assumptions (if you make any), and your conclusions
+- **Write all prose in ASD-STE100 Simplified Technical English.** This is the default mode. It does not expire during a long task.
+- **Does not apply to:** code, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, commentationals commits prefixes like `feat:`, `fix:`, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
+
+## STE Precedence
+
+- STE is the default mode for all prose (not the code) Project rules or skills can override it.
+
+## Scannable and Terse
+
+- Completeness wins over brevity. Keep every caveat and every step, even when the text runs long.
+- Use the fewest words that carry the message, inside that limit.
+- Put the answer first. Reasoning comes after.
+- Break text with headings, bullets, and tables. 
+
+
+# COUNTS IN INSTRUCTIONS
+
+- Never state how many items a set holds. Name the set — "the modules below", not "the eleven modules".
+- Worst case is a count in a different file from the set. Nothing signals the drift.
+- Rewrite a load-bearing count. Never delete it. Write "one per item in <the list>", never a vague plural.
+- These are exempt: thresholds and limits, ordinals for a step, phase, or stage, versions, dates, and exit codes.
+- These are also exempt: "one per X" phrasing, verbatim quotes, and named frameworks whose number is part of the concept.
 
 # CODING STANDARDS
 
@@ -108,6 +126,7 @@ paths:
 
 - Conventional commit format (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`), optional `(scope)`.
 - Subject: imperative, ≤72 chars, no trailing period. Reference the task/issue ID when there is one.
+- **The subject line is exempt from `# WRITING STYLE`.** It keeps the conventional-commit format above. The commit body and the MR/PR body follow `# WRITING STYLE`.
 - **Body is optional and why-focused.** Add one only when the reason or impact isn't obvious from subject + diff. Keep to 1-2 short bullets of *why/impact*. Never list file-by-file what changed — the diff already shows that.
 - **A single-commit MR/PR uses the commit body verbatim as its description (GitLab, GitHub).** Write the body as a clean MR description, not a change inventory — no noise.
 - **MR/PR description = `## Summary` only** (or clean commit body verbatim). Never add a `## Test plan` / `## Testing` section unless I explicitly ask for one. No checklists, no "how to verify" boilerplate by default.
@@ -195,7 +214,7 @@ paths:
 
 ## Implementation Verification Protocol
 
-After completing any code changes, perform a four-phase verification before considering the task complete:
+After completing any code changes, perform every verification phase below before considering the task complete:
 
 ### Phase 1: Build Verification
 
@@ -203,7 +222,7 @@ After completing any code changes, perform a four-phase verification before cons
 - Ensure zero compile errors and warnings are addressed
 - Verify all TypeScript types resolve correctly
 
-### Phase 2: Automated Testing (tests + lint)
+### Phase 2: Automated Testing (tests, lint etc)
 
 - Run the full test suite (`pnpm test` or any other test command available) after **every** code change — no exceptions
 - Ensure all existing tests pass — zero failures
@@ -212,20 +231,10 @@ After completing any code changes, perform a four-phase verification before cons
 - If new functionality was added, write tests for it
 - Run lint (if present in the project), fix any reported issues (errors and also warnings)
 
-### Phase 3: Visual/Browser Verification
-
-- Use your harness's browser automation tooling (e.g. a Playwright MCP server) to visually verify your changes in the running application
-- Navigate to the affected pages/components and confirm:
-  - The UI renders correctly without visual regressions
-  - Interactive elements (buttons, forms, links) function as expected
-  - No console errors appear in the browser
-  - The user flow works end-to-end as intended
-- Take screenshots when you observe any inconsistencies
-
-### Phase 4: Code Review
+### Phase 3: Code Review
 
 - Run a `code-review` task agent on the changes made in this session
 - Fix the findings from the review, if that makes a sense
 - Present to the user what review returned and how it was addressed
 
-CRITICAL: Do not mark implementation as complete until all four verification phases pass. If any phase fails, fix the issues and re-run all phases.
+CRITICAL: Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.

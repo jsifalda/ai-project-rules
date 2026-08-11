@@ -2,7 +2,7 @@
 
 Structural validation (`quick_validate.py`) confirms a skill is well-formed. It does *not* confirm the skill works. Before distribution, run a behavioral eval.
 
-## The 5-step eval loop
+## The eval loop
 
 ### 1. Write down what "success" looks like — per prompt
 
@@ -14,7 +14,7 @@ Each test prompt gets its own success criterion. Grade outcomes, not paths:
 
 Don't grade on "did Claude follow my steps." Claude may reach the right outcome a different way — that's fine.
 
-### 2. Mix 10–20 prompts across three buckets
+### 2. Mix 10–20 prompts across these buckets
 
 - **Positive triggers** — prompts the skill *should* handle.
 - **Negative triggers** — prompts the skill *should not* fire on (guards against description hijack).

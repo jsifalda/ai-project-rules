@@ -114,7 +114,7 @@ The patterns below are common architectural conventions worth checking regardles
 
 Beyond the numbered Standards, carry an always-on baseline of Fowler's structural "Bad Smells in Code" — the full catalogue with *what it is → how to fix* lives in `references/code-smells.md`. It is the structural floor every diff is measured against, even when the touched files document no standards of their own. It is **not** a new axis (this skill stays single-axis and structural); it widens recall for smells the Standards don't name explicitly: Mysterious Name, Feature Envy, Data Clumps, Primitive Obsession, Repeated Switches, Shotgun Surgery, Divergent Change, Message Chains, Refused Bequest.
 
-Two binding rules keep the baseline honest — **the repo overrides the baseline**, and **every smell is a judgement call, never a hard violation**. `references/code-smells.md` is the single source of truth for both rules and how they bind; apply them from there.
+Binding rules keep the baseline honest — **the repo overrides the baseline**, and **every smell is a judgement call, never a hard violation**. `references/code-smells.md` is the single source of truth for these rules and how they bind; apply them from there.
 
 ## Escalation Triggers
 
@@ -207,7 +207,7 @@ End every review with exactly one of:
 
 ## Approval Bar
 
-Do not approve merely because behavior seems correct. The bar is: **no violation of Standards 0–8 above** that the author cannot clearly justify. In particular, treat these as presumptive blockers:
+Do not approve merely because behavior seems correct. The bar is: **no violation of the Non-Negotiable Standards above** that the author cannot clearly justify. In particular, treat these as presumptive blockers:
 
 - A plausible code judo move exists that would delete significant incidental complexity
 - The PR pushes a file past 1000 lines

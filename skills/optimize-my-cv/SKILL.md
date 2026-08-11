@@ -1,6 +1,6 @@
 ---
 name: optimize-my-cv
-description: Diagnose a CV or resume against a target role — score it across seven dimensions, then return what is already holding up, an evidence-quoted gap list ranked blocker-first, and an ordered remediation plan. Picks an IC or leadership track automatically, matches requirement-by-requirement against a job description when one is supplied, and accepts pasted text, a local .md or .txt path, or a local .pdf read directly. Use when the user says "optimize my cv", "review my resume", "what is wrong with my cv", "gap analysis of my resume", "is my cv ready for X role", or asks why their applications get no replies. Do NOT use to write or rewrite the CV for the user, to draft cover letters, to run interview prep or mock interviews, or to do job searching, sourcing, or application tracking.
+description: Diagnose a CV or resume against a target role — score it across a fixed set of dimensions, then return what is already holding up, an evidence-quoted gap list ranked blocker-first, and an ordered remediation plan. Picks an IC or leadership track automatically, matches requirement-by-requirement against a job description when one is supplied, and accepts pasted text, a local .md or .txt path, or a local .pdf read directly. Use when the user says "optimize my cv", "review my resume", "what is wrong with my cv", "gap analysis of my resume", "is my cv ready for X role", or asks why their applications get no replies. Do NOT use to write or rewrite the CV for the user, to draft cover letters, to run interview prep or mock interviews, or to do job searching, sourcing, or application tracking.
 ---
 
 # Optimize My CV
@@ -8,9 +8,9 @@ description: Diagnose a CV or resume against a target role — score it across s
 Diagnose a CV against a target role and hand back a prioritized fix list. The deliverable is the
 gap analysis and the plan, not a rewritten CV.
 
-Two reference files carry the detail. Read both in Step 4, not before:
+The reference files carry the detail. Read them in Step 4, not before:
 
-- [references/rubric.md](references/rubric.md) — the seven scoring dimensions, IC vs leadership
+- [references/rubric.md](references/rubric.md) — the scoring dimensions, IC vs leadership
   calibrations, severity definitions, and the track-selection heuristic.
 - [references/best-practices.md](references/best-practices.md) — bullet formula, metric families,
   ATS constraints, section order, and rules for projects.
@@ -80,7 +80,7 @@ short. If nothing is defensibly strong, say that in one line rather than manufac
 to fill the section — a padded strength here contradicts the never-invent rule below. Skipping the
 section entirely leads people to rewrite working sections.
 
-**Gaps.** Blockers first, then major, then minor. Each gap carries three things:
+**Gaps.** Blockers first, then major, then minor. Each gap carries:
 
 - the evidence, quoted from the CV
 - what is wrong with it

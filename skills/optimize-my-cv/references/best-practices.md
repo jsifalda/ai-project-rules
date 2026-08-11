@@ -11,7 +11,7 @@ work experience, projects, education, certifications (if relevant). A CV missing
 skills near the top, or burying it below education, loses ATS keyword weight and recruiter
 scan time — both parse top-to-bottom first.
 
-A Projects section carries the most weight for four groups: junior engineers, career
+A Projects section matters most for junior engineers, career
 changers, bootcamp graduates, and anyone with a work-history gap. For these candidates,
 a missing or thin Projects section is a bigger gap than a missing certification — it is
 often the only evidence of hands-on technical work the CV can offer.
@@ -29,7 +29,7 @@ photo, introduce a bias-review problem the CV does not need.
 
 ## Technical skills section
 
-Three organization strategies, each with a different cost:
+Organization strategies, each with a different cost:
 
 - **By category** (Languages / Frameworks / Databases / Cloud-Infrastructure / Tools) —
   most legible to a human reviewer, costs more space.
@@ -68,7 +68,7 @@ from the upstream:
 
 ## The four metric families
 
-A CV with no quantified bullets across any of these four families is under-evidenced,
+A CV with no quantified bullets across any of these families is under-evidenced,
 regardless of how senior the role titles look:
 
 - **Scale** — users ("serving 500K DAU"), requests ("handling 10K requests/second"), data

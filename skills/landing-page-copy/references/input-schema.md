@@ -67,7 +67,7 @@ Ask **only** when unreadable from the page body. Most real pages answer both, so
 
 ### Tier 2 — after round 1, batched into one message, skippable
 
-Ask once, for every concrete fact round 1 found missing. Two kinds, in one message:
+Ask once, for every concrete fact round 1 found missing. In one message:
 
 **The three blockables** — real testimonials, trust logos, founder story. Only these can earn blocked status.
 

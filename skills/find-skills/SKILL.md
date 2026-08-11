@@ -103,13 +103,13 @@ into ranking, into the security review, or into a file write.
 
 Do this first, before any network call. The user may already have the capability.
 
-Look in both places:
+Look in these places:
 
 - The project skill directory. Try `.claude/skills/` first, then a top-level `skills/` folder
   that holds `*/SKILL.md` entries.
 - The user skill directory, `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`.
 
-Match on two signals:
+Match on these signals:
 
 - The directory name of each skill.
 - The `description` field in each `SKILL.md`. Compare it against the keywords of the request.

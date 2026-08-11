@@ -90,44 +90,19 @@ paths:
 # WRITING STYLE
 
 - **Write all prose in ASD-STE100 Simplified Technical English.** This is the default mode. It does not expire during a long task.
-- **Applies to:** chat replies to the user, documentation, plans, summaries, prose files, commit message BODIES, and pull-request BODIES.
-- **Does not apply to:** code, code comments, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, `feat:` or `fix:` prefix, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
-
-## STE Core Rules
-
-- Use approved words only. One word, one meaning. One meaning, one word.
-- Use the active voice. Name the agent of each action.
-- Keep procedural sentences to 20 words or fewer. Keep descriptive sentences to 25 words or fewer.
-- Put one instruction in one sentence.
-- Use the same word for the same thing every time. Do not use synonyms for variety.
-- Use simple verb tenses (present, past, future). Do not use the `-ing` form as a noun.
-- Start each instruction with the verb.
-- Use articles (`a`, `the`) and full sentences. Do not use telegraphic style.
-- Do not use idioms, jargon, or figures of speech.
-- Keep paragraphs to 6 sentences or fewer.
-- Put two newline characters after each long sentence.
-- State your assumptions and your conclusions clearly.
-
-## STE Bans and Exceptions
-
-- Do not use emojis.
-- Do not use semicolons.
-- Do not use filler openers such as "Great question" or "Certainly".
-- Do not use hype or marketing language.
-- Do not use cliches.
-- Em-dashes stay allowed. Keep them.
+- **Does not apply to:** code, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, commentationals commits prefixes like `feat:`, `fix:`, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
 
 ## STE Precedence
 
-- STE is the default mode for all prose. The `write-like-human` skill overrides it. When that skill runs, it replaces STE for that one piece of text only. STE resumes for everything after it.
+- STE is the default mode for all prose (not the code) Project rules or skills can override it.
 
 ## Scannable and Terse
 
 - Completeness wins over brevity. Keep every caveat and every step, even when the text runs long.
 - Use the fewest words that carry the message, inside that limit.
 - Put the answer first. Reasoning comes after.
-- Break text with headings, bullets, and tables. Bold the key term.
-- Delete preamble, filler, and restatement of the question.
+- Break text with headings, bullets, and tables. 
+
 
 # COUNTS IN INSTRUCTIONS
 
@@ -248,7 +223,7 @@ After completing any code changes, perform every verification phase below before
 - Ensure zero compile errors and warnings are addressed
 - Verify all TypeScript types resolve correctly
 
-### Phase 2: Automated Testing (tests + lint)
+### Phase 2: Automated Testing (tests, lint etc)
 
 - Run the full test suite (`pnpm test` or any other test command available) after **every** code change — no exceptions
 - Ensure all existing tests pass — zero failures
@@ -257,17 +232,7 @@ After completing any code changes, perform every verification phase below before
 - If new functionality was added, write tests for it
 - Run lint (if present in the project), fix any reported issues (errors and also warnings)
 
-### Phase 3: Visual/Browser Verification
-
-- Use your harness's browser automation tooling (e.g. a Playwright MCP server) to visually verify your changes in the running application
-- Navigate to the affected pages/components and confirm:
-  - The UI renders correctly without visual regressions
-  - Interactive elements (buttons, forms, links) function as expected
-  - No console errors appear in the browser
-  - The user flow works end-to-end as intended
-- Take screenshots when you observe any inconsistencies
-
-### Phase 4: Code Review
+### Phase 3: Code Review
 
 - Run a `code-review` task agent on the changes made in this session
 - Fix the findings from the review, if that makes a sense

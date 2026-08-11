@@ -57,22 +57,20 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Counts
 
-`rules/general.md` under `# COUNTS IN INSTRUCTIONS` is the single source of truth. It holds the rule,
-the load-bearing carve-out, and the exemption list. Read the rule there.
+`rules/general.md` under `# COUNTS IN INSTRUCTIONS` holds the whole rule. Read it there.
 
 It binds every file here — a `SKILL.md`, a rule file, a `description`, a `README` row.
 
-`changelog/20260810085949-drop-brittle-counts.md` records a worked example. A skill advertised a
-smaller category set than its reference file defined, and nothing caught it.
+`changelog/20260811075111-writing-standard-and-counts-rules.md` records a worked example. A skill
+advertised a smaller category set than its reference file defined, and nothing caught it.
 
 ## Writing Style
 
 All prose this repo produces uses **ASD-STE100 Simplified Technical English**. The commit subject
 line and the PR title are exempt and keep the conventional-commit format.
 
-`rules/general.md` under `# WRITING STYLE` is the single source of truth. It holds the full scope,
-the core rules, the sentence caps, the ban list, and the precedence against `write-like-human`.
-Read the rules there. Do not restate or re-scope them in this file — a second copy drifts.
+`rules/general.md` under `# WRITING STYLE` holds the whole rule. Read it there. Do not restate or
+re-scope it in this file — a second copy drifts.
 
 ## Key Rules
 

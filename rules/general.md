@@ -121,6 +121,14 @@ paths:
 
 - STE is the default mode for all prose. The `write-like-human` skill overrides it. When that skill runs, it replaces STE for that one piece of text only. STE resumes for everything after it.
 
+## Scannable and Terse
+
+- Completeness wins over brevity. Keep every caveat and every step, even when the text runs long.
+- Use the fewest words that carry the message, inside that limit.
+- Put the answer first. Reasoning comes after.
+- Break text with headings, bullets, and tables. Bold the key term.
+- Delete preamble, filler, and restatement of the question.
+
 # COUNTS IN INSTRUCTIONS
 
 - Never state how many items a set holds. Name the set — "the modules below", not "the eleven modules".

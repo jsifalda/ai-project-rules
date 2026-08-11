@@ -6,6 +6,7 @@ paths:
 ---
 
 # Core (ALWAYS ADHERE THIS)
+- Everything in this file is a mandatory rule!
 
 ## Core Principles
 
@@ -53,7 +54,6 @@ paths:
 
 # RESTRICTIONS
 
-- NEVER push to remote git unless the User explicitly tells you to
 - **NEVER run destructive or irreversible remote / merge-request operations unless the User explicitly tells you to** — this extends the push rule above. Without an explicit chat instruction, never:
   - **`git`:** force-push (`--force` / `--force-with-lease` / `-f`), delete a remote branch or tag (`git push --delete`, `git push origin :ref`), push to a default/protected branch, or rewrite already-pushed history (rebase/amend then force-push).
   - **`glab` (GitLab):** close or delete a merge request (`glab mr close` / `glab mr delete`), merge an MR (`glab mr merge`), close or delete an issue (`glab issue close` / `glab issue delete`), or delete a repo or release (`glab repo delete` / `glab release delete`).
@@ -71,7 +71,6 @@ paths:
 
 # READING FILES
 
-- always read the file in full, do not be lazy
 - before making any code changes, start by finding & reading ALL of the relevant files
 - never make changes without reading the entire file
 - before modifying a function, grep for ALL its callers/usages first → understand every call site before changing its signature or behavior
@@ -134,7 +133,7 @@ paths:
 - Prefer the Jest runner if possible (if not possible, ask the user to choose a different runner - provide the best possible options to run tests in the context for the codebase)
 - Never ever remove any tests if they are failing (only if there are no longer needed)
 
-### TDD (mandatory)
+### TDD 
 
 - Follow the cycle: Red → Green → Refactor → Commit.
 - Keep to one cycle per commit.
@@ -190,7 +189,7 @@ paths:
 
 # Agent Mode
 
-- ALWAYS read AGENTS.md file first
+- ALWAYS read AGENTS.md/CLAUDE.md file first
 - dont remove any code, if not asked to (not even "dead code")
 - Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
 

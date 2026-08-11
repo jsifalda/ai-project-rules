@@ -1,6 +1,6 @@
 ---
 name: better-plan
-description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor (explore, design, draft). Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes the refined plan through the op skill, assigning each task the cheapest capable model and mapping dependencies. It runs in plan mode, so the routed plan lands in a plan file you approve before op dispatches the subagents. It recaps the run, then by default ships the result as a PR via ship-pr, once execution is verified and nothing awaits you. Slash-only. Use when you type /better-plan and want a plan enhanced, hardened, cost-routed, and shipped. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
+description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor (explore, design, draft). Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes the refined plan through the op skill, assigning each task the cheapest capable model and mapping dependencies. It runs in plan mode, so the routed plan lands in a plan file you approve before op dispatches the subagents. By default it ships the result as a PR via ship-pr, once execution is verified and nothing awaits you. Slash-only. Use when you type /better-plan and want a plan enhanced, hardened, cost-routed, and shipped. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
 disable-model-invocation: true
 ---
 
@@ -82,8 +82,7 @@ plan and not just chat output.
 The plan file now holds the final routed plan. Present it for approval.
 
 - **In plan mode (the default path).** Check the file holds the Stage 3 routing table and
-  the verification method, append the Recap section below to it, then call
-  `ExitPlanMode`. That approval is the go signal. Do not ask for approval in chat as
+  the verification method, then call `ExitPlanMode`. That approval is the go signal. Do not ask for approval in chat as
   well. Nothing goes into the plan file after the exit call.
 - **Without plan mode (fallback).** Print the routed plan and ask the user to approve
   before any dispatch.
@@ -98,7 +97,7 @@ If the user only wants the routed plan and not execution, stop after presenting 
 ## Stage 5 — Ship the work (default)
 
 Once execution is done, open a PR for it. This is the last thing the flow does — nothing
-follows the ship report, not even the recap.
+follows the ship report.
 
 Ship when **every one** of these holds:
 
@@ -127,18 +126,3 @@ Skip Stage 5 entirely, without treating it as blocked, when:
 - The user said not to open a PR.
 - Execution changed no files. ship-pr aborts on a clean tree anyway (`no changes to
   commit`), so calling it would only produce a confusing error.
-
-## Recap — Explain the run
-
-Make the run transparent. In plan mode the recap has to be readable at approval time, so
-it closes the plan file as a short "How this plan was built" section, written in Stage 4
-just before `ExitPlanMode` rather than after it:
-
-- The original text passed to /better-plan.
-- The enhanced request prompt-enhancer produced, and what it sharpened.
-- One line per stage, covering how the plan was built, what the grill changed, and how it
-  was routed.
-
-Keep it to a few lines. Without plan mode, print the same recap in chat after Stage 4's
-execution report and before Stage 5 ships — the ship report is always last. What executed
-after approval is reported in Stage 4, not here.

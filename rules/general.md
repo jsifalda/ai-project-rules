@@ -169,7 +169,18 @@ paths:
 - **Small enough to write? Write it.** Option (3) costs a user round-trip (ask-first, RESTRICTIONS), so propose a new package only when the self-written alternative is non-trivial or correctness-sensitive — auth, crypto, parsing, dates, timezones. Otherwise write it. Default stays: install nothing.
 - **Do not reimplement common functionality without a stated reason.** Where a library is warranted, prefer an established, well-maintained one. Judge on maintenance, security, and bundle cost, not on popularity alone. Adding a *new* package is still governed by the ask-first protocol in RESTRICTIONS — propose it, do not install it.
 - use local package manager (respect existing lockfile; if none present, prefer pnpm, then yarn, then npm)
-- Always use the latest stable version of dependencies
+- **Install the latest stable version. Resolve it, never recall it.** Let the package manager pick
+  the version, or look the version up first. Never write a version string from memory, and never
+  copy one from another file or another project. Pre-release, beta, canary, and release-candidate
+  builds are not stable — take one only when the user asks.
+- **Latest blocked? Take the newest that works, and say so.** A peer-dependency conflict, an engine
+  or runtime constraint, a framework that pins the version, or a known breaking change can stop the
+  latest version. Install the newest version that does work, then report in chat: (1) the package,
+  (2) the version you used, (3) the latest version you could not use, and (4) the reason. Never
+  downgrade in silence.
+- **This governs the version you add, not the versions already installed.** Do not upgrade an
+  existing dependency unless the user asks — that is a separate task with its own risk. When you
+  see one that is far behind or no longer maintained, say so in chat and let the user decide.
 - Avoid using deprecated, outdated and unsecured libraries
 - Never install any dependency outside the project's local package manager — no
   global, `--user`, or one-off installs (e.g. `npm i -g`, `yarn global add`,

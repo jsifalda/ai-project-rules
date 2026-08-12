@@ -148,25 +148,14 @@ says otherwise.
   Report it every time — `passed`, `failed (what is missing)`, or `n/a (not user-visible)`. There
   is no silent skip. Unsure whether a change is user-visible → treat it as user-visible; a
   redundant scenario costs less than a coverage hole.
-- **Backlog sweep** — run the complete sweep described in the `## TODO / Known issues`
-  section of the agent instructions: propose what this session found and could not fix, and close
-  the entries it solved. **This gate overrides the markdown-only exemption above — it is the one
-  gate that survives it.** A defect can be found while reading, and a docs-only change can close a
-  docs-only entry, so the sweep runs on every substantive session, whether or not the session
-  touched code. **Filing is user-approved, never autonomous** — present each candidate as a full
-  draft (the heading, the status line, every bullet), file only what the user approves, and report
-  what was declined so the finding survives in the transcript even though it never reached the
-  backlog. The one exception is a top-level session with no interactive channel at all — a headless
-  run, a scheduled or cron job — where the entry is filed with this as its last bullet, verbatim:
-  `- _Filed without approval in an unattended session._`
-  **A subagent never files an entry** — it returns its candidates to whoever spawned it, and the
-  parent session runs the sweep, because the parent holds the user channel. A subagent having no way
-  to reach the user says nothing about whether the user is reachable, because the parent can ask. A
-  busy user, a long task, a finding that is obviously worth filing, or running as a subagent is not
-  that exception. **Closing an entry requires evidence the defect no longer reproduces** — a re-run,
-  a passing check, a confirmed absence — never close on "looks fixed". Closing is not
-  approval-gated. The evidence is the check. Report one line either way: what was proposed, what was
-  filed, what was declined, what was closed, or that none of it happened.
+- **Backlog sweep** — run the close-only sweep described in the `## TODO / Known issues`
+  section of the agent instructions: close the entries this session solved. **This gate overrides
+  the markdown-only exemption above — it is the one gate that survives it.** A docs-only change can
+  close a docs-only entry, so the sweep runs on every substantive session, whether or not the
+  session touched code. **Closing an entry requires evidence the defect no longer reproduces** — a
+  re-run, a passing check, a confirmed absence — never close on "looks fixed". Closing is not
+  approval-gated. The evidence is the check. Report one line either way: which entries you closed,
+  or that you closed none.
 
 If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
 

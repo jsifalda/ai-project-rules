@@ -40,7 +40,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | MCP-config reminder (when no `.mcp.json`) | inject | 7b | v1 |
 | GitHub App offer (Claude Code + GitHub only) | suggest | 9 | v1 |
 | Security-guidance plugin offer (Claude Code only) | suggest | 9b | v4 |
-| TODO backlog with a propose-and-close end-of-session sweep, filing user-approved (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
+| TODO backlog with a close-only end-of-session sweep, entries filed only on request (opt-in, default off) | delegate → `setup-todo-backlog` | 6 | v6 |
 | Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
 | User-scenarios sync gate in the verification protocol (appended only after the user-scenarios delegation succeeds) | inject | 6b | v7 |
 | Integration-only exemption for the Code review gate (merge/rebase/cherry-pick/revert) | inject | 5 | v9 |

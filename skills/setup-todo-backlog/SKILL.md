@@ -1,16 +1,16 @@
 ---
 name: setup-todo-backlog
 disable-model-invocation: true
-description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a propose-then-file policy into AGENTS.md or CLAUDE.md, where agents draft candidate entries and file them only once the user approves at an end-of-session sweep. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
+description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a policy into AGENTS.md or CLAUDE.md where an entry is filed only when the user asks for one and closed automatically once evidence shows the defect is gone. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
 ---
 
 # Setup TODO Backlog
 
-Set up a known-issues backlog in any project. Every weakness found mid-task becomes a candidate
-entry, drafted and presented for approval at the end-of-session sweep, then filed with a dated,
-immutable id in `docs/TODO.md` once approved, and a policy in the agent-instructions file makes
-future sessions maintain it from both ends. Propose an entry when you notice a defect, close it
-when you fix it. The point is that a defect outlives the session that found it.
+Set up a known-issues backlog in any project. An entry is filed only when the user asks for one,
+with a dated, immutable id in `docs/TODO.md`. Closing stays automatic: every substantive session
+sweeps the backlog for entries its own work resolved and closes them on evidence. A policy in the
+agent-instructions file holds future sessions to both rules. The point is that a defect outlives
+the session that found it, when the user decides to keep it.
 
 ## When to use
 
@@ -206,20 +206,7 @@ user whether to replace or skip. Never clobber it silently.
 **If the backlog path is not `docs/TODO.md`**, substitute the chosen path everywhere in the
 policy before injecting, including the pointer to the `## Resolved` section.
 
-Leave the `{{PROJECT_TRIGGERS}}` line in place for now. Step 5 resolves it.
-
-### Step 5: Gather project-specific triggers
-
-The policy lists six generic triggers, then a `{{PROJECT_TRIGGERS}}` placeholder. Ask the user
-for 2-4 triggers specific to this codebase, written in the same voice as the generic ones. Each
-should name a weakness this codebase actually produces, not a generic virtue. Offer candidates
-drawn from what you saw in the repo, so the user has something to react to rather than a blank
-question.
-
-Replace the placeholder line with those bullets. **If the user has none, delete the
-`{{PROJECT_TRIGGERS}}` line.** Never leave the raw placeholder text in a shipped file.
-
-### Step 6: Verify
+### Step 5: Verify
 
 Confirm to the user:
 
@@ -227,7 +214,6 @@ Confirm to the user:
 - Conversion done, with the count of entries converted, or declined, or not applicable
 - Policy injected into `[target file]`
 - `CLAUDE.md` to `AGENTS.md` symlink created, if applicable
-- Project-specific triggers added, with how many, or skipped and the placeholder removed
 
 ## Entry format (quick reference)
 
@@ -251,10 +237,6 @@ no line numbers, no function names, no code excerpts, because those rot and misl
 **Closing**: move the entry to `## Resolved` at the bottom of the same file, keep the id, swap
 the status line, and collapse the body to the problem plus what fixed it.
 
-**Unattended marker**: a last bullet reading
-`- _Filed without approval in an unattended session._` means the entry skipped the approval gate
-because no interactive channel existed.
-
 ## Rules
 
 - **One home.** The backlog file is the only list of known issues. Never copy an entry into
@@ -267,21 +249,14 @@ because no interactive channel existed.
 - **Entries are bullets under a status line.** Never subsections, never tables, never prose.
 - **Conversion is offer-then-honor-decline.** Never force a repo off its existing scheme. On a
   decline, inject the policy and adapt its id wording to what the repo uses.
-- **Filing is approval-gated, drafting is not.** An agent may notice and draft a candidate entry
-  mid-task, but never writes it without the user's approval. Drafts collect silently and surface
-  once, as full drafts, at the end-of-session sweep, one decision per candidate. The backlog is
-  the user's record of what is wrong with their project, so what enters it is the user's call.
-- **Closing stays evidence-gated, not approval-gated.** Closing an entry already requires proof
-  the defect no longer reproduces. That gate is separate from filing, and the two never merge.
-- **The unattended-session exception is about capability, not convenience.** When a top-level
-  session has no interactive channel at all (a headless run, a scheduled job), file the entry
-  autonomously and append this exact bullet last:
-  `- _Filed without approval in an unattended session._`
-  A busy user, an interrupted flow, an obviously-right finding, or running as a subagent do not
-  qualify. Only the absence of a channel does.
-- **A subagent never files an entry.** It returns its candidates to whoever spawned it, and the
-  parent session runs the sweep, because the parent holds the user channel. A subagent having no
-  way to reach the user says nothing about whether the user is reachable.
+- **Filing waits for a request, drafting never happens.** An agent never offers to file an entry,
+  suggests one belongs in the backlog, drafts one, or asks whether to file one, at any point in a
+  session. An entry exists only when the user asks for it, written in the documented format. The
+  backlog is the user's record of what is wrong with their project, so what enters it is the
+  user's call alone.
+- **Closing stays evidence-gated, filing waits for a request.** Closing an entry already requires
+  proof the defect no longer reproduces. Filing needs the user to ask. The two gates are
+  different, and they never merge.
 - **Never clobber an existing `## TODO / Known issues` policy section.** Always ask first.
 - **Never overwrite an existing backlog file.** Convert it or leave it, do not replace it.
 - **Dates come from git or from the user.** Never guess a date, and never quietly stamp today
@@ -294,12 +269,11 @@ because no interactive channel existed.
   explain goes to the user with its file and line. Never leave one silently.
 - **Idempotent on re-run.** Re-running finds the backlog, finds the policy section, and asks
   before changing either. A second run must not duplicate the policy or reset the backlog.
-- **Never ship the `{{PROJECT_TRIGGERS}}` placeholder.** Fill it or delete the line.
 
 ## References
 
 - [policy-template.md](references/policy-template.md) is the full `## TODO / Known issues` policy
-  to inject into `AGENTS.md` or `CLAUDE.md`, including the `{{PROJECT_TRIGGERS}}` placeholder
+  to inject into `AGENTS.md` or `CLAUDE.md`
 
 ## Assets
 

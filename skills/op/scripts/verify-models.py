@@ -15,6 +15,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import sys
 
 
@@ -28,7 +29,16 @@ def _projects_root():
 
 
 def _cwd_slug():
-    return os.getcwd().replace("/", "-")
+    """Encode the cwd into Claude Code's project transcript directory name.
+
+    Every non-alphanumeric character becomes a dash, so a dot-directory doubles the
+    dash it follows: /repo/.claude/worktrees/x -> -repo--claude-worktrees-x.
+
+    This does not reproduce the full encoder. Past 200 characters Claude Code
+    truncates the slug and appends a hash suffix. Such a path fails the no-argument
+    lookup, and the caller must pass the transcript path explicitly.
+    """
+    return re.sub(r"[^a-zA-Z0-9]", "-", os.getcwd())
 
 
 def _find_transcript(args):
@@ -47,6 +57,8 @@ def _find_transcript(args):
     project_dir = os.path.join(root, _cwd_slug())
     if not os.path.isdir(project_dir):
         print(f"error: project transcript directory not found: {project_dir}", file=sys.stderr)
+        print("hint: transcripts live in $CLAUDE_CONFIG_DIR/projects/ (default ~/.claude/projects/)", file=sys.stderr)
+        print("hint: pass one explicitly -- verify-models.py <path-to.jsonl>", file=sys.stderr)
         sys.exit(2)
     candidates = glob.glob(os.path.join(project_dir, "*.jsonl"))
     if not candidates:

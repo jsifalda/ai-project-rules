@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v10**
+**Skill version: v11**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -44,6 +44,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Backlog sweep gate in the verification protocol (appended only after the backlog delegation succeeds) | inject | 6b | v6 |
 | User-scenarios sync gate in the verification protocol (appended only after the user-scenarios delegation succeeds) | inject | 6b | v7 |
 | Integration-only exemption for the Code review gate (merge/rebase/cherry-pick/revert) | inject | 5 | v9 |
+| Skill discovery — search the registry for skills that fit this repo (opt-in, default off) | delegate → `find-skills` | 6c | v11 |
 
 ## How the self-audit uses this (Step 8b)
 

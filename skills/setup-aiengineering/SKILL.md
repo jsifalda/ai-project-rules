@@ -29,6 +29,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
 | TODO backlog (known-issues list + a propose-and-close end-of-session sweep, entry filing user-approved) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) |
+| Skill discovery (search the registry for skills that fit this repo) — opt-in | delegate → `find-skills` |
 
 ## Workflow
 
@@ -113,6 +114,14 @@ review unavailable)`. Selecting it is also what enables the Step 9b plugin offer
 
 The **Writing style (ASD-STE100)** module defaults to **ON** — deselect to opt out. It is
 injected verbatim, like the PRD gate, with no `{{...}}` placeholders to substitute.
+
+The **Skill discovery (search the registry for skills that fit this repo)** module is **opt-in —
+default it OFF**, exactly like the PRD gate and the TODO backlog. Its default differs in kind from
+the other modules: every other module writes the project's own policy into the project's own repo,
+while this one reaches the public internet and lands third-party code in the project skill
+directory, which the agent then reads as instructions. Selecting it here only **unlocks** the
+module — the real go/no-go sits in Step 6c, once the inferred topics are visible. Same shape as the
+worktree module, which is selected here but still probes, proposes, and confirms in Step 7.
 
 ### Step 5: Inject the policy modules
 
@@ -204,6 +213,50 @@ mandatory gate pointing at a doc or section that was never installed. Copy each 
 `references/verification-protocol.md` — no tail gate carries `{{...}}` placeholders. A repo appends
 only the tail gates that qualify.
 
+### Step 6c: Offer skill discovery (opt-in)
+
+Clear the guards first. Each one produces a labelled skip, never a silent one:
+
+1. **Module selected in Step 4.** Not selected → `skipped (opt-in, not selected)`.
+2. **`find-skills` available on this machine** — same availability guard as Step 6. Absent → tell
+   the user and label it `skipped (find-skills unavailable)`.
+
+**Never pre-flight the network here.** A missing `curl`, an unreachable registry, or a failed search
+belongs to `find-skills` — its own Step 3 reports the failure and offers a version-pinned fallback
+that the user approves per use. A reachability guard in this step would hide that path and turn a
+recoverable failure into a skipped module.
+
+Then run the flow:
+
+1. **Propose search topics grounded in real signal, never guessed.** `find-skills` takes a topic
+   query from the user and has no codebase-scan mode, so this skill infers the topics and feeds
+   them in one at a time. Draw them from the dependency manifest (`package.json`,
+   `requirements.txt`, `go.mod`, `Cargo.toml`, `*.tf`) for framework names, from Step 2's detected
+   tooling, and from the repo's stated purpose in `README.md` / `AGENTS.md`. Show each topic **with
+   the signal that produced it**, so a wrong detection is visible before it becomes a search.
+   Tooling names alone make weak queries — a linter name matches the tool, not the work. The topics
+   that pay off name frameworks and domains.
+2. **No usable signal** (a config/IaC repo with no manifest) → say so plainly and invite the user to
+   name topics themselves. They decline → `skipped (no topics)`. Never fall back to a generic,
+   ungrounded query.
+3. **Warn once, before the loop starts.** `find-skills` enriches candidates through the
+   **unauthenticated** GitHub API, which is rate-limited, and nothing caps how many topics are
+   searched.
+4. **The user picks which topics to search.** Picking none ends the step.
+5. **Invoke `find-skills` once per picked topic, sequentially.** Every run keeps its own dedupe (its
+   Step 1), its own approval gate (its Step 5), and its own security review (its Step 6).
+   `setup-aiengineering` supplies topics and never supplies consent on the user's behalf — it must
+   not pre-approve a candidate and must not waive a security review. Report each topic's outcome
+   before starting the next.
+6. **A GitHub rate-limit 403 halts the loop.** Report the topics that completed, the topic that hit
+   the limit, and every unattempted topic **by name**, so a re-run is a copy-paste. Anything already
+   approved and cloned stays. Other per-topic failures (an empty result, a declined candidate) do
+   not halt the loop.
+7. **`find-skills` runs the host project gates itself** (its Step 8) — including the gates this
+   skill injected in Step 5. Report a gate failure; never auto-fix a third-party file.
+8. **Let `find-skills` run its own docs-mention ask** (its Step 9). It appends its own section, so
+   it does not collide with the injected policy `##` sections.
+
 ### Step 7: Worktree auto-bootstrap
 
 **Host gate (first).** The worktree bootstrap is Claude-Code-specific — it relies on a
@@ -273,6 +326,9 @@ Confirm in one short message:
   selected, or `skipped (setup-todo-backlog unavailable)`.
 - Backlog sweep gate: appended after a successful delegation, or omitted — naming which condition
   failed (module not selected, verification module not selected, or the delegation was skipped).
+- Skill discovery: which topics were searched and which skills landed, or `skipped (opt-in, not
+  selected)` / `skipped (find-skills unavailable)` / `skipped (no topics)` — and, when a rate limit
+  halted the loop, the unattempted topics by name.
 - Worktree hook scaffolded (or skipped, or `N/A (host is not Claude Code)`).
 - `.worktreeinclude` created/updated (with which files, noting whether a gitignored `.mcp.json` was
   carried over — or, if absent, that the MCP-config reminder was added to the agent instructions),
@@ -362,9 +418,9 @@ only; the user runs it.
   bumping the version, not by patching one repo.
 - Always end with the Step 8b coverage self-audit against `baseline-checklist.md`; surface every
   `not covered` concern explicitly, never omit one silently.
-- Guard every delegated skill (Step 6) and the optional **Nuclear structural review** lens for
-  availability; if a skill is absent, label it `skipped (... unavailable)` and tell the user, never
-  fail silently.
+- Guard every delegated skill (Step 6), the `find-skills` delegation (Step 6c), and the optional
+  **Nuclear structural review** lens for availability; if a skill is absent, label it
+  `skipped (... unavailable)` and tell the user, never fail silently.
 - Backfill only for working repos, only on user opt-in, and only grounded in real files.
 - Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
 - The worktree module (Step 7) is Claude-Code-only (gated on `CLAUDECODE=1`); on any other host skip
@@ -404,6 +460,11 @@ only; the user runs it.
 - The security-guidance plugin offer (Step 9b) is Claude-Code-only, fires only when the security
   review lens was selected and the plugin is not already installed, and is a suggestion only —
   never install it.
+- Skill discovery (Step 6c) is opt-in (default off) and delegated to `find-skills`. This skill
+  infers the search topics, because `find-skills` takes a topic query and has no codebase-scan
+  mode. Per-topic approval and security review always stay with `find-skills` — never pre-approve a
+  candidate and never waive a review on the user's behalf. A GitHub rate-limit 403 halts the loop,
+  and the report names every unattempted topic.
 
 ## References
 

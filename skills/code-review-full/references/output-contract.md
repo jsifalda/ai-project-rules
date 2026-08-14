@@ -89,7 +89,12 @@ Security reviewer: DEGRADED -- the pinned source is not the checked-out branch.
 **When both causes hold, print the inline warning only.** An inline run has no delegate scope
 to redirect, so the second warning would state something untrue of it.
 
-### Per finding (one block each, max 5)
+### Per finding (one block each)
+
+Group the kept findings under verdict headers carrying a count: `BLOCK MERGE (n)`,
+`FIX BEFORE MERGE (n)`, `FOLLOW-UP TICKET (n)`, in that order. Omit an empty group. Within a
+group, keep rank order. Every finding keeps its full block: anchor, what is wrong, why it
+matters, fix direction. The grouping adds headers, it hides nothing.
 
 - **Anchor.** `file:line`. Exactly one file and exactly one added line from the diff. Other
   sites of the same finding belong in the body, not in the anchor.
@@ -144,7 +149,6 @@ already says why.
 |---------|-----------------|--------|
 | ... | Verification gate | No reproducible path found |
 | ... | Council cut | Duplicate of F2 |
-| ... | Cap | Ranked below the top 5 |
 
 This table is not filler. It is what tells the reader the pipeline discriminated rather than
 pattern-matched. Its presence is what makes the kept findings credible. Omitting it is not
@@ -188,7 +192,7 @@ Still one action. Do not emit both a closing action and a posting offer.
 ### Worked layout
 
 ```
-3 findings to fix before merge. 8 dropped.
+2 findings to fix before merge. 8 dropped.
 Spec-conformance reviewer: SKIPPED -- no Jira ticket was found.
                            This review covers code quality only, not ticket requirements.
 
@@ -196,6 +200,8 @@ Reviewers: correctness, structural, direct-read, security
 Mode: all delegates available
 
 ---
+
+FIX BEFORE MERGE (2)
 
 F1  SearchScreenViewModel.kt:84
     What is wrong: global_search_entered fires during view setup, not on user action.
@@ -209,6 +215,8 @@ F2  PaymentRepository.kt:201
                    launched with Dispatchers.Main.
     Why it matters: ANR on slow connections.
     Fix direction: switch to Dispatchers.IO for the retrofit call.
+
+FOLLOW-UP TICKET (1)
 
 F3  build.gradle:14
     What is wrong: minSdkVersion 19 but code calls API 21 without a version guard.
@@ -228,7 +236,6 @@ Dropped findings
 | Nullable receiver in ExtUtils.kt:55   | Verification gate  | Compiler null-checks the site   |
 | Magic number in Config.kt:9           | Council cut        | Existing constant one line up   |
 | Import order in 6 files               | Council cut        | Style-only, no behaviour risk   |
-| Missing kdoc on internal fun          | Cap                | Ranked below top 5              |
 | ...                                   | ...                | ...                             |
 
 ---
@@ -466,7 +473,7 @@ by hand in the agent's reasoning.
 
 **Its only input is `$RUN/report.json`.** The script reads that one file and nothing else, so
 everything the report shows has to be inside it first: the pipeline chart data, the verdict,
-findings, overflow, dropped, corrections, and the whole council record. The authoritative
+findings, dropped, corrections, and the whole council record. The authoritative
 schema is the module docstring at the top of `scripts/render-report.py`. Read it, then build
 `report.json` to match. The script validates its own output and exits non-zero with a reason if
 anything is malformed.
@@ -483,7 +490,7 @@ word. Nothing is summarized, trimmed, or elided.
 | `record.advisors[]` | Every advisor response, unedited |
 | `record.peer_reviews[]` | Every peer review, unedited |
 | `record.anonymization_mapping` | Which advisor letter maps to which role |
-| `record.ranked_list` | The full ranked list before the cap was applied |
+| `record.ranked_list` | The full ranked list |
 | `record.synthesis` | The chairman synthesis and the final output |
 | `record.process_notes` | Stage timings and model versions |
 
@@ -509,7 +516,7 @@ the chart degrades cleanly.
   verification gate, with their counts. **Only steps that have no key of their own.** Sources,
   reviewers, the council and the verdict each have a dedicated key, so repeating one here
   draws that branch on the chart twice.
-- `council` - mode, model, advisor and peer counts, kept and overflow.
+- `council` - mode, model, advisor and peer counts, and the kept count.
 - `outcome` - the verdict line.
 
 The counts are what make the chart worth reading. "34 calls, 6m40s, 5 findings" tells the
@@ -537,9 +544,8 @@ reader how much work went into a pass. A chart of bare role names does not.
    - The framed question sent to advisors.
    - Each advisor response.
    - Each peer review.
-   - The ranked list before the cap.
+   - The ranked list.
    - The synthesis.
-   - Overflow findings cut by the cap.
    - Process notes (stage timings, model versions used).
 
 **The report opens automatically on every run that wrote one.** This holds whether or not the

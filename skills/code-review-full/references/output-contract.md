@@ -17,7 +17,7 @@ answer.
 <N> findings to fix before merge. <M> dropped.
 <any degradation warning, one line each>
 
-Reviewers: <roles that actually ran, from: correctness, structural, direct-read, spec-conformance>
+Reviewers: <roles that actually ran, from: correctness, structural, direct-read, spec-conformance, security>
 Mode: <any reviewer that ran inline because its skill was absent, or "all delegates available">
 ```
 
@@ -33,8 +33,8 @@ coexist, the headline reports the blockers, and the rest are visible in the find
 
 **Degradation warnings sit in the opening block, above the provenance.** A warning the reader
 scrolls past is a warning that failed. These are the warnings that qualify: a skipped
-spec-conformance reviewer, a diff that was not read in full, and any reviewer that could not
-run at all.
+spec-conformance reviewer, a degraded security reviewer, a diff that was not read in full, and
+any reviewer that could not run at all.
 
 When the spec-conformance reviewer ran, say so. When it was skipped, say so loudly. A thin
 review must never look like a full one.
@@ -61,6 +61,33 @@ Spec-conformance reviewer: SKIPPED -- the run was non-interactive, so no ticket 
 
 The third case is the one that most needs stating. A ticket probably exists and simply could
 not be asked for, so the gap is in the pipeline, not in the change.
+
+**The security lens has two distinct degradation causes, separate from the spec-conformance
+skip above.** Both describe a weaker run, not a missing one. The lens still ran, so the warning
+reads DEGRADED, never SKIPPED. It reads DEGRADED even when the lens found nothing, because no
+findings is a valid result.
+
+Fires when the host provides no `security-review` skill, so the lens ran inline instead of
+delegating:
+
+```
+Security reviewer: DEGRADED -- the host provides no security-review skill, so the
+                   lens ran inline. An inline pass is weaker than the delegated one.
+```
+
+Fires on a DELEGATED run whose pinned source is not the checked-out branch, because that is
+when the delegate's default scope had to be redirected. It does not apply to an inline run,
+which reads the pinned diff directly and has no default scope to redirect:
+
+```
+Security reviewer: DEGRADED -- the pinned source is not the checked-out branch.
+                   security-review defaults to the current branch. This run steered
+                   it onto the pinned diff. The anchor gate drops any finding that
+                   still lands outside that diff.
+```
+
+**When both causes hold, print the inline warning only.** An inline run has no delegate scope
+to redirect, so the second warning would state something untrue of it.
 
 ### Per finding (one block each, max 5)
 
@@ -137,7 +164,7 @@ Still one action. Do not emit both a closing action and a posting offer.
 Spec-conformance reviewer: SKIPPED -- no Jira ticket was found.
                            This review covers code quality only, not ticket requirements.
 
-Reviewers: correctness, structural, direct-read
+Reviewers: correctness, structural, direct-read, security
 Mode: all delegates available
 
 ---
@@ -483,7 +510,22 @@ reader how much work went into a pass. A chart of bare role names does not.
    - Overflow findings cut by the cap.
    - Process notes (stage timings, model versions used).
 
-The report is NOT auto-opened. The skill prints the path and the human opens it.
+**The report opens automatically on every run that wrote one.** This holds whether or not the
+session is interactive.
+
+The skill tries a portable opener, in order: `open` (macOS), then `xdg-open` (Linux), then
+`wslview` (WSL). It uses the first one found on `PATH`.
+
+**A failed open never fails the run.** When no opener is found, or the opener errors, the run
+continues. It prints one line: `Could not open automatically - open <path>`.
+
+The path and the gitignore suggestion print either way. The open is in addition to the closing
+note in section 4, never a replacement for it.
+
+**Timing.** The skill opens the report right after it writes it, before the posting offer. This
+way the report is on screen while the reader decides what to post.
+
+This section states the contract. For the shell snippet, see Stage 9 of `SKILL.md`.
 
 ---
 
@@ -503,3 +545,13 @@ The file is in your working directory. If you do not want it committed, add this
 ```
 
 The skill does not add the gitignore line itself. It suggests. The human decides.
+
+**Only when the automatic open failed**, per section 3, the skill adds one more line to the
+block above:
+
+```
+Could not open automatically - open <path>
+```
+
+Print this line only on a failed open. On a successful open, skip it. Do not print it
+unconditionally.

@@ -32,8 +32,10 @@ Shape of report.json
          "detail": str}          # "12 files, +340/-58"
       ],
       "reviewers": [
-        {"role": str,            # "correctness" | "structural" | "direct-read" | "spec-conformance"
-         "delegate": str,        # "code-review agent" | "code-review-nuclear" | "this agent"
+        {"role": str,            # "correctness" | "structural" | "direct-read"
+                                 #  | "spec-conformance" | "security"
+         "delegate": str,        # "code-review agent" | "code-review-nuclear"
+                                 #  | "security-review" | "this agent"
          "model": str,           # "claude-opus-5", or "" when not applicable
          "mode": str,            # "delegated" | "inline"
          "tool_calls": int|null,

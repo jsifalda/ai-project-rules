@@ -33,6 +33,96 @@ author's time whether it ranks second or twelfth. Hiding it because five other f
 above it is arbitrary. Noise is removed by disproving false claims at Stage 6 and by the bar
 at Stage 7, never by a headcount.
 
+## How it works
+
+One pass, from the slash command to a posted comment.
+
+```
+/code-review-full  (slash only, never auto-triggers)
+      │ the only entry point
+      ▼
+Stage 0   preflight ──probes for──▶ which delegates exist on this machine
+      │ the mode of each stage is recorded
+      ▼
+Stage 1   pin the diff ──extract-anchors.py──▶ anchors.json, the only legal anchors
+Stage 1b  resolve the Jira parent ──writes──▶ ticket-context.md
+      │ one diff, one anchor set, one ticket context
+      ├──────────┬──────────┬──────────┬──────────┐  launched in ONE message
+      ▼          ▼          ▼          ▼          ▼
+   Stage 2    Stage 3    Stage 4    Stage 4b   Stage 4c
+  correctness structure  self-read    spec      security
+      │          │          │          │          │
+      └──────────┴─────┬────┴──────────┴──────────┘
+                       │ every result set
+                       ▼
+              Stage 5   merge, dedupe on root cause
+                       │ one row per finding
+                       ▼
+              Stage 6   verify claim AND anchor ──disproven──▶ dropped, with the disproof
+                       │ verified only
+                       ▼
+              Stage 7   council ranks and rules ──DROP──▶ out
+                       │ everything else, in rank order
+                       ▼
+              Stage 8   re-read what the chairman named
+                       │ a correction is published beside the claim
+                       ▼
+              Stage 9   verdict + comments + render-report.py ──▶ review-<slug>-<ts>.html, opened
+                       │ the gates pass
+                       ▼
+              Stage 10  post-comment.py ──one per approval──▶ MR or PR
+```
+
+### What it calls, and when
+
+| Callee | Kind | Stage | How it is called | If it is absent |
+|---|---|---|---|---|
+| `code-review` | agent | 2 | Dispatched with a self-contained prompt, concurrently with the other reviews | The role is mandatory. Run it inline when dispatch is unavailable |
+| `code-review-nuclear` | skill | 3 | Delegated | Inline per `references/structural-review.md` |
+| (none) | none | 4 | The pipeline agent reads the pinned diff and the surrounding files itself | Not applicable. It never delegates |
+| (none) | none | 4b | Inline per `references/spec-conformance.md`. It writes `$RUN/spec-ledger.json` | Not applicable |
+| `security-review` | skill | 4c | Delegated. The prompt must override its default branch scope in the first line | Inline per `references/security-review.md` |
+| `council` | skill | 7 | Delegated with the framed brief. Advisors run in parallel, get anonymized, distinct peer probes run in parallel, then a chairman rules. See `references/council-protocol.md` | Inline per the same file. An inline council counts as WEAKER evidence |
+| `extract-anchors.py` | script | 1 | `$SKILL_DIR`-relative | The run has no legal anchor set |
+| `render-report.py` | script | 9 | Reads `$RUN/report.json` and nothing else | The deliverable is lost |
+| `post-comment.py` | script | 10 | One call per approved comment | Nothing can be posted |
+
+A missing delegate degrades the run. It never aborts it, and the final verdict states which
+mode each stage ran in. The bundled scripts resolve against `$SKILL_DIR`, never against cwd,
+because cwd is the repo under review and holds no `scripts/` directory.
+
+### Caps
+
+| Cap | Value | Enforced in |
+|---|---|---|
+| Cost | Roughly 15 agent invocations | `## Invocation` |
+| Whole-file reads | Under 8000 bytes | Stage 1 |
+| Total read budget | 120000 bytes, largest first | Stage 1 |
+| `ticket-context.md` | 60 lines | Stage 1b |
+| Jira keys resolved | 6 | `references/spec-conformance.md` |
+| Criteria ledger | 60 criteria | `references/spec-conformance.md` |
+| Paste-ready comment | 4 lines, roughly 50 words | `references/output-contract.md` |
+
+The finding count is absent from this table on purpose, because there is no cap on it.
+
+### Gates and refusals
+
+| Gate | What happens | Owner |
+|---|---|---|
+| Slash-only entry | Any paraphrase must not load the skill | `## Invocation` |
+| Never edits, commits or pushes | The run produces a verdict, a comment set and a report, nothing else | `## Hard constraints` |
+| Working tree never moves | No `checkout`, `stash` or `worktree`. History is read with `git show` | `## Hard constraints` |
+| Anchor must be an added line | The anchor moves to the line that carries the mechanism, and the finding survives | Stage 6 |
+| No legal anchor anywhere | The finding is marked not postable and still reaches the verdict | Stage 6 |
+| Unverified claim | Never reaches the council or the verdict. This is the claim check, not the anchor check | Stage 6 |
+| Spec ledger `implemented` row | Goes through the same two-part check. A row that fails is demoted and enters the ledger as a finding | Stage 6 |
+| Finding count | No cap. Every verified finding the council did not `DROP` reaches chat | Stage 7 |
+| Missing delegate | The run degrades to inline. It never aborts | Stage 0 |
+| Parent ticket unreadable | Spec-finding confidence is capped at medium | Stage 4b |
+| Files skipped by the read budget | Every affected finding is capped at low confidence | Stage 1 |
+| Posting gates | The source was an MR or PR, the run can ask, and a comment survived | Stage 10 |
+| Per-comment approval | Nothing posts without an individual yes. A batched approval breaches the rule | Stage 10 |
+
 ## Invocation
 
 One entry point, the literal `/code-review-full`. Nothing else loads this skill. It is

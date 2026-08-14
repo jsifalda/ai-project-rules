@@ -78,6 +78,28 @@ Shape of report.json
 
   # All fields below are OPTIONAL. Missing keys degrade gracefully.
 
+  "spec": {                          # the acceptance-criteria ledger, after Stage 6 verified it.
+                                     # Omit the whole key when the spec lens was skipped; the
+                                     # section is then not rendered at all.
+    "invariant": str,                # "criteria total: 8  scored: 8  (implemented: 8, ...)"
+    "criteria": [
+      {"criterion_id": str,          # "PROJ-1234/AC-1"
+       "ticket_key": str,            # "PROJ-1234"
+       "text": str,                  # the criterion, verbatim from the ticket
+       "status": str,                # "implemented" | "partial" | "missing"
+                                     #  | "contradicted" | "not_verifiable" | "not_scored"
+       "polarity": str,              # "positive" | "negative"
+       "anchor": str,                # "path/to/File.swift:120"; "" when there is none
+       "anchor_kind": str,           # "added" | "preexisting"
+       "chain": [str],               # each hop as "path:line", entry point first
+       "note": str}                  # required on partial/preexisting/not_scored rows
+    ],
+    "excluded_criteria": [
+      {"criterion_id": str, "text": str, "reason": str}   # "other_platform:BE (inferred)"
+    ],
+    "warnings": [str]
+  },
+
   "overflow": [
     {"id": str, "verdict": str, "file": str, "lines": str,
      "claim": str, "reason_cut": str}
@@ -273,6 +295,16 @@ VERDICT_COLOR = {
     "INFORMATIONAL": "#2980b9",
 }
 
+SPEC_STATUS_COLOR = {
+    "implemented": "#1a7f37",
+    "partial": "#9a6700",
+    "missing": "#cf222e",
+    "contradicted": "#8e1616",
+    "not_verifiable": "#57606a",
+    "not_scored": "#8250df",
+    "excluded": "#7f8c8d",
+}
+
 
 def severity_badge(severity: str) -> str:
     color = SEVERITY_COLOR.get(severity.lower(), "#555")
@@ -289,6 +321,24 @@ def verdict_badge(verdict: str) -> str:
         f'<span style="background:{color};color:#fff;padding:2px 8px;'
         f'border-radius:4px;font-size:0.8em;font-weight:600">'
         f'{e(verdict)}</span>'
+    )
+
+
+def spec_status_badge(status: str, anchor_kind: str = "") -> str:
+    """Badge for one criterion's verified status.
+
+    ``preexisting`` is shown on the badge itself, because a criterion satisfied by
+    untouched code is a materially different result from one this change delivered.
+    """
+    key = (status or "").strip().lower()
+    color = SPEC_STATUS_COLOR.get(key, "#555")
+    label = key.replace("_", " ").upper() or "UNKNOWN"
+    if key == "implemented" and (anchor_kind or "").strip().lower() == "preexisting":
+        label = "IMPLEMENTED (PRE-EXISTING)"
+    return (
+        f'<span style="background:{color};color:#fff;padding:2px 8px;'
+        f'border-radius:4px;font-size:0.8em;font-weight:600;white-space:nowrap">'
+        f'{e(label)}</span>'
     )
 
 
@@ -616,6 +666,119 @@ def build_corrections(corrections: List[Dict[str, Any]]) -> str:
     </thead>
     <tbody>{rows}</tbody>
   </table>
+</section>
+"""
+
+
+def build_spec_ledger(spec: Dict[str, Any]) -> str:
+    """Render the acceptance-criteria ledger.
+
+    Returns "" for anything unusable, so a report without a ``spec`` key, or with an
+    empty one, renders exactly as it did before this section existed. A ledger that
+    carries an invariant line or a warning but no rows is a degraded spec pass, not a
+    skipped one, so it still renders and the table is dropped instead.
+    """
+    if not isinstance(spec, dict):
+        return ""
+    raw_criteria = spec.get("criteria") or []
+    raw_excluded = spec.get("excluded_criteria") or []
+    warnings = list(spec.get("warnings") or [])
+    invariant = spec.get("invariant") or ""
+
+    criteria = [c for c in raw_criteria if isinstance(c, dict)]
+    excluded = [x for x in raw_excluded if isinstance(x, dict)]
+    malformed_rows = (len(raw_criteria) - len(criteria)) + (len(raw_excluded) - len(excluded))
+    if malformed_rows:
+        warnings.append(
+            f"{malformed_rows} ledger row(s) were not objects and could not be rendered"
+        )
+
+    if not criteria and not excluded and not malformed_rows and not warnings and not invariant:
+        return ""
+
+    cell = "padding:8px;border:1px solid #ddd;vertical-align:top"
+
+    def anchor_cell(row: Dict[str, Any]) -> str:
+        anchor = str(row.get("anchor") or "").strip()
+        if not anchor:
+            return '<span style="color:#a00">no anchor</span>'
+        chain = [str(h) for h in (row.get("chain") or []) if str(h).strip()]
+        chain_html = ""
+        if chain:
+            chain_html = (
+                '<div style="color:#666;font-size:0.85em;margin-top:4px">'
+                + e(" -> ".join(chain))
+                + "</div>"
+            )
+        return f"{e(anchor)}{chain_html}"
+
+    rows = "".join(
+        f"""<tr>
+          <td style="{cell}">
+            <div style="font-family:monospace;font-size:0.85em;font-weight:600">
+              {e(c.get("criterion_id", ""))}
+            </div>
+            <div style="color:#444;font-size:0.85em;margin-top:4px">{e(c.get("text", ""))}</div>
+          </td>
+          <td style="{cell}">{spec_status_badge(c.get("status", ""), c.get("anchor_kind", ""))}</td>
+          <td style="{cell};font-family:monospace;font-size:0.85em">{anchor_cell(c)}</td>
+          <td style="{cell};font-size:0.85em">{e(c.get("note", ""))}</td>
+        </tr>"""
+        for c in criteria
+    )
+
+    excluded_rows = "".join(
+        f"""<tr>
+          <td style="{cell}">
+            <div style="font-family:monospace;font-size:0.85em;font-weight:600">
+              {e(x.get("criterion_id", ""))}
+            </div>
+            <div style="color:#444;font-size:0.85em;margin-top:4px">{e(x.get("text", ""))}</div>
+          </td>
+          <td style="{cell}">{spec_status_badge("excluded")}</td>
+          <td style="{cell};font-size:0.85em" colspan="2">
+            not scored: {e(x.get("reason", ""))}
+          </td>
+        </tr>"""
+        for x in excluded
+    )
+
+    invariant_html = ""
+    if invariant:
+        invariant_html = (
+            '<div style="font-family:monospace;font-size:0.85em;color:#333;'
+            'background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;'
+            f'padding:8px 10px;margin-bottom:12px;white-space:pre-wrap">{e(invariant)}</div>'
+        )
+
+    warnings_html = ""
+    if warnings:
+        items = "".join(f"<li>{e(w)}</li>" for w in warnings)
+        warnings_html = (
+            '<ul style="margin:12px 0 0 0;padding-left:20px;font-size:0.85em;color:#9a6700">'
+            f"{items}</ul>"
+        )
+
+    table_html = ""
+    if rows or excluded_rows:
+        table_html = f"""<table style="width:100%;border-collapse:collapse;font-size:0.9em">
+    <thead>
+      <tr style="background:#f5f5f5">
+        <th style="{cell};text-align:left">Criterion</th>
+        <th style="{cell};text-align:left">Status</th>
+        <th style="{cell};text-align:left">Anchor / chain</th>
+        <th style="{cell};text-align:left">Note</th>
+      </tr>
+    </thead>
+    <tbody>{rows}{excluded_rows}</tbody>
+  </table>"""
+
+    return f"""
+<section style="margin-bottom:28px">
+  <h2 style="font-size:1.2em">Acceptance criteria</h2>
+  {invariant_html}
+  {table_html}
+  {warnings_html}
 </section>
 """
 
@@ -994,6 +1157,7 @@ def build_html(data: Dict[str, Any]) -> str:
     overflow: List[Dict[str, Any]] = data.get("overflow") or []
     dropped: List[Dict[str, Any]] = data.get("dropped") or []
     corrections: List[Dict[str, Any]] = data.get("corrections") or []
+    spec: Dict[str, Any] = data.get("spec") or {}
     record: Optional[Dict[str, Any]] = data.get("record")
 
     # Collect malformed findings from all sections
@@ -1012,6 +1176,9 @@ def build_html(data: Dict[str, Any]) -> str:
 
     if corrections:
         body_parts.append(build_corrections(corrections))
+
+    if spec:
+        body_parts.append(build_spec_ledger(spec))
 
     body_parts.append(build_findings_table(findings, malformed))
 

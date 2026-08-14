@@ -99,7 +99,7 @@ hierarchy: <PRIMARY-KEY> (<issuetype>) -> parent: <KEY> fetched | no parent | un
 ```
 
 A run that cannot state this line has not resolved the hierarchy and is incomplete. This
-gate is structural and binding, exactly like the coverage invariant in section 7.
+gate is structural and binding, exactly like the two invariants in section 7.
 
 ### 3.4 Comments
 
@@ -161,7 +161,8 @@ platform. Platform labels exclude criteria from SCORING, never from the scope bo
 
 Score every criterion against `$RUN/diff.patch`. Use `$RUN/diff_index.json` to locate files before reading hunks.
 
-Statuses (exactly five, no others):
+Statuses (the ones below, no others). `not_scored` is the one addition, and section 9 is the
+only place that allows it:
 
 | status | meaning |
 |---|---|
@@ -170,8 +171,36 @@ Statuses (exactly five, no others):
 | `missing` | anti-false-gap protocol ran and found nothing; requires `absent` evidence with `searched[]` |
 | `contradicted` | the diff does the opposite; always blocking |
 | `not_verifiable` | a diff cannot prove it; requires `unprovable_reason` and `suggested_check`; NEVER a gap |
+| `not_scored` | degraded runs only, per section 9; the criterion was never reached and `note` carries the reason |
 
 A test alone never yields `implemented`. A criterion evidenced only by `kind` of `test` is `partial`, with the note `"test present, implementation not located"`.
+
+**Anti-false-clear protocol.** Run BEFORE emitting any `implemented`. This is the mirror of the
+anti-false-gap protocol below and it is not optional. Emitting `missing` used to cost four
+recorded steps while `implemented` cost nothing, and a status nothing checks is the one way a
+real gap leaves the run as a clean pass.
+
+All three must hold, and all three are recorded on the criterion's row.
+
+1. **An anchor.** Exactly one `file:line`, either from the `added` list for that file in
+   `$RUN/anchors.json` with `anchor_kind` of `added`, or an untouched location with
+   `anchor_kind` of `preexisting`. A criterion with no anchor is never `implemented`. Route it
+   to `partial`, or to `not_verifiable` when a diff genuinely cannot prove it.
+
+2. **A traced chain.** Record `chain[]`, one real `file:line` per hop, from the entry point the
+   criterion's `Given` names to the mechanism its `Then` asserts. A criterion evidenced only by
+   a flag or a Bool threaded one level deep is `partial`, with the untraced hop named in `note`.
+   Threading a value is not the same as delivering the behaviour it is supposed to switch on.
+
+3. **Clause coverage.** Every clause of the criterion evidenced, not only the one that was easy
+   to find. One unevidenced clause makes the criterion `partial` and `note` names that clause.
+   The rule for tests above is the precedent: partial evidence never rounds up to a pass.
+
+**An `implemented` whose chain runs through untouched code is `implemented (preexisting)` and is
+reported as such.** Set `anchor_kind` to `preexisting`, name the untouched `file:line`, and put
+one sentence in `note` saying this change did not deliver it. A criterion the change inherits
+rather than implements is not a defect and not a gap. Silently folding it into a plain pass is
+what makes the verdict unreadable, because the reader cannot tell what the change actually did.
 
 **Anti-false-gap protocol.** Run in this order BEFORE emitting any `missing`. Most false gaps come from skipping step 1.
 
@@ -252,23 +281,86 @@ Walk EVERY path in `$RUN/diff_index.json` and classify it. First match wins.
 
 Extra IDs: `EX-1`, `EX-2`, `EX-3`, in the order found. Use that exact prefix.
 
-## 7. Coverage invariant
+## 7. Invariants
+
+Two of them, both structural and binding, both stated before any finding is emitted. They close
+different holes. The first proves every changed FILE was looked at. The second proves every
+CRITERION was scored. A run can close the first while having scored nothing at all, which is why
+the second exists.
+
+### 7.1 File coverage invariant
 
 Every path in `$RUN/diff_index.json` must land in exactly one of:
 - a criterion's `evidence[].file`
 - `ignored_files[].path`
 - an extra's `files[]`
 
-Not zero places, not two. State the ledger counts before emitting findings:
+Not zero places, not two. State the ledger counts:
 ```
 paths total: <N>  accounted: <N>  (criteria evidence: <n>, ignored: <n>, extras: <n>)
 ```
 
-A run that does not close this invariant is incomplete.
+### 7.2 Criteria invariant
+
+State the counts, then one row per criterion. The counts alone are not the record.
+
+```
+criteria total: <N>  scored: <N>  (implemented: <n>, partial: <n>, missing: <n>,
+                                   contradicted: <n>, not_verifiable: <n>, excluded: <n>)
+
+PROJ-1234/AC-1  implemented       SearchScreen.swift:120  flag ON -> multi element
+PROJ-1234/AC-2  implemented(pre)  SearchScreen.swift:112  untouched, main already gates
+PROJ-1234/NG-1  implemented       DashboardViewController.swift:92   bypass needs files.count > 1
+```
+
+Every criterion gets a row, including every `excluded_criteria[]` entry, which prints its
+`reason` in place of an anchor. A criterion excluded by a weak platform guess is the other way a
+real gap disappears without argument, and section 4 already warns about it. The row is what makes
+that call challengeable by a reader.
+
+**A summary sentence is banned as the record.** "All eight criteria are implemented", "the change
+matches its spec", "all four acceptance criteria are covered" and every variant are prose, not
+evidence. They may appear in the verdict only AFTER the rows exist, and only as a restatement of
+them. On the recorded run the entire spec pass reached the report as one such sentence, buried in
+process notes, with no per-criterion anchor anywhere in the run directory. Nothing downstream
+could check it, and the reader could not tell whether a given criterion had been scored at all.
+
+**A run that cannot print the counts line and every row has not run this reviewer.** Say so in
+the verdict as a degradation. Do not report it as a clean spec result.
+
+Both invariants must close. A run that closes neither, or only one, is incomplete.
+
+### 7.3 The ledger file
+
+Write the rows to `$RUN/spec-ledger.json` as soon as they are complete, before emitting any
+finding. Stage 6 reads this file to verify the `implemented` rows and Stage 9 reads it to publish
+them, so a ledger held only in this reviewer's head reaches neither. It is the same contract as
+`$RUN/ticket-context.md`: a named file the rest of the pipeline can open.
+
+```json
+{
+  "invariant": "criteria total: 8  scored: 8  (implemented: 8, partial: 0, ...)",
+  "criteria": [
+    {"criterion_id": "PROJ-1234/AC-1", "ticket_key": "PROJ-1234", "polarity": "positive",
+     "text": "Given the user creates an entry and the multi_select flag is on, when selecting files, then the user can select more than one file.",
+     "status": "implemented", "anchor": "path/to/File.swift:120", "anchor_kind": "added",
+     "chain": ["Entry.swift:161", "Provider.swift:20", "Provider.swift:120"],
+     "note": "", "searched": []}
+  ],
+  "excluded_criteria": [
+    {"criterion_id": "PROJ-1234/TS-3", "text": "...", "reason": "other_platform:BE (inferred)"}
+  ],
+  "warnings": []
+}
+```
+
+`searched[]` carries the commands from the anti-false-gap protocol on a `missing` row and is
+empty otherwise. `note` is required on every `partial` and every `preexisting` row and empty
+elsewhere.
 
 ## 8. Emitting into the pipeline ledger
 
-After the coverage invariant is satisfied, emit pipeline findings. Only gaps and extras become findings. Matches and `not_verifiable` are recorded in the run's spec section for the final report only.
+After both invariants in section 7 are satisfied, emit pipeline findings. Only gaps and extras become findings. Matches and `not_verifiable` are recorded in the run's spec section for the final report only.
 
 Each finding row:
 
@@ -284,6 +376,11 @@ Each finding row:
 | `ticket_key` | the primary ticket this criterion came from |
 
 Criteria with status `implemented` or `not_verifiable` do NOT become pipeline findings.
+
+**Not becoming a finding is not the same as not being checked.** Stage 6 verifies every
+`implemented` row in `$RUN/spec-ledger.json` against the branch bytes, and a row that fails there
+is demoted and enters the pipeline as a finding at that point. This reviewer's `implemented`
+verdicts are a claim awaiting verification, not a result.
 
 For a gap with no changed file to anchor against, use the closest file in the diff that is semantically related to the feature. If no file can be found, the criterion is `not_verifiable` with `unprovable_reason` of `runtime_behaviour` and it does not enter the pipeline.
 
@@ -308,3 +405,9 @@ scope-inversion finding from section 5 without the parent in hand. Do not abort 
 **Working-tree check unavailable** (different repo or not a repo). Skip step 2 of the anti-false-gap protocol. Add a `method.warnings` entry. Do not guess the answer that step would have given.
 
 **`diff.patch` absent or empty.** This reviewer is SKIPPED. Emit one `method.warnings` entry: `"spec-conformance skipped: $RUN/diff.patch missing or empty"`.
+
+**Criteria invariant cannot be closed.** Criteria were decomposed but some could not be scored,
+for example because the read budget ran out before their files were reached. Print the rows you
+have, mark the rest `not_scored` with the reason, and add a `method.warnings` entry naming the
+count. Then lead the report section with it and cap `confidence` at `medium`. Never round the
+unscored rows up to `implemented`, and never drop them from the table to make the counts close.

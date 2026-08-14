@@ -110,6 +110,34 @@ Pipeline correction: <what was wrong and what the correct reading is>
 Never fold a correction silently into the final text. The user should see the pipeline caught
 its own error.
 
+### Acceptance-criteria table (required whenever the spec lens ran)
+
+One line per criterion, taken from `$RUN/spec-ledger.json` after Stage 6 verified it. Sits between
+the findings and the dropped table.
+
+```
+Acceptance criteria (PROJ-1234)
+AC-1  implemented       SearchScreen.swift:120
+AC-2  implemented(pre)  SearchScreen.swift:112  inherited from main
+AC-3  partial           DashboardViewController.swift:92   hidden-state clause not evidenced
+NG-1  implemented       DashboardViewController.swift:92
+```
+
+`implemented(pre)` means the chain runs through code this change did not touch, and the trailing
+note says so in a few words. A `partial` or `missing` row names the unevidenced clause. An
+excluded criterion prints its reason in place of the anchor.
+
+It exists for the same reason as the dropped table below: it is what shows the reviewer
+discriminated rather than pattern-matched, and it is what lets the reader check one criterion they
+care about instead of trusting a summary.
+
+**A sentence in place of the table is a contract failure.** "All four acceptance criteria are
+implemented" tells the reader nothing they can verify and hides which criteria the change actually
+delivered. State the rows, then summarise if you want to. Never the other way round.
+
+When the spec lens was skipped, this table is omitted and the skip warning in the opening block
+already says why.
+
 ### Dropped-findings table (required)
 
 | Finding | Dropped at stage | Reason |
@@ -498,9 +526,13 @@ reader how much work went into a pass. A chart of bare role names does not.
 1. **Pipeline chart.** The ASCII run map. First thing on the page, so the reader sees what was
    reviewed and by what before reading any conclusion.
 2. **Verdict block.** Reviewer list, skipped-reviewer notice if applicable, kept / total count.
-3. **Per-finding table.** Anchor, what, why, fix direction, self-correction notice if one exists.
-4. **Paste-ready comments.** Each in a styled block with a copy-to-clipboard button.
-5. **Collapsed details.** Inside `<details>` elements, collapsed by default:
+3. **Acceptance-criteria ledger.** The criteria invariant line, then one row per criterion with
+   its status, anchor and note, plus the excluded rows. Rendered from `report.json`'s `spec` key
+   and omitted entirely when that key is absent, which is the case when the spec lens was skipped
+   or when the report predates this section.
+4. **Per-finding table.** Anchor, what, why, fix direction, self-correction notice if one exists.
+5. **Paste-ready comments.** Each in a styled block with a copy-to-clipboard button.
+6. **Collapsed details.** Inside `<details>` elements, collapsed by default:
    - The original request.
    - The framed question sent to advisors.
    - Each advisor response.

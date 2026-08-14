@@ -199,7 +199,8 @@ parent:  <KEY> (<issuetype>) - <summary>
 ## Sibling sub-tasks              <- key, summary, platform label
 ```
 
-Stage 4b reuses this same fetch for the criteria ledger. Do not fetch twice.
+Stage 4b reuses this same fetch for the criteria ledger it writes to `$RUN/spec-ledger.json`. Do
+not fetch twice.
 
 **When there is no ticket** the file is not written, and the reviewer prompts in the next
 stage omit the context paragraph rather than pointing at a missing file.
@@ -219,7 +220,7 @@ corroboration in Stage 5.
 | 2 | `code-review` agent | Correctness. Logic errors, bugs, contract violations, repo rule breaches |
 | 3 | `code-review-nuclear`, or inline per `references/structural-review.md` | Structure. Architecture, abstraction quality, complexity growth |
 | 4 | The agent itself | Reads the pinned diff and the surrounding files directly |
-| 4b | Inline, per `references/spec-conformance.md` | Spec conformance. Gaps and extras against the Jira ticket AND its parent. The parent is fetched on every run, never only when the child looks empty |
+| 4b | Inline, per `references/spec-conformance.md` | Spec conformance. Gaps and extras against the Jira ticket AND its parent. The parent is fetched on every run, never only when the child looks empty. Writes `$RUN/spec-ledger.json`, one row per criterion, which Stage 6 verifies and Stage 9 publishes |
 | 4c | `security-review` skill, or inline per `references/security-review.md` | Security. Exploitable defects in the pinned diff, injection, authorization gaps, secret handling, unsafe deserialization, crypto misuse |
 
 **Stage 4 is not optional and not redundant.** On the recorded run the agent found the
@@ -481,6 +482,39 @@ Outcomes. **Verified** proceeds with evidence attached. **Disproven** is dropped
 disproof recorded, never silently deleted, so the same false finding is not re-raised next
 run. **Refined** proceeds with corrected severity or scope.
 
+### The spec ledger goes through this gate too
+
+**No `implemented` row reaches the verdict unverified either.** Everything above this line
+protects the reader from a finding that is wrong. This part protects them from a pass that is
+wrong, which is the more expensive error, because a false finding wastes an author's afternoon
+while a false all-clear ships the gap.
+
+On the recorded run the spec pass declared all eight criteria implemented. That claim never
+became a finding, so nothing verified it, the council never saw it, Stage 8 never re-read it, and
+it reached the report as one sentence with no per-criterion anchor anywhere in `$RUN`. The reader
+could not tell whether a given acceptance criterion had been scored at all.
+
+Read `$RUN/spec-ledger.json` and check every row whose `status` is `implemented`. Use the same
+two-part check defined above, not a second mechanism:
+
+- `anchor_kind` of `added` -> the line is in the `added` list for that file in `anchors.json`,
+  AND the text at that line carries the mechanism the criterion turns on.
+- `anchor_kind` of `preexisting` -> `git show <ref>:<path> | sed -n '<n>p'` and confirm that one
+  line carries the mechanism. It is legitimately off the diff, so the allowlist does not apply,
+  but the text check does.
+
+Then walk `chain[]` the same way. One hop that does not resolve to real code means the chain was
+asserted, not traced.
+
+A row that fails any part is demoted, to `partial` when part of the criterion still holds and to
+`missing` when none of it does, and it **then** enters the Stage 5 ledger as a finding with
+`origin` of `spec-conformance`. From there it flows through the council and Stage 8 like any
+other finding. Record the demotion in `corrections`, because it is the pipeline catching its own
+error and the user should see that.
+
+Reading a row without checking it is the failure this section exists to prevent. `implemented` is
+a claim until this gate confirms it.
+
 ## Stage 7 - Council triage
 
 Only verified findings reach the council. Its job is not to find problems, it is to decide
@@ -526,8 +560,9 @@ Three artifacts, all defined in `references/output-contract.md`. Read it before 
 anything.
 
 1. The chat verdict. Opens with the actionable headline and any degradation warning, never
-   with reviewer provenance. At most 5 findings, then the dropped table, the report path,
-   and one concrete closing next action.
+   with reviewer provenance. At most 5 findings, then the acceptance-criteria table whenever
+   the spec lens ran, then the dropped table, the report path, and one concrete closing next
+   action.
 2. Paste-ready comments, one fenced block each, scrubbed of every internal term. Anchor,
    one-sentence problem, one-sentence ask, and nothing else. **Four lines and roughly fifty
    words is a hard cap.** Verified evidence is stated flatly, the ask is an imperative unless
@@ -543,9 +578,15 @@ skill has no dependency on any writing-style skill being installed. Do not subst
 own house style for them.
 
 **Assemble `$RUN/report.json` first.** The renderer reads that ONE file and nothing else, so
-every advisor response, peer review, overflow finding and dropped finding must be embedded in
-it before the script runs. Its exact schema is the module docstring of
+every advisor response, peer review, overflow finding, dropped finding and criteria row must be
+embedded in it before the script runs. Its exact schema is the module docstring of
 `scripts/render-report.py`. Read that docstring, then build the file to match.
+
+**Copy the criteria ledger into `report.json` under `spec`.** Take it from
+`$RUN/spec-ledger.json` after Stage 6's demotions, so the published table reflects the verified
+statuses and not the reviewer's first pass. The renderer draws a per-criterion section from it,
+and without that key the spec pass has no published record at all, whatever it found. When the
+spec reviewer was skipped, omit the key.
 
 **There is no separate transcript file.** The whole audit record lives in `report.json` under
 `record`, and it is verbatim. That means `record.original_request` holds the user's request as
@@ -560,6 +601,11 @@ source you fetched and where it came from, one row per review pass with its dele
 mode, tool-call count, duration and finding count, the merge and verification counts, the
 council numbers, and the outcome line. Those counts are what make the chart worth reading,
 so leave a field out only when the run genuinely does not know it.
+
+**`tool_calls` on the spec-conformance row must be a real integer.** A lens that scored eight
+criteria and reports `null` read nothing, and on the recorded run that null was the only visible
+tell that the spec pass had produced a claim rather than a result. A spec row reporting no tool
+calls is recorded as degraded, and the warning goes in the verdict opening block.
 
 **A degraded reviewer is a reviewer that ran.** It belongs in `meta.reviewers_run`, and its row
 in `meta.pipeline.reviewers` carries the mode it really ran in, `delegated` or `inline`. A lens
@@ -668,8 +714,9 @@ The report is not re-rendered, so this summary is the only record.
 Paths are relative to this skill's directory.
 
 - `references/spec-conformance.md` - Stages 1b and 4b. Jira key resolution, the mandatory
-  parent walk and the hierarchy invariant, the criteria ledger, scope-inversion detection, the
-  anti-false-gap and anti-false-extra protocols, all against the pinned diff.
+  parent walk and the hierarchy invariant, the criteria ledger and the criteria invariant that
+  forbids a blanket pass, `$RUN/spec-ledger.json`, scope-inversion detection, the
+  anti-false-clear, anti-false-gap and anti-false-extra protocols, all against the pinned diff.
 - `references/structural-review.md` - Stage 3 inline fallback, used only when
   `code-review-nuclear` is absent.
 - `references/security-review.md` - Stage 4c inline fallback, used only when the host provides

@@ -9,21 +9,29 @@ description: >-
   `/code-review-full`. When invoked, runs independent reviews concurrently against one
   pinned diff (correctness, structure, a direct read, Jira spec conformance and security),
   verifies every claim against real code and drops false ones, triages survivors through a
-  council of AI advisors, verifies the council's own output, reports at most 5 findings plus
-  paste-ready comments and one offline HTML report. Offers to post those comments to the MR
-  or PR one at a time, each only if you approve. Never edits, commits or pushes. Roughly 15
-  agent invocations, wrong for a small change, review a typo directly.
+  council of AI advisors, verifies the council's own output, reports every finding that
+  survives, grouped by verdict, plus paste-ready comments and one offline HTML report. Offers
+  to post those comments to the MR or PR one at a time, each only if you approve. Never edits,
+  commits or pushes. Roughly 15 agent invocations, wrong for a small change, review a typo
+  directly.
 ---
 
 # Code Review Full
 
-Independent reviews, one pinned diff, every claim verified, a council to rank and cut. The
-output is a short list the author can act on, not an inventory of everything imperfect.
+Independent reviews, one pinned diff, every claim verified, a council to rank and rule. The
+output is every finding that is real and that matters, in rank order, and nothing else.
 
 **The point is noise reduction.** A single review pass gives one model's opinion, stated with
 uniform confidence whether it is right or wrong. This pipeline separates *generating*
 candidate findings from *verifying* them and from *triaging* them, so each stage catches the
-previous stage's errors.
+previous stage's errors. Noise is what is false, or what does not matter. Noise is not what
+ranks sixth.
+
+**Never re-introduce a numeric cap.** A count is a proxy for relevance, not relevance. A
+finding that is verified, that clears the bar and that the council did not DROP is worth the
+author's time whether it ranks second or twelfth. Hiding it because five other findings ranked
+above it is arbitrary. Noise is removed by disproving false claims at Stage 6 and by the bar
+at Stage 7, never by a headcount.
 
 ## Invocation
 
@@ -524,7 +532,7 @@ The council **always convenes**, however few findings survive.
 
 Delegate to the `council` skill, or run the identical method inline. Either way the protocol,
 the five advisor prompts, the five distinct peer probes, the mandatory dissenter, the fixed
-verdict vocabulary and the cap are defined in `references/council-protocol.md`. Read it.
+verdict vocabulary and the chat gate are defined in `references/council-protocol.md`. Read it.
 
 **An inline council is weaker than a delegated one, say so in the verdict.** Run inline, all
 ten seats are one model reasoning sequentially. The content still differs, because each seat
@@ -535,11 +543,12 @@ evidence than on the council's agreement.
 
 Verdict vocabulary, fixed: `BLOCK MERGE`, `FIX BEFORE MERGE`, `FOLLOW-UP TICKET`, `DROP`.
 
-**Hard cap of 5 findings reach the chat verdict.** The council must rank and cut. Findings
-below the cap move to the report's overflow section, they are never deleted. A finding must
-also clear the bar to reach chat at all: it changes runtime behaviour, breaks a contract,
-loses or corrupts data, or violates a binding repo convention. Taste, naming, style,
-hypotheticals and "consider extracting this" never reach chat at any severity.
+**Every verified finding the council did not DROP reaches the chat verdict.** There is no
+numeric cap. The council ranks and rules, it does not cut to a number. The ranking survives as
+the order the findings are presented in, highest first. A finding must clear the bar to reach
+chat at all: it changes runtime behaviour, breaks a contract, loses or corrupts data, or
+violates a binding repo convention. Taste, naming, style, hypotheticals and "consider
+extracting this" never reach chat at any severity, because the council rules DROP on them.
 
 ## Stage 8 - Verify the chairman
 
@@ -560,9 +569,9 @@ Three artifacts, all defined in `references/output-contract.md`. Read it before 
 anything.
 
 1. The chat verdict. Opens with the actionable headline and any degradation warning, never
-   with reviewer provenance. At most 5 findings, then the acceptance-criteria table whenever
-   the spec lens ran, then the dropped table, the report path, and one concrete closing next
-   action.
+   with reviewer provenance. The findings grouped by verdict, then the acceptance-criteria
+   table whenever the spec lens ran, then the dropped table, the report path, and one concrete
+   closing next action.
 2. Paste-ready comments, one fenced block each, scrubbed of every internal term. Anchor,
    one-sentence problem, one-sentence ask, and nothing else. **Four lines and roughly fifty
    words is a hard cap.** Verified evidence is stated flatly, the ask is an imperative unless
@@ -578,8 +587,8 @@ skill has no dependency on any writing-style skill being installed. Do not subst
 own house style for them.
 
 **Assemble `$RUN/report.json` first.** The renderer reads that ONE file and nothing else, so
-every advisor response, peer review, overflow finding, dropped finding and criteria row must be
-embedded in it before the script runs. Its exact schema is the module docstring of
+every advisor response, peer review, dropped finding and criteria row must be embedded in it
+before the script runs. Its exact schema is the module docstring of
 `scripts/render-report.py`. Read that docstring, then build the file to match.
 
 **Copy the criteria ledger into `report.json` under `spec`.** Take it from
@@ -592,8 +601,7 @@ spec reviewer was skipped, omit the key.
 `record`, and it is verbatim. That means `record.original_request` holds the user's request as
 received, `record.advisors` and `record.peer_reviews` hold every response unedited,
 `record.anonymization_mapping` reveals the letters, and `record.ranked_list` holds the full
-ranking before the cap. Summarizing any of these loses the audit trail the report exists to
-carry.
+ranking. Summarizing any of these loses the audit trail the report exists to carry.
 
 **Fill in `meta.pipeline` from what the run actually did.** The script draws the report's ASCII
 chart from it, so never hand-draw the chart and never pass a pre-drawn string. Record each
@@ -722,7 +730,7 @@ Paths are relative to this skill's directory.
 - `references/security-review.md` - Stage 4c inline fallback, used only when the host provides
   no `security-review` skill.
 - `references/council-protocol.md` - Stage 7. Advisors, anonymization, the distinct peer
-  probes, chairman ruling rules, the cap.
+  probes, chairman ruling rules, the chat gate.
 - `references/output-contract.md` - Stage 9. The verdict block, the terse paste-ready comment
   contract and its four-line cap, the certainty rule, the inlined writing and shaping rules,
   worked examples, and the report contract including the verbatim record and the pipeline

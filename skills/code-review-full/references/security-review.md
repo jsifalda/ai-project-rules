@@ -98,5 +98,5 @@ first, per step 3 above. Drop a finding only when the defect itself is not real.
 
 Rank by exploitability and blast radius, not by how alarming the category name sounds.
 
-This lens gets no special treatment at the cap of 5 findings. A security finding competes on the
-same bar and goes through the same council ranking as a finding from any other lens.
+This lens gets no special treatment. A security finding competes on the same bar and goes through
+the same council ranking as a finding from any other lens.

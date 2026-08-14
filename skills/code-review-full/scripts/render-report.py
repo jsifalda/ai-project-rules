@@ -51,7 +51,7 @@ Shape of report.json
          "detail": str|[str]}    # "14 raw -> 9 deduped" (list of str also accepted)
       ],
       "council": {"mode": str, "model": str, "advisors": int, "peer_reviews": int,
-                  "kept": int, "overflow": int},
+                  "kept": int},
       "outcome": str             # "2 FIX BEFORE MERGE, 1 FOLLOW-UP TICKET"
     }
   },
@@ -100,10 +100,6 @@ Shape of report.json
     "warnings": [str]
   },
 
-  "overflow": [
-    {"id": str, "verdict": str, "file": str, "lines": str,
-     "claim": str, "reason_cut": str}
-  ],
   "dropped": [
     {"id": str, "file": str, "lines": str, "claim": str,
      "disproof": str}              # markdown
@@ -123,9 +119,9 @@ Shape of report.json
       {"probe": str, "response": str}               # response is markdown
     ],
     "anonymization_mapping": {str: str},            # {"A": "The Executor"}
-    "ranked_list": str,            # OPTIONAL markdown — the full ranked finding list before
-                                   # the cap was applied; rendered as a collapsed block titled
-                                   # "Ranked list (before cap)", placed immediately before synthesis
+    "ranked_list": str,            # OPTIONAL markdown — the full ranked finding list;
+                                   # rendered as a collapsed block titled "Ranked list",
+                                   # placed immediately before synthesis
     "synthesis": str,              # markdown
     "process_notes": str           # markdown
   }
@@ -158,7 +154,7 @@ def validate_findings_and_collect_malformed(
     findings_list: List[Dict[str, Any]], section_name: str
 ) -> Dict[str, str]:
     """
-    Validate findings in a list (findings/overflow/dropped).
+    Validate findings in a list (findings/dropped).
     Returns {finding_id: reason_str} for malformed findings.
     """
     malformed = {}
@@ -509,7 +505,6 @@ def build_pipeline_chart(pipeline: Dict[str, Any]) -> str:
         advisors = council.get("advisors")
         peer_reviews_n = council.get("peer_reviews")
         kept = council.get("kept")
-        c_overflow = council.get("overflow")
         header_parts = [p for p in [mode, model] if p]
         council_title = f"COUNCIL ({', '.join(header_parts)})" if header_parts else "COUNCIL"
         c_detail_parts: List[str] = []
@@ -521,8 +516,6 @@ def build_pipeline_chart(pipeline: Dict[str, Any]) -> str:
         ko_parts: List[str] = []
         if kept is not None:
             ko_parts.append(f"{kept} kept")
-        if c_overflow is not None:
-            ko_parts.append(f"{c_overflow} overflow")
         if ko_parts:
             c_detail_parts.append(", ".join(ko_parts))
         council_detail = " -> ".join(c_detail_parts)
@@ -925,48 +918,6 @@ def build_dropped(dropped: List[Dict[str, Any]], malformed: Dict[str, str] | Non
 """
 
 
-def build_overflow_details(overflow: List[Dict[str, Any]], malformed: Dict[str, str] | None = None) -> str:
-    if malformed is None:
-        malformed = {}
-    if not overflow:
-        return ""
-    rows = "".join(
-        f"""<tr>
-          <td style="padding:8px;border:1px solid #ddd">{e(o.get('id',''))} {malformed_badge(malformed[o.get('id','')]) if o.get('id','') in malformed else ''}</td>
-          <td style="padding:8px;border:1px solid #ddd">
-            {verdict_badge(o.get('verdict',''))}
-          </td>
-          <td style="padding:8px;border:1px solid #ddd;font-family:monospace;font-size:0.85em">
-            {e(o.get('file',''))} :{e(o.get('lines',''))}
-          </td>
-          <td style="padding:8px;border:1px solid #ddd">{e(o.get('claim',''))}</td>
-          <td style="padding:8px;border:1px solid #ddd">{e(o.get('reason_cut',''))}</td>
-        </tr>"""
-        for o in overflow
-    )
-    table = f"""
-<table style="width:100%;border-collapse:collapse;font-size:0.9em">
-  <thead>
-    <tr style="background:#f5f5f5">
-      <th style="padding:8px;border:1px solid #ddd;text-align:left">ID</th>
-      <th style="padding:8px;border:1px solid #ddd;text-align:left">Verdict</th>
-      <th style="padding:8px;border:1px solid #ddd;text-align:left">Location</th>
-      <th style="padding:8px;border:1px solid #ddd;text-align:left">Claim</th>
-      <th style="padding:8px;border:1px solid #ddd;text-align:left">Reason cut</th>
-    </tr>
-  </thead>
-  <tbody>{rows}</tbody>
-</table>
-"""
-    return f"""
-<details style="margin-bottom:20px">
-  <summary style="cursor:pointer;font-weight:600;font-size:1.1em;
-    padding:8px 0">Overflow findings ({len(overflow)})</summary>
-  <div style="margin-top:12px">{table}</div>
-</details>
-"""
-
-
 def build_record_details(record: Dict[str, Any]) -> str:
     """Build collapsed <details> blocks for the council record."""
     parts: List[str] = []
@@ -1038,7 +989,7 @@ def build_record_details(record: Dict[str, Any]) -> str:
     if ranked_list:
         parts.append(f"""
 <details style="margin-bottom:16px">
-  <summary style="cursor:pointer;font-weight:600">Ranked list (before cap)</summary>
+  <summary style="cursor:pointer;font-weight:600">Ranked list</summary>
   <div style="margin-top:10px;padding:10px 14px;background:#fafafa;
     border:1px solid #eee;border-radius:4px">{md_to_html(ranked_list)}</div>
 </details>
@@ -1154,7 +1105,6 @@ def build_html(data: Dict[str, Any]) -> str:
     meta: Dict[str, Any] = data["meta"]
     verdict: Dict[str, Any] = data["verdict"]
     findings: List[Dict[str, Any]] = data.get("findings") or []
-    overflow: List[Dict[str, Any]] = data.get("overflow") or []
     dropped: List[Dict[str, Any]] = data.get("dropped") or []
     corrections: List[Dict[str, Any]] = data.get("corrections") or []
     spec: Dict[str, Any] = data.get("spec") or {}
@@ -1163,7 +1113,6 @@ def build_html(data: Dict[str, Any]) -> str:
     # Collect malformed findings from all sections
     malformed: Dict[str, str] = {}
     malformed.update(validate_findings_and_collect_malformed(findings, "findings"))
-    malformed.update(validate_findings_and_collect_malformed(overflow, "overflow"))
     malformed.update(validate_findings_and_collect_malformed(dropped, "dropped"))
 
     pipeline: Optional[Dict[str, Any]] = meta.get("pipeline")
@@ -1187,9 +1136,6 @@ def build_html(data: Dict[str, Any]) -> str:
 
     if dropped:
         body_parts.append(build_dropped(dropped, malformed))
-
-    if overflow:
-        body_parts.append(build_overflow_details(overflow, malformed))
 
     if record:
         body_parts.append(build_record_details(record))
@@ -1297,10 +1243,8 @@ def main() -> None:
     # Validate findings and collect malformed before rendering
     malformed: Dict[str, str] = {}
     findings: List[Dict[str, Any]] = data.get("findings") or []
-    overflow: List[Dict[str, Any]] = data.get("overflow") or []
     dropped: List[Dict[str, Any]] = data.get("dropped") or []
     malformed.update(validate_findings_and_collect_malformed(findings, "findings"))
-    malformed.update(validate_findings_and_collect_malformed(overflow, "overflow"))
     malformed.update(validate_findings_and_collect_malformed(dropped, "dropped"))
 
     # Report malformed findings to stderr

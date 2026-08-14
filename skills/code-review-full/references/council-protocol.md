@@ -1,10 +1,10 @@
 # Stage 7: Council Triage Protocol
 
 Findings from Stage 6 are real and verified. The council does not find problems.
-It ranks, cuts, and assigns verdicts.
+It ranks, drops noise, and assigns verdicts.
 
 Decisions required: assign a verdict to every finding, resolve severity disagreements,
-rank all survivors, cut the chat-facing set to at most 5.
+and rank all survivors.
 
 ## Delegation vs. inline execution
 
@@ -101,10 +101,20 @@ Chairman instructions:
    report record.
 
 4. Rank all surviving findings by severity and confidence. Preserve that full ranked list, it
-   goes into the report as `record.ranked_list` so the cut is auditable.
+   goes into the report as `record.ranked_list`. The list is the ordering evidence behind the
+   verdict, so a reader can check how you weighed severity against confidence. It is no longer
+   an audit of a cut, because there is no cut.
 
-5. Cut the chat-facing set to at most 5. Hard cap, not a target. Findings ranked 6 and
-   above move to the HTML report's collapsed overflow section. Fewer than 5 is fine.
+5. Every finding you did not rule `DROP` reaches the chat verdict. There is no cap. Never cut
+   to a number. Rank order decides the order the findings are presented in, nothing more.
+
+   **Runaway guard.** When more than 10 findings survive to chat, re-run the root-cause map
+   from Reviewer 5 before you finalise. A count that high is more often a dedupe miss than ten
+   separate mechanisms. Merge what shares a cause. Never drop a finding to hit a number, and
+   record in the synthesis that you ran this re-check.
+
+   This guard is a diagnostic, not a cap. It must never remove a finding. It can only merge
+   findings that share one root cause.
 
 6. Bar for reaching chat. A finding must do at least one of:
    - change runtime behaviour
@@ -128,11 +138,10 @@ Chairman instructions:
    ## Root-cause clusters
    [Reviewer 5 output: cause name -> finding IDs]
 
-   ## Chat-facing findings (at most 5)
-   [ranked list, verdict, required action]
-
-   ## Overflow findings
-   [ranked 6+, for HTML report collapsed section]
+   ## Chat-facing findings
+   [group under verdict headers with a count: BLOCK MERGE (n), FIX BEFORE MERGE (n),
+    FOLLOW-UP TICKET (n), in that order. Omit an empty group. Keep rank order inside a
+    group. Per finding: file:line and the required action]
 
    ## Dropped findings
    [one-sentence reason each]

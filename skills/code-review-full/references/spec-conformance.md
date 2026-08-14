@@ -8,7 +8,7 @@ This reviewer answers two questions:
 - Does the diff cover everything the ticket specified? (gaps)
 - Does the diff do anything the ticket never specified? (extras)
 
-That is the entire scope. This reviewer NEVER reports bugs, security issues, style, naming, architecture, or performance. Those belong to the other three reviewers in the pipeline. A finding that fits any of those categories is silently dropped, not mentioned in chat, and has no field to live in. This rule is structural and binding, not advisory.
+That is the entire scope. This reviewer NEVER reports bugs, security issues, style, naming, architecture, or performance. Those belong to the other reviewers in the pipeline. A finding that fits any of those categories is silently dropped, not mentioned in chat, and has no field to live in. This rule is structural and binding, not advisory.
 
 ## 2. Getting the ticket key
 

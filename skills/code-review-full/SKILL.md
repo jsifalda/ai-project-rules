@@ -6,20 +6,19 @@ description: >-
   the literal slash command `/code-review-full`. Phrasing like "review this", "review my
   changes", "quick review", "look at this diff", "deep review" or any paraphrase are
   ANTI-TRIGGERS, they MUST NOT load this skill, review directly instead and offer
-  `/code-review-full`. When invoked, runs four independent reviews concurrently against one
-  pinned diff (correctness, structure, a direct read, and Jira spec conformance), verifies
-  every claim against real code and drops the false ones, triages survivors through a
-  council of AI advisors, verifies the council's own output, then reports at most 5 findings
-  plus terse paste-ready comments and one offline HTML report. Finally offers to post
-  those comments to the MR or PR one at a time, each only if you approve it. Never edits,
-  commits or pushes. Roughly 14 agent invocations, wrong for a small change, review a typo
-  directly.
+  `/code-review-full`. When invoked, runs independent reviews concurrently against one
+  pinned diff (correctness, structure, a direct read, Jira spec conformance and security),
+  verifies every claim against real code and drops false ones, triages survivors through a
+  council of AI advisors, verifies the council's own output, reports at most 5 findings plus
+  paste-ready comments and one offline HTML report. Offers to post those comments to the MR
+  or PR one at a time, each only if you approve. Never edits, commits or pushes. Roughly 15
+  agent invocations, wrong for a small change, review a typo directly.
 ---
 
 # Code Review Full
 
-Four reviews, one pinned diff, every claim verified, a council to rank and cut. The output is
-a short list the author can act on, not an inventory of everything imperfect.
+Independent reviews, one pinned diff, every claim verified, a council to rank and cut. The
+output is a short list the author can act on, not an inventory of everything imperfect.
 
 **The point is noise reduction.** A single review pass gives one model's opinion, stated with
 uniform confidence whether it is right or wrong. This pipeline separates *generating*
@@ -29,7 +28,7 @@ previous stage's errors.
 ## Invocation
 
 One entry point, the literal `/code-review-full`. Nothing else loads this skill. It is
-expensive, roughly 14 agent invocations, so accidental firing on a two-line fix is the
+expensive, roughly 15 agent invocations, so accidental firing on a two-line fix is the
 failure this restriction prevents.
 
 ## Hard constraints (never relaxed)
@@ -63,8 +62,8 @@ that vendors it. Your cwd is the repo under review and does not contain `scripts
 `references/`, so every bundled path in this file resolves against `$SKILL_DIR`, never cwd.
 Get it wrong and Stage 9 fails with `No such file or directory`.
 
-Probe for the two external delegates and record which mode the run is in. Both live outside
-this repo and may be absent on any given machine. Probe, do not assume.
+Probe for the delegate skills that install as a directory, and record which mode the run is in.
+They live outside this repo and may be absent on any given machine. Probe, do not assume.
 
 ```bash
 for d in code-review-nuclear council; do
@@ -72,10 +71,16 @@ for d in code-review-nuclear council; do
 done
 ```
 
+**`security-review` is a harness built-in, so this probe cannot see it.** It has no directory
+under `~/.claude/skills/`, `~/.claude-pro/skills/` or `~/.agents/skills/`, and adding it to the
+loop above only makes the probe report it absent on every machine. Judge it by observation
+instead, whether the host lists `security-review` among the skills you can invoke.
+
 | Delegate | Used for | If absent |
 |---|---|---|
 | `code-review` agent | Stage 2, correctness | Role is mandatory. Run inline when dispatch is unavailable |
 | `code-review-nuclear` skill | Stage 3, structure | Run inline per `references/structural-review.md` |
+| `security-review` skill | Stage 4c, security | Run inline per `references/security-review.md` |
 | `council` skill | Stage 7, triage | Run inline per `references/council-protocol.md` |
 
 A missing delegate degrades the run, it never aborts it. State in the final verdict which
@@ -172,8 +177,8 @@ skipped is listed in the verdict and caps every affected finding's confidence at
 
 ## Stage 1b - Resolve the ticket hierarchy
 
-This stage runs at the end of Stage 1, BEFORE the four reviews are dispatched, because the
-next stage launches all four reviewers in one message and a reviewer cannot be handed context
+This stage runs at the end of Stage 1, BEFORE the reviews are dispatched, because the
+next stage launches every reviewer in one message and a reviewer cannot be handed context
 that has not been fetched yet.
 
 Resolve the ticket key and fetch the hierarchy exactly as `references/spec-conformance.md`
@@ -199,13 +204,13 @@ Stage 4b reuses this same fetch for the criteria ledger. Do not fetch twice.
 **When there is no ticket** the file is not written, and the reviewer prompts in the next
 stage omit the context paragraph rather than pointing at a missing file.
 
-## Stages 2, 3, 4, 4b - Four reviews, concurrently
+## Stages 2, 3, 4, 4b, 4c - The reviews, concurrently
 
-**Launch all four in one message.** Do not wait for one before starting the next.
+**Launch every review in one message.** Do not wait for one before starting the next.
 
 If the runtime cannot spawn sub-agents, which is the case when this skill is itself running
-inside a sub-agent, run all four passes inline and sequentially instead. Say so in the verdict
-header. The four mandates stay separate even when one agent performs them. Do not let them
+inside a sub-agent, run every pass inline and sequentially instead. Say so in the verdict
+header. The mandates stay separate even when one agent performs them. Do not let them
 collapse into a single undifferentiated read, the separation is what produces independent
 corroboration in Stage 5.
 
@@ -215,6 +220,7 @@ corroboration in Stage 5.
 | 3 | `code-review-nuclear`, or inline per `references/structural-review.md` | Structure. Architecture, abstraction quality, complexity growth |
 | 4 | The agent itself | Reads the pinned diff and the surrounding files directly |
 | 4b | Inline, per `references/spec-conformance.md` | Spec conformance. Gaps and extras against the Jira ticket AND its parent. The parent is fetched on every run, never only when the child looks empty |
+| 4c | `security-review` skill, or inline per `references/security-review.md` | Security. Exploitable defects in the pinned diff, injection, authorization gaps, secret handling, unsafe deserialization, crypto misuse |
 
 **Stage 4 is not optional and not redundant.** On the recorded run the agent found the
 headline blocker on its own while both reviewers were still working. When their results
@@ -230,8 +236,9 @@ verified and must not proceed, and neither can a finding whose anchor is absent 
 `added` list in `anchors.json`.** An anchor off the diff is as disqualifying as no anchor at
 all, because a comment posted there lands on code the author did not write in this change.
 
-**All four reviewers read the ticket context. Only Stage 4b scores against it.** Attach this
-paragraph verbatim to the Stage 2, 3 and 4 prompts whenever `$RUN/ticket-context.md` exists:
+**Every reviewer reads the ticket context. Only Stage 4b scores against it.** Attach this
+paragraph verbatim to the Stage 2, 3, 4 and 4c prompts whenever `$RUN/ticket-context.md`
+exists:
 
 > Read `$RUN/ticket-context.md` first. It states what this change was asked to do, and the
 > scope boundary the parent ticket drew, including which platform or layer the work was
@@ -274,10 +281,54 @@ carry everything. Use this shape, so two runs of the pipeline give it the same m
 table calls the `code-review` agent "always available" because the reviewer role is always
 performed, not because dispatch always works. The role is mandatory, the dispatch is not.
 Read the prompt above as your own instructions and keep the correctness pass separate from
-the other three.
+the other passes.
+
+**Stage 4c delegates to the `security-review` skill when the host provides one.** That skill
+defaults to reviewing the pending changes on the current branch, which is NOT what this
+pipeline reviews, so the prompt has to override its scope in the first line. Use this shape:
+
+> Review the diff at `$RUN/diff.patch` for SECURITY only. That file is the authoritative and
+> only target of this review. Review nothing outside it. Do not resolve your own scope from the
+> checked-out branch or from the working tree, whatever either one holds, because the pinned
+> diff was captured for you already. Look for exploitable defects the pinned diff introduces,
+> injection, authorization gaps, unsafe secret handling, unsafe deserialization and crypto
+> misuse. Read surrounding files with `git show <ref>:<path>`, never `checkout`. Report every
+> claim as `file:line` plus the attack path and the impact.
+>
+> The only legal anchors are the added lines listed in `$RUN/anchors.json`, which is keyed by
+> file path and lists each added line with its text. Find your anchor by searching that file
+> for the construct you are describing and taking its `line` value. Do not count lines by eye
+> in a file read, that is how previous runs landed comments on unrelated code. A context line,
+> a removed line, or any line outside the hunks is not a legal anchor.
+>
+> When the thing you are reporting lives on a line this change did not touch, anchor the claim
+> to the added line that causes the problem and name the untouched location in the body of the
+> claim instead. A guard this change DELETED is the case that matters most to you. A removed
+> line is not a legal anchor, so anchor to the added line that now runs unguarded and name the
+> deleted guard in the body. Never drop the finding, and never anchor it off the diff.
+>
+> When the change deletes a guard and adds no line in that file, prefer an added line elsewhere
+> in the diff whose behaviour the deletion changes. When the diff holds no such line anywhere,
+> keep the finding, mark it not postable, and name the deleted guard and its old location in
+> the body. Say plainly that it has no legal anchor.
+>
+> Correctness, structure and spec conformance belong to other reviewers. A finding of theirs
+> raised here is dropped as a duplicate at Stage 5.
+>
+> Report a finding only when you can state the path from attacker-controlled input to the
+> dangerous sink. A construct that only looks unsafe is not a finding.
+
+**When the host provides no `security-review` skill, run Stage 4c inline against
+`references/security-review.md`.** The security role is mandatory, the delegation is not.
+
+**On a DELEGATED run whose pinned source is not the checked-out branch, say so in the verdict as
+a degradation warning.** The delegate's default scope and the pinned diff disagree, so the reader
+has to know this lens was steered off its default. An inline run has no default scope to steer,
+so this warning does not apply to it. `references/output-contract.md` holds the warning wording.
+Take it from there rather than writing a second copy of it.
 
 Stage 4b is skipped when no Jira key is found and the user supplied no MR or PR link. Ask once
-whether to supply one, allow the skip, then run three reviewers and say so loudly in the
+whether to supply one, allow the skip, then run four reviewers and say so loudly in the
 verdict header. A thin review must never masquerade as a full one. **When the run is
 non-interactive** and there is no channel to ask, take the skip without asking and record that
 the question could not be put.
@@ -289,7 +340,7 @@ without the parent in hand.
 
 ## Stage 5 - Merge and dedupe
 
-Collapse the four result sets into one ledger. The session database works well.
+Collapse every result set into one ledger. The session database works well.
 
 | Column | Purpose |
 |---|---|
@@ -395,6 +446,13 @@ matching teardown. So the anchor becomes 199 and `setHidden()` at line 70 moves 
 The finding survives with a legal anchor, which is the only outcome that both tells the truth
 and can be posted.
 
+**One case has no legal anchor at all.** A change that deletes a guard and adds no line
+anywhere the deletion reaches leaves nothing in the `added` list to carry the claim. Do not
+drop it and do not invent an anchor. Mark the finding not postable, name the deleted code and
+its old location in the body, and let it through to the chat verdict and the report. Stage 10
+skips it, because there is no diff line to attach a comment to. This is the only finding that
+reaches the verdict without an anchor, so say why in the finding itself.
+
 - Trace the callers before believing any claim about how something is invoked.
 - Check history before believing any claim that something is pre-existing or newly introduced.
 - If a finding claims a parity break with another implementation, open that implementation and
@@ -476,7 +534,8 @@ anything.
    it turns on a judgement the pipeline cannot make, and no comment carries an effort
    estimate. A comment that runs long has failed the contract and goes back to be cut.
 3. The HTML report, built by `scripts/render-report.py`, never assembled by hand. It is the
-   only file this pipeline writes and it carries the full audit record.
+   only file this pipeline writes and it carries the full audit record. It opens on screen at
+   the end of this stage.
 
 Both the verdict and the comments follow the writing and shaping rules in
 `references/output-contract.md`. Those rules are inlined there in full, deliberately, so this
@@ -502,6 +561,13 @@ mode, tool-call count, duration and finding count, the merge and verification co
 council numbers, and the outcome line. Those counts are what make the chart worth reading,
 so leave a field out only when the run genuinely does not know it.
 
+**A degraded reviewer is a reviewer that ran.** It belongs in `meta.reviewers_run`, and its row
+in `meta.pipeline.reviewers` carries the mode it really ran in, `delegated` or `inline`. A lens
+can be degraded and still delegated, so never write `inline` to mean degraded. Never put it in
+`meta.reviewers_skipped`. The renderer prints "some reviewers were skipped" for every entry
+in that list, which is the one word `references/output-contract.md` forbids for a lens that
+ran. `meta.reviewers_skipped` is for a lens that produced nothing at all.
+
 ```bash
 python3 "$SKILL_DIR/scripts/render-report.py" --run-dir "$RUN" \
   --out "$PWD/review-<source-slug>-<ts>.html"
@@ -514,7 +580,39 @@ Every path in the "Bundled files" list below is relative to it.
 
 The report lands in the user's cwd, which may be the repo under review. Name the file in the
 closing message and suggest a gitignore line rather than staying silent about dirtying the
-tree. Do not auto-open the report.
+tree.
+
+**Open the report the moment it is written.** The report is the deliverable, so the user must
+not have to open it by hand. Every run that wrote a report attempts the open. It is not
+optional and it does not depend on the run being interactive. Try `open`, then `xdg-open`, then
+`wslview`, and use the first one that exists on `PATH`.
+
+```bash
+REPORT="$PWD/review-<source-slug>-<ts>.html"
+opened=0
+for opener in open xdg-open wslview; do
+  if command -v "$opener" >/dev/null 2>&1; then
+    "$opener" "$REPORT" </dev/null >/dev/null 2>&1 &
+    opened=1
+    break
+  fi
+done
+[ "$opened" -eq 1 ] || printf 'Could not open automatically - open %s\n' "$REPORT"
+```
+
+**Detach the opener from stdin and run it in the background.** `xdg-open` with `$BROWSER` set
+to a terminal browser starts that browser attached to your stdin and never returns, which
+stalls the stage until the harness times out. `</dev/null` and the trailing `&` are what stop
+that. The cost is that the loop reports the opener it started, not that a window appeared.
+
+**A failed open never fails the run.** No opener on `PATH`, or an opener that errors, produces
+that one printed line and nothing else. Swallow the error, do not retry, and do not report the
+run as failed.
+
+The path and the gitignore suggestion print either way. The open is in addition to that closing
+note, never a replacement for it. Do the open at the end of this stage, immediately after the
+report is written and BEFORE Stage 10 offers to post, so the report is on screen while the user
+decides what to post.
 
 ## Stage 10 - Offer to post
 
@@ -574,6 +672,8 @@ Paths are relative to this skill's directory.
   anti-false-gap and anti-false-extra protocols, all against the pinned diff.
 - `references/structural-review.md` - Stage 3 inline fallback, used only when
   `code-review-nuclear` is absent.
+- `references/security-review.md` - Stage 4c inline fallback, used only when the host provides
+  no `security-review` skill.
 - `references/council-protocol.md` - Stage 7. Advisors, anonymization, the distinct peer
   probes, chairman ruling rules, the cap.
 - `references/output-contract.md` - Stage 9. The verdict block, the terse paste-ready comment

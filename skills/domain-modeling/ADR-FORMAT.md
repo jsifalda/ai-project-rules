@@ -1,5 +1,33 @@
 # ADR Format
 
+## Which format to use
+
+The repo can already have its own ADR system. Use it when it does. Check in this order and stop
+at the first match.
+
+1. **An ADR template exists.** Look in `docs/adr/`, `doc/adr/`, `adr/`, and
+   `docs/architecture/decisions/` for a `0000-template.md`. Copy it for the new ADR, and write
+   into that same directory. Obey the repo's `## ADRs` policy, and update `ARCHITECTURE.md` if
+   the policy names one.
+2. **An `## ADRs` section exists in `AGENTS.md`, `CLAUDE.md`, or `.claude/CLAUDE.md`.** Obey it.
+   It gives the directory, the filename form, and the body format.
+3. **Neither exists, and the `setup-adrs` skill is available.** Tell the user the repo has no ADR
+   system, and ask before you install one. `setup-adrs` writes several files and adds a policy
+   section to the agent-instructions file, so it must not run as a silent side effect of one ADR.
+   Use the template it writes.
+4. **Neither exists, and `setup-adrs` is not available.** Use the minimal format below.
+
+Search every listed path before you go to step 3. A repo that keeps ADRs somewhere other than
+`docs/adr/` still has an ADR system, and telling the user it has none is wrong.
+
+A missing `setup-adrs` never blocks the ADR. Step 4 always works.
+
+The `## Minimal format`, `## Template`, `## Optional sections`, and `## Naming` sections below
+apply to step 4 only. `## When to offer an ADR` applies to all four steps — whether a decision
+deserves an ADR is independent of which format writes it.
+
+## Minimal format
+
 ADRs live in `docs/adr/` and use date-plus-slug filenames: `YYYY-MM-DD-slug.md`.
 
 Create the `docs/adr/` directory lazily — only when the first ADR is needed.

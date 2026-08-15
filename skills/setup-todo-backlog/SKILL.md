@@ -1,10 +1,28 @@
 ---
 name: setup-todo-backlog
-disable-model-invocation: true
-description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a policy into AGENTS.md or CLAUDE.md where an entry is filed only when the user asks for one and closed automatically once evidence shows the defect is gone. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
+description: RESTRICTED-INVOCATION — do NOT auto-trigger. Only the literal `/setup-todo-backlog` command or `setup-aiengineering` Step 6 may load this. Paraphrases are ANTI-TRIGGERS. When invoked — bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a policy into AGENTS.md or CLAUDE.md where an entry is filed only when the user asks for one and closed automatically once evidence shows the defect is gone. Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
 ---
 
 # Setup TODO Backlog
+
+## Invocation (check this first)
+
+These are the only entry points allowed:
+
+1. The user types the literal slash command `/setup-todo-backlog`.
+2. `setup-aiengineering` reaches Step 6 and delegates the TODO backlog module.
+
+Everything else is an anti-trigger. None of these load this skill — "track this bug", "add a
+TODO", "we should keep a list of known issues", or any other paraphrase. This skill creates
+`docs/TODO.md` and appends a policy section to the project's agent-instructions file, so a wrong
+trigger changes files the user did not ask about. Filing or closing one backlog entry is not this
+skill.
+
+This rule is prompt-enforced, not harness-enforced. This skill deliberately carries no
+`disable-model-invocation` flag, because that flag is a binary block with no per-caller
+allowlist — it removes the skill from the Skill tool entirely, so a dependent skill's delegation
+step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
+without first removing every dependent skill's delegation step.
 
 Set up a known-issues backlog in any project. An entry is filed only when the user asks for one,
 with a dated, immutable id in `docs/TODO.md`. Closing stays automatic: every substantive session
@@ -14,10 +32,9 @@ the session that found it, when the user decides to keep it.
 
 ## When to use
 
-- User asks to "set up a TODO backlog", "add known-issues tracking", or "scaffold a tech-debt list"
-- User wants the backlog pattern (dated ids + policy + end-of-session sweep) replicated in a new repo
-- User mentions "setup todo backlog" or "initialize the known-issues list"
-- A setup or bootstrap flow delegates backlog provisioning to this skill
+See `## Invocation` above. Those two entry points are the only ones. A user who describes
+wanting a known-issues list is not one of them — offer `/setup-todo-backlog` and wait for them to
+run it.
 
 ## Workflow
 

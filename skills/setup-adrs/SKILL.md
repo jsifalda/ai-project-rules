@@ -1,10 +1,29 @@
 ---
 name: setup-adrs
-disable-model-invocation: true
-description: Bootstrap an Architecture Decision Record (ADR) system in any project — creates an ADR directory with a template and a seed record ADR, scaffolds an ARCHITECTURE.md recap doc, and injects a when-to-create-an-ADR policy into AGENTS.md or CLAUDE.md. Use when setting up ADRs, adding architecture decision records, scaffolding ADR tracking, initializing decision logging, or the user mentions "setup adrs". Do NOT use to write or fill in a single ADR for one specific decision (just copy the template), to set up changelogs or PRDs, or to record non-architectural product decisions.
+description: RESTRICTED-INVOCATION — do NOT auto-trigger. The only entry points are the literal `/setup-adrs` command, `setup-aiengineering` Step 6, and `domain-modeling` when a repo has no ADR system. Every paraphrase is an ANTI-TRIGGER. When invoked through one of those — bootstrap an Architecture Decision Record (ADR) system in any project — creates an ADR directory with a template and a seed record ADR, scaffolds an ARCHITECTURE.md recap doc, and injects a when-to-create-an-ADR policy into AGENTS.md or CLAUDE.md. Do NOT use to write or fill in a single ADR for one specific decision (just copy the template), to set up changelogs or PRDs, or to record non-architectural product decisions.
 ---
 
 # Setup ADRs
+
+## Invocation (check this first)
+
+These are the only entry points allowed:
+
+1. The user types the literal slash command `/setup-adrs`.
+2. `setup-aiengineering` reaches Step 6 and delegates the ADRs module.
+3. `domain-modeling` needs to write an ADR and finds no ADR system in the repo.
+
+Everything else is an anti-trigger. None of these load this skill — "add ADRs", "start
+recording decisions", "we should document this decision", "set up architecture docs", or any
+other paraphrase. This skill writes into `docs/adr/`, creates `ARCHITECTURE.md`, and appends a
+policy section to the project's agent-instructions file, so a wrong trigger changes files the
+user did not ask about.
+
+This rule is prompt-enforced, not harness-enforced. This skill deliberately carries no
+`disable-model-invocation` flag, because that flag is a binary block with no per-caller
+allowlist — it removes the skill from the Skill tool entirely, so a dependent skill's delegation
+step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
+without first removing every dependent skill's delegation step.
 
 Set up an Architecture Decision Record system in any project. Each meaningful technical
 decision gets a numbered, version-controlled record in `docs/adr/`, and an `ARCHITECTURE.md`
@@ -13,9 +32,8 @@ sessions read them, stay true to past choices, and supersede what's stale.
 
 ## When to use
 
-- User asks to "set up ADRs", "add architecture decision records", or "scaffold ADR tracking"
-- User wants the ADR pattern (record + recap doc + policy) replicated in a new repo
-- User mentions "setup adrs" or "initialize decision records"
+See `## Invocation` above. Those three entry points are the only ones. A user who describes
+wanting ADRs is not one of them — offer `/setup-adrs` and wait for them to run it.
 
 ## Workflow
 

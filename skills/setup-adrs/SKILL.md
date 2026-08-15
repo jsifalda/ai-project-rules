@@ -15,8 +15,6 @@ sessions read them, stay true to past choices, and supersede what's stale.
 - User asks to "set up ADRs", "add architecture decision records", or "scaffold ADR tracking"
 - User wants the ADR pattern (record + recap doc + policy) replicated in a new repo
 - User mentions "setup adrs" or "initialize decision records"
-- `setup-aiengineering` Step 6 delegates the ADRs module, or `domain-modeling` finds no ADR
-  system in the repo
 
 ## Workflow
 

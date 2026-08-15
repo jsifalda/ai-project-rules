@@ -12,7 +12,6 @@ Bootstrap a canonical user-scenarios inventory in any project. The output is a `
 - User asks to "set up user scenarios" or "add a scenarios doc" to a project
 - User wants to replicate the user-scenarios pattern in a new repo
 - User mentions "user-scenarios setup" or "bootstrap user scenarios"
-- `setup-aiengineering` Step 6 delegates the User scenarios module
 
 ## Workflow
 

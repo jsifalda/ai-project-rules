@@ -12,7 +12,6 @@ Set up a per-session, file-per-change changelog system in any project. Each agen
 - User asks to "set up changelogs" or "add changelog tracking" to a project
 - User wants to replicate the per-session changelog pattern in a new repo
 - User mentions "changelog setup" or "initialize changelog"
-- `setup-aiengineering` Step 6 delegates the Changelog module
 
 ## Workflow
 

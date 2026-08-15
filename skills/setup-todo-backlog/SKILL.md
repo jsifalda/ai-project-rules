@@ -16,7 +16,6 @@ the session that found it, when the user decides to keep it.
 - User asks to "set up a TODO backlog", "add known-issues tracking", or "scaffold a tech-debt list"
 - User wants the backlog pattern (dated ids + policy + end-of-session sweep) replicated in a new repo
 - User mentions "setup todo backlog" or "initialize the known-issues list"
-- A setup or bootstrap flow delegates backlog provisioning to this skill
 
 ## Workflow
 

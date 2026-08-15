@@ -1,36 +1,18 @@
 ---
 name: setup-user-scenarios
-description: RESTRICTED-INVOCATION — do NOT auto-trigger. Only the literal `/setup-user-scenarios` command or `setup-aiengineering` Step 6 may load this. Paraphrases are ANTI-TRIGGERS. When invoked — bootstrap a BDD-formatted user-scenarios inventory in any project. Creates `docs/user-scenarios.md` with a Conventions section, frozen domain prefixes, seeded example scenarios, and a Coverage Matrix, then injects a doc-sync policy into `AGENTS.md` or `CLAUDE.md` so future agents must keep the doc in sync with user-visible changes. Do NOT use for one-off scenario edits in an existing doc, for generating end-to-end tests, for changelog setup (see `setup-changelog`), or for PRD breakdown into stories (see `prd-breakdown`).
+description: Bootstrap a BDD-formatted user-scenarios inventory in any project. Creates `docs/user-scenarios.md` with a Conventions section, frozen domain prefixes, seeded example scenarios, and a Coverage Matrix, then injects a doc-sync policy into `AGENTS.md` or `CLAUDE.md` so future agents must keep the doc in sync with user-visible changes. Use when the user asks to "set up user scenarios", "bootstrap a user-scenarios doc", "add a scenarios inventory", "scenarios setup", or wants to replicate the pattern in a new repo. Do NOT use for one-off scenario edits in an existing doc, for generating end-to-end tests, for changelog setup (see `setup-changelog`), or for PRD breakdown into stories (see `prd-breakdown`).
 ---
 
 # User Scenarios Setup
-
-## Invocation (check this first)
-
-These are the only entry points allowed:
-
-1. The user types the literal slash command `/setup-user-scenarios`.
-2. `setup-aiengineering` reaches Step 6 and delegates the User scenarios module.
-
-Everything else is an anti-trigger. None of these load this skill — "add user scenarios", "write
-some Given/When/Then", "document the user flows", or any other paraphrase. This skill creates
-`docs/user-scenarios.md` and appends a blocking verification gate to the project's
-agent-instructions file, so a wrong trigger changes files the user did not ask about. Editing one
-scenario in an existing doc is not this skill.
-
-This rule is prompt-enforced, not harness-enforced. This skill deliberately carries no
-`disable-model-invocation` flag, because that flag is a binary block with no per-caller
-allowlist — it removes the skill from the Skill tool entirely, so a dependent skill's delegation
-step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
-without first removing every dependent skill's delegation step.
 
 Bootstrap a canonical user-scenarios inventory in any project. The output is a `docs/user-scenarios.md` file in BDD (Given/When/Then) format, keyed by stable IDs (`<DOMAIN>-YYYY-MM-DD-slug`), plus a policy block in the project's agent instructions that requires every user-visible change to add or update a scenario.
 
 ## When to use
 
-See `## Invocation` above. Those two entry points are the only ones. A user who describes
-wanting a scenarios doc is not one of them — offer `/setup-user-scenarios` and wait for them to
-run it.
+- User asks to "set up user scenarios" or "add a scenarios doc" to a project
+- User wants to replicate the user-scenarios pattern in a new repo
+- User mentions "user-scenarios setup" or "bootstrap user scenarios"
+- `setup-aiengineering` Step 6 delegates the User scenarios module
 
 ## Workflow
 

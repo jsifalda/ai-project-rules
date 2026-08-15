@@ -374,9 +374,16 @@ python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/
 Set `disable-model-invocation: true` to make a skill slash-only. It stays invocable through its `/command`, but Claude will not auto-trigger it from a description match. Reach for it when auto-firing on a loose natural-language match would be harmful or wasteful:
 
 - Destructive, hard-to-reverse, or outward-facing actions (opening PRs/MRs, pushing, deleting, publishing, external sync).
-- Heavy setup or bootstrap ops that scaffold files or mutate repo or global config (the `setup-*` family, `qmd-project`, `claude-allow-home`).
+- Heavy setup or bootstrap ops that scaffold files or mutate repo or global config (`qmd-project`, `claude-allow-home`). Check the caveat below first.
 
 Default: leave it unset so auto-invocation stays on. Most skills (writers, summarizers, generators, research, personas, modes) should auto-trigger, because that is their whole value.
+
+**Never set it on a delegation target.** The flag removes the skill from the Skill tool
+completely, not only from auto-matching. Another skill that invokes it as a step then fails with
+`cannot be used with Skill tool`. The delegation is dead, and it still looks wired. Look for
+inbound callers before you set the flag — the README `Depends on` column names them. When a skill
+writes into the user's repo *and* is a delegation target, the guard is that skill's own
+confirmation gate, not this flag.
 
 Beyond `name`, `description`, `disable-model-invocation`, `license`, `allowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
 

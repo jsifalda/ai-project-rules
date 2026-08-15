@@ -1,35 +1,18 @@
 ---
 name: setup-changelog
-description: RESTRICTED-INVOCATION — do NOT auto-trigger. The only entry points are the literal `/setup-changelog` command and `setup-aiengineering` Step 6. Every paraphrase is an ANTI-TRIGGER. When invoked through one of those — bootstrap a per-session changelog system in any project. Creates changelog/ directory, adds policy to AGENTS.md or CLAUDE.md, and optionally freezes an existing changelog.md. Do NOT use to write one changelog entry in a project that already has the system.
+description: Bootstrap a per-session changelog system in any project. Creates changelog/ directory, adds policy to AGENTS.md or CLAUDE.md, and optionally freezes an existing changelog.md. Use when setting up changelogs, initializing project change tracking, or the user mentions "changelog setup". Do NOT use to write one changelog entry in a project that already has the system.
 ---
 
 # Changelog Setup
-
-## Invocation (check this first)
-
-These are the only entry points allowed:
-
-1. The user types the literal slash command `/setup-changelog`.
-2. `setup-aiengineering` reaches Step 6 and delegates the Changelog module.
-
-Everything else is an anti-trigger. None of these load this skill — "add a changelog", "start
-tracking changes", "we should log what we did", or any other paraphrase. This skill creates a
-`changelog/` directory and appends a policy section to the project's agent-instructions file, so
-a wrong trigger changes files the user did not ask about. Writing one changelog entry is not
-this skill.
-
-This rule is prompt-enforced, not harness-enforced. This skill deliberately carries no
-`disable-model-invocation` flag, because that flag is a binary block with no per-caller
-allowlist — it removes the skill from the Skill tool entirely, so a dependent skill's delegation
-step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
-without first removing every dependent skill's delegation step.
 
 Set up a per-session, file-per-change changelog system in any project. Each agent session records what changed and why in a dedicated file — no automation, no tooling, just documented policy.
 
 ## When to use
 
-See `## Invocation` above. Those two entry points are the only ones. A user who describes
-wanting a changelog is not one of them — offer `/setup-changelog` and wait for them to run it.
+- User asks to "set up changelogs" or "add changelog tracking" to a project
+- User wants to replicate the per-session changelog pattern in a new repo
+- User mentions "changelog setup" or "initialize changelog"
+- `setup-aiengineering` Step 6 delegates the Changelog module
 
 ## Workflow
 

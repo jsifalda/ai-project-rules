@@ -1,6 +1,5 @@
 ---
 name: setup-adrs
-disable-model-invocation: true
 description: Bootstrap an Architecture Decision Record (ADR) system in any project — creates an ADR directory with a template and a seed record ADR, scaffolds an ARCHITECTURE.md recap doc, and injects a when-to-create-an-ADR policy into AGENTS.md or CLAUDE.md. Use when setting up ADRs, adding architecture decision records, scaffolding ADR tracking, initializing decision logging, or the user mentions "setup adrs". Do NOT use to write or fill in a single ADR for one specific decision (just copy the template), to set up changelogs or PRDs, or to record non-architectural product decisions.
 ---
 

@@ -1,6 +1,5 @@
 ---
 name: setup-todo-backlog
-disable-model-invocation: true
 description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a policy into AGENTS.md or CLAUDE.md where an entry is filed only when the user asks for one and closed automatically once evidence shows the defect is gone. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
 ---
 
@@ -17,7 +16,6 @@ the session that found it, when the user decides to keep it.
 - User asks to "set up a TODO backlog", "add known-issues tracking", or "scaffold a tech-debt list"
 - User wants the backlog pattern (dated ids + policy + end-of-session sweep) replicated in a new repo
 - User mentions "setup todo backlog" or "initialize the known-issues list"
-- A setup or bootstrap flow delegates backlog provisioning to this skill
 
 ## Workflow
 

@@ -104,18 +104,15 @@ says otherwise.
     - **Prerequisites** — `cr` on `PATH` (`which cr`) and authenticated (`cr auth status`). If either
       fails, **tell the user and skip the CodeRabbit CLI lens** — label it `skipped (CodeRabbit
       unavailable)`; never skip silently.
-    - **Triage** — `critical`/`major` → auto-apply the fix, then re-run the **Lint**, **Typecheck**,
-      and **Tests** gates. `minor`/`trivial`/`info` → do **not** auto-apply; list them for the user
-      (file:line + suggested fix).
-    - **Re-review budget** — at most one extra `cr review` after auto-fixes; further loops need user
-      approval (each costs credits).
   - **Nuclear structural review** — if the `code-review-nuclear` skill is available, spawn a
     subagent that runs it on this session's diff (Claude Code: `Task`/`Agent` tool → a subagent
     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
     maintainability "code judo" only — NOT correctness, security, tests, or lint (the
     **Harness-native code review** lens and the **Lint**, **Typecheck**, **Tests**, **Test coverage
-    for new code**, and **Regression test for bug fixes** gates cover those). Surface its findings
-    for the user; never auto-apply. If the skill isn't available, **tell the user and skip the
+    for new code**, and **Regression test for bug fixes** gates cover those). This lens is exempt
+    from the triage step below, because it proposes structural rewrites and not defects. Each finding
+    is a proposal, and each one is larger than the change under review. Surface its findings for the
+    user; never apply one on your own. If the skill isn't available, **tell the user and skip the
     nuclear structural review lens** — label it `skipped (nuclear review unavailable)`; never skip
     silently.
   - **Security review** — if your harness provides a security-review capability (Claude Code:
@@ -124,13 +121,41 @@ says otherwise.
     injection, XSS, SSRF, hardcoded secrets, IDOR, auth bypass, unsafe deserialization, and path
     traversal. Structural and correctness concerns belong to the **Harness-native code review** and
     **Nuclear structural review** lenses, not here.
-    - **Triage** — `critical`/`major` → auto-apply the fix, then re-run the **Lint**, **Typecheck**,
-      and **Tests** gates. `minor`/`trivial`/`info` → do **not** auto-apply; list them for the user
-      (file:line + suggested fix).
     - If your harness provides no security-review capability, **tell the user and skip the security
       review lens** — label it `skipped (security review unavailable)`; never skip silently.
   - **Merge** — wait for **every lens** to finish — a `skipped` lens still counts as done — then
     deduplicate findings across them and present one combined "Code review findings" section.
+  - **Triage before you fix — relevance decides, not severity.** Judge every merged finding on its
+    own before you change anything. Relevance is the gate. Severity sets the order of the work; it
+    never decides whether a finding gets fixed.
+    - **Relevant** → fix it, whatever its severity. A finding its lens rated low — `minor`,
+      `trivial`, or below — that is correct and in scope gets fixed like any other. **A low severity
+      is never a reason to leave a real defect.**
+    - **Not relevant** → reject it, and state the reason. A finding is not relevant when it is wrong
+      about the code or the tooling, when it points at code this session did not change and the
+      change did not make it wrong, when it contradicts a documented project convention or a
+      decision the user already made, when it is taste with no defect and no convention behind it,
+      or when the merge missed it as a duplicate. Verify a finding that contradicts a command you
+      have actually run — a `--help` output or a successful run beats a reviewer's recollection of a
+      tool. Never turn a working command into a broken one. Rejecting is your call; do not queue
+      rejections for the user to clear.
+    - **Changes what a rule requires** → never apply it on its own, at any severity. Draft the
+      wording, show it, ask. This covers a policy number — a threshold, a budget, a retry limit, a
+      coverage percentage — and any finding that adds, removes, weakens, or re-scopes a rule. A
+      factual defect is different and gets fixed: a broken command or flag, a dead link, a reference
+      to something absent, a typo.
+    - **Bigger than the change under review** → state the finding with the fix you propose, and ask.
+      A relevant finding never grows into a broad refactor, a new dependency, or a change to a
+      public interface without approval.
+    - **Ambiguous** → ask. A rejection needs a reason you can state. With no reason either way, the
+      finding is not rejected.
+    - Fix in severity order, highest first. Then re-run the lint, typecheck, and test gates this repo
+      has.
+    - Report every finding with its verdict — `fixed`, `rejected (reason)`, or `waiting on you`.
+      State a rejected or deferred finding as a plain finding in the report. Never collect one into a
+      queue, and never offer to file it as a tracked entry.
+  - **Re-review budget** — at most one extra `cr review` after the fixes; further loops need user
+    approval (each costs credits).
 - **Docs & instructions alignment** — before marking the task done, check whether this session's
   changes made any documentation stale:
   - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale

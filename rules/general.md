@@ -245,7 +245,11 @@ After completing any code changes, perform every verification phase below before
 ### Phase 3: Code Review
 
 - Run a `code-review` task agent on the changes made in this session
-- Fix the findings from the review, if that makes a sense
-- Present to the user what review returned and how it was addressed
+- Triage every finding before you change anything. Relevance decides if you fix a finding. Severity only sets the order of the work
+- Fix every relevant finding, at any severity. A low severity is never a reason to leave a real defect
+- Reject the rest, and state the reason for each rejection. A finding is not relevant when it is wrong about the code, when it points outside the scope of this change, when it contradicts a convention the project already set, or when it is taste with no defect and no convention behind it. State each rejected finding in the report. Never queue a rejection for the user to clear
+- When a relevant finding needs a broad refactor, a new dependency, or a change to a public interface, state it with the fix you propose, and ask first. A review never grows the change on its own
+- Never apply a finding that changes what a rule requires, at any severity. Draft the wording, show it to the user, and ask
+- Present to the user what review returned and what you did with each finding
 
 CRITICAL: Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.

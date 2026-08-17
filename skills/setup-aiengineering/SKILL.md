@@ -455,6 +455,12 @@ only; the user runs it.
   on the host's security-review capability; when absent the injected lens labels itself `skipped
   (security review unavailable)` — never skip silently. It invokes the harness built-in (Claude
   Code: `/security-review`) and does not require the `security-guidance` plugin.
+- The **Code review** gate triages findings by relevance, not severity. Severity sets only the
+  order of work. Fix a relevant finding at any severity, including `minor` and `trivial`. Reject a
+  finding that is not relevant, and state the reason — do not queue it for the user. Never apply a
+  finding that changes what a rule requires on its own, at any severity — draft it, show it, and
+  ask. The **Nuclear structural review** lens stays exempt: its findings are structural proposals,
+  not defects, so surface them for the user and never apply them on your own.
 - The security-guidance plugin offer (Step 9b) is Claude-Code-only, fires only when the security
   review lens was selected and the plugin is not already installed, and is a suggestion only —
   never install it.
@@ -470,7 +476,8 @@ only; the user runs it.
   (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`), plus the placeholder-free
   regression-test-for-bug-fixes gate and its degradation paths, plus the conditional tail
   gates (user-scenarios sync, then backlog sweep — held back in Step 5 and appended in Step 6b,
-  each only after its own delegated skill successfully runs).
+  each only after its own delegated skill successfully runs), plus the Code review gate's shared
+  relevance-based triage step, which every lens follows except the nuclear structural review.
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.

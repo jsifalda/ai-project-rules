@@ -128,6 +128,7 @@ function syncSkills() {
   let created = 0;
   let removed = 0;
   let unchanged = 0;
+  let failed = 0;
 
   // Remove stale managed symlinks
   for (const entry of fs.readdirSync(SKILLS_DIR)) {
@@ -153,29 +154,48 @@ function syncSkills() {
   for (const [name, sourcePath] of skillMap) {
     const linkPath = path.join(SKILLS_DIR, name);
 
-    if (fs.existsSync(linkPath)) {
+    // One bad entry must never abort the run. Without this, a throw escapes to the
+    // top-level catch and every remaining skill is left unlinked.
+    try {
+      // lstat, NOT existsSync. existsSync follows the link, so it reports false for a
+      // dangling symlink while the name still occupies the directory entry — and then
+      // symlinkSync below throws EEXIST. Do not simplify this back to existsSync.
+      let linkStat = null;
       try {
-        const currentTarget = fs.readlinkSync(linkPath);
-        if (currentTarget === sourcePath) {
+        linkStat = fs.lstatSync(linkPath);
+      } catch {
+        // Nothing at that path. This is the normal case for a new skill.
+      }
+
+      if (linkStat) {
+        if (!linkStat.isSymbolicLink()) {
+          console.error(
+            `[sync-skills] WARNING: ${linkPath} exists but is not a symlink, skipping`
+          );
+          continue;
+        }
+
+        // The entry is a symlink, so a failure below is a real I/O problem. Let it reach
+        // the outer catch, which counts it. Do not swallow it as a "not a symlink" case.
+        if (fs.readlinkSync(linkPath) === sourcePath) {
           unchanged++;
           continue;
         }
         fs.unlinkSync(linkPath);
-      } catch {
-        console.error(
-          `[sync-skills] WARNING: ${linkPath} exists but is not a symlink, skipping`
-        );
-        continue;
       }
-    }
 
-    fs.symlinkSync(sourcePath, linkPath);
-    created++;
+      fs.symlinkSync(sourcePath, linkPath);
+      created++;
+    } catch (err) {
+      console.error(`[sync-skills] WARNING: failed to link ${name}: ${err.message}`);
+      failed++;
+    }
   }
 
   const total = skillMap.size;
+  const failedNote = failed > 0 ? `, ${failed} failed` : '';
   console.log(
-    `[sync-skills] Synced ${total} skills (${created} new, ${removed} removed, ${unchanged} unchanged, ${conflicts.length} conflicts)`
+    `[sync-skills] Synced ${total} skills (${created} new, ${removed} removed, ${unchanged} unchanged, ${conflicts.length} conflicts${failedNote})`
   );
 }
 

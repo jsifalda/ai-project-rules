@@ -134,10 +134,11 @@ says otherwise.
     - **Not relevant** → reject it, and state the reason. A finding is not relevant when it is wrong
       about the code or the tooling, when it points at code this session did not change and the
       change did not make it wrong, when it contradicts a documented project convention or a
-      decision the user already made, or when it is taste with no defect and no convention behind
-      it. Verify a finding that contradicts a command you have actually run — a `--help` output or a
-      successful run beats a reviewer's recollection of a tool. Never turn a working command into a
-      broken one. Rejecting is your call; do not queue rejections for the user to clear.
+      decision the user already made, when it is taste with no defect and no convention behind it,
+      or when the merge missed it as a duplicate. Verify a finding that contradicts a command you
+      have actually run — a `--help` output or a successful run beats a reviewer's recollection of a
+      tool. Never turn a working command into a broken one. Rejecting is your call; do not queue
+      rejections for the user to clear.
     - **Changes what a rule requires** → never apply it on its own, at any severity. Draft the
       wording, show it, ask. This covers a policy number — a threshold, a budget, a retry limit, a
       coverage percentage — and any finding that adds, removes, weakens, or re-scopes a rule. A

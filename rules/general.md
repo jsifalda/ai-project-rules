@@ -152,6 +152,19 @@ paths:
 - Prefer the Jest runner if possible (if not possible, ask the user to choose a different runner - provide the best possible options to run tests in the context for the codebase)
 - Never ever remove any tests if they are failing (only if there are no longer needed)
 
+### Concurrent test runs
+
+- **One test suite per machine at a time.** Several agent sessions or worktrees open → confirm no
+  other run is in flight before you start one. Wait, never start a second.
+- **Why:** a runner's parallelism cap is per process, not per machine. Each run reads the core
+  count, not the **remaining** capacity. Each run also computes that cap alone. So N runs give
+  N × the cap. CPU and RAM saturate, and the machine can livelock.
+- **An overlap is unavoidable → cap the runner explicitly.** Pick the knob that bounds test
+  workers, not build jobs: Vitest `maxWorkers` (v4+) or `poolOptions.forks.maxForks` (v3 — config
+  overrides the CLI flag) · `jest --maxWorkers=2` · `pytest -n 2` · `go test -parallel 2` (`-p`
+  bounds packages, not one binary) · `cargo test -- --test-threads 2`. Never leave it on the
+  CPU-derived default.
+
 ### TDD 
 
 - Follow the cycle: Red → Green → Refactor → Commit.

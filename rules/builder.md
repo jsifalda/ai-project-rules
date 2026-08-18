@@ -19,8 +19,8 @@ paths:
 * shadcn/ui with Tailwind CSS
 * lucide for React-compatible icons
 * Next.js as the server, hosted on Vercel
-* SWR for data fetching with Next.js, otherwise native fetch
-* Auth.js for auth (NextAuth.js with Next.js)
+* SWR for data fetching with Next.js, otherwise native fetch (not axios etc.)
+* BetterAuth for user authentication
 * Microsoft Clarity for analytics (over GA)
 * Sentry for error tracking
 * PostHog for product analytics

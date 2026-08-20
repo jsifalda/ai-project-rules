@@ -57,7 +57,7 @@ The rule files under `rules/`. The `type` frontmatter is a convention for tools 
 - `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style (ASD-STE100 Simplified Technical English, plus scannability and terseness), the ban on stating how many items a set holds, git commit format.
 - `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
 
-`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill (see the Skills table).
+`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill for general UI work, and the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot (see the Skills table).
 
 ## Skills
 
@@ -98,6 +98,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`goal-breakdown`](skills/goal-breakdown/SKILL.md) | Break a big finite goal into a sharp end state, ordered milestones (riskiest first), and one-day tasks with a single clear next action; re-plans as milestones complete. | — | — |
 | [`grill-me`](skills/grill-me/SKILL.md) | Interview the user relentlessly about a plan, design, or decision until reaching shared understanding, one question at a time. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`grill-with-docs`](skills/grill-with-docs/SKILL.md) | Run a `grill-me` interview that also builds domain-model docs — ADRs and glossary — as it goes. | `grill-me`, `domain-modeling` | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [`hallmark`](skills/hallmark/SKILL.md) | Build a new page, or audit, redesign, or extract the design DNA of an existing page or screenshot, using a named theme catalog to avoid generic AI-generated aesthetics. | — | [Nutlope/hallmark](https://github.com/Nutlope/hallmark) |
 | [`handoff`](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to pick up. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. | — | — |
 | [`i-have-adhd`](skills/i-have-adhd/SKILL.md) | Reshape every response for an ADHD reader — action first, numbered steps, restated state, concrete time estimates, no preamble or closers. Invoked bare mid-session with work in flight, it opens by catching you up on where the work stands. Manual-invoke only. | — | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |

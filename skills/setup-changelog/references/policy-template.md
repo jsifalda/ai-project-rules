@@ -43,7 +43,7 @@ changelog/YYYYMMDDHHMMSS-short-slug.md
 - New dependency: `package-name` (if any were added)
 ```
 
-Keep it concise — minimal words to deliver the message. Focus on *why* over *how*. No technical implementation details.
+80 words maximum per entry. Focus on *why* over *how*. No technical implementation details.
 
 ### File organization notes
 

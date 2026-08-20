@@ -97,10 +97,9 @@ paths:
 
 ## Scannable and Terse
 
-- Completeness wins over brevity. Keep every caveat and every step, even when the text runs long.
-- Use the fewest words that carry the message, inside that limit.
-- Put the answer first. Reasoning comes after.
-- Break text with headings, bullets, and tables. 
+- Put the answer first. Headings, bullets, tables.
+- Brevity wins. Cut any sentence that does not change what the reader does. No recap, no restating the code.
+- Never drop a caveat, a step, or a number. Compress into clauses, not paragraphs.
 
 
 # COUNTS IN INSTRUCTIONS

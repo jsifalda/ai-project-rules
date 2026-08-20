@@ -85,7 +85,7 @@ Confirm to the user:
 - Never edit existing changelog files — always create a new one
 - One file per agent session (multiple related changes go in same file)
 - Focus on **why** over **how** — no technical implementation details
-- Keep it concise
+- 80 words maximum per entry
 
 ## References
 

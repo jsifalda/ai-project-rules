@@ -85,7 +85,8 @@ Resolved entries are never deleted. The entry is the record that the defect exis
   `README.md` or anywhere else. A second copy is a hand-maintained sync that loses, and the
   reader who finds the stale one trusts it.
 - **Bullets, not prose.** A status line, then bullets. No `###` subsections, no tables, no
-  paragraphs. Aim for 5-8 bullets. Past roughly 12 it is a plan, not a backlog entry.
+  paragraphs. Aim for 5-8 bullets, hard cap 120 words total. Past roughly 12 it is a plan, not a
+  backlog entry.
 - **Shorten the wording, never drop a number.** An entry nobody can defend with evidence is not
   worth keeping. Evidence is the last thing to cut, not the first.
 - **Content** is the problem, the evidence, the decisions already locked, and the traps. Not the

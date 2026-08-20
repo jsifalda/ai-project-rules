@@ -153,7 +153,9 @@ independent of work size. Full criteria live in the policy template.
 - The date prefix is permanent once an ADR lands — supersede a stale ADR with a new one, never
   re-date it, or inbound references break.
 - Never delete or rewrite an accepted ADR — supersede it with a new one and mark the old one.
-- Keep ADRs concise. Focus on **why** over how.
+- Budget: 250 words for the whole ADR file — a cap, not a target. Add 20 words per option past
+  three. Context 50 · Decision 70 · Options 20 each · Consequences 40 · Supersedes 15. Over the
+  cap, cut words, never a discarded option. Focus on **why** over how.
 - `ARCHITECTURE.md` holds only current state, derived from the ADRs — update it after an ADR
   changes a cross-cutting decision.
 - In a repo with existing code, ask before scaffolding the recap doc, and on yes populate

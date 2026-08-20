@@ -228,9 +228,10 @@ Cross-reference other entries by id, never by position.
 - `**Status:** resolved YYYY-MM-DD`
 
 **Body**: bullets under the status line. No subsections, no tables, no prose paragraphs. Aim for
-5-8 bullets, and past roughly 12 it is a plan rather than a backlog entry. Content is the
-problem, the evidence, the decisions already locked, and the traps. Not the implementation, so
-no line numbers, no function names, no code excerpts, because those rot and mislead.
+5-8 bullets, hard cap 120 words total, and past roughly 12 it is a plan rather than a backlog
+entry. Content is the problem, the evidence, the decisions already locked, and the traps. Not the
+implementation, so no line numbers, no function names, no code excerpts, because those rot and
+mislead.
 
 **Closing**: move the entry to `## Resolved` at the bottom of the same file, keep the id, swap
 the status line, and collapse the body to the problem plus what fixed it.

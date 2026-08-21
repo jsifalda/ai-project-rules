@@ -164,34 +164,27 @@ paths:
   bounds packages, not one binary) · `cargo test -- --test-threads 2`. Never leave it on the
   CPU-derived default.
 - **A per-process cap cannot see its neighbours.** Several worktrees or sessions on one machine →
-  serialize the runs with a machine-wide slot lock, not a bigger cap: `lockf` on macOS/BSD, `flock`
-  on Linux, keyed on the repo so unrelated projects are untouched. Wrap the test script itself, so
-  the rule is enforced rather than remembered. Leave a watch-mode script unwrapped — it never exits
-  and would hold the slot forever.
+  serialize with a machine-wide slot lock, not a bigger cap: `flock` on Linux, `lockf -k` on
+  macOS/BSD (`-k` orders the waiters). Key it on `git rev-parse --path-format=absolute
+  --git-common-dir` — the bare form is relative in the main worktree, so keys would differ per
+  worktree. Wrap the test script itself. Watch mode stays unwrapped: it never exits, so it would
+  hold the slot forever.
 
 ### Never wait real wall-clock
 
-- **A test never sleeps.** No real-time wait: no bare `setTimeout`, no polling loop, no waiting out
-  a production timeout in real time.
-- **Control the clock instead.** Vitest/Jest `vi.useFakeTimers()` / `jest.useFakeTimers()` with
-  `advanceTimersByTimeAsync(ms)` · Python `freezegun` or a monkeypatched clock · Go an injected
-  `Clock` interface, never `time.Sleep` · Rust an injected time source.
-- Pair the fake with cleanup in `afterEach` or a `finally` — else the next test inherits a frozen
-  clock.
-- **A raised per-test timeout is the tell.** `it(..., 30_000)` means the test waits. Fix the wait,
-  never raise the ceiling.
-- **The production timer must be fakeable.** A plain `setTimeout` is. `AbortSignal.timeout(ms)` is
-  NOT — Node implements it natively, below the JS timer the fake replaces. Wrap it in an
-  `AbortController` plus `setTimeout` so a test can control it.
-- **Can't fake it → inject the duration.** Give the code a parameter or an overridable constant so
-  a test can pass a small value. Never assert against the real production number by waiting for it.
-- **Why:** a sleeping test holds a worker for its whole duration. It burns no CPU, so it never
-  shows up as load — but it holds a slot, which under `### Concurrent test runs` above is pure
-  queue for every other run.
-- **A slow test is a floor, not a share.** A run never finishes before its slowest single file, so
-  one 20s test caps how fast the suite can ever go, whatever the core count. Removing it moves the
-  bound back to work ÷ workers, where more cores help again. Measured on one real project: 22.2s →
-  20.2s wall, a small number that hides the real win — the floor is gone.
+- **A test never sleeps.** No bare `setTimeout`, no polling loop, no waiting out a production
+  timeout in real time. It burns no CPU so it never reads as load, yet it holds a worker — pure
+  queue under `### Concurrent test runs`. And a run never beats its slowest file, so one slow test
+  floors the whole suite, whatever the core count.
+- **Control the clock.** Vitest/Jest `useFakeTimers()` + `advanceTimersByTimeAsync` (modern timers
+  only) · Python `freezegun` or an injected clock · Go and Rust an injected clock, never
+  `time.Sleep`. Restore it on teardown (`useRealTimers()` in `afterEach`), else the next test
+  inherits a frozen clock.
+- **Can't fake the timer → inject it.** A fake replaces the JS timer only, so a native deadline
+  (`AbortSignal.timeout`) stays real. Take the timer or its duration as a parameter — never assert
+  a production number by waiting for it.
+- **A raised per-test timeout is usually the tell.** `it(..., 30_000)` says the test waits — fix
+  the wait, never the ceiling.
 
 ### TDD 
 

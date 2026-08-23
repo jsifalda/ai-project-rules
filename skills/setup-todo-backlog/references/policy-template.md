@@ -48,6 +48,18 @@ is true:
   one.
 - It is a style, naming, or formatting preference.
 - It is a speculative worry with no evidence behind it.
+- **It is a decision, not a defect** — one you or the user just took deliberately. A decision
+  belongs where decisions live: an ADR, a code comment, the PR body. An entry implies unfinished
+  work, and a decision is finished work. A `decided, deferred` status on something nobody intends
+  to revisit is the tell.
+- **Its own body has to explain why nobody will act on it** — an architectural constraint, a
+  permanent trade-off, a fix ruled out on purpose. That is a design property, not a defect.
+  Document it at the code and stop.
+- **A code comment and a test already record it.** A third copy is the drift the one-home rule
+  exists to prevent, and the backlog is the copy that goes stale first.
+
+The test that catches the last three: **would somebody pick this up and do it?** If the entry has to
+argue that nobody will, it is not a backlog entry.
 
 Then honor the answer. The user's call is final, and a second objection is noise.
 

@@ -256,6 +256,13 @@ the status line, and collapse the body to the problem plus what fixed it.
 - **Closing stays evidence-gated, filing waits for a request.** Closing an entry already requires
   proof the defect no longer reproduces. Filing needs the user to ask. The two gates are
   different, and they never merge.
+- **Even when asked, three shapes are not backlog entries.** A decision just taken, by the agent or
+  by the user — that belongs in an ADR, a code comment or the PR body, because an entry implies
+  unfinished work. A limitation whose entry has to explain why the fix will never happen — that is
+  a design property, documented at the code. Something a code comment and a test already record —
+  a third copy, and the one that goes stale first. The test is whether somebody would pick it up
+  and do it. Push back once, then honor the answer. The full list is in
+  `references/policy-template.md`; keep the two in step.
 - **Never clobber an existing `## TODO / Known issues` policy section.** Always ask first.
 - **Never overwrite an existing backlog file.** Convert it or leave it, do not replace it.
 - **Dates come from git or from the user.** Never guess a date, and never quietly stamp today

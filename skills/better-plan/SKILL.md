@@ -107,15 +107,17 @@ Ship when **every one** of these holds:
 - No question is still outstanding to the user.
 - No finding or decision is sitting in the user's queue awaiting triage.
 
-All true → invoke the **ship-pr** skill. Pass it nothing. It reads the diff and
-derives the branch, commit message, and PR body on its own. Do not ask permission first —
+All true → invoke the **ship-pr** skill. Pass it nothing. It derives the branch, commit
+message, and PR body from the work this session did. Do not ask permission first —
 the Stage 4 approval covers the ship, and a second gate here just re-asks a settled
-question. Report ship-pr's own Phase 6 block verbatim and stop.
+question. Report ship-pr's own Phase 4 block verbatim and stop.
 
-If ship-pr aborts before Phase 6 — no `origin` remote, an unauthenticated `gh` or `glab`,
+If ship-pr aborts before Phase 4 — no `origin` remote, a missing `gh` or `glab`,
 an unsupported remote host, a suspected secret in the diff, a failing pre-commit hook —
-report its one-line reason and stop there. Do not route around it, and do not commit or
-push by hand instead. The work stays local and the user decides what to do next.
+report its one-line reason and stop there. When the abort carries tool output — a pre-commit
+hook or a push failure — pass that output through verbatim as well; ship-pr never swallows it,
+and neither do you. Do not route around it, and do not commit or push by hand instead. The work
+stays local and the user decides what to do next.
 
 Any one false → do not ship. Name the condition that blocked it in a single line, so the
 user can clear it and run `/ship-pr` themselves. A blocked ship is not a failed run.

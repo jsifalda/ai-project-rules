@@ -57,8 +57,9 @@ its nearest neighbor. Evidence always comes from the browser, never from reading
 ## blocked
 
 1. **Definition.** The scenario could not be reached. A missing fixture, an unconfigured
-   provider, a failed prerequisite scenario, a bucket that does not exist. The reason must be
-   named.
+   provider, a failed prerequisite scenario, a bucket that does not exist, a missing required
+   environment variable. The reason must be named. For a missing environment variable, name
+   the variable itself — not just "a variable is missing".
 2. **Decision test** (nearest neighbor: `fail`). Did something outside the behavior under
    test stop the run before it could observe an outcome? Yes → `blocked`, and name what
    stopped it. No, the run reached the behavior and it was wrong → `fail`.

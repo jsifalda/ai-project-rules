@@ -12,6 +12,36 @@
 - Commit: {{COMMIT}}
 - Dev server: {{DEV_SERVER_URL}}
 
+## Run preparation
+
+- Environment preflight: {{ENV_PREFLIGHT}}
+- Database target: {{DATABASE_TARGET}}
+- Reset: {{RESET_STATUS}}
+- Seed: {{SEED_STATUS}}
+- Playwright MCP: {{PLAYWRIGHT_MCP_STATUS}}
+- Phase 1 Discover: {{PHASE_1_STATUS}}
+- Phase 2 Select: {{PHASE_2_STATUS}}
+- Phase 3 Plan: {{PHASE_3_STATUS}}
+- Phase 4 Prepare: {{PHASE_4_STATUS}}
+- Phase 5 Execute: {{PHASE_5_STATUS}}
+- Phase 6 Judge: {{PHASE_6_STATUS}}
+- Phase 7 Report: {{PHASE_7_STATUS}}
+- Phase 8 Decide: {{PHASE_8_STATUS}}
+
+`{{ENV_PREFLIGHT}}` is the preflight's own report, the names of any missing required
+variables, or `no preflight in this project`.
+
+`{{DATABASE_TARGET}}` is the resolved host the run was allowed to write to.
+
+`{{RESET_STATUS}}` is `ran`, `declined — ran against whatever data was present`, or
+`failed (<what broke>)`.
+
+`{{SEED_STATUS}}` is `ran`, `did not run`, or `failed (<what broke>)`.
+
+`{{PLAYWRIGHT_MCP_STATUS}}` is `available`, or `skipped (<reason>)`.
+
+Each `{{PHASE_N_STATUS}}` is `passed`, `failed (<what broke>)`, or `skipped (<reason>)`.
+
 ## Coverage
 
 {{COVERAGE_LINE}}
@@ -30,12 +60,8 @@
 
 ## Verdict table
 
-| ID | Domain | Verdict | Note |
-| --- | --- | --- | --- |
-{{VERDICT_ROWS}}
-
-Each row of `{{VERDICT_ROWS}}` is one scenario, in this shape. Three example rows, covering
-three different verdicts, for the shape only:
+`{{VERDICT_ROWS}}` replaces the example rows below, one row per scenario, in the same shape.
+Three example rows, covering three different verdicts, for the shape only:
 
 | ID | Domain | Verdict | Note |
 | --- | --- | --- | --- |

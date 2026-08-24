@@ -1,10 +1,10 @@
 ---
-name: qa-user-scenarios
-description: Drive a project's documented user scenarios through a real browser with Playwright MCP, then report what actually broke. Reads whatever scenario inventory the repo keeps, sorts each scenario into browser-reachable or out of scope, writes a falsifiable test plan, resets and seeds the local database, drives each scenario serially against a dev server it starts itself, and judges every one as pass, fail, gap, drift or blocked with a screenshot as evidence. Reports the findings, then decides with the user what to do about each. Never auto-fixes, never files a backlog entry. Use when the user types /qa-user-scenarios, or asks to QA the documented scenarios, verify user scenarios in a browser, or hunt for bugs against the scenario inventory. Do NOT use for writing new end-to-end test files, a one-off browser check of a single change, creating or editing the scenario inventory itself, or running an existing test suite.
+name: verify-user-scenarios
+description: Drive a project's documented user scenarios through a real browser with Playwright MCP, then report what actually broke. Reads whatever scenario inventory the repo keeps, sorts each scenario into browser-reachable or out of scope, writes a falsifiable test plan, resets and seeds the local database, drives each scenario serially against a dev server it starts itself, and judges every one as pass, fail, gap, drift or blocked with a screenshot as evidence. Reports the findings, then decides with the user what to do about each. Never auto-fixes, never files a backlog entry. Use when the user types /verify-user-scenarios, or asks to QA the documented scenarios, verify user scenarios in a browser, or hunt for bugs against the scenario inventory. Do NOT use for writing new end-to-end test files, a one-off browser check of a single change, creating or editing the scenario inventory itself, or running an existing test suite.
 disable-model-invocation: true
 ---
 
-# QA User Scenarios — drive the documented scenarios through a real browser
+# Verify User Scenarios — drive the documented scenarios through a real browser
 
 Take the scenarios a project already documents, drive each one through a real browser, and report
 which ones the application does not actually honour. The output is a verdict per scenario with
@@ -98,7 +98,8 @@ Present the plan. Do not start the browser until it exists.
 
 ## Phase 4 — Prepare
 
-Run these five steps in this order. Each one aborts the run on failure.
+Run these five steps in this order. Step 0 records its failures and continues. Steps 1 to 4 abort
+the run on failure.
 
 **0. Check the environment first.** Where the project ships an environment preflight, run it and
 report what it says. Do not abort on a failure — record which variables are missing and carry that
@@ -112,13 +113,16 @@ resolved host in the abort message. This run destroys data, and it is the only i
 skill does, so the guard is not optional and has no override.
 
 **2. Reset and seed.** Say plainly, before running anything, that the run destroys the local
-development database. Then run the project's reset and seed commands. A project with no reset command
-runs against whatever is present — say so, because a pass on leftover data proves less.
+development database. That warning is not consent. Ask the user for an explicit yes immediately
+before the reset command runs, every time. On a yes, run the project's reset and seed commands. On
+anything else, run without the reset and record the choice in the report — a decline never stops
+the run. A project with no reset command runs against whatever is present — say so, because a pass
+on leftover data proves less.
 
-Ask before resetting when anything else is using that database — another development server, another
-checkout, a colleague's session. A reset takes their data with it. Where the user declines the reset,
-run without it and record the choice in the report. Then, before Phase 5, count the fixtures the
-selected scenarios depend on and state what you found. A scenario whose fixture is absent is
+Warn again when anything else is using that database — another development server, another
+checkout, a colleague's session. A reset takes their data with it, so name that consequence before
+you ask. Then, before Phase 5, count the fixtures the selected scenarios depend on and state what
+you found. A scenario whose fixture is absent is
 `blocked`, never `fail` — that distinction is the whole reason to look first.
 
 **3. Start the development server.** Start it yourself, in the background, and read the bound port
@@ -148,8 +152,12 @@ development, unsent mail is usually written to the server's own output, so harve
 link from the development server's stdout and open it. An administrator scenario may also need a
 grant command the project provides, run against the local database.
 
-**Save evidence.** One screenshot per scenario, into the Phase 1 evidence directory, named by
-scenario ID. Take it when the observable is visible, not before the interaction.
+**Save evidence.** One screenshot per scenario, into the Phase 1 evidence directory. The basename
+is the scenario ID reduced to a filesystem-safe slug — path separators and `..` removed, not
+escaped, because an ID the project spells with a separator writes outside the evidence directory.
+Where two reduced names collide, extend the second until it is unique, because every scenario
+keeps its own screenshot. Take the screenshot when the observable is visible, not before the
+interaction.
 
 **Write the evidence path in full, every time.** A screenshot filename with no directory is written
 relative to the working directory, which puts it in the repository root and dirties the tree. Pass
@@ -164,8 +172,11 @@ for one silently finds nothing.
 
 **A text match is a lead, not a finding.** Searching served markup for a name, an address or a
 telephone number will match advertising copy, other people's records and unrelated prose. Before
-reporting a leak, print the surrounding text and confirm whose data it is. A privacy finding reported
-from a bare match count is usually wrong, and it is the most expensive kind of wrong.
+reporting a leak, confirm ownership from stable DOM context — which record or which section the
+match sits in — and mask the matched value itself. The mask applies to the chat, to the report
+and to the receipt file, and only the minimum evidence needed to identify the leak is recorded.
+A privacy finding reported from a bare match count is usually wrong, and it is the most expensive
+kind of wrong.
 
 Report progress as you go. A long serial run that reports only at the end is indistinguishable from
 one that hung.
@@ -194,13 +205,17 @@ The full rubric, with worked examples of the `fail` against `gap` boundary and t
 
 ## Phase 7 — Report
 
-Three parts, in this order.
+Five parts, in the order the template lists them.
 
-1. **The verdict table.** One row per scenario — ID, domain, verdict, and a one-line note.
-2. **A detail block per non-pass**, carrying what was expected, what was observed, the path to the
-   evidence file, and a severity.
-3. **The coverage line** — how many scenarios ran, how many were out of scope, and the reason for
+1. **The run-preparation block.** What each Phase 4 step produced, and a status line per phase.
+2. **The coverage line** — how many scenarios ran, how many were out of scope, and the reason for
    each group. A report that omits this reads as a full sweep.
+3. **The verdict summary** — one count per verdict.
+4. **The verdict table.** One row per scenario — ID, domain, verdict, and a one-line note.
+5. **A detail block per non-pass**, carrying what was expected, what was observed, the path to the
+   evidence file, and a severity.
+
+The template's own `Decisions` section stays empty here. Phase 8 fills it.
 
 Write the report to the chat, and the same report to a receipt file in the evidence directory. The
 chat is what the user reads. The file is what survives the session.
@@ -230,7 +245,7 @@ Then act on the answers. A finding the user did not decide on stays open in the 
   user decides unprompted. Some projects forbid even the offer.
 - **Never auto-fix.** Fixes happen after Phase 8, as ordinary work. A QA run is not a substitute for
   the project's own gates, and a fix applied mid-run has been reviewed by nothing.
-- **Never run against a database the skill did not itself resolve to a local container.**
+- **Never run against a database the skill did not itself resolve to localhost or a local container.**
 - **Never adopt a development server this session did not start, and never assume its port.**
 - **Close the browser and stop the development server** on the failure path as well as the success
   path.
@@ -260,5 +275,6 @@ Then act on the answers. A finding the user did not decide on stays open in the 
 
 - [Verdicts](references/verdicts.md) — the five-verdict rubric, with a decision test and worked
   examples for each, and the boundaries between them.
-- [Report template](references/report-template.md) — the run-report shape, with `{{VERDICT_ROWS}}`,
-  `{{FINDING_BLOCKS}}` and `{{COVERAGE_LINE}}` placeholders.
+- [Report template](references/report-template.md) — the run-report shape, with the run-preparation
+  placeholders, one `{{PHASE_N_STATUS}}` per phase, and the `{{VERDICT_ROWS}}`, `{{FINDING_BLOCKS}}`
+  and `{{COVERAGE_LINE}}` placeholders.

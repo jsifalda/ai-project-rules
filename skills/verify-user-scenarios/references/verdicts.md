@@ -58,8 +58,14 @@ its nearest neighbor. Evidence always comes from the browser, never from reading
 
 1. **Definition.** The scenario could not be reached. A missing fixture, an unconfigured
    provider, a failed prerequisite scenario, a bucket that does not exist, a missing required
-   environment variable. The reason must be named. For a missing environment variable, name
-   the variable itself — not just "a variable is missing".
+   environment variable, or a workaround that was used to get past the obstacle and in doing
+   so closed the branch under test. The reason must be named. For a missing environment
+   variable, name the variable itself — not just "a variable is missing". For a workaround,
+   name the workaround itself — not just "a workaround was used". This last reason differs
+   from the others: they stop the run before it reaches the behavior. A workaround lets the
+   run continue while quietly removing the thing it was going to look at — a workaround that
+   alters account or fixture state can make a control structurally unrenderable, so the
+   control is not weakly covered, it is absent, and nothing on screen says so.
 2. **Decision test** (nearest neighbor: `fail`). Did something outside the behavior under
    test stop the run before it could observe an outcome? Yes → `blocked`, and name what
    stopped it. No, the run reached the behavior and it was wrong → `fail`.
@@ -82,3 +88,10 @@ its nearest neighbor. Evidence always comes from the browser, never from reading
 - "The code looks right" is never evidence. The verdict comes from what the browser did.
 - One verdict per scenario. A scenario that seems to deserve two is really two scenarios, and
   that is itself a `drift` finding against the inventory.
+- A surface a workaround stepped over blocks every scenario that depends on it, and the
+  workaround is named in the reason. Continuing past a bypassed surface is not the same as
+  observing it.
+- A control that was observed but never operated yields no verdict on what that control does.
+  Where the Then step describes what the control does rather than that it exists, an unoperated
+  control is `blocked`, never `pass` — nothing about a rendered control tells you it has a
+  handler attached.

@@ -53,7 +53,18 @@ project spells it. A project with no reset command changes Phase 4, so find out 
 **The evidence directory.** Prefer a directory the repository already ignores, such as
 `.playwright-mcp/`. Confirm the choice against `.gitignore` before writing into it.
 
-Report all four discoveries before the run starts. A wrong one poisons every later phase.
+**The environment.** Where the project ships an environment preflight, run it **here**, and record
+the name of every missing required variable. Where none exists, say so, and say that configuration
+gaps will therefore surface mid-run rather than up front.
+
+This is a discovery, not a preparation step, because a missing variable decides what can be tested
+at all — and Phase 2 needs that answer before it fixes a slice. A missing variable disables a
+feature silently while the interface still reports success, so an environment checked late turns a
+configuration gap into a false `fail` and spends the browser debugging the wrong layer. One run
+found its two missing variables ten minutes into Phase 5, as forensics on a flow that had quietly
+done nothing.
+
+Report all five discoveries before the run starts. A wrong one poisons every later phase.
 
 ## Phase 2 — Select
 
@@ -70,6 +81,12 @@ a browser against a local development environment.
 - Asserts a database constraint or a data-integrity rule with no user-visible surface.
 - Describes a background or scheduled job with no path a user can trigger.
 
+**A missing variable is a scope decision, not a mid-run surprise.** Take the list Phase 1 recorded,
+map each variable onto the scenarios that depend on it, and mark those `blocked` now, naming the
+variable. They still appear in the report; they are simply not driven. A run that meets the same
+gap in Phase 5 has already spent the browser on it, and its verdicts for that surface are about
+configuration rather than about the product.
+
 Apply the scope argument `$ARGUMENTS`. It is one of these.
 
 | Argument | Meaning |
@@ -82,8 +99,31 @@ Apply the scope argument `$ARGUMENTS`. It is one of these.
 An empty argument does not start an interview. Propose a slice, name the scenarios in it, and say how
 many there are. Ask the user exactly once, and only when the slice is genuinely ambiguous.
 
-Print three counts before continuing — selected, out of scope grouped by reason, and the total in the
-inventory. A run that silently drops scenarios reads as coverage it does not have.
+**This phase derives the slice. It never inherits one.** A list of IDs reaching you from anywhere
+other than `$ARGUMENTS` — a plan file, an earlier session, a menu answer, your own notes — is an
+input to the ranking below, never its output. A run once took twenty IDs from a plan file that
+itself said the Select phase would re-derive them; it did not, and the one scenario naming the
+defect that run was about was dropped along with eighty-eight others, silently.
+
+**Build the proposed slice by risk, not by spread.** An even sample across domains looks like
+coverage and is the least informative slice available, because it re-tests what is already best
+tested. Rank the browser-reachable scenarios and take from the top.
+
+1. The verification pointer is `TODO`. Nothing anywhere asserts this scenario, so the browser is
+   its only possible evidence.
+2. The pointer names a test that runs without a browser — a component mounted into a simulated DOM,
+   a unit test over mocks. Open it and read what it asserts. A pointer resolving to assertions loose
+   enough to pass on a wrong value is coverage in name only, and it is the cheapest thing to check
+   after a `TODO`. Reading a test to **rank** it is not awarding a verdict from code; the hard rule
+   below governs verdicts, and nothing here awards one.
+3. The scenario crosses a boundary a mocked test cannot reach — a redirect, a generated link, a
+   mail, a payment, a role change, a page a crawler sees.
+4. Everything else.
+
+Print the counts before continuing — selected and total **per domain**, then the inventory total.
+Name every domain with nothing selected. Every scenario left out carries its own stated reason, and
+`not selected` is not a reason. A run that silently drops scenarios reads as coverage it does not
+have.
 
 ## Phase 3 — Plan
 
@@ -94,18 +134,23 @@ Record five fields per selected scenario — the scenario ID, the route to load,
 (signed out, signed in as which account type, or which seeded fixture is needed), the interaction to
 drive, and the single observable that decides the verdict.
 
-Present the plan. Do not start the browser until it exists.
+**The plan is an artefact, not an assertion.** Print all five fields for all selected scenarios,
+in full, and do not open the browser until that text exists in the transcript. "Test plan built" is
+not a test plan, and a run that says it improvises instead — which is the exact failure this phase
+was written to prevent, because an improvised run then rationalises whatever the browser happened to
+show. One run's entire Phase 3 was that sentence; nine seconds later the browser opened, and nothing
+had written down the interaction to drive for a single scenario. The report carries this text
+verbatim, so a phase skipped here is visible there.
 
 ## Phase 4 — Prepare
 
 Run these five steps in this order. Step 0 records its failures and continues. Steps 1 to 4 abort
 the run on failure.
 
-**0. Check the environment first.** Where the project ships an environment preflight, run it and
-report what it says. Do not abort on a failure — record which variables are missing and carry that
-list into Phase 6. A missing variable disables a feature silently while the interface still reports
-success, so an unchecked environment turns configuration gaps into false `fail` verdicts and burns
-the run on debugging the wrong layer. Where no preflight exists, say so.
+**0. The environment was already checked.** Phase 1 ran the preflight and Phase 2 blocked the
+scenarios the missing variables reach. Re-run it only if something has touched the environment
+since — a checkout, an install, an edited env file. Carry the list into the report either way, and
+where Phase 1 found no preflight, say so again here.
 
 **1. Guard the database.** Resolve the database URL the application will actually use, the same way
 the application resolves it. Abort unless it resolves to localhost or a local container. Name the
@@ -146,11 +191,37 @@ contend for the one browser and corrupt each other's session state.
 route, perform the When, and then read what changed. A screenshot of a page that was never used is not
 evidence about a scenario.
 
+**Presence is not function.** A control the Then step says **does** something is operated, never
+merely observed. `pass` on "the control is there" is available only when the Then step says
+*there*. Nothing about a rendered control tells you it has a handler attached, and one wired to
+nothing looks exactly like one that works. Count your own clicks against the scenarios whose Then
+step describes an action before judging any of them — a run whose whole record holds one click has
+driven nothing. One run saw a resend button, screenshotted it, and scored a pass on its presence.
+The button had no handler at all.
+
 **Reach the signed-in scenarios.** Seeded fixtures often carry no credentials at all, so signing in as
 a seeded account can be impossible. Register a fresh account through the user interface instead. In
 development, unsent mail is usually written to the server's own output, so harvest the verification
 link from the development server's stdout and open it. An administrator scenario may also need a
 grant command the project provides, run against the local database.
+
+**Every workaround is recorded, and it blocks what it bypassed.** Reaching a scenario sometimes
+needs a step the product does not offer — marking an account verified straight in the database,
+granting a role, seeding a row by hand. That stays allowed; it is often the only reason those
+scenarios are reachable. What is forbidden is letting the workaround disappear. Record four things
+before continuing: what was bypassed, what was done instead, which surface therefore went
+unobserved, and **which interface branches the change closed.**
+
+The fourth is the one runs forget. A workaround that alters account or fixture state does not merely
+leave a surface untested — it can make a control structurally unrenderable for the rest of the run,
+so the control is not weakly covered, it is absent, and nothing on screen says so. Mark every
+selected scenario depending on that surface `blocked`, naming the workaround: no evidence is not
+agreement.
+
+It has happened. A run whose local mail was unconfigured marked its account verified directly in the
+database, which flipped the very condition guarding the branch holding the defect the run existed to
+find. Twenty scenarios, sixteen passes, and nothing in the report said the surface had been walked
+around.
 
 **Save evidence.** One screenshot per scenario, into the Phase 1 evidence directory. The basename
 is the scenario ID reduced to a filesystem-safe slug — path separators and `..` removed, not
@@ -178,6 +249,28 @@ and to the receipt file, and only the minimum evidence needed to identify the le
 A privacy finding reported from a bare match count is usually wrong, and it is the most expensive
 kind of wrong.
 
+**Follow every URL the application itself hands a user.** An inventory records what a person sets
+out to do, never where the application sends them afterwards — so a link the product generates is
+asserted by nothing, and one that leads nowhere is invisible to every scenario and to every mocked
+test of the client that produced it. Collect these as the run proceeds, then follow each once at the
+end, in the same browser session:
+
+- the destination of every navigation control on a page the run loaded;
+- the target of every redirect observed, including the one after a form submission;
+- every link harvested from the server's output or a local mail capture, **and the callback each one
+  carries**;
+- any URL the run had to construct to reach a scenario, before it constructed it.
+
+A destination that renders the project's not-found page is a finding. Report these **outside** the
+verdict table — they belong to no scenario, and forcing one in invents a scenario the inventory does
+not have.
+
+Two traps. A generated link is not the control that triggered it: a confirmation mail's callback and
+the button that requested it can disagree, and only the button is on screen, so read the callback out
+of the URL actually generated. And same-origin is not the same as resolvable: a framework will
+happily redirect to a path of its own with no page behind it, and the origin check passes because
+the path is relative. Load it.
+
 Report progress as you go. A long serial run that reports only at the end is indistinguishable from
 one that hung.
 
@@ -203,26 +296,50 @@ Two rules decide the hard cases.
 The full rubric, with worked examples of the `fail` against `gap` boundary and the `drift` against
 `fail` boundary, is in [references/verdicts.md](references/verdicts.md).
 
-## Phase 7 — Report
+## Phase 7 — Self-audit
 
-Five parts, in the order the template lists them.
+Before the report is written, walk the hard rules against this run's own record and mark each one
+honoured, violated or not applicable, with the proof beside it. The checklist and what counts as
+proof for each rule are in [references/self-audit.md](references/self-audit.md).
 
-1. **The run-preparation block.** What each Phase 4 step produced, and a status line per phase.
-2. **The coverage line** — how many scenarios ran, how many were out of scope, and the reason for
-   each group. A report that omits this reads as a full sweep.
+A violated rule is **reported**, never quietly corrected. Rewriting the run to hide the violation
+destroys the only evidence that the rule needs strengthening, and a run that quietly repairs itself
+is a run nobody can audit.
+
+This phase exists because the rules were never the missing part. Every gate in this skill is prose,
+and prose that is skipped leaves no trace — one run skipped Select and Plan outright, drove one
+control across twenty scenarios, and still produced a report that read clean. The audit is what
+turns a skipped rule into a line somebody can see.
+
+## Phase 8 — Report
+
+Eight parts, in the order the template lists them.
+
+1. **The run-preparation block.** What each Phase 4 step produced, a status line per phase, and the
+   Phase 3 test plan in full — or `not written`, which is itself the finding.
+2. **The coverage line** — selected and total per domain, the inventory total, and a stated reason
+   against every scenario left out. A report that omits this reads as a full sweep.
 3. **The verdict summary** — one count per verdict.
-4. **The verdict table.** One row per scenario — ID, domain, verdict, and a one-line note.
+4. **The verdict table.** One row per scenario — ID, domain, verdict, a one-line note, and the
+   evidence path or `none`.
 5. **A detail block per non-pass**, carrying what was expected, what was observed, the path to the
    evidence file, and a severity.
+6. **Workarounds and surfaces not observed** — one block per workaround, or `none`.
+7. **Links the application emitted** — what was followed and what rendered.
+8. **The hard-rule self-audit** from Phase 7.
 
-The template's own `Decisions` section stays empty here. Phase 8 fills it.
+Parts 2, 4, 6, 7 and 8 are the checkable half of this skill. Each one has a field that a skipped
+phase cannot fill, which is the only reason a skipped phase becomes visible at all. Leave a field
+empty and say why; never omit the part.
+
+The template's own `Decisions` section stays empty here. Phase 9 fills it.
 
 Write the report to the chat, and the same report to a receipt file in the evidence directory. The
 chat is what the user reads. The file is what survives the session.
 
 The exact shape is in [references/report-template.md](references/report-template.md).
 
-## Phase 8 — Decide
+## Phase 9 — Decide
 
 Put the findings to the user. Offer four options for each.
 
@@ -243,7 +360,7 @@ Then act on the answers. A finding the user did not decide on stays open in the 
   edit. A tool that judges a document and rewrites it is trusted on neither.
 - **Never file a backlog or issue entry, and never offer to.** Findings go in the report, and the
   user decides unprompted. Some projects forbid even the offer.
-- **Never auto-fix.** Fixes happen after Phase 8, as ordinary work. A QA run is not a substitute for
+- **Never auto-fix.** Fixes happen after Phase 9, as ordinary work. A QA run is not a substitute for
   the project's own gates, and a fix applied mid-run has been reviewed by nothing.
 - **Never run against a database the skill did not itself resolve to localhost or a local container.**
 - **Never adopt a development server this session did not start, and never assume its port.**
@@ -251,7 +368,18 @@ Then act on the answers. A finding the user did not decide on stays open in the 
   path.
 - **Never mark a phase silently skipped.** Report `passed`, `failed (what broke)`, or
   `skipped (reason)` for each phase. A gate that reads as enforced and is not is worse than no gate.
-- **Never report a verdict without evidence.** A screenshot is falsifiable. A claim is not.
+- **Never report a verdict without evidence.** A screenshot is falsifiable. A claim is not. The
+  verdict table carries the evidence path per row, so a verdict with nothing behind it shows as an
+  empty cell rather than as a pass.
+- **Never inherit a slice.** Phase 2 derives what runs, from the inventory, every time. A list of
+  IDs arriving from anywhere else is an input to ranking, never a substitute for it.
+- **Never leave a workaround unrecorded**, and never leave the surface it bypassed unblocked. Name
+  the interface branches it closed, because a closed branch is not weak coverage, it is an absent
+  control.
+- **Never award a `pass` from a control's presence** when its Then step describes what the control
+  does. Operate it.
+- **Never end a run without following the URLs the application itself emitted.** They belong to no
+  scenario, so nothing else in this skill will ever look at them.
 
 ## Failure modes (abort with a one-line reason)
 
@@ -276,5 +404,8 @@ Then act on the answers. A finding the user did not decide on stays open in the 
 - [Verdicts](references/verdicts.md) — the five-verdict rubric, with a decision test and worked
   examples for each, and the boundaries between them.
 - [Report template](references/report-template.md) — the run-report shape, with the run-preparation
-  placeholders, one `{{PHASE_N_STATUS}}` per phase, and the `{{VERDICT_ROWS}}`, `{{FINDING_BLOCKS}}`
-  and `{{COVERAGE_LINE}}` placeholders.
+  placeholders, one `{{PHASE_N_STATUS}}` per phase, and the `{{TEST_PLAN}}`, `{{VERDICT_ROWS}}`,
+  `{{FINDING_BLOCKS}}`, `{{COVERAGE_LINE}}`, `{{WORKAROUND_BLOCKS}}`, `{{EMITTED_LINK_ROWS}}` and
+  `{{SELF_AUDIT_ROWS}}` placeholders.
+- [Self-audit](references/self-audit.md) — one checklist row per hard rule, each with the question
+  that decides it and what counts as proof from the run's own record.

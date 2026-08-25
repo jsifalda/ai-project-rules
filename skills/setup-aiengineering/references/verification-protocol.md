@@ -26,8 +26,8 @@ kept or dropped, it also has a dormant state:
 |------|-------|--------|----|------|--------------|
 | Lint `{{LINT_CMD}}` | `<pm> run lint` (lint script) or `<pm> exec eslint .` | `ruff check .` / `flake8` | `go vet ./...` / `golangci-lint run` | `cargo clippy` | `hadolint <Dockerfile>`, `yamllint .`, `shellcheck <scripts>`, `terraform fmt -check` / `tflint` — only if the tool is on PATH |
 | Typecheck `{{TYPECHECK_CMD}}` | `<pm> exec tsc --noEmit` (needs `tsconfig.json`) | `mypy .` (if configured) | — | — | — |
-| Test `{{TEST_CMD}}` | `<pm> test` / `<pm> exec vitest run` | `pytest` | `go test ./...` | `cargo test` | — |
-| Coverage `{{COVERAGE_CMD}}` | `<pm> exec vitest run --coverage` (or `jest --coverage`) with the threshold set in config (`coverage.thresholds` / `coverageThreshold`) — the runner enforces `{{COVERAGE_THRESHOLD}}` | `pytest --cov --cov-fail-under={{COVERAGE_THRESHOLD}}` | `go test -coverprofile=coverage.out ./...` then a threshold check on the total (e.g. `go tool cover -func=coverage.out`, fail if total < `{{COVERAGE_THRESHOLD}}`) | `cargo llvm-cov --fail-under-lines {{COVERAGE_THRESHOLD}}` (or `cargo tarpaulin --fail-under {{COVERAGE_THRESHOLD}}`) | — |
+| Test `{{TEST_CMD}}` (subsumed by Coverage below — run Coverage once for both) | `<pm> test` / `<pm> exec vitest run` | `pytest` | `go test ./...` | `cargo test` | — |
+| Coverage `{{COVERAGE_CMD}}` (subsumes Test — run once, read both assertions from it) | `<pm> exec vitest run --coverage` (or `<pm> exec jest --coverage`) with the threshold set in config (`coverage.thresholds` / `coverageThreshold`) — the runner enforces `{{COVERAGE_THRESHOLD}}` | `pytest --cov --cov-fail-under={{COVERAGE_THRESHOLD}}` | `go test -coverprofile=coverage.out ./...` then a threshold check on the total (e.g. `go tool cover -func=coverage.out`, fail if total < `{{COVERAGE_THRESHOLD}}`) | `cargo llvm-cov --fail-under-lines {{COVERAGE_THRESHOLD}}` (or `cargo tarpaulin --fail-under {{COVERAGE_THRESHOLD}}`) | — |
 
 - `<pm>` = detected package manager: `pnpm` (`pnpm-lock.yaml`), `yarn` (`yarn.lock`), `npm`
   (`package-lock.json`). Default `npm` if a `package.json` exists with no lockfile.
@@ -36,6 +36,43 @@ kept or dropped, it also has a dormant state:
 - `{{COVERAGE_THRESHOLD}}` defaults to `90` and is user-adjustable at setup time. A repo's current
   real coverage may sit below it — the gate is aspirational for future changes, so the user may pick
   a lower starting number and raise it later.
+- **`{{COVERAGE_CMD}}` subsumes `{{TEST_CMD}}` on every stack in this table.** The coverage command
+  runs the same tests as the bare test command and adds the threshold check on top. Run
+  `{{COVERAGE_CMD}}` once per change. Read both assertions from that one run — zero test failures,
+  and the coverage threshold. Do not also run `{{TEST_CMD}}` on its own.
+  A coverage run costs a fraction more than a bare test run, not double. A second bare run after it
+  costs time and checks nothing new.
+- **Derive `{{COVERAGE_CMD}}` from the test script, do not write a parallel command.** The
+  subsumption holds only when both commands run the same tests. A `<pm> test` script can carry
+  config, projects, environments, or filters that a hand-built `<pm> exec … --coverage` bypasses.
+  Add the coverage flag to the configured test command. When you cannot, wire both commands and
+  record why in the project's own agent instructions.
+- **Exception** — the subsumption above holds only when the coverage tool does not change the
+  tests' own behavior. A provider that rewrites the code under test, such as Istanbul-style
+  instrumentation, still runs the same tests, so it stays safe to merge. A project with real
+  evidence that instrumentation changes test behavior runs both commands. That project records why
+  in its own agent instructions.
+- **Degraded form of the Tests and coverage gate — test framework on disk, no coverage tool
+  wired.** Inject the bullet below in place of the full **Tests and coverage** bullet, and
+  substitute neither coverage placeholder. Restore the full bullet once a coverage tool lands.
+
+  > - **Tests** — run `{{TEST_CMD}}` once. It must report zero test failures. Read the printed test
+  >   counts. Do not read the absence of the word "failed" as a pass — a run that executes nothing
+  >   also shows no failures. Read the command's own exit status, not a pipe's. A downstream `grep`
+  >   or filter can report success for a run that failed.
+  >
+  >   Every new production module or feature gets a co-located test file. A feature added inside an
+  >   existing module counts: new behavior needs new tests, wherever it lands. Tests must cover (1)
+  >   the main business goal, (2) the main user flow, and (3) error/edge cases (failure paths,
+  >   empty/invalid inputs). Updating existing mocks is necessary but **not** sufficient — new logic
+  >   needs dedicated tests. Exempt: pure type-only files, generated code, trivial re-exports,
+  >   config.
+  >
+  >   This repo has no coverage tool wired, so this gate carries no coverage threshold. Adopt one to
+  >   restore that half.
+
+  The **Regression test for bug fixes** gate is unchanged in this state — it stays enforced, and its
+  sentence about the coverage-threshold assertion is dropped along with the threshold.
 - **No lint/typecheck/test tool at all** → inject the **Code review** and **Docs & instructions
   alignment** gates plus the "no automated gates found" note at the bottom, and tell the user. Note
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
@@ -69,24 +106,38 @@ says otherwise.
 - **Typecheck** — `{{TYPECHECK_CMD}}` must exit with **zero errors total**. "Pre-existing" errors
   do not get a pass: if the typechecker reports errors — even in files you did not touch — fix them
   before proceeding. A green typecheck is a gate, not a suggestion.
-- **Tests** — `{{TEST_CMD}}` must show zero failures.
-- **Test coverage for new code** — every new production module or feature gets a co-located test
-  file. A feature added inside an existing module counts: new behavior needs new tests, wherever it
-  lands. Tests must cover (1) the main business goal, (2) the main user flow, and (3) error/edge
-  cases (failure paths, empty/invalid inputs). Updating existing mocks is necessary but **not**
-  sufficient — new logic needs dedicated tests. Exempt: pure type-only files, generated code,
-  trivial re-exports, config. On top of that, overall repository coverage must stay at or above
-  `{{COVERAGE_THRESHOLD}}%` — run `{{COVERAGE_CMD}}`, which fails the build itself when the total
-  drops below the threshold. New tests for new code are necessary but not sufficient either: if the
-  run reports the overall percentage under `{{COVERAGE_THRESHOLD}}%`, the gate fails and more tests
-  are needed before proceeding.
+- **Tests and coverage** — run `{{COVERAGE_CMD}}` once. This one run carries the assertions below.
+  Both must pass:
+  - **Zero test failures.** Read the printed test counts. Do not read the absence of the word
+    "failed" as a pass — a run that executes nothing also shows no failures. Read the command's own
+    exit status, not a pipe's. A downstream `grep` or filter can report success for a run that
+    failed.
+  - **The coverage threshold.** Overall repository coverage must stay at or above
+    `{{COVERAGE_THRESHOLD}}%`. `{{COVERAGE_CMD}}` fails the build itself when the total drops below
+    the threshold.
+
+  `{{COVERAGE_CMD}}` runs the same tests as `{{TEST_CMD}}` and adds the threshold check. One run
+  covers both assertions, so do not also run `{{TEST_CMD}}` on its own. Coverage does not replace
+  the test gate. It is the test gate plus one more check, both read from a single run. Run both
+  commands only where this repo's own agent instructions record the reason — a coverage command that
+  does not run the same tests as `{{TEST_CMD}}`, or instrumentation that changes how the tests
+  behave.
+
+
+  Every new production module or feature gets a co-located test file. A feature added inside an
+  existing module counts: new behavior needs new tests, wherever it lands. Tests must cover (1) the
+  main business goal, (2) the main user flow, and (3) error/edge cases (failure paths, empty/invalid
+  inputs). Updating existing mocks is necessary but **not** sufficient — new logic needs dedicated
+  tests. Exempt: pure type-only files, generated code, trivial re-exports, config. New tests for new
+  code are necessary but not sufficient either: if the run reports the overall percentage under
+  `{{COVERAGE_THRESHOLD}}%`, the gate fails and more tests are needed before proceeding.
 - **Regression test for bug fixes** — every bug fix ships a test that **fails before the fix and
   passes after**. Test-first: write the failing test, watch it fail for the right reason, then fix
   the bug and watch it pass. No test, no fix — a fix without a reproducing test does not clear this
   gate. Exempt, and only these: typos in copy, build/CI config, dependency bumps, pure formatting.
-  This gate is not covered by the **Test coverage for new code** percentage — a bug fixed on an
-  already-covered line does not move the coverage number, so `{{COVERAGE_CMD}}` cannot detect a
-  missing regression test. Coverage measures executed lines, not asserted behavior.
+  This gate is not covered by the **Tests and coverage** gate's coverage-threshold assertion — a
+  bug fixed on an already-covered line does not move the coverage number, so `{{COVERAGE_CMD}}`
+  cannot detect a missing regression test. Coverage measures executed lines, not asserted behavior.
 - **Code review** — **Exempt:** an integration-only session — a merge, rebase, cherry-pick, or
   revert of already-reviewed work that authored no new lines — skips this gate and only this gate;
   every other gate still runs. Writing one line neither side had voids it. Report the skip with the
@@ -108,8 +159,8 @@ says otherwise.
     subagent that runs it on this session's diff (Claude Code: `Task`/`Agent` tool → a subagent
     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
     maintainability "code judo" only — NOT correctness, security, tests, or lint (the
-    **Harness-native code review** lens and the **Lint**, **Typecheck**, **Tests**, **Test coverage
-    for new code**, and **Regression test for bug fixes** gates cover those). This lens is exempt
+    **Harness-native code review** lens and the **Lint**, **Typecheck**, **Tests and coverage**, and
+    **Regression test for bug fixes** gates cover those). This lens is exempt
     from the triage step below, because it proposes structural rewrites and not defects. Each finding
     is a proposal, and each one is larger than the change under review. Surface its findings for the
     user; never apply one on your own. If the skill isn't available, **tell the user and skip the
@@ -188,9 +239,11 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 
 **Note for skill user**: Substitute `{{LINT_CMD}}`, `{{TYPECHECK_CMD}}`, `{{TEST_CMD}}`,
 `{{COVERAGE_CMD}}`, `{{COVERAGE_THRESHOLD}}`, `{{DEFAULT_BRANCH}}` from detection. Drop any gate whose
-tool is absent. The quantitative coverage requirement in the **Test coverage for new code** gate is
-dropped alongside the test gate when no test framework/coverage tool exists — a repo with no tests
-has no coverage number to gate on. The **Regression test for bug fixes** gate degrades on its own
+tool is absent. The **Tests and coverage** gate drops in full when no test framework exists at all —
+a repo with no tests has nothing to run and no coverage number to gate on. When a test framework
+exists but no coverage tool is chosen yet, inject the gate's **degraded form** from the stack
+detection section above — zero failures only, run via `{{TEST_CMD}}` alone. The **Regression
+test for bug fixes** gate degrades on its own
 path, not with the test gate: **enforced** in a source repo with a test framework; **kept
 as dormant, unenforced prose** in a source repo without one (it sets the intent and pairs with the
 `references/test-setup.md` offer, and since it carries no command there is nothing empty or guessed

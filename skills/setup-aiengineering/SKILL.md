@@ -155,13 +155,19 @@ For each chosen inject module (verification, git policy, file organization, writ
      they are right. Optionally dry-run the fast, non-mutating gates (lint, typecheck) to catch a bad
      command — **never auto-run the test or coverage command** during setup. Drop or flag any command
      that errors.
-   - **Coverage gate (source repos).** Substitute `{{COVERAGE_CMD}}` and `{{COVERAGE_THRESHOLD}}`
-     alongside the lint/typecheck/test placeholders. Prompt the user to confirm or adjust the
-     threshold (**default 90**) and echo the resolved coverage command for confirmation like the
-     others — a repo's current coverage may be below the threshold, that is fine. Then branch:
-     - **Source repo WITH a test framework** → wire `{{COVERAGE_CMD}}` + `{{COVERAGE_THRESHOLD}}`
-       (the runner's fail-under mechanism, scope = overall repository %) into the injected
-       verification block.
+   - **Coverage gate (source repos).** Branch first — substitute `{{COVERAGE_CMD}}` and
+     `{{COVERAGE_THRESHOLD}}` only on a branch that wires them. Where they are wired, prompt the user
+     to confirm or adjust the threshold (**default 90**) and echo the resolved coverage command for
+     confirmation like the others — a repo's current coverage may be below the threshold, that is
+     fine.
+     - **Source repo WITH a test framework and a coverage tool** → wire `{{COVERAGE_CMD}}` +
+       `{{COVERAGE_THRESHOLD}}` (the runner's fail-under mechanism, scope = overall repository %)
+       into the injected verification block.
+     - **Source repo WITH a test framework but no coverage tool** → offer to wire one, under the
+       same no-install rule as `references/test-setup.md` (emit the install command, never run it).
+       If the user declines, inject the gate's **degraded form** from
+       `references/verification-protocol.md` — zero failures only, run via `{{TEST_CMD}}` — and
+       substitute neither coverage placeholder.
      - **Source repo WITHOUT a test framework** → follow `references/test-setup.md`: ask the user
        which runner + coverage tool to adopt, scaffold minimal config (**confirm before writing**),
        emit the install command for the user to run (**never install**), then wire `{{COVERAGE_CMD}}`
@@ -332,8 +338,9 @@ Confirm in one short message:
   lint/typecheck/test commands were confirmed with the user.
 - **Security review** lens: injected, or skipped (user opted out).
 - Coverage gate: whether it was wired (with the chosen `{{COVERAGE_THRESHOLD}}` and `{{COVERAGE_CMD}}`),
-  or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that it was
-  N/A (config/no-source repo).
+  or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that a
+  coverage tool was offered and declined (gate kept, zero-failures half only, via `{{TEST_CMD}}`),
+  or that it was N/A (config/no-source repo).
 - Regression gate: enforced, kept as dormant prose (source repo, no test framework), or N/A
   (config/no-source repo).
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
@@ -414,7 +421,9 @@ only; the user runs it.
 - Inject into the project's existing agent file (first match: `AGENTS.md` → root `CLAUDE.md` →
   `.claude/CLAUDE.md`). If none, create `AGENTS.md` and symlink `CLAUDE.md → AGENTS.md`. Never
   overwrite a real `CLAUDE.md` with a symlink.
-- Never inject an empty or guessed command — drop the gate instead. Confirm the detected
+- Never inject an empty or guessed command — drop the gate instead. One exception: the coverage
+  half of the **Tests and coverage** gate, which has a written degraded form in
+  `references/verification-protocol.md` — inject that rather than dropping the whole gate. Confirm the detected
   lint/typecheck/test/coverage commands with the user before they ship into a mandatory gate; never
   auto-run the test or coverage command during setup.
 - Coverage threshold is user-adjustable (default 90) and enforced overall via the runner's fail-under

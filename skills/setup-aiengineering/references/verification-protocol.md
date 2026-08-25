@@ -200,13 +200,14 @@ says otherwise.
       public interface without approval.
     - **Ambiguous** → ask. A rejection needs a reason you can state. With no reason either way, the
       finding is not rejected.
-    - Fix in severity order, highest first. Then re-run the lint, typecheck, and test gates this repo
-      has.
+    - Fix in severity order, highest first. Then re-run the gates this fix could break.
     - Report every finding with its verdict — `fixed`, `rejected (reason)`, or `waiting on you`.
       State a rejected or deferred finding as a plain finding in the report. Never collect one into a
       queue, and never offer to file it as a tracked entry.
-  - **Re-review budget** — at most one extra `cr review` after the fixes; further loops need user
-    approval (each costs credits).
+  - **The review runs once per task.** Every lens runs one time, on one tree. After the fixes
+    land, re-run only the deterministic gates the fix could break — never a lens, and never this
+    gate. A finding that would need a review of the fix to surface is reported to the user, not
+    chased with another pass. A fix you are not confident in is reported instead of applied.
 - **Docs & instructions alignment** — before marking the task done, check whether this session's
   changes made any documentation stale:
   - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale

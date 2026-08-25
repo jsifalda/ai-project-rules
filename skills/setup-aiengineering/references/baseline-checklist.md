@@ -20,7 +20,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Stack detection (package manager, lint/typecheck/test, default branch) | detect | 2 | v1 |
 | Backfill grounded body for working repos (opt-in) | scaffold | 3 | v1 |
 | Verification protocol (lint, typecheck, test, coverage) | inject | 5 | v1 |
-| Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt | inject | 5 | v2 |
+| Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt, or a coverage-tool offer where a framework already exists | inject | 5 | v2 |
 | Regression test for bug fixes (test-first, degrades by repo type) | inject | 5 | v5 |
 | Code review lens — harness-native | inject | 5 | v1 |
 | Code review lens — CodeRabbit CLI | inject | 5 | v1 |

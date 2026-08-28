@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v12**
+**Skill version: v13**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -17,8 +17,10 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Concern | Delivery | Step | Since |
 |---------|----------|------|-------|
 | Agent instructions file (`AGENTS.md` + `CLAUDE.md` symlink) | scaffold | 1 | v1 |
+| Agent-instructions scope rule — directives and read-first pointers only, documentation lives in `README.md` / `ARCHITECTURE.md` / `docs/adr/` | inject | 1 | v13 |
+| Re-run scans the agent file for documentation sections and offers to relocate them | behaviour | 1 | v13 |
 | Stack detection (package manager, lint/typecheck/test, default branch) | detect | 2 | v1 |
-| Backfill grounded body for working repos (opt-in) | scaffold | 3 | v1 |
+| Backfill grounded project docs for working repos, into `README.md` / `ARCHITECTURE.md` (opt-in) | scaffold | 3 | v1 |
 | Verification protocol (lint, typecheck, test, coverage) | inject | 5 | v1 |
 | Coverage threshold gate (overall ≥90%, adjustable) + test-framework setup prompt, or a coverage-tool offer where a framework already exists | inject | 5 | v2 |
 | Regression test for bug fixes (test-first, degrades by repo type) | inject | 5 | v5 |

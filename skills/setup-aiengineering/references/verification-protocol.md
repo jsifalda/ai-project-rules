@@ -214,6 +214,18 @@ says otherwise.
     docs are part of the change, like a failing test: update them now and list what was updated.
   - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
     updated wording and **ask the user** before applying. Never silently edit instruction files.
+  - **Scope check on the agent instructions.** When this session added anything to that file,
+    confirm every added line is a directive or a read-first pointer, per the scope block at the top
+    of it. Imperative wording is not enough — a body of project knowledge does not belong there
+    however it is phrased. Anything that fails the check belongs in its owning document
+    (`README.md` / `ARCHITECTURE.md` / `docs/adr/`, per the scope block's own table and its
+    fallbacks). **The bullet above governs the move:** draft the relocation — what moves, to which
+    file, and the pointer left behind — and **ask the user** before applying it. Never cut content
+    out of an instruction file on your own. Report the check every time — `passed`, `moved (<what,
+    to where>)`, or `declined (<what the user kept>)`.
+    **This check overrides the markdown-only exemption above.** A session that touches only `*.md`
+    is exactly how documentation reaches an instructions file, so the check runs whenever this
+    session changed the agent instructions, whether or not it changed code.
   - Nothing stale → say so explicitly in one line; do not invent updates.
 - **User scenarios in sync** — every user-visible change ships a matching scenario in the BDD
   scenario doc named by the `## User Scenarios` section of these instructions. A change is
@@ -227,7 +239,8 @@ says otherwise.
   redundant scenario costs less than a coverage hole.
 - **Backlog sweep** — run the close-only sweep described in the `## TODO / Known issues`
   section of the agent instructions: close the entries this session solved. **This gate overrides
-  the markdown-only exemption above — it is the one gate that survives it.** A docs-only change can
+  the markdown-only exemption above — it is one of the two checks that survive it, alongside the
+  docs-alignment scope check on the agent instructions.** A docs-only change can
   close a docs-only entry, so the sweep runs on every substantive session, whether or not the
   session touched code. **Closing an entry requires evidence the defect no longer reproduces** — a
   re-run, a passing check, a confirmed absence — never close on "looks fixed". Closing is not

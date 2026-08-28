@@ -11,7 +11,7 @@ These are the only entry points allowed:
 
 1. The user types the literal slash command `/ship-pr`.
 2. A skill that declares `ship-pr` as a dependency reaches its ship step — currently
-   `better-plan` (Stage 5) and `loop-todos` (its per-entry PR step).
+   `better-plan` (Stage 4) and `loop-todos` (its per-entry PR step).
 
 Anything else is an anti-trigger. None of these load this skill — "ship this", "ship these
 changes", "create a PR", "open a PR", "open an MR", "push and create PR", "send this for

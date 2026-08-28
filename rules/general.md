@@ -90,13 +90,8 @@ paths:
 
 - **Write all prose in ASD-STE100 Simplified Technical English.** This is the default mode. It does not expire during a long task.
 - **Does not apply to:** code, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, commentationals commits prefixes like `feat:`, `fix:`, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
-
-## STE Precedence
-
 - STE is the default mode for all prose (not the code) Project rules or skills can override it.
-
 ## Scannable and Terse
-
 - Put the answer first. Headings, bullets, tables.
 - Brevity wins. Cut any sentence that does not change what the reader does. No recap, no restating the code.
 - Never drop a caveat, a step, or a number. Compress into clauses, not paragraphs.

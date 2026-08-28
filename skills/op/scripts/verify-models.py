@@ -6,9 +6,15 @@ dispatch landed on the requested model tier.
 
 Usage:
   python3 verify-models.py [FILE]   # explicit transcript path
-  python3 verify-models.py          # newest transcript for current project
+  python3 verify-models.py          # this session's transcript, via CLAUDE_CODE_SESSION_ID
 
-Exit codes: 0 = ok, 1 = mismatch(es), 2 = no dispatches / transcript not found.
+Transcript selection, in order: an explicit FILE argument, then the transcript named by
+CLAUDE_CODE_SESSION_ID, then -- outside Claude Code only -- the newest transcript for the
+current directory's project, which is a guess and says so on stderr.
+
+Exit codes: 0 = ok, 1 = mismatch(es), 2 = no dispatches, or no transcript to analyse --
+which covers a transcript that is missing, and the rare case of more than one file
+claiming the same session id, where stderr names the candidates to choose between.
 """
 
 import argparse
@@ -35,25 +41,51 @@ def _cwd_slug():
     dash it follows: /repo/.claude/worktrees/x -> -repo--claude-worktrees-x.
 
     This does not reproduce the full encoder. Past 200 characters Claude Code
-    truncates the slug and appends a hash suffix. Such a path fails the no-argument
-    lookup, and the caller must pass the transcript path explicitly.
+    truncates the slug and appends a hash suffix. Inside Claude Code the session-id
+    lookup covers that case; outside it, such a path fails the no-argument lookup and
+    the caller must pass the transcript path explicitly.
     """
     return re.sub(r"[^a-zA-Z0-9]", "-", os.getcwd())
 
 
-def _find_transcript(args):
-    """Return the path to the JSONL to analyse, or exit with code 2."""
-    root = _projects_root()
+def _session_id():
+    """The current Claude Code session id, or None when running outside Claude Code.
 
-    # 1) explicit positional file path
-    if args.file:
-        path = args.file
-        if not os.path.isfile(path):
-            print(f"error: file not found: {path}", file=sys.stderr)
-            sys.exit(2)
-        return path
+    The id is interpolated into a path and into a glob pattern, so the whitelist below
+    bans path separators and the glob metacharacters `*`, `?` and `[`.
+    """
+    sid = os.environ.get("CLAUDE_CODE_SESSION_ID", "").strip()
+    if not sid or not re.fullmatch(r"[A-Za-z0-9._-]+", sid):
+        return None
+    return sid
 
-    # 2) default: newest *.jsonl in <root>/<cwd-slug>/
+
+def _find_by_session(root, sid):
+    """Return the transcript for `sid`, or exit 2. Never guesses."""
+    # Fast path: the project directory encoding the current working directory.
+    direct = os.path.join(root, _cwd_slug(), sid + ".jsonl")
+    if os.path.isfile(direct):
+        return direct
+
+    # The cwd is not the project root -- a shell `cd`, or a slug Claude Code truncated.
+    # A session id is unique, so a match in any project directory is proof, not a guess.
+    matches = sorted(glob.glob(os.path.join(root, "*", sid + ".jsonl")))
+    if len(matches) == 1:
+        return matches[0]
+    if not matches:
+        print(f"error: no transcript for session {sid} under {root}", file=sys.stderr)
+        print("hint: transcripts live in $CLAUDE_CONFIG_DIR/projects/ (default ~/.claude/projects/)", file=sys.stderr)
+        print("hint: pass one explicitly -- verify-models.py <path-to.jsonl>", file=sys.stderr)
+        sys.exit(2)
+    print(f"error: {len(matches)} transcripts claim session {sid}:", file=sys.stderr)
+    for match in matches:
+        print(f"  {match}", file=sys.stderr)
+    print("hint: pass the right one -- verify-models.py <path-to.jsonl>", file=sys.stderr)
+    sys.exit(2)
+
+
+def _find_newest(root):
+    """Last resort, outside Claude Code: the newest transcript for the cwd's project."""
     project_dir = os.path.join(root, _cwd_slug())
     if not os.path.isdir(project_dir):
         print(f"error: project transcript directory not found: {project_dir}", file=sys.stderr)
@@ -64,7 +96,32 @@ def _find_transcript(args):
     if not candidates:
         print(f"error: no *.jsonl transcripts in {project_dir}", file=sys.stderr)
         sys.exit(2)
-    return max(candidates, key=os.path.getmtime)
+    newest = max(candidates, key=os.path.getmtime)
+    print(
+        f"note: no usable CLAUDE_CODE_SESSION_ID, guessing the newest transcript: {newest}",
+        file=sys.stderr,
+    )
+    return newest
+
+
+def _find_transcript(args):
+    """Return the path to the JSONL to analyse, or exit with code 2."""
+    # 1) explicit positional file path
+    if args.file:
+        if not os.path.isfile(args.file):
+            print(f"error: file not found: {args.file}", file=sys.stderr)
+            sys.exit(2)
+        return args.file
+
+    root = _projects_root()
+
+    # 2) this session's own transcript, named by the harness
+    sid = _session_id()
+    if sid:
+        return _find_by_session(root, sid)
+
+    # 3) outside Claude Code: guess, and say so
+    return _find_newest(root)
 
 
 # ---------------------------------------------------------------------------

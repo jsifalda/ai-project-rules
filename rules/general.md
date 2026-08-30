@@ -44,6 +44,12 @@ paths:
 - Capture from success too, not only correction: if the user explicitly confirms a non-obvious choice ("yes exactly", "perfect"), that is also a lesson worth saving
 - Ruthlessly iterate on these lessons until mistake rate drops
 
+# CHEAPEST REMEDY FIRST
+
+- **"I cannot reproduce it" is a finding, not a dead end.** When a reported bug does not occur in a clean environment, say so at once and say what it implies. Dig further only if asked.
+- Never offer a menu of fixes that omits "no change needed" when that is the true answer.
+- **Why:** on a "button is broken on staging" report, the site worked from a clean browser in three minutes. The fix was a hard reload of a stale cached script. I delivered a four-phase plan instead, and the user asked why I had not simply told them to clear the cache.
+
 # PLAN MODE DEFAULT
 
 - Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
@@ -96,6 +102,14 @@ paths:
 - Brevity wins. Cut any sentence that does not change what the reader does. No recap, no restating the code.
 - Never drop a caveat, a step, or a number. Compress into clauses, not paragraphs.
 
+# DOCUMENTATION
+
+- Code is the record. Prose is the exception, and holds only what the code cannot state: the constraint, the option that lost, the failure it prevents.
+- **The deletion test.** What does a reader get wrong once this line is gone? "Nothing, they would read the code" means delete it.
+- Prefer a clear name, a type, or a test. A doc is the last place to put a fact.
+- **Argue a decision once.** Every other place states what to do and links to it. A second copy at a second length drifts fastest.
+- A comment holds a why local to its line. A why that spans a module goes to the project's decision record.
+- Never open a doc surface the project does not already keep. No word limit applies; these rules set the length.
 
 # COUNTS IN INSTRUCTIONS
 

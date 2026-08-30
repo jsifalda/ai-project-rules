@@ -8,7 +8,8 @@ disable-model-invocation: true
 
 Turn a request into a plan that has been stress-tested before any code is written, then
 ship the result. Run the preface, then every stage, in order.
-Stages 1-3 are mandatory and none may be skipped. Stage 4 is conditional — it ships only
+Stages 1-3 are mandatory and none may be skipped, unless Stage 1b's abort gate fires — that
+ends the run before Stage 2. Stage 4 is conditional — it ships only
 when its own gate passes, and skips cleanly when it does not. Stop and surface a blocker
 rather than guessing.
 
@@ -55,6 +56,21 @@ the same rigor plan mode uses:
    mode, hold the draft in context instead. This draft is the input to Stage 2.
 
 If the request is too vague to plan, ask the user before continuing.
+
+## Stage 1b — Abort gate: does this need a change at all?
+
+Run this the moment Stage 1 has settled what the request really needs, and before Stage 2.
+
+If what you found needs no code change — a stale cache, a restart, a setting, a user
+action, or a bug that does not reproduce — STOP the whole flow. Report the finding and the
+remedy in one short reply. Do not run the grill or the ship.
+
+A plan is a deliverable only when work must happen. Producing one for a problem that needs no
+work is the failure this gate exists to prevent.
+
+The gate binds hardest when you have already spent many tool calls. A one-line answer after a
+long investigation is a good outcome, not a thin one. Never let the cost of the search set the
+size of the deliverable.
 
 ## Stage 2 — Grill the plan, then revise
 

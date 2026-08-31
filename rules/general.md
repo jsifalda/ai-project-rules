@@ -205,6 +205,25 @@ paths:
 - Fix flaky tests first.
 - Prefer E2E over unit tests for user flows.
 
+### Comments in tests
+
+- **A test file carries one `//` line at the top naming what it guards. Nothing more, by default.**
+  The `describe` and `it` titles are the documentation. Write the title well instead of explaining it.
+- **Never a JSDoc block in a test file.** Not for the file, not for a helper, not above a `describe`.
+  The `/**`, the `*/` and the blank ` *` lines cost more lines than the words they wrap.
+- **One extra `//` line per trap**, and rarely more than one trap in a file. It is allowed only
+  where a reader cannot recover the reason from the code, and it must be a real trap: a mock-shape
+  or mock-ordering trap, an env-load-timing trap, a known flake cause, an assertion that is
+  structural by necessity, a measured provenance the assertion cannot carry. **Each is a single
+  line, never wrapped to a second.** A why that needs two lines belongs in a decision record.
+- **Never** a comment that restates the next line, repeats the test name, labels a section
+  (Arrange/Act/Assert), cross-references a requirement or task number, points at a sibling test
+  file, or records a regression history. `git blame` holds the history and grep finds the sibling.
+- Tooling directives are not comments for this rule and are never removed: `@vitest-environment`,
+  `eslint-disable*`, `oxlint-disable*`, `@ts-expect-error`, `istanbul ignore`, `prettier-ignore`.
+- **Why:** an agent reads the whole suite every session and pays for the prose in context tokens. A
+  comment that restates a test name also drifts away from it, and the stale copy is the one trusted.
+
 ## Dependency Management
 
 - **Preference order, before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. This is a bias, not a ranking to obey — take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default is inverted, see "Small enough to write?" below. An existing dependency never overrides a named prohibition in these rules (e.g. `fetch` over `axios`) or the repo's own conventions.

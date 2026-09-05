@@ -75,9 +75,7 @@ paths:
 - Need a global env file changed → STOP, hand the user the exact line to add themselves (ask-first, same shape as installs in `# RESTRICTIONS`).
 
 # READING FILES
-
 - before making any code changes, start by finding & reading ALL of the relevant files
-- never make changes without reading the entire file
 - before modifying a function, grep for ALL its callers/usages first → understand every call site before changing its signature or behavior
 - research before you edit: read the file plus its callers/usages first, never edit blind
 
@@ -155,17 +153,12 @@ paths:
 
 ## Testing
 
-- Write unit tests a lot (aim at least for covering all user scenarios)!
-- Prefer the Jest runner if possible (if not possible, ask the user to choose a different runner - provide the best possible options to run tests in the context for the codebase)
+- Write tests a lot (aim for covering all user scenarios) - unit tests, integration tests, end-to-end etc (pick the best fit for the scenario)
 - Never remove any tests if they are failing (only if they are no longer needed)
 
 ### Concurrent test runs
 
-- **One test suite per machine at a time.** Several agent sessions or worktrees open → confirm no
-  other run is in flight before you start one. Wait, never start a second.
-- **Why:** a runner's parallelism cap is per process, not per machine. Each run reads the core
-  count, not the **remaining** capacity. Each run also computes that cap alone. So N runs give
-  N × the cap. CPU and RAM saturate, and the machine can livelock.
+- **One test suite per machine at a time.** Several agent sessions or worktrees open → confirm no  other run is in flight before you start one. Wait, never start a second.
 - **An overlap is unavoidable → cap the runner explicitly.** Pick the knob that bounds test
   workers, not build jobs: Vitest `maxWorkers` (v4+) or `poolOptions.forks.maxForks` (v3 — config
   overrides the CLI flag) · `jest --maxWorkers=2` · `pytest -n 2` · `go test -parallel 2` (`-p`

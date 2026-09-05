@@ -391,6 +391,31 @@ Beyond `name`, `description`, `disable-model-invocation`, `license`, `allowed-to
 
 Write instructions for using the skill and its bundled resources.
 
+#### Prompt-Audit Gate (before the skill is reported done)
+
+A SKILL.md is a prompt. Prompts carry dated patterns written against an older model — a pinned
+model id, a deprecated parameter shape, a workaround the current model no longer needs, an
+instruction so prescriptive it now lowers output quality. None of that announces itself, and no
+structural validator catches it. Audit for it before calling the skill finished.
+
+Where the agent provides the `claude-api` skill, invoke its `prompt-audit` subcommand, scoped to
+the skill directory just written. Pass the subcommand bare — it routes by an exact match against
+that skill's subcommand table, and a trailing scope stops it matching; name the scope in the
+surrounding request instead. Let the audit infer its own target model and state that assumption;
+do not pin a model id, it rots.
+
+The audit returns a report and a proposed diff, and applies nothing on its own:
+
+- Fix every **factual** finding — a stale model id, a deprecated parameter, a reference to
+  something that does not exist.
+- A finding that would change what the skill **requires of its reader** is drafted and shown to
+  the user, never applied silently. The proposed diff is a draft, not a patch to apply.
+- Report what the audit found and what was done with each finding.
+
+No `claude-api` skill available (Copilot CLI, Gemini CLI, and other consumers that do not provide
+it) → say the audit was skipped and why, and do not hand-roll a substitute. A skipped audit does
+not block the skill.
+
 ### Step 5: Packaging a Skill
 
 Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:

@@ -5,13 +5,13 @@ paths:
   - '**'
 ---
 
-# Core (ALWAYS ADHERE THIS)
-- Everything in this file is a mandatory rule!
+# Core
+- Every rule in this file is mandatory.
 
 ## Core Principles
 
 - **Simplicity First:** Make every change as simple as possible. Impact minimal code. Choose the simplest implementation that fully meets the **current** requirements — no speculative abstraction, configuration, or indirection for a need nobody has stated yet.
-- **No Laziness:** Find root causes. No temporary fixes. Senior developer standards.
+- **Root Cause, Not Stopgap:** fix the cause, never the symptom.
 - **Minimal Impact:** Only touch what's necessary. No side effects with new bugs.
 
 ## Core Guidelines
@@ -23,11 +23,10 @@ paths:
 - Add code comments sparingly. Focus on _why_ something is done, especially for complex logic, rather than _what_ is done. Only add high-value comments if necessary for clarity or if requested by the user. Do not edit comments that are separate from the code you are changing. _NEVER_ talk to the user or describe your changes through comments.
 - Fulfill the user's request thoroughly, including reasonable, directly implied follow-up actions.
 - Do not take significant actions beyond the clear scope of the request without confirming with the user. If asked _how_ to do something, explain first, don't just do it.
-- Prioritize simplicity and minimalism in your solutions.
 
 # ARCHITECTURE
 
-- **Decide for the long term.** Pick the design you would still stand behind in a year. Never accept a stopgap that only works for now and is meant to be swapped out later — that is the "No Laziness" rule applied to structure, not just to bug fixes.
+- **Decide for the long term.** Pick the design you would still stand behind in a year. Never accept a stopgap that only works for now and is meant to be swapped out later — that is the root-cause rule applied to structure, not just to bug fixes.
 - **Long-term direction, minimal implementation.** When the two pull apart, make the *interface and the boundary* durable and keep the *implementation behind it* the smallest thing that meets today's requirements. A durable decision is never a licence to build for imagined future needs.
 - **Grow the system in layers.** Ship the smallest version that works end to end, then stack each new capability on top of something that already works. Never trade a working product for half-finished complexity — at every step there is a product that runs.
 - **Separate concerns, enforce boundaries.** Explicit interfaces between layers, no reaching across them, no shared mutable state as a back channel. Sizing and single-purpose guidance lives in `# FILE LENGTH`.
@@ -52,7 +51,7 @@ paths:
 
 # PLAN MODE DEFAULT
 
-- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- Enter plan mode for any non-trivial task (3+ steps or architectural decisions)
 - If something goes sideways, STOP and re-plan immediately
 - Use plan mode for verification steps, not just building
 - Write detailed specs upfront to reduce ambiguity
@@ -158,7 +157,7 @@ paths:
 
 - Write unit tests a lot (aim at least for covering all user scenarios)!
 - Prefer the Jest runner if possible (if not possible, ask the user to choose a different runner - provide the best possible options to run tests in the context for the codebase)
-- Never ever remove any tests if they are failing (only if there are no longer needed)
+- Never remove any tests if they are failing (only if they are no longer needed)
 
 ### Concurrent test runs
 
@@ -283,7 +282,6 @@ paths:
 
 - ALWAYS read AGENTS.md/CLAUDE.md file first
 - dont remove any code, if not asked to (not even "dead code")
-- Think carefully and only action the specific task I have given you with the most concise and elegant solution that changes as little code as possible.
 
 ## Implementation Verification Protocol
 
@@ -297,7 +295,7 @@ After completing any code changes, perform every verification phase below before
 
 ### Phase 2: Automated Testing (tests, lint etc)
 
-- Run the full test suite (`pnpm test` or any other test command available) after **every** code change — no exceptions
+- Run the full test suite (`pnpm test` or any other test command available) after every code change
 - Ensure all existing tests pass — zero failures
 - If your changes break existing tests, **fix them immediately** before proceeding
 - If you modified functionality, verify affected tests still pass or update them accordingly
@@ -314,4 +312,4 @@ After completing any code changes, perform every verification phase below before
 - Never apply a finding that changes what a rule requires, at any severity. Draft the wording, show it to the user, and ask
 - Present to the user what review returned and what you did with each finding
 
-CRITICAL: Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.
+Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.

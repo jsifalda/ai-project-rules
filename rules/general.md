@@ -9,300 +9,214 @@ paths:
 - Every rule in this file is mandatory.
 
 ## Core Principles
-
-- **Simplicity First:** Make every change as simple as possible. Impact minimal code. Choose the simplest implementation that fully meets the **current** requirements — no speculative abstraction, configuration, or indirection for a need nobody has stated yet.
-- **Root Cause, Not Stopgap:** fix the cause, never the symptom.
-- **Minimal Impact:** Only touch what's necessary. No side effects with new bugs.
+- **Simplicity first.** The simplest change that meets the **current** requirement. No speculative abstraction, config, or indirection for an unstated need.
+- **Root cause, not stopgap.** Fix the cause, never the symptom.
+- **Minimal impact.** Touch only what is necessary. No side effects, no new bugs.
 
 ## Core Guidelines
-
-- Rigorously adhere to existing project conventions when reading or modifying code. Analyze surrounding code, tests, and configuration first.
-- NEVER assume a library/framework is available or appropriate. Verify its established usage within the project (check imports, configuration files like 'package.json', 'requirements.txt' etc., or observe neighboring files) before employing it.
-- Mimic the style (formatting, naming), structure, framework choices, typing, and architectural patterns of existing code in the project.
-- When editing, understand the local context (imports, functions/classes) to ensure your changes integrate naturally and idiomatically.
-- Add code comments sparingly. Focus on _why_ something is done, especially for complex logic, rather than _what_ is done. Only add high-value comments if necessary for clarity or if requested by the user. Do not edit comments that are separate from the code you are changing. _NEVER_ talk to the user or describe your changes through comments.
-- Fulfill the user's request thoroughly, including reasonable, directly implied follow-up actions.
-- Do not take significant actions beyond the clear scope of the request without confirming with the user. If asked _how_ to do something, explain first, don't just do it.
+- Rigorously follow existing project conventions. Read surrounding code, tests, and config first.
+- Never assume a library or framework is available or appropriate. Verify its use in the project first (imports, `package.json`, `requirements.txt`, neighboring files).
+- Mimic existing style (formatting, naming), structure, framework choices, typing, and architecture.
+- Understand the local context (imports, functions, classes) before an edit. Integrate idiomatically.
+- Comments: sparse, high-value, _why_ not _what_, especially for complex logic. Add one only for clarity or on request. Do not edit comments outside the code you change. Never address the user or describe changes in a comment.
+- Fulfill the request in full, with reasonable, directly implied follow-ups.
+- No significant action beyond the request without confirmation. Asked _how_ → explain first, do not do it.
 
 # ARCHITECTURE
-
-- **Decide for the long term.** Pick the design you would still stand behind in a year. Never accept a stopgap that only works for now and is meant to be swapped out later — that is the root-cause rule applied to structure, not just to bug fixes.
-- **Long-term direction, minimal implementation.** When the two pull apart, make the *interface and the boundary* durable and keep the *implementation behind it* the smallest thing that meets today's requirements. A durable decision is never a licence to build for imagined future needs.
-- **Grow the system in layers.** Ship the smallest version that works end to end, then stack each new capability on top of something that already works. Never trade a working product for half-finished complexity — at every step there is a product that runs.
-- **Separate concerns, enforce boundaries.** Explicit interfaces between layers, no reaching across them, no shared mutable state as a back channel. Sizing and single-purpose guidance lives in `# FILE LENGTH`.
+- **Decide for the long term.** Pick the design you would still stand behind in a year. Never a stopgap meant to be swapped later.
+- **Long-term direction, minimal implementation.** Durable interface and boundary. Smallest implementation behind it that meets today's requirement. Never build for imagined needs.
+- **Grow in layers.** Ship the smallest end-to-end version, then stack each capability on what already works. Never trade a working product for half-finished complexity. A runnable product exists at every step.
+- **Separate concerns, enforce boundaries.** Explicit interfaces between layers. No reaching across. No shared mutable state as a back channel. Sizing → `# FILE LENGTH`.
 
 # SELF IMPROVEMENT LOOP
-
-- After ANY correction from the user → persist a lesson using your agent's available memory/preference system
-- Decide scope before saving:
-  - **Cross-project** rules (tone, language, code style, tool preferences, workflow habits) → save to the agent's global/user memory
-  - **Project-specific** rules (build commands, local conventions, repo gotchas) → save to the agent's project-scoped memory if one exists; otherwise fall back to global and prefix with the project name
-- Write the rule so it prevents the same mistake recurring; capture **Why** (the reason / past incident) and **How to apply** (when it kicks in)
-- Update existing entries rather than duplicating; remove entries that turn out wrong
-- Consult prior lessons on demand: when you are unsure, before a task in a domain you have past lessons about, or after an error or correction. Do not eagerly load all lessons at session start. Each agent has its own memory store (Claude Code reads `MEMORY.md`, Copilot reads its own config); load the relevant lesson when it applies.
-- Capture from success too, not only correction: if the user explicitly confirms a non-obvious choice ("yes exactly", "perfect"), that is also a lesson worth saving
-- Ruthlessly iterate on these lessons until mistake rate drops
+- After any user correction → persist a lesson in the agent's available memory/preference system.
+- Scope first:
+  - **Cross-project** (tone, language, code style, tool preferences, workflow habits) → global/user memory.
+  - **Project-specific** (build commands, local conventions, repo gotchas) → project memory. None exists → global, prefixed with the project name.
+- Write it to stop the same mistake. Capture **Why** (reason / incident) and **How to apply** (when it kicks in).
+- Update existing entries, never duplicate. Remove entries proven wrong.
+- Consult lessons on demand: when unsure, before a task in a domain with past lessons, after an error or correction. Never load all lessons at session start. Each agent has its own store (Claude Code reads `MEMORY.md`, Copilot its own config).
+- Capture success too: an explicit confirmation of a non-obvious choice ("yes exactly", "perfect") is a lesson.
+- Iterate on lessons until the mistake rate drops.
 
 # CHEAPEST REMEDY FIRST
-
-- **"I cannot reproduce it" is a finding, not a dead end.** When a reported bug does not occur in a clean environment, say so at once and say what it implies. Dig further only if asked.
-- Never offer a menu of fixes that omits "no change needed" when that is the true answer.
-- **Why:** on a "button is broken on staging" report, the site worked from a clean browser in three minutes. The fix was a hard reload of a stale cached script. I delivered a four-phase plan instead, and the user asked why I had not simply told them to clear the cache.
+- **"Cannot reproduce" is a finding, not a dead end.** Bug absent in a clean environment → say so at once, and what it implies. Dig further only if asked.
+- Never offer a menu of fixes that omits "no change needed" when that is true.
 
 # PLAN MODE DEFAULT
-
-- Enter plan mode for any non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways, STOP and re-plan immediately
-- Use plan mode for verification steps, not just building
-- Write detailed specs upfront to reduce ambiguity
-- **Study prior art before designing.** Look at how established products solve this problem and start from their proven patterns, naming, and conventions rather than inventing one. Name the reference in the plan. This is a starting bias, not the answer — challenge it from first principles the same way `builder.md` says to challenge a default stack, and say why when you deviate.
+- Plan mode for any non-trivial task (3+ steps or architectural decisions).
+- Something goes sideways → STOP, re-plan.
+- Plan verification steps too, not only building.
+- Write detailed specs upfront.
+- **Study prior art before designing.** Start from how established products solve it: patterns, naming, conventions. Name the reference in the plan. A starting bias, not the answer: challenge it from first principles, as `builder.md` does for a default stack, and say why when you deviate.
 
 # RESTRICTIONS
-
-- **NEVER run destructive or irreversible remote / merge-request operations unless the User explicitly tells you to** — this extends the push rule above. Without an explicit chat instruction, never:
-  - **`git`:** force-push (`--force` / `--force-with-lease` / `-f`), delete a remote branch or tag (`git push --delete`, `git push origin :ref`), push to a default/protected branch, or rewrite already-pushed history (rebase/amend then force-push).
-  - **`glab` (GitLab):** close or delete a merge request (`glab mr close` / `glab mr delete`), merge an MR (`glab mr merge`), close or delete an issue (`glab issue close` / `glab issue delete`), or delete a repo or release (`glab repo delete` / `glab release delete`).
-  - Default to **read-only `glab`** for inspection (`glab mr view` / `list` / `diff`, `glab ci view`, `glab issue view`). When a destructive action is genuinely needed, STOP and ask first (what + why) — same protocol as installs.
-- You have no power or authority to install **anything** — any package, library, tool, or binary — **anywhere** (global, `--user`, into a venv, or as a one-off) and for **any** purpose, including a single throwaway task. "It's not global, it's just `--user` / just this once" is NOT an exception. This applies to **every** installer, including but not limited to: `brew`, `brew cask`, `apt`/`apt-get`, `yum`/`dnf`, `pacman`, `port`, `npm i -g` / `yarn global add` / `pnpm add -g`, `pipx install`, `pip install` / `pip install --user`, `cargo install`, `gem install`, `go install`, any `curl ... | sh` / `wget ... | bash` bootstrap scripts, and direct downloads into `/usr/local/bin`, `~/.local/bin`, or similar.
-- **Prefer no-install paths first:** before treating anything as "needed," check whether a tool already available does the job — e.g. the native `Read` tool reads PDFs directly (no `poppler`/`pypdf`), plus built-in CLIs, `git`, and the `node`/`python` stdlib. Only when none works do you reach the ask-first step below. Default is to install nothing.
-- **Ask-first protocol (any package, library, or binary):** if something — a binary (e.g. `docker`, `glab`, `gh`, `kubectl`, `terraform`) OR a one-off library (e.g. `pypdf` to read a PDF) — is genuinely needed to finish the job and is not already present, **STOP and ask the user in chat first**. State: (1) what, (2) why it is needed, (3) the suggested install command. **On the user's explicit approval, run that one specific install command** (and only that one).
+- **Never push to a remote without explicit user instruction.**
+- **Never run a destructive or irreversible remote / merge-request operation without explicit user instruction.** Without an explicit chat instruction, never:
+  - **`git`:** force-push (`--force` / `--force-with-lease` / `-f`), delete a remote branch or tag (`git push --delete`, `git push origin :ref`), push to a default/protected branch, rewrite pushed history (rebase/amend then force-push).
+  - **`glab` (GitLab):** close or delete an MR (`glab mr close` / `glab mr delete`), merge an MR (`glab mr merge`), close or delete an issue (`glab issue close` / `glab issue delete`), delete a repo or release (`glab repo delete` / `glab release delete`).
+  - Default to read-only `glab` (`glab mr view` / `list` / `diff`, `glab ci view`, `glab issue view`). A destructive action is genuinely needed → STOP, ask first (what + why), same protocol as installs.
+- **No authority to install anything, anywhere, for any purpose.** Package, library, tool, or binary. Global, `--user`, venv, or one-off, a single throwaway task included. "Just `--user` / just this once" is not an exception. Every installer, including: `brew`, `brew cask`, `apt`/`apt-get`, `yum`/`dnf`, `pacman`, `port`, `npm i -g` / `yarn global add` / `pnpm add -g`, `pipx install`, `pip install` / `pip install --user`, `cargo install`, `gem install`, `go install`, `curl ... | sh` / `wget ... | bash` bootstraps, direct downloads into `/usr/local/bin`, `~/.local/bin`, or similar.
+- **Prefer a no-install path first.** Before "needed": does an available tool do the job? Native `Read` reads PDFs (no `poppler`/`pypdf`); built-in CLIs, `git`, `node`/`python` stdlib. Only when none works → ask-first. Default: install nothing.
+- **Ask-first protocol (any package, library, or binary).** A binary (`docker`, `glab`, `gh`, `kubectl`, `terraform`) or a one-off library (`pypdf` for a PDF) genuinely needed and absent → STOP, ask in chat: (1) what, (2) why, (3) suggested install command. On explicit approval, run that one command and only that one.
 
 # SECRETS & ENV FILES
-
-- NEVER open — read / `cat` / `grep` / `source` / edit — global env, shell-config, or credential files: `~/.zshenv`, `~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, `~/.profile`, `~/.netrc`, `~/.npmrc`, `~/.aws/credentials`, `~/.ssh/*`, `~/.config/**/credentials*`, any `.env*`. Listing names (`ls`) is fine. **Overrides `# READING FILES`.**
-- NEVER print a secret value (key, token, password, connection string) to the transcript — from ANY source: env files, `printenv`/`env`, keychain, MCP responses, logs, error dumps. No masked/partial values either — a `sk-ant-abc…` prefix still leaks entropy and shape. **Why:** anything read is in the transcript; the transcript is not a secret store.
+- Never open (read / `cat` / `grep` / `source` / edit) a global env, shell-config, or credential file: `~/.zshenv`, `~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, `~/.profile`, `~/.netrc`, `~/.npmrc`, `~/.aws/credentials`, `~/.ssh/*`, `~/.config/**/credentials*`, any `.env*`. Listing names (`ls`) is fine. **Overrides `# READING FILES`.**
+- Never print a secret value (key, token, password, connection string) to the transcript, from any source: env files, `printenv`/`env`, keychain, MCP responses, logs, error dumps. No masked or partial values, not even a `sk-ant-abc…` prefix.
 - Presence-check, never value-check: `[ -n "$FOO" ] && echo set`. Names only: `env | cut -d= -f1`.
-- Need a global env file changed → STOP, hand the user the exact line to add themselves (ask-first, same shape as installs in `# RESTRICTIONS`).
+- A global env file must change → STOP, hand the user the exact line to add (ask-first, as installs in `# RESTRICTIONS`).
 
 # READING FILES
-- before making any code changes, start by finding & reading ALL of the relevant files
-- before modifying a function, grep for ALL its callers/usages first → understand every call site before changing its signature or behavior
-- research before you edit: read the file plus its callers/usages first, never edit blind
+- Before any code change, find and read all relevant files.
+- Before modifying a function, grep all callers/usages. Understand every call site before a signature or behavior change.
+- Research before edit: the file plus its callers first. Never edit blind.
 
 # EGO
-
-- always verify; do not make assumptions or jump to conclusions (unless you are asked to do so; if so, state your assumptions clearly).
-- always consider multiple different approaches, just like a Senior Developer would
+- Always verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
+- Always consider several approaches, as a senior developer would.
 
 # FILE LENGTH
-
-- ideally, keep all code files under 300 LOC
-- files should be modular & single-purpose
+- Ideally under 300 LOC per code file.
+- Files modular and single-purpose.
 
 # WRITING STYLE
-
-- **Write all prose in ASD-STE100 Simplified Technical English.** This is the default mode. It does not expire during a long task.
-- **Does not apply to:** code, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, and the pull-request TITLE. The subject line and the title keep the conventional-commit format (imperative mood, commentationals commits prefixes like `feat:`, `fix:`, 72 characters or fewer, no articles). The conventional-commit format and the STE full-sentence rule cannot both hold, so the subject format wins.
-- STE is the default mode for all prose (not the code) Project rules or skills can override it.
+- **All prose in ASD-STE100 Simplified Technical English.** The default mode. It does not expire during a long task. Project rules or skills can override it.
+- **Exempt:** code, structured config (JSON, YAML), terse CLI output, the commit SUBJECT line, the PR TITLE. Subject and title keep the conventional-commit format (imperative, prefixes like `feat:`, `fix:`, 72 characters or fewer, no articles). The subject format wins over STE.
 ## Scannable and Terse
-- Put the answer first. Headings, bullets, tables.
+- Answer first. Headings, bullets, tables.
 - Brevity wins. Cut any sentence that does not change what the reader does. No recap, no restating the code.
 - Never drop a caveat, a step, or a number. Compress into clauses, not paragraphs.
 
 # DOCUMENTATION
-
-- Code is the record. Prose is the exception, and holds only what the code cannot state: the constraint, the option that lost, the failure it prevents.
-- **The deletion test.** What does a reader get wrong once this line is gone? "Nothing, they would read the code" means delete it.
-- Prefer a clear name, a type, or a test. A doc is the last place to put a fact.
-- **Argue a decision once.** Every other place states what to do and links to it. A second copy at a second length drifts fastest.
-- A comment holds a why local to its line. A why that spans a module goes to the project's decision record.
-- Never open a doc surface the project does not already keep. No word limit applies; these rules set the length.
+- Code is the record. Prose holds only what code cannot state: the constraint, the option that lost, the failure it prevents.
+- **The deletion test.** What does a reader get wrong once the line is gone? "Nothing, they would read the code" → delete it.
+- Prefer a clear name, a type, or a test. A doc is the last place for a fact.
+- **Argue a decision once.** Every other place states what to do and links to it.
+- A comment holds a why local to its line. A module-wide why goes to the project's decision record.
+- Never open a doc surface the project does not already keep. No word limit; these rules set the length.
 
 # COUNTS IN INSTRUCTIONS
-
-- Never state how many items a set holds. Name the set — "the modules below", not "the eleven modules".
-- Worst case is a count in a different file from the set. Nothing signals the drift.
-- Rewrite a load-bearing count. Never delete it. Write "one per item in <the list>", never a vague plural.
-- These are exempt: thresholds and limits, ordinals for a step, phase, or stage, versions, dates, and exit codes.
-- These are also exempt: "one per X" phrasing, verbatim quotes, and named frameworks whose number is part of the concept.
+- Never state how many items a set holds. Name the set: "the modules below", not "the eleven modules".
+- Rewrite a load-bearing count, never delete it. Write "one per item in <the list>", never a vague plural.
+- Exempt: thresholds and limits; ordinals for a step, phase, or stage; versions; dates; exit codes; "one per X" phrasing; verbatim quotes; named frameworks whose number is part of the concept.
 
 # CODING STANDARDS
 
 ## General Guidelines
-
-- use/change absolute minimum code needed
+- Use and change the absolute minimum code.
 
 ## Naming Conventions
-
-- Use camelCase for variables and functions
-- Use PascalCase for classes and components
+- camelCase for variables and functions. PascalCase for classes and components.
 
 ## GIT Commit Guidelines
-
-- Conventional commit format (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`), optional `(scope)`.
-- Subject: imperative, ≤72 chars, no trailing period. Reference the task/issue ID when there is one.
-- **The subject line is exempt from `# WRITING STYLE`.** It keeps the conventional-commit format above. The commit body and the MR/PR body follow `# WRITING STYLE`.
-- **Body is optional and why-focused.** Add one only when the reason or impact isn't obvious from subject + diff. Keep to 1-2 short bullets of *why/impact*. Never list file-by-file what changed — the diff already shows that.
-- **A single-commit MR/PR uses the commit body verbatim as its description (GitLab, GitHub).** Write the body as a clean MR description, not a change inventory — no noise.
-- **MR/PR description = `## Summary` only** (or clean commit body verbatim). Never add a `## Test plan` / `## Testing` section unless I explicitly ask for one. No checklists, no "how to verify" boilerplate by default.
+- Conventional commits (`feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`), optional `(scope)`.
+- Subject: imperative, ≤72 chars, no trailing period, task/issue ID when one exists.
+- **The subject line is exempt from `# WRITING STYLE`.** Commit body and MR/PR body follow `# WRITING STYLE`.
+- **Body optional, why-focused.** Only when reason or impact is not obvious from subject + diff. 1-2 short bullets of why/impact. Never a file-by-file list.
+- **A single-commit MR/PR uses the commit body verbatim as its description** (GitLab, GitHub). Write the body as a clean description, not a change inventory.
+- **MR/PR description = `## Summary` only** (or the clean commit body verbatim). No `## Test plan` / `## Testing` section unless explicitly asked. No checklists, no "how to verify" boilerplate by default.
 - Good: `git commit -m "feat(module): add payment validation logic, #ISSUE-ID"`.
 
 ## Error Handling
-
-- Always log errors (console.error) for debugging purposes
+- Always log errors (`console.error`).
 
 ## Code Structure
-
-- When generating new code, please follow the existing coding style.
-- Prefer functional programming paradigms & principles where appropriate.
-- Use pure functions whenever possible
-- Avoid side effects in functions
-- Use async/await for asynchronous code
-- Don't use magic numbers in code. Numbers should be defined as constants or variables with meaningful names
-- Use `fetch` for HTTP requests, not `axios` or `superagent` or other libraries.
+- Follow the existing coding style.
+- Prefer functional paradigms where appropriate. Pure functions whenever possible. Avoid side effects.
+- `async/await` for asynchronous code.
+- No magic numbers. Constants or variables with meaningful names.
+- `fetch` for HTTP. Never `axios`, `superagent`, or another library.
 
 ## Testing
-
-- Write tests a lot (aim for covering all user scenarios) - unit tests, integration tests, end-to-end etc (pick the best fit for the scenario)
-- Never remove any tests if they are failing (only if they are no longer needed)
+- Write many tests. Aim to cover all user scenarios. Unit, integration, e2e; pick the best fit.
+- Never remove a failing test. Remove only one no longer needed.
 
 ### Concurrent test runs
-
-- **One test suite per machine at a time.** Several agent sessions or worktrees open → confirm no  other run is in flight before you start one. Wait, never start a second.
-- **An overlap is unavoidable → cap the runner explicitly.** Pick the knob that bounds test
-  workers, not build jobs: Vitest `maxWorkers` (v4+) or `poolOptions.forks.maxForks` (v3 — config
-  overrides the CLI flag) · `jest --maxWorkers=2` · `pytest -n 2` · `go test -parallel 2` (`-p`
-  bounds packages, not one binary) · `cargo test -- --test-threads 2`. Never leave it on the
-  CPU-derived default.
-- **A per-process cap cannot see its neighbours.** Several worktrees or sessions on one machine →
-  serialize with a machine-wide slot lock, not a bigger cap: `flock` on Linux, `lockf -k` on
-  macOS/BSD (`-k` orders the waiters). Key it on `git rev-parse --path-format=absolute
-  --git-common-dir` — the bare form is relative in the main worktree, so keys would differ per
-  worktree. Wrap the test script itself. Watch mode stays unwrapped: it never exits, so it would
-  hold the slot forever.
+- **One test suite per machine at a time.** Several sessions or worktrees open → confirm no other run is in flight. Wait, never start a second.
+- **Overlap unavoidable → cap the runner explicitly.** Bound test workers, not build jobs: Vitest `maxWorkers` (v4+) or `poolOptions.forks.maxForks` (v3, config overrides the CLI flag) · `jest --maxWorkers=2` · `pytest -n 2` · `go test -parallel 2` (`-p` bounds packages, not one binary) · `cargo test -- --test-threads 2`. Never the CPU-derived default.
+- **Several worktrees or sessions on one machine → a machine-wide slot lock, not a bigger cap.** `flock` (Linux), `lockf -k` (macOS/BSD). Key on `git rev-parse --path-format=absolute --git-common-dir`, never the bare form. Wrap the test script itself. Watch mode stays unwrapped.
 
 ### Never wait real wall-clock
+- **A test never sleeps.** No bare `setTimeout`, no polling loop, no waiting out a production timeout.
+- **Control the clock.** Vitest/Jest `useFakeTimers()` + `advanceTimersByTimeAsync` (modern timers only) · Python `freezegun` or an injected clock · Go and Rust an injected clock, never `time.Sleep`. Restore on teardown (`useRealTimers()` in `afterEach`).
+- **Cannot fake the timer → inject it.** A native deadline (`AbortSignal.timeout`) stays real under a fake. Take the timer or its duration as a parameter. Never assert a production number by waiting for it.
+- **A raised per-test timeout (`it(..., 30_000)`) is usually the tell.** Fix the wait, never the ceiling.
 
-- **A test never sleeps.** No bare `setTimeout`, no polling loop, no waiting out a production
-  timeout in real time. It burns no CPU so it never reads as load, yet it holds a worker — pure
-  queue under `### Concurrent test runs`. And a run never beats its slowest file, so one slow test
-  floors the whole suite, whatever the core count.
-- **Control the clock.** Vitest/Jest `useFakeTimers()` + `advanceTimersByTimeAsync` (modern timers
-  only) · Python `freezegun` or an injected clock · Go and Rust an injected clock, never
-  `time.Sleep`. Restore it on teardown (`useRealTimers()` in `afterEach`), else the next test
-  inherits a frozen clock.
-- **Can't fake the timer → inject it.** A fake replaces the JS timer only, so a native deadline
-  (`AbortSignal.timeout`) stays real. Take the timer or its duration as a parameter — never assert
-  a production number by waiting for it.
-- **A raised per-test timeout is usually the tell.** `it(..., 30_000)` says the test waits — fix
-  the wait, never the ceiling.
-
-### TDD 
-
-- Follow the cycle: Red → Green → Refactor → Commit.
-- Keep to one cycle per commit.
-- For bugs, write a failing regression test first, then fix the bug.
+### TDD
+- Cycle: Red → Green → Refactor → Commit. One cycle per commit.
+- Bug → failing regression test first, then the fix.
 - Exception: pure CSS/layout changes.
 - **Test quality (Kent Beck's Desiderata):** Isolated · Deterministic · Fast · Behavioral · Structure-insensitive · Specific · Predictive.
 - Fix flaky tests first.
 - Prefer E2E over unit tests for user flows.
 
 ### Comments in tests
-
-- **A test file carries one `//` line at the top naming what it guards. Nothing more, by default.**
-  The `describe` and `it` titles are the documentation. Write the title well instead of explaining it.
-- **Never a JSDoc block in a test file.** Not for the file, not for a helper, not above a `describe`.
-  The `/**`, the `*/` and the blank ` *` lines cost more lines than the words they wrap.
-- **One extra `//` line per trap**, and rarely more than one trap in a file. It is allowed only
-  where a reader cannot recover the reason from the code, and it must be a real trap: a mock-shape
-  or mock-ordering trap, an env-load-timing trap, a known flake cause, an assertion that is
-  structural by necessity, a measured provenance the assertion cannot carry. **Each is a single
-  line, never wrapped to a second.** A why that needs two lines belongs in a decision record.
-- **Never** a comment that restates the next line, repeats the test name, labels a section
-  (Arrange/Act/Assert), cross-references a requirement or task number, points at a sibling test
-  file, or records a regression history. `git blame` holds the history and grep finds the sibling.
-- Tooling directives are not comments for this rule and are never removed: `@vitest-environment`,
-  `eslint-disable*`, `oxlint-disable*`, `@ts-expect-error`, `istanbul ignore`, `prettier-ignore`.
-- **Why:** an agent reads the whole suite every session and pays for the prose in context tokens. A
-  comment that restates a test name also drifts away from it, and the stale copy is the one trusted.
+- **One `//` line at the top naming what the file guards. Nothing more, by default.** `describe` and `it` titles are the documentation. Write the title well instead of explaining it.
+- **Never a JSDoc block in a test file.** Not for the file, a helper, or above a `describe`.
+- **One extra `//` line per trap**, rarely more than one trap per file. Only where the reader cannot recover the reason from the code, and only a real trap: mock shape or mock ordering, env-load timing, a known flake cause, an assertion structural by necessity, a measured provenance the assertion cannot carry. **One line each, never wrapped.** A two-line why belongs in a decision record.
+- **Never** a comment that restates the next line, repeats the test name, labels a section (Arrange/Act/Assert), cross-references a requirement or task number, points at a sibling test file, or records regression history.
+- Tooling directives are not comments here and are never removed: `@vitest-environment`, `eslint-disable*`, `oxlint-disable*`, `@ts-expect-error`, `istanbul ignore`, `prettier-ignore`.
 
 ## Dependency Management
-
-- **Preference order, before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. This is a bias, not a ranking to obey — take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default is inverted, see "Small enough to write?" below. An existing dependency never overrides a named prohibition in these rules (e.g. `fetch` over `axios`) or the repo's own conventions.
-- **Check capability before you conclude a gap.** Distinct from the availability check in `## Core Guidelines`: once a library is in play, read its docs and its types before deciding it cannot do what you need. "It probably can't do X" is not a finding — grep the types, check the changelog, then decide.
-- **Small enough to write? Write it.** Option (3) costs a user round-trip (ask-first, RESTRICTIONS), so propose a new package only when the self-written alternative is non-trivial or correctness-sensitive — auth, crypto, parsing, dates, timezones. Otherwise write it. Default stays: install nothing.
-- **Do not reimplement common functionality without a stated reason.** Where a library is warranted, prefer an established, well-maintained one. Judge on maintenance, security, and bundle cost, not on popularity alone. Adding a *new* package is still governed by the ask-first protocol in RESTRICTIONS — propose it, do not install it.
-- use local package manager (respect existing lockfile; if none present, prefer pnpm, then yarn, then npm)
-- **Install the latest stable version. Resolve it, never recall it.** Let the package manager pick
-  the version, or look the version up first. Never write a version string from memory, and never
-  copy one from another file or another project. Pre-release, beta, canary, and release-candidate
-  builds are not stable — take one only when the user asks.
-- **Latest blocked? Take the newest that works, and say so.** A peer-dependency conflict, an engine
-  or runtime constraint, a framework that pins the version, or a known breaking change can stop the
-  latest version. Install the newest version that does work, then report in chat: (1) the package,
-  (2) the version you used, (3) the latest version you could not use, and (4) the reason. Never
-  downgrade in silence.
-- **This governs the version you add, not the versions already installed.** Do not upgrade an
-  existing dependency unless the user asks — that is a separate task with its own risk. When you
-  see one that is far behind or no longer maintained, say so in chat and let the user decide.
-- Avoid using deprecated, outdated and unsecured libraries
-- Never install any dependency outside the project's local package manager — no
-  global, `--user`, or one-off installs (e.g. `npm i -g`, `yarn global add`,
-  `pnpm add -g`, `brew install`, `pipx install`, `pip install --user`, `cargo install`,
-  `gem install`, `go install`, `curl ... | sh`, etc.). See the RESTRICTIONS section
-  for the full policy and the ask-first protocol for any required package, library, or binary.
+- **Preference order before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. A bias, not a ranking: take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default inverts, see "Small enough to write?". An existing dependency never overrides a named prohibition here (`fetch` over `axios`) or the repo's conventions.
+- **Check capability before you conclude a gap.** Distinct from the availability check in `## Core Guidelines`: once a library is in play, read its docs and types before deciding it cannot do the job. "It probably can't do X" is not a finding. Grep the types, check the changelog, then decide.
+- **Small enough to write? Write it.** Propose a new package only when the self-written alternative is non-trivial or correctness-sensitive: auth, crypto, parsing, dates, timezones. Otherwise write it. Default stays: install nothing.
+- **Do not reimplement common functionality without a stated reason.** Where a library is warranted, prefer an established, well-maintained one. Judge on maintenance, security, and bundle cost, not popularity alone. A new package still goes through ask-first in RESTRICTIONS: propose, do not install.
+- Local package manager. Respect the lockfile; none → prefer pnpm, then yarn, then npm.
+- **Latest stable version. Resolve it, never recall it.** Let the package manager pick, or look it up first. Never write a version from memory or copy one from another file or project. Pre-release, beta, canary, and RC are not stable; take one only when the user asks.
+- **Latest blocked → the newest that works, and say so.** Blockers: a peer-dependency conflict, an engine or runtime constraint, a framework pin, a known breaking change. Install the newest that works, then report in chat: (1) package, (2) version used, (3) latest not usable, (4) reason. Never downgrade in silence.
+- **Governs the version you add, not versions already installed.** Never upgrade an existing dependency unless asked. One far behind or unmaintained → say so in chat, the user decides.
+- Avoid deprecated, outdated, or insecure libraries.
+- Never install outside the project's local package manager. Full policy and ask-first protocol → RESTRICTIONS.
 
 ## TypeScript Guidelines
-
-- Use TypeScript for new code (if possible)
-- Prefer immutable data (const, readonly)
-- Use interfaces for data structures (if possible)
-- Use TSX "node --import=tsx ..." to run typescript locally (for production code use tsc build)
-- Strict TypeScript types with zero "any"
-- Dont use "ts-nocheck" or "ts-ignore"
-- Dont allow any types errors - always check your TS (eg. with npx tsc --noEmit), and fix typing if needed
+- TypeScript for new code (if possible).
+- Prefer immutable data (`const`, `readonly`).
+- Interfaces for data structures (if possible).
+- Run locally with tsx: `node --import=tsx ...`. Production: `tsc` build.
+- Strict types, zero `any`. No `ts-nocheck`, no `ts-ignore`.
+- Zero type errors. Always check (`npx tsc --noEmit`) and fix typing if needed.
 
 # TOOLS
 
 ## Diagrams
-
-- Diagram when a picture beats words on something complex. Do not force one onto simple things.
-- Default to inline ASCII / unicode box-drawing: trees, boxes and arrows, flows. Renders in a terminal, a diff, a code comment, and every markdown viewer. No tool, no build step, no asset to keep in sync.
-- **Exception, where the target renders it natively.** A fenced ` ```mermaid ` block is correct when the output lands somewhere that renders it with no extra tooling — GitHub markdown, Obsidian — and a skill calls for it. Do NOT convert those to ASCII. The ASCII default governs terminal and chat output, where nothing renders.
-- One idea per diagram, roughly 15 nodes maximum. Split rather than cram.
-- Label every edge. An unlabelled arrow says things connect, not why.
-- What is banned is the toolchain, not the syntax: no standalone `.mmd` files, and never install a renderer or parser to preview or validate a diagram. A fenced block inside a markdown file is not that. If a diagram genuinely needs interactivity or a rendered image, stop and ask first per RESTRICTIONS.
+- Diagram when a picture beats words on something complex. Never force one onto simple things.
+- Default: inline ASCII / unicode box-drawing (trees, boxes and arrows, flows).
+- **Exception: native rendering.** A fenced ` ```mermaid ` block is correct where the output renders it with no extra tooling (GitHub markdown, Obsidian) and a skill calls for it. Never convert those to ASCII. ASCII governs terminal and chat.
+- One idea per diagram, roughly 15 nodes max. Split, never cram.
+- Label every edge.
+- Banned: the toolchain, not the syntax. No standalone `.mmd` files. Never install a renderer or parser to preview or validate. A fenced block in markdown is fine. Interactivity or a rendered image genuinely needed → stop, ask first per RESTRICTIONS.
 
 ## Browser Automation (bot-walled sites)
-
-- Automating a login or flow on a site that runs bot detection (Reddit, and similar) → drive **real Chrome** (not bundled Chromium) via Playwright, headful, with the anti-automation config, or the site's "network security" / bot check blocks the window:
+- Login or flow on a bot-detecting site (Reddit and similar) → **real Chrome** (not bundled Chromium) via Playwright, headful, anti-automation config:
   - `chromium.launch({ channel: "chrome", headless: false, args: ["--disable-blink-features=AutomationControlled"] })`
   - `context.addInitScript(() => Object.defineProperty(navigator, "webdriver", { get: () => undefined }))`
-- Detect success by polling `context.cookies()` for the site's auth/session cookie (e.g. `reddit_session`), not a fixed wait. Do NOT use `page.waitForTimeout` (a redirect detaches the page) → use a plain `setTimeout`.
-- A 403 serving a "network policy" / "whoa there" block page is usually transient **IP-level rate-limiting, not a fingerprint wall** (it also blocks a real browser from the same IP). Do not probe-spam to diagnose, and do not reach for `curl-impersonate` or a paid scraper. Stop, wait for the IP block to clear (minutes, up to ~1h), then retry.
+- Detect success by polling `context.cookies()` for the auth/session cookie (`reddit_session`), not a fixed wait. Never `page.waitForTimeout`; use a plain `setTimeout`.
+- A 403 with a "network policy" / "whoa there" page is usually transient **IP rate-limiting, not a fingerprint wall**. No probe-spam, no `curl-impersonate`, no paid scraper. Stop, wait for the block to clear (minutes, up to ~1h), retry.
 
 # Agent Mode
-
-- ALWAYS read AGENTS.md/CLAUDE.md file first
-- dont remove any code, if not asked to (not even "dead code")
+- Always read AGENTS.md/CLAUDE.md first.
+- Never remove code unless asked, "dead code" included.
 
 ## Implementation Verification Protocol
-
-After completing any code changes, perform every verification phase below before considering the task complete:
+- After any code change, run every phase below before the task is complete. Not complete until every phase passes. A phase fails → fix, re-run all phases.
 
 ### Phase 1: Build Verification
-
-- Run the project's build command (e.g., pnpm build, yarn build, npm run build)
-- Ensure zero compile errors and warnings are addressed
-- Verify all TypeScript types resolve correctly
+- Run the project build (`pnpm build`, `yarn build`, `npm run build`).
+- Zero compile errors. Address warnings.
+- All TypeScript types resolve.
 
 ### Phase 2: Automated Testing (tests, lint etc)
-
-- Run the full test suite (`pnpm test` or any other test command available) after every code change
-- Ensure all existing tests pass — zero failures
-- If your changes break existing tests, **fix them immediately** before proceeding
-- If you modified functionality, verify affected tests still pass or update them accordingly
-- If new functionality was added, write tests for it
-- Run lint (if present in the project), fix any reported issues (errors and also warnings)
+- Full test suite (`pnpm test` or the project's command) after every code change. Zero failures.
+- Your change breaks a test → fix it at once, before proceeding.
+- Modified functionality → verify or update affected tests. New functionality → write tests.
+- Lint present → run it, fix errors and warnings.
 
 ### Phase 3: Code Review
-
-- Run a `code-review` task agent on the changes made in this session
-- Triage every finding before you change anything. Relevance decides if you fix a finding. Severity only sets the order of the work
-- Fix every relevant finding, at any severity. A low severity is never a reason to leave a real defect
-- Reject the rest, and state the reason for each rejection. A finding is not relevant when it is wrong about the code, when it points outside the scope of this change, when it contradicts a convention the project already set, or when it is taste with no defect and no convention behind it. State each rejected finding in the report. Never queue a rejection for the user to clear
-- When a relevant finding needs a broad refactor, a new dependency, or a change to a public interface, state it with the fix you propose, and ask first. A review never grows the change on its own
-- Never apply a finding that changes what a rule requires, at any severity. Draft the wording, show it to the user, and ask
-- Present to the user what review returned and what you did with each finding
-
-Do not mark implementation as complete until every verification phase passes. If any phase fails, fix the issues and re-run all phases.
+- Run a `code-review` task agent on this session's changes.
+- Triage every finding before any change. Relevance decides the fix. Severity only sets the order.
+- Fix every relevant finding at any severity.
+- Reject the rest with a stated reason: wrong about the code, outside this change's scope, contradicts a project convention, or taste with no defect and no convention. State each rejection in the report. Never queue a rejection for the user.
+- A relevant finding needs a broad refactor, a new dependency, or a public-interface change → state it with the proposed fix, ask first. A review never grows the change.
+- Never apply a finding that changes what a rule requires, at any severity. Draft the wording, show it, ask.
+- Present what review returned and what you did with each finding.

@@ -76,7 +76,6 @@ re-scope it in this file — a second copy drifts.
 
 - **Simplicity first**: minimal code changes, no side effects.
 - **Root cause, not stopgap**: fix the cause, never the symptom.
-- **Self-improvement loop**: after any correction, learn from it, be proactive.
 - **Plan mode**: enter plan mode for any non-trivial task (3+ steps).
 - **Conventional commits**: `feat:`, `fix:`, `refactor:`, etc.
 

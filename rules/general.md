@@ -28,17 +28,6 @@ paths:
 - **Grow in layers.** Ship the smallest end-to-end version, then stack each capability on what already works. Never trade a working product for half-finished complexity. A runnable product exists at every step.
 - **Separate concerns, enforce boundaries.** Explicit interfaces between layers. No reaching across. No shared mutable state as a back channel. Sizing → `# FILE LENGTH`.
 
-# SELF IMPROVEMENT LOOP
-- After any user correction → persist a lesson in the agent's available memory/preference system.
-- Scope first:
-  - **Cross-project** (tone, language, code style, tool preferences, workflow habits) → global/user memory.
-  - **Project-specific** (build commands, local conventions, repo gotchas) → project memory. None exists → global, prefixed with the project name.
-- Write it to stop the same mistake. Capture **Why** (reason / incident) and **How to apply** (when it kicks in).
-- Update existing entries, never duplicate. Remove entries proven wrong.
-- Consult lessons on demand: when unsure, before a task in a domain with past lessons, after an error or correction. Never load all lessons at session start. Each agent has its own store (Claude Code reads `MEMORY.md`, Copilot its own config).
-- Capture success too: an explicit confirmation of a non-obvious choice ("yes exactly", "perfect") is a lesson.
-- Iterate on lessons until the mistake rate drops.
-
 # CHEAPEST REMEDY FIRST
 - **"Cannot reproduce" is a finding, not a dead end.** Bug absent in a clean environment → say so at once, and what it implies. Dig further only if asked.
 - Never offer a menu of fixes that omits "no change needed" when that is true.

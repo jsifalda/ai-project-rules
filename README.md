@@ -140,18 +140,12 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`ship-v1`](skills/ship-v1/SKILL.md) | Ship the smallest live version of a side project in one weekend, post it, then let real signal decide whether to continue, pivot, or drop. An anti-roadmap protocol for unvalidated, zero-user products. | — | — |
 | [`summarise-text`](skills/summarise-text/SKILL.md) | Summarise pasted text, a local file, or an Obsidian note into main idea, takeaways, and an action plan. | — | — |
 | [`summarise-url`](skills/summarise-url/SKILL.md) | Fetch a link's content and return a structured summary, plus a distilled set of maxims from the same content, in one reply. | `defuddle`, `distill-notes` | — |
-| [`team-code-writer`](skills/team-code-writer/SKILL.md) | Writer role for an agent dev team — implements features matching existing style and summarizes with file:line refs. Writes code only, no tests and no self-review. | — | — |
-| [`team-reviewer`](skills/team-reviewer/SKILL.md) | Reviewer role for an agent dev team — read-only, runs `git diff` and reports Critical/Important/Nitpick findings with file:line, never edits. | — | — |
-| [`team-ship`](skills/team-ship/SKILL.md) | Lead orchestrator — `/team-ship <task>` records the agent territories in the project's AGENTS.md/CLAUDE.md, writes a brief, dispatches the writer and tester in parallel then the reviewer on the diff, and collects one summary that produces a PR you approve. | `team-code-writer`, `team-tester`, `team-reviewer` | — |
-| [`team-tester`](skills/team-tester/SKILL.md) | Tester role for an agent dev team — writes tests from the spec, blind to the implementation, covering every branch, edge case, and error path. | — | — |
 | [`translate-to-czech`](skills/translate-to-czech/SKILL.md) | Translate English text to Czech while preserving accuracy. | — | — |
 | [`verify-user-scenarios`](skills/verify-user-scenarios/SKILL.md) | Drive a project's documented user scenarios through a real browser with Playwright MCP and report what actually broke — selects browser-reachable scenarios, writes a falsifiable test plan, drives each serially against a dev server it starts itself, and judges every one as pass, fail, gap, drift or blocked with a screenshot as evidence. Reports only, never auto-fixes and never files a backlog entry. Slash-only. | — | — |
 | [`write-like-human`](skills/write-like-human/SKILL.md) | Apply a strict style guide so prose reads as human, not AI-generated. | — | — |
 | [`yt-video-finder`](skills/yt-video-finder/SKILL.md) | Drive a real Chrome browser via Playwright to search YouTube, shortlist and rate candidates by engagement + comments, then pick the single best video for the user's criteria and write it up. | — | — |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
-
-_The four `team-*` skills (an agent dev team — a writer, a reviewer, a tester, and a `team-ship` lead that runs them) are adapted from [@zodchiii's post on X](https://x.com/zodchiii/status/2067552428627484853)._
 
 ## Upstream skill sync
 

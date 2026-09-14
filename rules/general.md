@@ -176,6 +176,14 @@ paths:
 - Label every edge.
 - Banned: the toolchain, not the syntax. No standalone `.mmd` files. Never install a renderer or parser to preview or validate. A fenced block in markdown is fine. Interactivity or a rendered image genuinely needed → stop, ask first per RESTRICTIONS.
 
+## Reading Files (context budget)
+- Read file content with `Read` (`offset` + `limit`). Never `cat`, `sed -n`, `head` or `tail` a file in Bash.
+- Find the lines first (`grep -n pattern file | head`), then read only that range.
+- Never re-read a file range that is already in the conversation and unchanged since.
+- One Bash call, one purpose. Never chain several file reads with `&&`.
+- Broad exploration across many files → an `Explore` subagent. The file dumps stay out of the main context.
+- Long Bash output (logs, lists) → pipe through `grep`, `head` or `tail`. Test, lint and build failures keep their full output.
+
 ## Browser Automation (bot-walled sites)
 - Login or flow on a bot-detecting site (Reddit and similar) → **real Chrome** (not bundled Chromium) via Playwright, headful, anti-automation config:
   - `chromium.launch({ channel: "chrome", headless: false, args: ["--disable-blink-features=AutomationControlled"] })`

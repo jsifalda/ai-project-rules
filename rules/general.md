@@ -144,7 +144,7 @@ paths:
 - **Never a JSDoc block in a test file.** Not for the file, a helper, or above a `describe`.
 - **One extra `//` line per trap**, rarely more than one trap per file. Only where the reader cannot recover the reason from the code, and only a real trap: mock shape or mock ordering, env-load timing, a known flake cause, an assertion structural by necessity, a measured provenance the assertion cannot carry. **One line each, never wrapped.** A two-line why belongs in a decision record.
 - **Never** a comment that restates the next line, repeats the test name, labels a section (Arrange/Act/Assert), cross-references a requirement or task number, points at a sibling test file, or records regression history.
-- Tooling directives are not comments here and are never removed: `@vitest-environment`, `eslint-disable*`, `oxlint-disable*`, `@ts-expect-error`, `istanbul ignore`, `prettier-ignore`.
+- Tooling directives are not comments here and are never removed: `@vitest-environment`, `eslint-disable*`,`prettier-ignore` etc
 
 ## Dependency Management
 - **Preference order before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. A bias, not a ranking: take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default inverts, see "Small enough to write?". An existing dependency never overrides a named prohibition here (`fetch` over `axios`) or the repo's conventions.

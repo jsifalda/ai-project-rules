@@ -140,11 +140,11 @@ paths:
 - Prefer E2E over unit tests for user flows.
 
 ### Comments in tests
-- **One `//` line at the top naming what the file guards. Nothing more, by default.** `describe` and `it` titles are the documentation. Write the title well instead of explaining it.
-- **Never a JSDoc block in a test file.** Not for the file, a helper, or above a `describe`.
-- **One extra `//` line per trap**, rarely more than one trap per file. Only where the reader cannot recover the reason from the code, and only a real trap: mock shape or mock ordering, env-load timing, a known flake cause, an assertion structural by necessity, a measured provenance the assertion cannot carry. **One line each, never wrapped.** A two-line why belongs in a decision record.
-- **Never** a comment that restates the next line, repeats the test name, labels a section (Arrange/Act/Assert), cross-references a requirement or task number, points at a sibling test file, or records regression history.
-- Tooling directives are not comments here and are never removed: `@vitest-environment`, `eslint-disable*`,`prettier-ignore` etc
+- **Test titles are the documentation.** A test that needs a comment needs a better title.
+- **One header comment names what the file guards.** Nothing else by default.
+- **One line per real trap** the code cannot show. Traps: a mock shape or order, a load-order timing, a known flake cause, a forced structural assertion, the origin of a measured value. Keep each on one line. A file rarely needs more than one.
+- **Never a doc comment or docstring in a test file.** Never a comment that restates code, repeats the title, labels a section, cross-references a ticket or another file, or records history.
+- **Tooling directives are not comments.** Never remove a compiler, type-checker, test-runner, linter, or formatter directive.
 
 ## Dependency Management
 - **Preference order before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. A bias, not a ranking: take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default inverts, see "Small enough to write?". An existing dependency never overrides a named prohibition here (`fetch` over `axios`) or the repo's conventions.

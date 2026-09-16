@@ -18,7 +18,6 @@ paths:
 - Never assume a library or framework is available or appropriate. Verify its use in the project first (imports, `package.json`, `requirements.txt`, neighboring files).
 - Mimic existing style (formatting, naming), structure, framework choices, typing, and architecture.
 - Understand the local context (imports, functions, classes) before an edit. Integrate idiomatically.
-- Comments: sparse, high-value, _why_ not _what_, especially for complex logic. Add one only for clarity or on request. Do not edit comments outside the code you change. Never address the user or describe changes in a comment.
 - Fulfill the request in full, with reasonable, directly implied follow-ups.
 - No significant action beyond the request without confirmation. Asked _how_ → explain first, do not do it.
 
@@ -81,7 +80,7 @@ paths:
 - **The deletion test.** What does a reader get wrong once the line is gone? "Nothing, they would read the code" → delete it.
 - Prefer a clear name, a type, or a test. A doc is the last place for a fact.
 - **Argue a decision once.** Every other place states what to do and links to it.
-- A comment holds a why local to its line. A module-wide why goes to the project's decision record.
+- A module-wide why goes to the project's decision record, never a comment.
 - Never open a doc surface the project does not already keep. No word limit; these rules set the length.
 
 # COUNTS IN INSTRUCTIONS
@@ -116,6 +115,13 @@ paths:
 - No magic numbers. Constants or variables with meaningful names.
 - `fetch` for HTTP. Never `axios`, `superagent`, or another library.
 
+## Comments
+- Default: none. Rename or extract until the code needs no comment. In doubt, do not write it.
+- Never: restate the code, narrate the diff, banners, doc blocks that echo the signature, agent chatter (`// as requested`), prose a test title already says.
+- Only: a non-obvious why, a cited external constraint, a correctness trap (`// Copy before sort: callers hold this slice`), an API contract the signature cannot show (side effects, errors, units, threads, ownership). "It is complex" does not qualify, simplify instead.
+- Never add or edit a comment outside your change. Delete one only when your change made it wrong. A contradicting comment is a defect.
+- Tooling directives are not comments. Never remove one.
+
 ## Testing
 - Write many tests. Aim to cover all user scenarios. Unit, integration, e2e; pick the best fit.
 - Never remove a failing test. Remove only one no longer needed.
@@ -138,13 +144,6 @@ paths:
 - **Test quality (Kent Beck's Desiderata):** Isolated · Deterministic · Fast · Behavioral · Structure-insensitive · Specific · Predictive.
 - Fix flaky tests first.
 - Prefer E2E over unit tests for user flows.
-
-### Comments in tests
-- **Test titles are the documentation.** A test that needs a comment needs a better title.
-- **One header comment names what the file guards.** Nothing else by default.
-- **One line per real trap** the code cannot show. Traps: a mock shape or order, a load-order timing, a known flake cause, a forced structural assertion, the origin of a measured value. Keep each on one line. A file rarely needs more than one.
-- **Never a doc comment or docstring in a test file.** Never a comment that restates code, repeats the title, labels a section, cross-references a ticket or another file, or records history.
-- **Tooling directives are not comments.** Never remove a compiler, type-checker, test-runner, linter, or formatter directive.
 
 ## Dependency Management
 - **Preference order before you write an implementation:** (1) a dependency already in the project, (2) the language/platform standard library, (3) an established, well-maintained third-party library, (4) your own code. A bias, not a ranking: take a later option when it is materially simpler, safer, or more reliable, and say why. Between (3) and (4) the default inverts, see "Small enough to write?". An existing dependency never overrides a named prohibition here (`fetch` over `axios`) or the repo's conventions.

@@ -1,16 +1,16 @@
 ---
 name: setup-changelog
-description: Bootstrap a per-session changelog system in any project. Creates changelog/ directory, adds policy to AGENTS.md or CLAUDE.md, and optionally freezes an existing changelog.md. Use when setting up changelogs, initializing project change tracking, or the user mentions "changelog setup". Do NOT use to write one changelog entry in a project that already has the system.
+description: Bootstrap a per-branch changelog system in any project. Creates changelog/ directory, adds policy to AGENTS.md or CLAUDE.md, and optionally freezes an existing changelog.md. Use when setting up changelogs, initializing project change tracking, or the user mentions "changelog setup". Do NOT use to write one changelog entry in a project that already has the system.
 ---
 
 # Changelog Setup
 
-Set up a per-session, file-per-change changelog system in any project. Each agent session records what changed and why in a dedicated file — no automation, no tooling, just documented policy.
+Set up a one-file-per-branch changelog system in any project. Each branch records what changed and why in one dedicated file, and a later session on the same branch extends that file — no automation, no tooling, just documented policy.
 
 ## When to use
 
 - User asks to "set up changelogs" or "add changelog tracking" to a project
-- User wants to replicate the per-session changelog pattern in a new repo
+- User wants to replicate the per-branch changelog pattern in a new repo
 - User mentions "changelog setup" or "initialize changelog"
 
 ## Workflow
@@ -66,6 +66,8 @@ Confirm to the user:
 
 **When to create one**: only for a change worth a future reader knowing — code/config/behavior changes, structural or dependency changes, or any destructive / hard-to-reverse action (always log those). Skip low-impact work: creating a standalone note or scratch md file, read-only research, trivial no-impact edits. Full criteria live in the policy template.
 
+**Where it goes**: one entry per branch — extend the branch's existing entry when it has one, and create a file only when it has none. On the default branch itself, one entry per session. The lookup commands live in the policy template.
+
 **Filename**: `changelog/YYYYMMDDHHMMSS-short-slug.md`
 - Timestamp: 14-digit format (e.g., `20260412114500`)
 - Slug: 2-5 word kebab-case (e.g., `fix-auth-redirect`, `add-token-tracking`)
@@ -82,8 +84,8 @@ Confirm to the user:
 ## Rules
 
 - Only create an entry for real changes or destructive actions — skip trivial/no-impact work like dropping a new note file (full criteria in the policy template)
-- Never edit existing changelog files — always create a new one
-- One file per agent session (multiple related changes go in same file)
+- One file per branch — a later session on the same branch extends the branch's entry, it does not add a second one. On the default branch itself, one file per session.
+- Never edit an entry already on the default branch — a merged entry is history
 - Focus on **why** over **how** — no technical implementation details
 - 80 words maximum per entry
 

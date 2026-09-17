@@ -15,7 +15,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone).
 - `.githooks/` — tracked `pre-commit` hook; runs the universality scanner + skill validator on staged files. Activated by `install-hooks.sh` setting `core.hooksPath`.
 - `AGENTS.md` — symlink to `CLAUDE.md`.
-- `changelog/` — one entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md`. See `## Changelog` below.
+- `changelog/` — one entry file per branch, `YYYYMMDDHHMMSS-short-slug.md`. See `## Changelog` below.
 - `changelog.md` — **frozen archive** of pre-`changelog/` entries. Do not edit or append.
 
 ## Skills Sync
@@ -204,7 +204,7 @@ CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may als
 
 ### Step 6 — then commit
 
-- Write the changelog entry and make the single bundled commit per the `## Changelog` section below. Hooks must run — never `--no-verify`.
+- Write or extend the changelog entry and make the single bundled commit per the `## Changelog` section below. Hooks must run — never `--no-verify`.
 
 ### When a lens cannot run
 
@@ -233,22 +233,35 @@ Create an entry only when the session made a change worth a future reader knowin
 - Any **destructive or hard-to-reverse action** — deleting or moving files, dropping data, rewriting git history, removing a dependency (always log these)
 
 Skip the entry for low-impact work that does not really change the project:
-- Creating a standalone note, draft, or scratch markdown file in the folder
+- Creating a standalone note, draft, or scratch markdown file
 - Read-only work — research, answering questions, exploring code
 - Trivial no-impact edits — a typo in a comment, reformatting
 
 When in doubt, skip the noise — but never skip a destructive action.
 
-Each agent session **that makes a qualifying change** (see _When to create an entry_ above) creates a **new file** in the `changelog/` directory:
+A session **that makes a qualifying change** (see _When to create an entry_ above) records it in the `changelog/` directory. One branch holds one entry, however many sessions build it, so one PR carries one entry.
 
-```
-changelog/YYYYMMDDHHMMSS-short-slug.md
-```
+1. Find the entry this branch already holds. The first command lists the committed entries this branch adds over the default branch, the second lists the uncommitted ones — staged, unstaged, or untracked:
+
+   ```
+   BASE="$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null || git rev-parse --verify -q --abbrev-ref main || git rev-parse --verify -q --abbrev-ref master)"
+   git diff --name-only --diff-filter=A "$BASE...HEAD" -- changelog/
+   git status --porcelain -- changelog/
+   ```
+
+   `BASE` empty → run `git remote set-head origin -a` once, or name the default branch by hand.
+
+2. One exists → **extend it**. Append bullets for this session's change. Keep the filename. Retitle only when the title no longer covers the whole entry. Condense as you append, so the entry stays short.
+3. None exists → create a **new file**:
+
+   ```
+   changelog/YYYYMMDDHHMMSS-short-slug.md
+   ```
 
 - **Timestamp**: `YYYYMMDDHHMMSS` format (e.g., `20260412114500`)
 - **Slug**: 2–5 word kebab-case summary (e.g., `fix-draft-highlight`, `add-token-tracking`)
-- **Never edit existing changelog files** — always create a new one
-- One file per agent session (multiple related changes go in the same file)
+- **Never edit an entry that is already on the default branch** — a merged entry is history. Only the current branch's own entry is open for edits.
+- One file per branch. On the default branch itself, one file per session (multiple related changes go in the same file).
 
 ### File content format
 
@@ -264,9 +277,9 @@ Keep it concise — minimal words to deliver the message. Focus on *why* over *h
 
 ### Commit the entry (autocommit)
 
-When you create a new changelog entry, commit it automatically — do not ask first:
+When you create or extend a changelog entry, commit it automatically — do not ask first:
 
-- **One bundled commit.** Stage the new `changelog/` file together with the related changes from this session that the entry documents, and commit them as a single commit. Use the conventional-commit format for the actual change (e.g. `feat: add foo skill`), not "add changelog" — the entry rides along with the work it describes.
+- **One bundled commit.** Stage the new or extended `changelog/` file together with the related changes from this session that the entry documents, and commit them as a single commit. Use the conventional-commit format for the actual change (e.g. `feat: add foo skill`), not "add changelog" — the entry rides along with the work it describes.
 - **Stage only related files.** Add the entry plus the files this session actually changed. Never `git add -A` / `git add .` — do not sweep unrelated working-tree files into the commit.
 - **Already-committed work.** If the related changes were already committed earlier this session (e.g. per TDD cycle), commit the entry on its own as a follow-up (`docs: …`).
 - **Local only — never push.** This is a local commit. Pushing still needs an explicit user instruction (see RESTRICTIONS in `rules/general.md`).
@@ -275,5 +288,5 @@ When you create a new changelog entry, commit it automatically — do not ask fi
 ### File organization notes
 
 - `changelog.md` at root is a **frozen archive** — do not edit
-- New changelog entries go in `changelog/` as individual files
+- Changelog entries live in `changelog/` as individual files, one per branch
 - Changes solely to `changelog/*.md` files are documentation-only and skip code verification protocols

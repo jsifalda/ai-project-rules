@@ -13,7 +13,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
 | `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
-| `changelog/` | One entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md` |
+| `changelog/` | One entry file per branch, `YYYYMMDDHHMMSS-short-slug.md` |
 | `changelog.md` | **Frozen archive** of pre-`changelog/` entries — do not edit or append |
 | `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, and the upstream skill-sync scripts (see [Upstream skill sync](#upstream-skill-sync)) |
 | `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
@@ -133,7 +133,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`seo-keyword-generator`](skills/seo-keyword-generator/SKILL.md) | Generate a categorized SEO keyword strategy for a side project via a questionnaire. | — | — |
 | [`setup-adrs`](skills/setup-adrs/SKILL.md) | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed record ADR, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. | — | — |
 | [`setup-aiengineering`](skills/setup-aiengineering/SKILL.md) | Bootstrap a repo's AI-engineering baseline — inject verification/git/file-org/writing-style policy blocks (plus an opt-in PRD gate) into AGENTS.md/CLAUDE.md, delegate ADRs/changelog/user-scenarios/TODO-backlog to their setup skills, and scaffold a worktree bootstrap hook plus a detected `.worktreeinclude`. Keeps that agent file to directives and read-first pointers only — documentation goes to README.md/ARCHITECTURE.md/`docs/adr/`, and a re-run offers to relocate any that drifted back in. Versioned and re-runnable — a coverage self-audit reports uncovered baseline concerns, and re-runs upgrade older setups to the current version. Stack-agnostic. | `setup-adrs`, `setup-changelog`, `setup-user-scenarios`, `setup-todo-backlog`, `find-skills` (optional), `code-review-nuclear` (optional) | — |
-| [`setup-changelog`](skills/setup-changelog/SKILL.md) | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). | — | — |
+| [`setup-changelog`](skills/setup-changelog/SKILL.md) | Bootstrap a per-branch changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). | — | — |
 | [`setup-rtk`](skills/setup-rtk/SKILL.md) | Install RTK (Rust Token Killer) on a machine for a single Claude Code profile — binary (Homebrew or official install script) + the `rtk hook claude` PreToolUse hook in settings.json, via RTK's own `rtk init`. | — | — |
 | [`setup-skills-autorefresh`](skills/setup-skills-autorefresh/SKILL.md) | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. | — | — |
 | [`setup-todo-backlog`](skills/setup-todo-backlog/SKILL.md) | Bootstrap a known-issues backlog in any project — `docs/TODO.md` with dated immutable ids, optional checklist conversion, and a policy where entries are filed only on request and closed automatically on evidence. | — | — |
@@ -250,5 +250,5 @@ Personal repo, but PRs welcome if something here is genuinely useful elsewhere. 
 
 **Verification gate:** every change here runs the repo's verification gate before it is reported done — the universality scanner, the skill validator, then a CodeRabbit review and the harness's built-in code review. Every finding is triaged for relevance first: a relevant finding is fixed whatever its severity, and the rest are rejected with a stated reason. A fix that would grow the change, and anything that would change what a rule requires, always asks first — whatever its severity. Full policy: the [`## Verification Protocol (MANDATORY)`](CLAUDE.md#verification-protocol-mandatory) section of `CLAUDE.md`.
 
-Log notable changes as a new file in `changelog/`, named `YYYYMMDDHHMMSS-short-slug.md`. The root `changelog.md` is a frozen archive — never append to it.
+Log notable changes in `changelog/`, one file per branch, named `YYYYMMDDHHMMSS-short-slug.md` — extend the branch's existing entry when it already has one. The root `changelog.md` is a frozen archive — never append to it.
 

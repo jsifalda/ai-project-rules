@@ -1,6 +1,6 @@
 ---
 name: ship-pr
-description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency (such as the final stage of a `/better-plan` run). Phrasing like "ship this", "create a PR", "send this for review", or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
+description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or anything touching tags or changelogs.
 ---
 
 # Ship PR
@@ -26,7 +26,7 @@ allowlist — it removes the skill from the Skill tool entirely, so a dependent 
 step fails with `cannot be used with Skill tool`. Do not re-add it to "tighten" invocation
 without first removing every dependent skill's ship step.
 
-Go from a dirty working tree to an open PR/MR in one pass. Auto-derive everything from the change and the repo's own conventions. No per-step confirmations.
+Go from a dirty working tree, or a committed branch not yet on a PR, to an open PR/MR in one pass. Auto-derive everything from the change and the repo's own conventions. No per-step confirmations.
 
 The skill runs the four phases in strict order. The hot path costs **three tool calls**: one for Phase 1, one for Phase 3a, one for Phase 3b. Phase 2 is reasoning, and Phase 4 is text. Keep each phase in one bash block. Do not split a block into per-command calls — each extra call is a full model round-trip, and the round-trips, not the commands, are what make this skill slow.
 
@@ -62,7 +62,12 @@ done
 # A name containing a space or a quote is STILL wrapped in double quotes — see Phase 3a.
 PORCELAIN=$(git -c core.quotePath=false status --porcelain -uall) \
   || { echo "ABORT: git status failed"; exit 1; }
-[ -n "$PORCELAIN" ] || { echo "ABORT: no changes to commit"; exit 1; }
+# A clean tree on the default branch has nothing to ship. Abort here, before any
+# remote or provider check, so this path stays as cheap as it was.
+if [ -z "$PORCELAIN" ]; then
+  LOCAL_DEFAULT=$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null | sed 's|^origin/||')
+  [ -n "$LOCAL_DEFAULT" ] && [ "$BRANCH" = "$LOCAL_DEFAULT" ] && { echo "ABORT: no changes to commit"; exit 1; }
+fi
 
 ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || { echo "ABORT: no origin remote configured"; exit 1; }
 
@@ -99,7 +104,27 @@ if [ -z "$DEFAULT_BRANCH" ]; then   # network fallback only when the local ref i
   fi
 fi
 
+# Two entry states. A dirty tree ships as before. A clean tree ships only when the
+# branch already carries commits the default branch lacks — a repo whose rules require
+# a commit before the ship (a bundled changelog commit, a TDD cycle) lands here.
+if [ -n "$PORCELAIN" ]; then
+  MODE=dirty; AHEAD=0
+else
+  # Committed mode cannot proceed on guesses: it needs the default branch name AND its
+  # local remote-tracking ref, or the ahead count is meaningless. Each gap gets its own
+  # message — "no changes to commit" is reserved for a branch that truly carries nothing.
+  [ -n "$DEFAULT_BRANCH" ] || { echo "ABORT: default branch unknown — ask the user, then re-run"; exit 1; }
+  [ "$BRANCH" != "$DEFAULT_BRANCH" ] || { echo "ABORT: no changes to commit"; exit 1; }
+  git rev-parse --verify -q "refs/remotes/origin/$DEFAULT_BRANCH" >/dev/null \
+    || { echo "ABORT: no local ref for origin/$DEFAULT_BRANCH — run: git fetch origin $DEFAULT_BRANCH"; exit 1; }
+  AHEAD=$(git rev-list --count "origin/$DEFAULT_BRANCH..HEAD")
+  [ "$AHEAD" -gt 0 ] || { echo "ABORT: no changes to commit"; exit 1; }
+  MODE=committed
+fi
+
 echo "branch=$BRANCH"
+echo "mode=$MODE"
+echo "ahead=$AHEAD"
 echo "provider=$PROVIDER"
 echo "host=$HOST"
 echo "default_branch=$DEFAULT_BRANCH"
@@ -107,6 +132,11 @@ echo "user_name=$(git config user.name)"
 
 echo "--- status ---";   printf '%s\n' "$PORCELAIN"
 echo "--- log ---";      git log --pretty=%s -20
+
+if [ "$MODE" = committed ]; then
+  echo "--- commits ---"; git log --reverse --format='== %h %s%n%b' "origin/$DEFAULT_BRANCH..HEAD"
+fi
+
 echo "--- branches ---"; git branch -a --sort=-committerdate | head -12
 
 # one grep pass over every convention file — never one read per file.
@@ -143,6 +173,7 @@ Read the result like this:
 - Any `ABORT:` line ends the run. Print that reason and stop.
 - `default_branch=` empty — ask the user once for the default branch, then continue.
 - `default_branch=` is read from the local `refs/remotes/origin/HEAD`, which is set at clone time and never refreshed here. A refresh is a network call on every run, which is the cost this skill exists to avoid. If the remote renamed its default branch, that local ref goes stale and the PR targets the wrong base. The symptom is loud — `gh pr create` rejects a base that no longer exists — and `git remote set-head origin -a` repairs it. Run that once if you see it.
+- `mode=committed` means the branch is already committed and Phase 3a only pushes. `--- commits ---` lists the commits the PR will carry, oldest first, and it is the source for the title and body in Phase 2.
 - `--- status ---` is the file inventory for Phase 2 and Phase 3a. Do not fetch it again.
 - `--- conventions ---` and `--- pr template ---` carry the repo's own rules. These files often
   state explicit branch, commit, and PR rules. Honor them when present — they beat every default below.
@@ -167,6 +198,10 @@ First answer one question:
 
 ```
 Who authored the working-tree changes?
+  mode=committed           -> the commits are the message. Read
+                              no diff. A PR template from Phase 1
+                              still shapes the body.
+
   I did, in this session   -> write the message from what you did.
                               NO diff read at all. The Phase 1 porcelain
                               output is the file inventory.
@@ -180,6 +215,13 @@ Who authored the working-tree changes?
   session                     then git diff HEAD if the stat leaves the
                               commit type ambiguous
 ```
+
+In committed mode the commits already carry the message, so derive the PR from them and write no
+new one. A single commit — the PR title is its subject and the `## Summary` bullets are its body
+verbatim, the repo convention for a single-commit PR. Several commits — the title takes the
+dominant type and scope, and 1-3 bullets cover them together. The branch name is the current
+branch, never derived. Copy a body through the attribution policy below: a `Co-Authored-By`
+trailer or a generated-with footer in a commit never reaches the PR body.
 
 The reason: in most `/ship-pr` runs you just made the changes. You know the type, the scope, and the why better than any diff reader. To re-read the diff is to re-derive what is already in context, and it costs a large block of tokens.
 
@@ -221,6 +263,50 @@ The commit message ends after the descriptive body. The PR body ends after the `
 Two bash blocks: 3a branches, stages, commits and pushes; 3b opens the PR/MR and reads the assignee back. Stop on the first failure — do NOT retry with `--no-verify`, `--no-gpg-sign`, `--force`, or `--amend`. The sole exception is a push denied for lack of write access on GitHub, which triggers the fork fallback in 3b (an alternate destination, not a bypass).
 
 ### 3a. Branch, stage, commit, push — one block
+
+#### Committed mode (mode=committed)
+
+The branch already carries its commits, so this phase is one push and nothing else.
+
+```bash
+set -e
+DEFAULT_BRANCH="<default-branch>"
+[ -n "$DEFAULT_BRANCH" ] || { echo "ABORT: default branch unknown — ask the user, then re-run"; exit 1; }
+CAND=$(git rev-parse --abbrev-ref HEAD)
+[ "$CAND" != "$DEFAULT_BRANCH" ] || { echo "ABORT: refusing to push the default branch"; exit 1; }
+
+# The dirty-mode filter guards what that mode stages. Here the commits already exist, so
+# scan the paths they add or change against the same patterns before anything leaves the
+# machine. Per commit, not one tree diff: a secret committed and removed two commits later
+# is absent from the end-to-end diff but its blob still ships with the push.
+# Enumerate first and fail closed: a scan that cannot list the range must not fall through
+# to the push. The loop reads a variable, not a pipe, so `exit 1` ends the script.
+set -o pipefail
+SCAN=$(git log --name-only --diff-filter=AMR --format= "origin/$DEFAULT_BRANCH..HEAD" | sort -u) \
+  || { echo "ABORT: cannot list the commits to push"; exit 1; }
+while IFS= read -r P; do
+  [ -n "$P" ] || continue
+  case "$P" in
+    .env.example|.env.sample|*/.env.example|*/.env.sample) ;;
+    .env*|*/.env*|*.pem|*.key|*.p12|*.pfx|id_rsa*|*/id_rsa*|id_ed25519*|*/id_ed25519*|id_ecdsa*|*/id_ecdsa*|credentials*|*/credentials*|*credentials.json|*service-account*.json)
+      echo "ABORT: committed file looks like a secret: $P — confirm to proceed"; exit 1 ;;
+  esac
+  # A path removed later in the range has no blob at HEAD; it met the name scan above.
+  if git cat-file -e "HEAD:$P" 2>/dev/null && [ "$(git cat-file -s "HEAD:$P")" -gt 10485760 ]; then
+    echo "ABORT: committed file larger than 10 MB: $P"; exit 1
+  fi
+done <<< "$SCAN"
+
+echo "branch=$CAND"
+echo "commit=$(git rev-parse --short HEAD)"
+git push -u origin "$CAND"
+```
+
+No staging and no commit. The scan covers every path any commit in the range adds or changes, with the same patterns and size cap dirty mode applies to staged paths. The size check reads the blob at `HEAD`, so a path removed later in the range passes the size check but still meets the name patterns. A hit aborts before the push, and the user decides, exactly as in dirty mode. Never `--force`. A non-fast-forward rejection aborts with git's own error, and a push denied for lack of write access takes the GitHub fork fallback in 3b, both as in dirty mode.
+
+#### Dirty mode (mode=dirty)
+
+Everything from here to the end of 3a runs in dirty mode only.
 
 Before you write the block, filter the Phase 1 porcelain list yourself. That list comes from `git status --porcelain -uall`, which expands an untracked directory into its individual files. One exception: a submodule whose pointer moved appears as a bare directory (` M vendor/lib`). `-uall` does not expand submodules, and it does not need to — `git add` stages one gitlink for it, not a tree. Drop every path that matches a secret pattern:
 
@@ -504,7 +590,9 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Not in a git work tree | `not a git repository` |
 | Detached HEAD | `detached HEAD — checkout a branch first` |
 | Active rebase/merge/cherry-pick | `<operation> in progress — finish or abort it first` |
-| Working tree clean | `no changes to commit` |
+| Working tree clean and branch not ahead of the default branch (or on it) | `no changes to commit` |
+| Working tree clean and default branch unknown | `default branch unknown — ask the user, then re-run` |
+| Working tree clean and no local `origin/<default>` ref | `no local ref for origin/<default> — run: git fetch origin <default>` |
 | No `origin` remote | `no origin remote configured` |
 | Unsupported provider host | `unsupported remote host: <host>` |
 | `origin` fetch and push URLs differ | `origin fetch and push URLs differ — push goes to <url>` |
@@ -528,6 +616,6 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Upstream slug lookup failed on the fork path | `cannot resolve the upstream repo — run: gh repo view --json nameWithOwner` |
 | GitHub login lookup failed on the fork path | `cannot resolve your GitHub login — run: gh api user -q .login` |
 
-The two `PR creation failed after …` rows matter because the commit and the push already landed. A second `/ship-pr` run cannot repair either one — the tree is clean, so the run aborts with `no changes to commit`. Always give the user the recovery command. An expired or missing CLI login is the common cause; `gh auth login` or `glab auth login` fixes it, then the recovery command opens the PR.
+The two `PR creation failed after …` rows matter because the commit and the push already landed. A second `/ship-pr` run repairs both — the tree is clean and the branch is ahead of the default branch, so the run enters committed mode, the push is a no-op, and Phase 3b opens the PR. Always give the user the recovery command as well. An expired or missing CLI login is the common cause; `gh auth login` or `glab auth login` fixes it, then either the recovery command or a fresh `/ship-pr` run opens the PR.
 
 The `Upstream slug lookup failed` row is different: it fires on the fork path before the fork push, so nothing has reached any remote yet. Do not tell the user a branch was pushed.

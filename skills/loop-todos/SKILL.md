@@ -474,15 +474,17 @@ commits nothing itself.** The host's git policy wins here, but for the one carve
   provider's equivalent, settles whether an earlier firing shipped this item and died before writing
   `prs`. In that window `prs` is empty and the tree is clean, so a url here means skip `ship-pr` and
   **resume at the retarget below**, which a firing dying between the two never reached. Without the
-  check `ship-pr` aborts on the clean tree with `no changes to commit`, Step 3 case 4 resumes here,
-  and the loop reproduces that abort once per interval. Its own existing-PR recovery cannot save
-  this: that lives in its last phase, the clean-tree abort in its first.
+  check `ship-pr` runs its committed-branch path on every firing, pushes nothing, and returns the
+  same URL after a full network round trip. The check is cheaper and it settles the state before
+  anything runs.
 - **Confirm the working tree is dirty and holds only this item's work**, that HEAD is
   `backlog/<todo-id>`, and that the backlog file's status line reads `resolved` and not the Step 5
   breadcrumb. Anything left from an abandoned iteration belongs to its own entry, not this PR.
 - **Invoke the `ship-pr` skill.** It branches where needed, commits, pushes, and opens the PR in one
-  pass. **Do not commit first**: it aborts on a clean tree, so a commit here breaks this step rather
-  than preparing it. Because the worker already sits on `backlog/<todo-id>`, it stays there rather
+  pass. **Do not commit first**: on a dirty tree ship-pr derives the commit message from the change
+  and the repo's conventions. On a committed branch it copies the subject the commit already has, so
+  a hand-made commit here locks in the PR title before ship-pr can derive a better one. Because the worker already
+  sits on `backlog/<todo-id>`, it stays there rather
   than deriving a branch: one PR, one entry.
 - **Retarget the PR's base.** `ship-pr` opens every PR against the default branch, so for every item
   after the run's first, `gh pr edit <url> --base <prs[-1].branch>` — or `glab mr update

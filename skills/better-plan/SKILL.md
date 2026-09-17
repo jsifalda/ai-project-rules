@@ -130,5 +130,5 @@ Skip Stage 4 entirely, without treating it as blocked, when:
 
 - The user wanted the plan only, so nothing executed.
 - The user said not to open a PR.
-- Execution changed no files. ship-pr aborts on a clean tree anyway (`no changes to
-  commit`), so calling it would only produce a confusing error.
+- Execution changed no files. Nothing of this run's exists to ship, and any older commit on
+  the branch is not this run's to publish.

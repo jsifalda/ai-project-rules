@@ -145,7 +145,9 @@ says otherwise.
   `git range-diff` for a rebase or cherry-pick) **plus** `git diff <integration-sha>..HEAD`, where
   `<integration-sha>` is the merge commit or the replayed tip — that pairing is what proves nothing
   landed after the integration commit, which neither command before it can see. Never skip silently.
-  Otherwise run **every lens below** in parallel on this session's changes:
+  Otherwise run the lenses below in parallel on this session's changes. The **Harness-native code
+  review** and **CodeRabbit CLI** lenses run on every change. The **Nuclear structural review** and
+  **Security review** lenses run when their trigger fires — see **Conditional lenses**:
   - **Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
     `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
@@ -174,8 +176,19 @@ says otherwise.
     **Nuclear structural review** lenses, not here.
     - If your harness provides no security-review capability, **tell the user and skip the security
       review lens** — label it `skipped (security review unavailable)`; never skip silently.
-  - **Merge** — wait for **every lens** to finish — a `skipped` lens still counts as done — then
-    deduplicate findings across them and present one combined "Code review findings" section.
+  - **Conditional lenses** — the **Nuclear structural review** and **Security review** lenses run
+    only when the change set calls for them. Decide from the change set's file list before you
+    launch anything. The **Security review** lens fires when the change touches auth or sessions, an
+    API route or other request handler, DB access or the schema, a queue, outbound HTTP, secrets or
+    env handling, user-supplied content rendered into HTML or email, a dependency, or deploy config.
+    The **Nuclear structural review** lens fires when the change adds a production module or
+    restructures existing ones — not for an edit inside existing functions. Unsure → the lens runs.
+    Report a lens that did not fire as `n/a (trigger not met: <one-line reason>)` — never omit it.
+    The **Harness-native code review** lens covers security on every change, so a Security review
+    `n/a` is never zero security review.
+  - **Merge** — wait for **every lens** to finish — a `skipped` or `n/a` lens still counts as
+    done — then deduplicate findings across them and present one combined "Code review findings"
+    section.
   - **Triage before you fix — relevance decides, not severity.** Judge every merged finding on its
     own before you change anything. Relevance is the gate. Severity sets the order of the work; it
     never decides whether a finding gets fixed.
@@ -272,9 +285,12 @@ Add them here when build tooling lands."* If a source repo has a test framework 
 tooling, the skill wires `{{COVERAGE_THRESHOLD}}` once coverage tooling is chosen — see
 `references/test-setup.md`. The
 **Security review** lens ships only when the security review module is selected in Step 4; when it is
-not, omit that lens bullet. The **integration-only exemption** on the **Code review** gate ships
-with that gate and is dropped with it — a repo that does not get the code review gate does not get
-the exemption either. The **User scenarios in sync** and **Backlog sweep** gates are similar but
+not, omit that lens bullet. The **Conditional lenses** bullet ships when the **Nuclear structural
+review** lens or the **Security review** lens ships; drop the sentence that describes a lens which
+did not ship, and drop the whole bullet — and restore the plain *"Otherwise run **every lens below**
+in parallel on this session's changes:"* sentence — when neither ships. The **integration-only
+exemption** on the **Code review** gate ships with that gate and is dropped with it — a repo that
+does not get the code review gate does not get the exemption either. The **User scenarios in sync** and **Backlog sweep** gates are similar but
 strictly stronger: no tail gate carries a `{{...}}` placeholder either, but selection alone is not
 enough to ship one. Each references something only its delegated skill installs — the BDD scenario
 doc from `setup-user-scenarios`, the `## TODO / Known issues` policy from `setup-todo-backlog` — so

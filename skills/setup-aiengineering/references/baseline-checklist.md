@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v13**
+**Skill version: v14**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -49,6 +49,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Skill discovery — search the registry for skills that fit this repo (opt-in, default off) | delegate → `find-skills` | 6c | v11 |
 | Re-run surfaces a local edit that inverts a template rule instead of preserving it | behaviour | 1 | v12 |
 | Re-run names the delegated sections it did not check, so a clean version match is not read as a clean file | behaviour | 1 | v12 |
+| Conditional triggers for the nuclear structural and security lenses — each runs on a diff that touches structure or security, else it is reported `n/a` | inject | 5 | v14 |
 
 ## How the self-audit uses this (Step 8b)
 

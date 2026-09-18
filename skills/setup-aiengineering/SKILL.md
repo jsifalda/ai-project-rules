@@ -194,7 +194,9 @@ The **Security review** lens defaults to **ON** — deselect to opt out. It has 
 block: it rides inside the verification module's **Code review** gate, so selecting it with
 verification deselected is a no-op. It self-gates on availability — if the host provides no
 security-review capability, the injected lens tells the user and labels itself `skipped (security
-review unavailable)`. Selecting it is also what enables the Step 9b plugin offer.
+review unavailable)`. Selecting it is also what enables the Step 9b plugin offer. Selection decides
+whether the lens ships at all; once it ships, it runs per change on the trigger in the injected
+**Conditional lenses** bullet, and a change that does not fire it is reported `n/a`.
 
 The **Writing style (ASD-STE100)** module defaults to **ON** — deselect to opt out. It is
 injected verbatim, like the PRD gate, with no `{{...}}` placeholders to substitute.
@@ -251,7 +253,10 @@ For each chosen inject module (verification, git policy, file organization, writ
 3. **Security review lens.** Include the **Security review** bullet in the injected verification
    block only when the security review module was selected in Step 4; when it was not, omit that
    bullet. It invokes the harness's own security-review capability — it does not depend on the
-   `security-guidance` plugin (see Step 9b).
+   `security-guidance` plugin (see Step 9b). Ship the **Conditional lenses** bullet whenever the
+   **Nuclear structural review** or the **Security review** lens ships, and drop the sentence that
+   describes a lens which did not ship; when neither ships, drop that bullet and restore the plain
+   "run every lens below" sentence — `references/verification-protocol.md` holds the exact wording.
 4. **Tail gates (user-scenarios sync, backlog sweep) — always hold every tail gate back here.**
    Inject the standard gates only, even when the user-scenarios or TODO backlog modules were
    selected; hold every tail gate back for Step 6b. Each tail gate points at something only its
@@ -595,6 +600,10 @@ only; the user runs it.
   on the host's security-review capability; when absent the injected lens labels itself `skipped
   (security review unavailable)` — never skip silently. It invokes the harness built-in (Claude
   Code: `/security-review`) and does not require the `security-guidance` plugin.
+- The **Nuclear structural review** and **Security review** lenses are conditional per change. The
+  injected **Conditional lenses** bullet names each trigger — security-relevant surfaces for the one,
+  a new or restructured production module for the other — and an unsure call runs the lens. A lens
+  whose trigger did not fire is reported `n/a (trigger not met: ...)`, never omitted.
 - The **Code review** gate triages findings by relevance, not severity. Severity sets only the
   order of work. Fix a relevant finding at any severity, including `minor` and `trivial`. Reject a
   finding that is not relevant, and state the reason — do not queue it for the user. Never apply a
@@ -620,7 +629,9 @@ only; the user runs it.
   regression-test-for-bug-fixes gate and its degradation paths, plus the conditional tail
   gates (user-scenarios sync, then backlog sweep — held back in Step 5 and appended in Step 6b,
   each only after its own delegated skill successfully runs), plus the Code review gate's shared
-  relevance-based triage step, which every lens follows except the nuclear structural review.
+  relevance-based triage step, which every lens follows except the nuclear structural review, plus
+  the **Conditional lenses** bullet that gates the nuclear structural and security lenses on what
+  the change set touches.
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.

@@ -65,7 +65,7 @@ No composite score, no percentage, no grade. Count verdicts instead.
 
 ### 6. Grill
 
-Invoke the `grill-me` skill against the deferred checks plus every `UNPROVEN` finding. One question at a time. These are the answers the page cannot give. Do not guess them. A question the user declines stays open, it does not become a PASS or a FAIL.
+Invoke the `grill-me` skill against the deferred checks plus every `UNPROVEN` finding. Work them in rounds, asking every unblocked question in each round. These are the answers the page cannot give. Do not guess them. A question the user declines stays open, it does not become a PASS or a FAIL.
 
 ### 7. Plan the fixes
 

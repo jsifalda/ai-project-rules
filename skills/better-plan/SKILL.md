@@ -48,8 +48,8 @@ Plan mode injects its own workflow guidance (explore, design, write the plan fil
   skips the grill and the routing, which is the whole point of this skill.
 - The plan file is the single artifact. Every stage edits that same file in place. Never
   open a second one.
-- **grill-me** asks through `AskUserQuestion`, which plan mode allows, so Stage 2 needs
-  no exception.
+- **grill-me** asks in chat text and writes nothing, so plan mode allows Stage 2 with no
+  exception.
 
 ## Stage 1 — Build the initial plan (plan-mode rigor)
 
@@ -84,8 +84,8 @@ size of the deliverable.
 ## Stage 2 — Grill the plan, then revise
 
 Invoke the **grill-me** skill against the Stage 1 draft. Interview the user
-relentlessly, walking each branch of the decision tree and resolving dependencies
-between decisions one at a time. For every question, give your recommended answer.
+relentlessly, working the design tree in rounds and asking every unblocked question
+in each round. For every question, give your recommended answer.
 Answer from the codebase whenever exploring can settle a question.
 
 When the interview reaches shared understanding, fold the answers back into the plan by

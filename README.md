@@ -54,11 +54,16 @@ The shape of a working deployment, if you want to reproduce it:
 
 The rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
-- `rules/general.md` — core principles, coding standards, testing (TDD mandatory), restrictions, file-length limits, writing style (ASD-STE100 Simplified Technical English, plus scannability and terseness), the ban on stating how many items a set holds, git commit format.
+- `rules/general.md` — always-loaded core: principles, architecture, restrictions, secrets handling, reading files, coding standards, dependency management, writing style, and the implementation verification protocol. It opens with a trigger table routing to the on-demand rule files below.
+- `rules/authoring.md` — how to write an instruction: directives only, no rationale, the five-point always-loaded test, the token budget, and the ban on stating how many items a set holds. Loads when writing or editing an instruction file, a rule, or a `SKILL.md`.
+- `rules/testing.md` — coverage, TDD, concurrent test runs, and the ban on waiting real wall-clock in a test. Loads when writing, changing or running tests.
+- `rules/git-ship.md` — destructive git and `glab` operations, commit message format, and MR/PR descriptions. Loads when committing, pushing, opening a PR or MR, or running any `glab` write.
+- `rules/browser.md` — always-Chrome targeting, bot-walled sites, and off-API session reads. Loads when driving a browser, configuring browser tooling, or reading a bot-walled site.
+- `rules/docs-diagrams.md` — documentation and diagram rules. Loads when writing a doc, an ADR, a README, or a diagram.
 - `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
 - `rules/tailwind.md` — the Tailwind v4 preflight change that removed `cursor: pointer` from buttons, and the one `@layer base` fix that restores it.
 
-`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. `rules/builder.md` is loaded on demand instead, only when a new-app build or a stack/tooling choice is in play. `rules/tailwind.md` is not named here — `rules/builder.md` points at it, and it is read from there when a stack choice puts Tailwind v4 and shadcn/ui in play. It has no trigger of its own, so a session that never loads `builder.md` never reaches it. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill for general UI work, and the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot (see the Skills table).
+`CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. Every other rule file is on demand: `general.md`'s trigger table names the condition that loads each one, so a session that never does that kind of work never pays for them. `rules/tailwind.md` is reached only from `rules/builder.md`, which names it under `## Related rules`. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill for general UI work, and the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot (see the Skills table).
 
 ## Skills
 
@@ -243,7 +248,7 @@ Video demo of the original workflow on [Claire Vo's "How I AI" podcast](https://
 Personal repo, but PRs welcome if something here is genuinely useful elsewhere. To add:
 
 - A **skill**: create `skills/<name>/SKILL.md` following the agentskills.io spec. It will be picked up by the sync hook on next session start. Add a matching row to the [Skills](#skills) table above, linking the name to `skills/<name>/SKILL.md`, **and fill the `Depends on` cell** — list every other repo skill this one invokes or requires, or `—` if it is self-contained.
-- A **rule**: add `rules/<name>.md` with `type: "always_apply"` frontmatter.
+- A **rule**: add `rules/<name>.md`. Give it `type: "always_apply"` frontmatter only if it must load on every session; an on-demand rule carries no frontmatter and is reached from the trigger table in `rules/general.md`.
 - A **Gemini command**: add `gemini-cli/commands/<name>.toml`. Add it to the Current commands list above.
 
 **Universality requirement:** anything added here must be reusable by any reader — no personal data, secrets, employer names, internal URLs, or hardcoded identities. Full policy: the [`## Universality requirement`](CLAUDE.md#universality-requirement) section of `CLAUDE.md`. After cloning, activate the pre-commit scanner once: `bash scripts/install-hooks.sh`.

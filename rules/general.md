@@ -125,6 +125,8 @@ paths:
 ## Testing
 - Write many tests. Aim to cover all user scenarios. Unit, integration, e2e; pick the best fit.
 - Never remove a failing test. Remove only one no longer needed.
+- **Never write a tautological test.** A test that restates the implementation, or that would pass even if the behavior it checks were broken, proves nothing. Rewrite it to assert the behavior a caller depends on. Never delete a test only because it is tautological.
+- **Test behavior through the public interface.** Assert on what a module promises its callers, never on its internals. Apply this to every module, a thin wrapper included. Prefer a deep module: a small interface over a large implementation.
 
 ### Concurrent test runs
 - **One test suite per machine at a time.** Several sessions or worktrees open → confirm no other run is in flight. Wait, never start a second.

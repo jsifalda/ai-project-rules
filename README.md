@@ -70,6 +70,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 
 | Skill | What it does | Depends on | Origin |
 | --- | --- | --- | --- |
+| [`add-mcp-api`](skills/add-mcp-api/SKILL.md) | Plan a remote MCP API for an existing application. | — | — |
 | [`apple-mail-query`](skills/apple-mail-query/SKILL.md) | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). | — | — |
 | [`apple-mail-thread-export`](skills/apple-mail-thread-export/SKILL.md) | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. | — | — |
 | [`audit-instructions`](skills/audit-instructions/SKILL.md) | Audit every instruction loaded in the current session's context and report all contradictions — inventories atomic rules, normalises each to a WHEN/DO/ON/UNLESS form, compares only overlapping triggers, and classifies each clash by type with verbatim evidence, severity, and paste-ready fix wording. Reports only, never rewrites. Slash-only. | — | — |

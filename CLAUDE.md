@@ -8,7 +8,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Repository Layout
 
-- `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session. `builder.md` (task-first stack guidance + default tools + when to load the `frontend-design` and `hallmark` skills together) loads on demand, only when a new-app build, a stack/tooling choice, or new UI design or a redesign is in play. `tailwind.md` (the v4 cursor trap and its `@layer base` fix) has no trigger of its own — `builder.md` names it under `## Related rules`, so it is reached only on a session that already loaded `builder.md`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
+- `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session and opens with a trigger table routing to every other rule file. On demand only: `authoring.md` (how to write an instruction, plus the counts ban), `testing.md`, `git-ship.md`, `browser.md`, `docs-diagrams.md`, and `builder.md` (task-first stack guidance, and when to load the `frontend-design` and `hallmark` skills together). `tailwind.md` has no trigger of its own — `builder.md` names it under `## Related rules`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
@@ -57,7 +57,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Counts
 
-`rules/general.md` under `# COUNTS IN INSTRUCTIONS` holds the whole rule. Read it there.
+`rules/authoring.md` under `## Counts` holds the whole rule. Read it there.
 
 It binds every file here — a `SKILL.md`, a rule file, a `description`, a `README` row.
 
@@ -69,8 +69,10 @@ advertised a smaller category set than its reference file defined, and nothing c
 All prose this repo produces uses **ASD-STE100 Simplified Technical English**. The commit subject
 line and the PR title are exempt and keep the conventional-commit format.
 
-`rules/general.md` under `# WRITING STYLE` holds the whole rule. Read it there. Do not restate or
-re-scope it in this file — a second copy drifts.
+`rules/general.md` under `# WRITING STYLE` holds the whole rule. Read it there. The
+conventional-commit format for a commit subject and a PR title, and its precedence over the
+style rules, live in `rules/git-ship.md`. Do not restate or re-scope either in this file — a
+second copy drifts.
 
 ## Key Rules
 

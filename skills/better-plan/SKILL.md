@@ -1,7 +1,6 @@
 ---
 name: better-plan
-description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor. Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, and the session model only orchestrates. Pass --inline to skip the routing and execute in the session. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes. By default it ships the result as a PR via ship-pr, once execution is verified. Slash-only. Use when you type /better-plan and want a plan enhanced, hardened, cost-routed, and shipped. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
-disable-model-invocation: true
+description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor. Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, and the session model only orchestrates. Pass --inline to skip the routing and execute in the session. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes. By default it ships the result as a PR via ship-pr, once execution is verified. Use when the user types /better-plan, or asks to plan, grill, model-route, and ship a change in one pass. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
 ---
 
 # Better Plan — build, grill, route, execute, in one pass
@@ -23,7 +22,8 @@ Set up the plan file, then sharpen the raw request you were given.
    - Already in plan mode → skip this step, the harness already named a plan file.
    - No plan-mode tool (agents other than Claude Code), or the user declines the
      prompt → continue without it and use the Stage 3 fallback gate.
-2. Take the text passed to /better-plan as the input prompt. Set the execution mode first.
+2. Take the text passed to /better-plan as the input prompt. When the skill loads without that
+   text, use the user's request that triggered it. Set the execution mode first.
    The flag `--inline`, as its own word at the start or the end of the text, sets the mode to
    inline. The same word inside the request is part of the request, not the flag. A plain-language form
    such as "execute inline" or "no subagents" also sets it to inline. No flag and no such

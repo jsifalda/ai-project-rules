@@ -85,12 +85,42 @@ kept or dropped, it also has a dormant state:
   (`setup-user-scenarios`), the backlog sweep at the `## TODO / Known issues` policy
   (`setup-todo-backlog`). Each ships **only after its own delegation actually succeeded** (SKILL.md
   Step 6b), which is why they are appended there rather than injected here with the other gates.
-  Append them last, in the order written below — user-scenarios sync, then backlog sweep. A repo
-  appends only the tail gates that qualify. A repo that appends none ends at the docs & instructions
+  Append them last among the gates, in the order written below — user-scenarios sync, then backlog
+  sweep — but above the **Commit** gate when it ships. A repo appends only the tail gates that
+  qualify. A repo that appends none, with no **Commit** gate either, ends at the docs & instructions
   alignment gate.
   **No tail gate body below carries meta-guidance** — every condition governing whether they ship
   lives here and in the note at the bottom, so Step 6b can copy each gate verbatim into a repo
   without leaking skill-authoring instructions into that repo's agent instructions.
+- **Pre-commit hook coverage** — check whether a tracked pre-commit hook already runs a gate above,
+  so the agent does not run it twice:
+  - Count only a hook config tracked in the repo — `.husky/pre-commit`, `lefthook.yml` /
+    `.lefthook.yml`, `.pre-commit-config.yaml`, `simple-git-hooks` in `package.json`, or a tracked
+    directory named by `git config core.hooksPath`. An untracked `.git/hooks/pre-commit` alone does
+    not count — other clones do not have it.
+  - Resolve what the hook runs, following delegation (e.g. `lint-staged` → its config in
+    `package.json` or `.lintstagedrc*`).
+  - A hook covers a gate only when it runs the same tool with the same pass condition over at least
+    the changed files. `lint-staged` on staged files counts for **Lint**. **Typecheck** needs a
+    whole-project run, because its gate counts errors in files the change did not touch. ESLint
+    without `--max-warnings=0` does not cover the zero-warnings **Lint** gate. A hook that runs tests
+    without the coverage threshold does not cover the **Tests and coverage** gate, because
+    `{{COVERAGE_CMD}}` subsumes the test run.
+  - **Near miss** (same tool, weaker pass condition or narrower scope — including tests run without
+    the coverage threshold) → the check would still run twice. Offer the user the one-line hook
+    change that makes the hook cover the gate: show the diff, write it only on a yes, never install
+    anything. Yes → the gate is covered. No → the gate stays manual, and the
+    Step 8 report names the duplicate that remains.
+  - A covered gate's bullet is dropped from the injected block. The **Commit** gate below names it
+    instead, via `{{HOOK_GATES}}` (gate names) and `{{HOOK_GATE_CMDS}}` (their manual commands, the
+    fallback).
+  - The **Commit** gate ships only when at least one gate is covered. A hook that runs only checks
+    outside this protocol (e.g. a secret scan) changes nothing.
+  - **Install probe**: `test -x "$(git rev-parse --git-path hooks)/pre-commit"` — it honors
+    `core.hooksPath`. It proves a hook file exists, not what it runs, so the **Commit** gate also
+    reads the commit output for the covered gates. At setup, a hook that is configured but not installed in this clone → report
+    the install command to the user, never run it. The gate still ships, since its own probe falls
+    back to the manual commands.
 
 ---
 
@@ -259,14 +289,26 @@ says otherwise.
   re-run, a passing check, a confirmed absence — never close on "looks fixed". Closing is not
   approval-gated. The evidence is the check. Report one line either way: which entries you closed,
   or that you closed none.
+- **Commit** — the pre-commit hook runs {{HOOK_GATES}}, so do not run them by hand unless the
+  fallback below applies. After every gate above passes: on the default branch, create a feature
+  branch first. Then stage only this task's files and commit locally, hooks on, never
+  `--no-verify`. The hook's pass is these gates' pass. A hook failure → fix, re-stage, commit
+  again. Fallback: the hook is not installed
+  (`test -x "$(git rev-parse --git-path hooks)/pre-commit"` fails), or the commit output does not
+  show {{HOOK_GATES}} ran → run {{HOOK_GATE_CMDS}} by hand.
 
 If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
 
 ---
 
 **Note for skill user**: Substitute `{{LINT_CMD}}`, `{{TYPECHECK_CMD}}`, `{{TEST_CMD}}`,
-`{{COVERAGE_CMD}}`, `{{COVERAGE_THRESHOLD}}`, `{{DEFAULT_BRANCH}}` from detection. Drop any gate whose
-tool is absent. The **Tests and coverage** gate drops in full when no test framework exists at all —
+`{{COVERAGE_CMD}}`, `{{COVERAGE_THRESHOLD}}`, `{{DEFAULT_BRANCH}}`, `{{HOOK_GATES}}`,
+`{{HOOK_GATE_CMDS}}` from detection. Drop any gate whose tool is absent. The **Commit** gate ships
+only when the **Pre-commit hook coverage** rules in the detection section mark at least one gate
+covered, and that covered gate's own bullet is dropped when it ships. It stays the last bullet, so
+the tail gates appended in SKILL.md Step 6b land above it, not below it. The **Exception** bullet in
+`references/git-policy.md` ships with the **Commit** gate and drops with it.
+The **Tests and coverage** gate drops in full when no test framework exists at all —
 a repo with no tests has nothing to run and no coverage number to gate on. When a test framework
 exists but no coverage tool is chosen yet, inject the gate's **degraded form** from the stack
 detection section above — zero failures only, run via `{{TEST_CMD}}` alone. The **Regression

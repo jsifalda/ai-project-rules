@@ -139,6 +139,11 @@ Detect, read-only:
   A **config/no-source repo** means the test + coverage gates are N/A.
 - **Default branch** — `git symbolic-ref --short refs/remotes/origin/HEAD` (strip `origin/`), else
   `git branch --show-current`, else `main`.
+- **Pre-commit hook** — a tracked hook config (husky, lefthook, the `pre-commit` framework,
+  `simple-git-hooks`, or a tracked `core.hooksPath` dir), what it runs, and which gates it covers,
+  per **Pre-commit hook coverage** in `references/verification-protocol.md`. Also run its install
+  probe; a configured hook not installed in this clone → note the install command for the report,
+  never run it.
 
 If no lint/typecheck/test tool exists at all (e.g. a Docker-config repo), note that the verification
 module will degrade to code-review-only and the test + coverage gates are N/A.
@@ -219,7 +224,16 @@ For each chosen inject module (verification, git policy, file organization, writ
      Echo the exact resolved commands (lint / typecheck / test / coverage) and have the user confirm
      they are right. Optionally dry-run the fast, non-mutating gates (lint, typecheck) to catch a bad
      command — **never auto-run the test or coverage command** during setup. Drop or flag any command
-     that errors.
+     that errors. When Step 2 found a pre-commit hook, the same echo lists the gates it covers, for
+     the user to confirm — each covered gate drops from the injected block, and the **Commit** gate
+     replaces them.
+   - **Pre-commit hook near-miss offer.** Make the offer from **Pre-commit hook coverage** in
+     `references/verification-protocol.md` here — show the hook diff the offer proposes, write it
+     only on a yes, and never install anything.
+   - **Commit gate.** Ship the **Commit** gate only when at least one gate came out hook-covered
+     above. No gate hook-covered → drop it. It ships even when the Git Policy module was deselected
+     — it carries its own rule. The Git Policy **Exception** bullet (`references/git-policy.md`)
+     ships only when both the **Commit** gate and the Git Policy block ship.
    - **Coverage gate (source repos).** Branch first — substitute `{{COVERAGE_CMD}}` and
      `{{COVERAGE_THRESHOLD}}` only on a branch that wires them. Where they are wired, prompt the user
      to confirm or adjust the threshold (**default 90**) and echo the resolved coverage command for
@@ -294,7 +308,8 @@ skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `A
 
 **Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held them
 all back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
-— **user-scenarios sync, then backlog sweep**. Append a tail gate only when **all** of these hold
+— **user-scenarios sync, then backlog sweep**. When the **Commit** gate shipped (Step 5.2), insert each
+tail gate above it — the Commit gate stays last. Append a tail gate only when **all** of these hold
 for it:
 
 1. Its module was selected in Step 4 (user scenarios / TODO backlog).
@@ -425,6 +440,9 @@ Confirm in one short message:
   added or refreshed.
 - Policy modules injected (with which gates were dropped for missing tools), and that the detected
   lint/typecheck/test commands were confirmed with the user.
+- **Pre-commit hook** — what was found (or none), the gates it covers, whether it is installed in
+  this clone (with the install command if not), whether the **Commit** gate and the Git Policy
+  exception shipped, and any duplicate run left because the user declined a near-miss offer.
 - **Security review** lens: injected, or skipped (user opted out).
 - Coverage gate: whether it was wired (with the chosen `{{COVERAGE_THRESHOLD}}` and `{{COVERAGE_CMD}}`),
   or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that a

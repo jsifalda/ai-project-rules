@@ -126,7 +126,7 @@ kept or dropped, it also has a dormant state:
 
 ## Mandatory Verification After Code Changes
 
-After ANY code change, run these checks before presenting the work. All are mandatory unless a step
+After any code change, run these checks before presenting the work. All are mandatory unless a step
 says otherwise.
 
 > **Exemption:** when changes are **solely** to markdown/docs (`*.md`), skip this protocol — no
@@ -135,7 +135,7 @@ says otherwise.
 - **Lint** — `{{LINT_CMD}}` must pass with zero warnings and zero errors.
 - **Typecheck** — `{{TYPECHECK_CMD}}` must exit with **zero errors total**. "Pre-existing" errors
   do not get a pass: if the typechecker reports errors — even in files you did not touch — fix them
-  before proceeding. A green typecheck is a gate, not a suggestion.
+  before proceeding.
 - **Tests and coverage** — run `{{COVERAGE_CMD}}` once. This one run carries the assertions below.
   Both must pass:
   - **Zero test failures.** Read the printed test counts. Do not read the absence of the word
@@ -179,7 +179,7 @@ says otherwise.
   review** and **CodeRabbit CLI** lenses run on every change. The **Nuclear structural review** and
   **Security review** lenses run when their trigger fires — see **Conditional lenses**:
   - **Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
-    `Task` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
+    `Agent` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
     conventions.
   - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}}`. Collect every
@@ -188,7 +188,7 @@ says otherwise.
       fails, **tell the user and skip the CodeRabbit CLI lens** — label it `skipped (CodeRabbit
       unavailable)`; never skip silently.
   - **Nuclear structural review** — if the `code-review-nuclear` skill is available, spawn a
-    subagent that runs it on this session's diff (Claude Code: `Task`/`Agent` tool → a subagent
+    subagent that runs it on this session's diff (Claude Code: `Agent` tool → a subagent
     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
     maintainability "code judo" only — NOT correctness, security, tests, or lint (the
     **Harness-native code review** lens and the **Lint**, **Typecheck**, **Tests and coverage**, and
@@ -297,7 +297,7 @@ says otherwise.
   (`test -x "$(git rev-parse --git-path hooks)/pre-commit"` fails), or the commit output does not
   show {{HOOK_GATES}} ran → run {{HOOK_GATE_CMDS}} by hand.
 
-If any check fails, fix and re-run. These gates are mandatory for every code change — no exceptions.
+If any check fails, fix and re-run. These gates are mandatory for every code change.
 
 ---
 
@@ -306,8 +306,7 @@ If any check fails, fix and re-run. These gates are mandatory for every code cha
 `{{HOOK_GATE_CMDS}}` from detection. Drop any gate whose tool is absent. The **Commit** gate ships
 only when the **Pre-commit hook coverage** rules in the detection section mark at least one gate
 covered, and that covered gate's own bullet is dropped when it ships. It stays the last bullet, so
-the tail gates appended in SKILL.md Step 6b land above it, not below it. The **Exception** bullet in
-`references/git-policy.md` ships with the **Commit** gate and drops with it.
+the tail gates appended in SKILL.md Step 6b land above it, not below it.
 The **Tests and coverage** gate drops in full when no test framework exists at all —
 a repo with no tests has nothing to run and no coverage number to gate on. When a test framework
 exists but no coverage tool is chosen yet, inject the gate's **degraded form** from the stack

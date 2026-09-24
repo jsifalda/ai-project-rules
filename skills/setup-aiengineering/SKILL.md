@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios gates, git policy, file organization, writing style, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, setup-user-scenarios, and setup-todo-backlog skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap a project's AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, setup-user-scenarios, and setup-todo-backlog skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -23,7 +23,6 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Security review lens — harness security review inside the Code review verification gate | inject (rides with `references/verification-protocol.md`) |
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
-| Writing style (ASD-STE100 Simplified Technical English) | inject (`references/writing-style.md`) |
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
@@ -78,12 +77,6 @@ gate that is still in the file. Surface every one of those by name — quote the
 the repo's, say which way it was turned, and ask. Never carry one forward silently as a preserved
 edit, and check for them on **every** re-run, including the same-version path, since an inversion
 has nothing to do with the version stamp.
-
-Evidence this is worth a check of its own: a repo carried
-`Standing permission … file backlog entries autonomously` inside its TODO policy for three months,
-in the same file as a verification gate reading `Filing is user-approved, never autonomous`. It was
-added inside an unrelated feature commit, it inverted the delegated template, and it produced
-entries nobody would ever action. Nothing in a version comparison would have found it.
 
 **Documentation-drift scan (every re-run, same-version included).** A file can be at the current
 version and still have grown documentation between runs. Read every `##` section of the target and
@@ -203,9 +196,6 @@ review unavailable)`. Selecting it is also what enables the Step 9b plugin offer
 whether the lens ships at all; once it ships, it runs per change on the trigger in the injected
 **Conditional lenses** bullet, and a change that does not fire it is reported `n/a`.
 
-The **Writing style (ASD-STE100)** module defaults to **ON** — deselect to opt out. It is
-injected verbatim, like the PRD gate, with no `{{...}}` placeholders to substitute.
-
 The **Skill discovery (search the registry for skills that fit this repo)** module is **opt-in —
 default it OFF**, exactly like the PRD gate and the TODO backlog. Its default differs in kind from
 the other modules: every other module writes the project's own policy into the project's own repo,
@@ -216,7 +206,7 @@ worktree module, which is selected here but still probes, proposes, and confirms
 
 ### Step 5: Inject the policy modules
 
-For each chosen inject module (verification, git policy, file organization, writing style, PRD gate):
+For each chosen inject module (verification, git policy, file organization, PRD gate):
 1. Read the matching `references/*.md`.
 2. Substitute `{{...}}` placeholders with detected commands; **drop gates with no tool**
    (verification only).
@@ -232,8 +222,7 @@ For each chosen inject module (verification, git policy, file organization, writ
      only on a yes, and never install anything.
    - **Commit gate.** Ship the **Commit** gate only when at least one gate came out hook-covered
      above. No gate hook-covered → drop it. It ships even when the Git Policy module was deselected
-     — it carries its own rule. The Git Policy **Exception** bullet (`references/git-policy.md`)
-     ships only when both the **Commit** gate and the Git Policy block ship.
+     — it carries its own rule.
    - **Coverage gate (source repos).** Branch first — substitute `{{COVERAGE_CMD}}` and
      `{{COVERAGE_THRESHOLD}}` only on a branch that wires them. Where they are wired, prompt the user
      to confirm or adjust the threshold (**default 90**) and echo the resolved coverage command for
@@ -441,8 +430,8 @@ Confirm in one short message:
 - Policy modules injected (with which gates were dropped for missing tools), and that the detected
   lint/typecheck/test commands were confirmed with the user.
 - **Pre-commit hook** — what was found (or none), the gates it covers, whether it is installed in
-  this clone (with the install command if not), whether the **Commit** gate and the Git Policy
-  exception shipped, and any duplicate run left because the user declined a near-miss offer.
+  this clone (with the install command if not), whether the **Commit** gate shipped, and any
+  duplicate run left because the user declined a near-miss offer.
 - **Security review** lens: injected, or skipped (user opted out).
 - Coverage gate: whether it was wired (with the chosen `{{COVERAGE_THRESHOLD}}` and `{{COVERAGE_CMD}}`),
   or that a test framework was scaffolded via the `references/test-setup.md` prompt, or that a
@@ -451,7 +440,6 @@ Confirm in one short message:
 - Regression gate: enforced, kept as dormant prose (source repo, no test framework), or N/A
   (config/no-source repo).
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
-- Writing-style block injected, or skipped (user deselected it).
 - PRD gate injected (or skipped, since it is opt-in).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
 - User-scenarios sync gate: appended after a successful `setup-user-scenarios` delegation, or
@@ -593,9 +581,6 @@ only; the user runs it.
 - Always carry a gitignored `.mcp.json` into `.worktreeinclude` when present (local MCP servers are
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).
-- Writing style (ASD-STE100) module defaults to **ON** (deselectable) and is injected verbatim —
-  it has no `{{...}}` placeholders. The injected block names no skill, so it stays valid in a
-  target repo where no style skill is installed.
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
 - The verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
   verification block but are **appended in Step 6b after their own delegation succeeds, never
@@ -654,8 +639,6 @@ only; the user runs it.
   scaffold minimal config, defer install, then wire the coverage gate.
 - `references/git-policy.md` — git policy block.
 - `references/file-organization.md` — file organization block.
-- `references/writing-style.md` — writing-style policy block (ASD-STE100 Simplified Technical
-  English; default-on).
 - `references/prd-gate.md` — PRD-gate policy block (opt-in; require a PRD before substantial features).
 - `references/backfill-guide.md` — greenfield-vs-working heuristic, survey + grounding rules, and
   the routing table that sends every drafted section to `README.md` or `ARCHITECTURE.md` rather than

@@ -183,11 +183,17 @@ says otherwise.
     `Agent` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
     conventions.
-  - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}}`. Collect every
-    `type: "finding"` event; wait for `type: "complete"`.
+  - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}} --include-untracked`. Collect every
+    `type: "finding"` event; wait for `type: "complete"`. Without `--include-untracked`, new
+    files are never reviewed.
     - **Prerequisites** — `cr` on `PATH` (`which cr`) and authenticated (`cr auth status`). If either
       fails, **tell the user and skip the CodeRabbit CLI lens** — label it `skipped (CodeRabbit
       unavailable)`; never skip silently.
+    - **Coverage check** — compare the `reviewedFiles` list in the `complete` event with the files
+      that ship:
+      `{ git diff --name-only --diff-filter=d $(git merge-base {{DEFAULT_BRANCH}} HEAD); git ls-files --others --exclude-standard; } | sort -u`.
+      Any file missing from `reviewedFiles` → label the lens `partial (missed: <files>)`. Never
+      report a partial run as 0 findings.
   - **Nuclear structural review** — if the `code-review-nuclear` skill is available, spawn a
     subagent that runs it on this session's diff (Claude Code: `Agent` tool → a subagent
     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
@@ -217,9 +223,9 @@ says otherwise.
     Report a lens that did not fire as `n/a (trigger not met: <one-line reason>)` — never omit it.
     The **Harness-native code review** lens covers security on every change, so a Security review
     `n/a` is never zero security review.
-  - **Merge** — wait for **every lens** to finish — a `skipped` or `n/a` lens still counts as
-    done — then deduplicate findings across them and present one combined "Code review findings"
-    section.
+  - **Merge** — wait for **every lens** to finish — a `skipped`, `n/a` or `partial` lens still
+    counts as done — then deduplicate findings across them and present one combined "Code review
+    findings" section.
   - **Triage before you fix — relevance decides, not severity.** Judge every merged finding on its
     own before you change anything. Relevance is the gate. Severity sets the order of the work; it
     never decides whether a finding gets fixed.
@@ -249,9 +255,15 @@ says otherwise.
       State a rejected or deferred finding as a plain finding in the report. Never collect one into a
       queue, and never offer to file it as a tracked entry.
   - **The review runs once per task.** Every lens runs one time, on one tree. After the fixes
-    land, re-run only the deterministic gates the fix could break — never a lens, and never this
-    gate. A finding that would need a review of the fix to surface is reported to the user, not
-    chased with another pass. A fix you are not confident in is reported instead of applied.
+    land, re-run only the deterministic gates the fix could break — never a lens outside the
+    exception below, and never this gate. A finding that would need a review of the fix to
+    surface is reported to the user, not chased with another pass. A fix you are not confident
+    in is reported instead of applied.
+    - **Exception — files no lens saw.** A file added or changed after the lenses ran was never
+      reviewed, unless its only post-lens change is a fix of a triaged finding or a later gate
+      of this protocol wrote it. Before commit, run the CodeRabbit CLI lens, with its coverage
+      check, and the Harness-native code review lens once more, and triage only their findings
+      on those files. CodeRabbit unavailable → list those files as unreviewed in the report.
 - **Docs & instructions alignment** — before marking the task done, check whether this session's
   changes made any documentation stale:
   - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale

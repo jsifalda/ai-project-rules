@@ -189,6 +189,9 @@ says otherwise.
     - **Prerequisites** — `cr` on `PATH` (`which cr`) and authenticated (`cr auth status`). If either
       fails, **tell the user and skip the CodeRabbit CLI lens** — label it `skipped (CodeRabbit
       unavailable)`; never skip silently.
+    - **Untracked files leave the machine** — `--include-untracked` uploads every untracked file
+      that is not gitignored. Before the run, list them (`git ls-files --others --exclude-standard`),
+      then gitignore or move anything that must not leave the machine.
     - **Coverage check** — compare the `reviewedFiles` list in the `complete` event with the files
       that ship:
       `{ git diff --name-only --diff-filter=d $(git merge-base {{DEFAULT_BRANCH}} HEAD); git ls-files --others --exclude-standard; } | sort -u`.

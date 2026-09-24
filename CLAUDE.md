@@ -61,9 +61,6 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 It binds every file here — a `SKILL.md`, a rule file, a `description`, a `README` row.
 
-`changelog/20260811075111-writing-standard-and-counts-rules.md` records a worked example. A skill
-advertised a smaller category set than its reference file defined, and nothing caught it.
-
 ## Writing Style
 
 All prose this repo produces uses **ASD-STE100 Simplified Technical English**. The commit subject
@@ -79,7 +76,6 @@ second copy drifts.
 - **Simplicity first**: minimal code changes, no side effects.
 - **Root cause, not stopgap**: fix the cause, never the symptom.
 - **Plan mode**: enter plan mode for any non-trivial task (3+ steps).
-- **Conventional commits**: `feat:`, `fix:`, `refactor:`, etc.
 
 ## Restrictions
 
@@ -164,9 +160,10 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 - `python skills/create-skill/scripts/quick_validate.py skills/<name>/` → must pass, for every touched skill.
 - Both scripts already exist in this repo. Reuse them — never reimplement the checks.
 
-### Step 2 — review lenses (run every lens that fires, in PARALLEL, against the dirty working tree)
+### Step 2 — review lenses (run every lens that fires, in parallel, against the dirty working tree)
 
 - **CodeRabbit** → `cr review --agent --uncommitted --include-untracked`. Collect every finding, wait for the review to complete. Those flags are verified against the CodeRabbit CLI — there is no `--type` flag, so do not "correct" them to one. Confirm with `cr review --help` before changing this line.
+  - **Coverage check** — compare the `reviewedFiles` list in the `complete` event with `{ git diff --name-only --diff-filter=d HEAD; git ls-files --others --exclude-standard; } | sort -u`. Any file missing from `reviewedFiles` → label the lens `partial (missed: <files>)`. Never report a partial run as 0 findings.
 - **Harness-native** → the `code-review` agent on this session's changes (Claude Code: the Agent tool with `subagent_type: "code-review"`).
 - **Prompt-audit** → where the agent provides a `claude-api` skill (Claude Code ships one with the CLI; other consumers may not — see *When a lens cannot run*), its `prompt-audit` subcommand. It finds dated prompt patterns the other lenses do not look for — a pinned model id, a deprecated parameter shape, an instruction a current model no longer needs. Claude Code: the `Skill` tool with `skill: "claude-api"`, `args: "prompt-audit"` — confirm that parameter shape against the tool's own schema before changing this line. **Pass the subcommand bare** — it routes by an exact match against the skill's subcommand table, and a trailing scope stops it matching. State the scope in the task instead.
   - **It fires only when the diff touches an agent-facing prompt** — a file this repo ships to be loaded into an agent's context as instructions: anything under `skills/` or `rules/`, a `gemini-cli/commands/*.toml`, a root PRD workflow prompt, or `CLAUDE.md` itself. No such file in the diff → the lens does not fire, and that is not a skip.
@@ -188,14 +185,14 @@ CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may als
 
 **Relevance decides whether a finding gets fixed. Severity only sets the order of the work.**
 
-- **Relevant** → fix it WITHOUT asking, at any severity, then re-verify per Step 5. A `minor` or `trivial` finding that is correct and in scope is fixed exactly like a `major` one. A low severity is never a reason to leave a real defect.
+- **Relevant** → fix it without asking, at any severity, then re-verify per Step 5. A `minor` or `trivial` finding that is correct and in scope is fixed exactly like a `major` one. A low severity is never a reason to leave a real defect.
 - **Not relevant** → reject it and state the reason in the report. The reasons that qualify: the finding is wrong about this repo or its tooling; it points at content this session did not change and the change did not make it wrong; it contradicts a documented convention or a decision the user already made; it is taste with no defect and no convention behind it; the merge missed it as a duplicate. Rejecting is your call — never queue rejections for the user to clear.
 - **Bigger than this change** → when a relevant finding needs a broad refactor, a new dependency, or a change to a public interface, state the finding with the fix you propose, and ask first. A review never grows the change on its own.
-- **Normative carve-out — this beats the relevance rule.** Auto-fix covers *factual* defects only: a broken command or flag, a dead link or anchor, a reference to something that does not exist, a typo, or a wrong count of a tool's documented behavior (how many severity values it emits). A **policy** number is not a factual one — a retry limit, a budget, a threshold, a coverage percentage is normative, so it asks. A finding that would **change what an agent is required to do** — adding, removing, weakening, or re-scoping a rule — is NEVER auto-applied at any severity. Draft the wording, show it, ask. In this repo the rules *are* the product; a review heuristic must not silently rewrite binding policy.
+- **Normative carve-out — this beats the relevance rule.** Auto-fix covers *factual* defects only: a broken command or flag, a dead link or anchor, a reference to something that does not exist, a typo, or a wrong count of a tool's documented behavior (how many severity values it emits). A **policy** number is not a factual one — a retry limit, a budget, a threshold, a coverage percentage is normative, so it asks. A finding that would **change what an agent is required to do** — adding, removing, weakening, or re-scoping a rule — is never auto-applied at any severity. Draft the wording, show it, ask. In this repo the rules *are* the product; a review heuristic must not silently rewrite binding policy.
   - **The carve-out binds the prompt-audit lens too, and hardest.** That lens reads instruction wording for a living, so its findings land on binding rules more often than any other lens's. Its factual findings — a stale model id, a deprecated parameter shape, a reference to something that no longer exists — auto-fix like any other. A finding that would rewrite what a rule requires is drafted and shown, never applied, whatever confidence it carries. Its proposed diff is a draft, not a patch to apply.
 - The harness `code-review` lens rates on its own scale, which does not map 1:1 onto CodeRabbit's → normalize before merging: a correctness or security defect with a concrete failure scenario ranks `major`; style, naming, and simplification rank `minor`. Keep the lens's own label in the report rather than overwriting it.
 - **The prompt-audit lens rates by `confidence`, not severity** → normalize the same way: a high-confidence factual defect ranks `major`; style and phrasing rank `minor`. Verify anything it marks low confidence against the file before fixing it. Keep its own label in the report.
-- **The prompt-audit lens is file-scoped, not line-scoped.** It reads a touched file whole, so the rejection reason "this session did not change it" does NOT apply to a prompt-audit finding inside a file the diff touches — triage that finding on its merits like any other. A finding in a file the diff does not touch is out of scope, and rejecting it needs no further reason.
+- **The prompt-audit lens is file-scoped, not line-scoped.** It reads a touched file whole, so the rejection reason "this session did not change it" does not apply to a prompt-audit finding inside a file the diff touches — triage that finding on its merits like any other. A finding in a file the diff does not touch is out of scope, and rejecting it needs no further reason.
 - **A lens can be wrong about this repo's tooling.** Verify any finding that contradicts a command you have actually run — `--help` output and a successful invocation beat a reviewer's recollection of a CLI. Reject with the evidence; never "fix" a working command into a broken one.
 - Ambiguous relevance → ask. A rejection needs a reason you can state. With no reason either way, the finding is not rejected.
 
@@ -203,6 +200,7 @@ CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may als
 
 - After auto-fixes, re-run Step 1 **and every Step 2 lens that fires** — not CodeRabbit alone. A fix can introduce a defect only another lens sees. Re-evaluate which lenses fire each round against the round's own diff: an auto-fix that newly touches an agent-facing prompt makes the prompt-audit lens eligible even when round 1 did not run it.
 - Budget: one extra round. Further loops need user approval. The budget exists because each `cr review` costs credits — it binds CodeRabbit, so a further loop of the local lenses alone is free and needs no approval.
+- A file added or changed after the lenses ran was never reviewed, unless its only post-lens change is a Step 4 fix or it is the Step 6 changelog entry → run CodeRabbit and the harness-native lens once more before Step 6, and triage only their findings on those files. The CodeRabbit run counts against the budget. Budget already spent → ask the user before this run. CodeRabbit unavailable → list those files as unreviewed in the report.
 
 ### Step 6 — then commit
 
@@ -212,13 +210,13 @@ CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may als
 
 - `cr` missing from `PATH`, `cr auth status` failing, or a review erroring out → label it `skipped (CodeRabbit unavailable — <reason>)` in the report, name the recovery that fits that reason (`cr auth login` answers an auth failure only — it does nothing for a missing binary or an erroring review, where the reported error is the recovery), and continue with the lenses that do run.
 - No `claude-api` skill on the agent — Copilot CLI, Gemini CLI, any consumer that does not provide it → label it `skipped (prompt-audit unavailable — no claude-api skill)` and continue. Do not hand-roll a substitute audit.
-- Never skip silently. A skipped lens does NOT block the task from being reported done. A lens that did not fire is not a skip — say nothing about it.
+- Never skip silently. A skipped lens does not block the task from being reported done. A lens that did not fire is not a skip — say nothing about it.
 
 ### Report before done
 
 Print one block covering:
 
-- Per-lens finding counts by severity — by confidence for the prompt-audit lens — or `skipped (<reason>)`.
+- Per-lens finding counts by severity — by confidence for the prompt-audit lens — or `skipped (<reason>)`, or `partial (missed: <files>)` for a CodeRabbit run that missed files.
 - Each finding's verdict — `fixed`, `rejected (reason)`, or `waiting on you`. A rejection states its reason; never leave one invisible.
 - What was auto-fixed.
 - What is waiting on the user.
@@ -272,7 +270,7 @@ When you create a new changelog entry, commit it automatically — do not ask fi
 - **Stage only related files.** Add the entry plus the files this session actually changed. Never `git add -A` / `git add .` — do not sweep unrelated working-tree files into the commit.
 - **Already-committed work.** If the related changes were already committed earlier this session (e.g. per TDD cycle), commit the entry on its own as a follow-up (`docs: …`).
 - **Local only — never push.** This is a local commit. Pushing still needs an explicit user instruction (see RESTRICTIONS in `rules/general.md`).
-- **Let hooks run.** The pre-commit hooks (universality scanner + skill validator) must run — never `--no-verify`. If a hook fails, STOP, surface it, fix, then commit.
+- **Let hooks run.** The pre-commit hooks (universality scanner + skill validator) must run — never `--no-verify`. If a hook fails, stop, surface it, fix, then commit.
 
 ### File organization notes
 

@@ -21,6 +21,7 @@ lives in its own document, and this file points at it.
 | What the product is, how to run it, dev commands, usage | `README.md` |
 | How the system is built, its structure, its current state | `ARCHITECTURE.md` |
 | Why a decision was made, the discarded options, the full context of a trap | `docs/adr/` |
+| How the app looks — tokens, type, components, visual rules | `DESIGN.md` |
 | A rule, a gate, a convention, or a read-first pointer | **here** |
 
 **The test is not "does it instruct?" — an unbounded list of project facts can be written as
@@ -55,6 +56,9 @@ loses, and the reader who finds the stale copy trusts it.
   does not have.
 - **`docs/adr/`** — use the ADR directory the ADR module actually chose. If no ADR system was set
   up, drop that row too, and route trap context to `ARCHITECTURE.md`, else `README.md`.
+- **`DESIGN.md`** — omit this row in Step 1. SKILL.md Step 5b adds it only when it wrote or kept a
+  design file, under that file's actual name (`DESIGN.md` or `design.md`). Never point a rule at
+  a file the repo does not have.
 - **`<the areas that bite in this repo>`** — name real areas, from what the repo evidences. With
   nothing to name yet, omit the whole `## Gotchas` example; a pointer to an empty ADR directory
   teaches an agent to ignore pointers.

@@ -78,15 +78,16 @@ kept or dropped, it also has a dormant state:
   the split: whether the **regression gate** also survives here turns on *source code*, not *tooling*.
   A source repo with no tooling still keeps it as dormant prose; only a config / no-source repo drops
   it.
-- **The tail gates (User scenarios in sync, Backlog sweep) have no stack signal at all** —
-  nothing here detects them from lint, typecheck, or test tooling. Each one is stack-independent,
-  and selection alone earns none of them: each points at a doc or policy section that only its own
-  delegated skill installs — the user-scenarios gate at the BDD scenario doc
-  (`setup-user-scenarios`), the backlog sweep at the `## TODO / Known issues` policy
-  (`setup-todo-backlog`). Each ships **only after its own delegation actually succeeded** (SKILL.md
-  Step 6b), which is why they are appended there rather than injected here with the other gates.
-  Append them last among the gates, in the order written below — user-scenarios sync, then backlog
-  sweep — but above the **Commit** gate when it ships. A repo appends only the tail gates that
+- **The tail gates (User scenarios in sync, Design in sync, Backlog sweep) have no stack signal
+  at all** — nothing here detects them from lint, typecheck, or test tooling. Each one is
+  stack-independent, and selection alone earns none of them: each points at a doc or policy
+  section installed by something else in this skill — the user-scenarios gate at the BDD scenario
+  doc (`setup-user-scenarios`), the design gate at the `DESIGN.md` that SKILL.md Step 5b writes or
+  keeps, the backlog sweep at the `## TODO / Known issues` policy (`setup-todo-backlog`). Each
+  ships **only after its own source actually lands** (SKILL.md Step 6b), which is why they are
+  appended there rather than injected here with the other gates. Append them last among the gates,
+  in the order written below — user-scenarios sync, then design sync, then backlog sweep — but
+  above the **Commit** gate when it ships. A repo appends only the tail gates that
   qualify. A repo that appends none, with no **Commit** gate either, ends at the docs & instructions
   alignment gate.
   **No tail gate body below carries meta-guidance** — every condition governing whether they ship
@@ -280,10 +281,21 @@ says otherwise.
   Report it every time — `passed`, `failed (what is missing)`, or `n/a (not user-visible)`. There
   is no silent skip. Unsure whether a change is user-visible → treat it as user-visible; a
   redundant scenario costs less than a coverage hole.
+- **Design in sync** — every UI change matches the design file named by the `## Design` section of
+  these instructions, the source of truth for how this app looks. A UI change alters styles,
+  tokens, theme, component markup or layout, fonts, icons, or visual assets. A copy-only change is
+  not a UI change. Use only the values the design file names, and reuse the components it lists. A
+  change that adds or changes a visual decision updates the design file in the same change. **This
+  gate binds exactly like the test gate: a stale design file means the task is not done.** **This
+  gate overrides the markdown-only exemption above when this session changed the design file** — a
+  design-file-only change (for example a token value) can leave code behind it, so check that the
+  code still matches. Report it every time — `passed`, `failed (what drifted)`, or
+  `n/a (no UI change)`. There is no silent skip. Unsure whether a change is a UI change → treat it
+  as one. A redundant check costs less than a stale design file.
 - **Backlog sweep** — run the close-only sweep described in the `## TODO / Known issues`
   section of the agent instructions: close the entries this session solved. **This gate overrides
-  the markdown-only exemption above — it is one of the two checks that survive it, alongside the
-  docs-alignment scope check on the agent instructions.** A docs-only change can
+  the markdown-only exemption above** — it survives it, as do the docs-alignment scope check on the
+  agent instructions and the Design in sync gate when the design file changed. A docs-only change can
   close a docs-only entry, so the sweep runs on every substantive session, whether or not the
   session touched code. **Closing an entry requires evidence the defect no longer reproduces** — a
   re-run, a passing check, a confirmed absence — never close on "looks fixed". Closing is not
@@ -331,14 +343,15 @@ review** lens or the **Security review** lens ships; drop the sentence that desc
 did not ship, and drop the whole bullet — and restore the plain *"Otherwise run **every lens below**
 in parallel on this session's changes:"* sentence — when neither ships. The **integration-only
 exemption** on the **Code review** gate ships with that gate and is dropped with it — a repo that
-does not get the code review gate does not get the exemption either. The **User scenarios in sync** and **Backlog sweep** gates are similar but
-strictly stronger: no tail gate carries a `{{...}}` placeholder either, but selection alone is not
-enough to ship one. Each references something only its delegated skill installs — the BDD scenario
-doc from `setup-user-scenarios`, the `## TODO / Known issues` policy from `setup-todo-backlog` — so
-each is **appended in SKILL.md Step 6b after its own delegation succeeds**. Do not inject a tail gate
-here with the other gates, or a repo whose delegation was skipped ends up with a mandatory gate
-pointing at something that does not exist. Append them last, in the order written above, so a repo
-appends only the tail gates that qualify.
+does not get the code review gate does not get the exemption either. The **User scenarios in
+sync**, **Design in sync**, and **Backlog sweep** gates are similar but strictly stronger: no tail
+gate carries a `{{...}}` placeholder either, but selection alone is not enough to ship one. Each
+references something installed by something else in this skill — the BDD scenario doc from
+`setup-user-scenarios`, the `DESIGN.md` that SKILL.md Step 5b writes or keeps, the `## TODO /
+Known issues` policy from `setup-todo-backlog` — so each is **appended in SKILL.md Step 6b after
+its own source lands**. Do not inject a tail gate here with the other gates, or a repo whose
+source did not land ends up with a mandatory gate pointing at something that does not exist.
+Append them last, in the order written above, so a repo appends only the tail gates that qualify.
 
 **Version / drift.** This block's version is recorded by the versioned provenance note the skill
 stamps (SKILL.md Step 5.6), not by a marker inside the block. On re-run upgrade mode (SKILL.md Step

@@ -1,7 +1,7 @@
 ---
 name: setup-aiengineering
 disable-model-invocation: true
-description: Bootstrap a project's AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, delegates doc systems to the setup-adrs, setup-changelog, setup-user-scenarios, and setup-todo-backlog skills, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands per repo (Node, Python, Go, Rust, or config/IaC) and degrades gracefully when none exist. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author a single ADR or changelog entry, to edit existing policy sections one-off, or to set up only one of the sub-systems (call that specific setup skill directly).
+description: Bootstrap AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios/design gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, writes a DESIGN.md source of truth for UI repos (backfilled from code), delegates doc systems to setup-adrs, setup-changelog, setup-user-scenarios and setup-todo-backlog, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude. Stack-agnostic — detects build/test commands (Node, Python, Go, Rust, config/IaC) and degrades gracefully without them. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author one ADR or changelog entry, to edit one existing policy section, or to set up one sub-system (call that setup skill directly).
 ---
 
 # Setup AI Engineering
@@ -24,6 +24,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Git policy | inject (`references/git-policy.md`) |
 | File organization | inject (`references/file-organization.md`) |
 | PRD gate (require a PRD before substantial features) — opt-in | inject (`references/prd-gate.md`) |
+| Design source of truth (`DESIGN.md`) — UI repos only, default ON when UI signals exist | inject + scaffold (`references/design-md.md`, `assets/DESIGN.template.md`, Step 5b) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
 | User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
@@ -49,9 +50,10 @@ This runs for every repo type — a config-only repo still gets an `AGENTS.md`.
 **Inject the scope block (always, not a module).** Read `references/instructions-scope.md` and place
 its block at the very **top** of the target file, above the provenance note and above every `##`
 section. Apply its `## Substitutions` — drop the `ARCHITECTURE.md` row when the ADR module will not
-run, drop the `docs/adr/` row when no ADR system is set up, and never point a rule at a file the
-repo does not have. This is not a Step 4 menu item and cannot be deselected: it defines what the
-file this skill creates is *for*, so a target repo never gets one without it. Idempotent — a block
+run, drop the `docs/adr/` row when no ADR system is set up, drop the `DESIGN.md` row since Step 5b
+adds it, and never point a rule at a file the repo does not have. This is not a Step 4 menu item
+and cannot be deselected: it defines what the file this skill creates is *for*, so a target repo
+never gets one without it. Idempotent — a block
 already containing `This file is agent instructions only.` is updated in place, never duplicated.
 
 Everything after this point obeys that block. **This skill never writes documentation into the agent
@@ -137,6 +139,8 @@ Detect, read-only:
   per **Pre-commit hook coverage** in `references/verification-protocol.md`. Also run its install
   probe; a configured hook not installed in this clone → note the install command for the report,
   never run it.
+- **UI signals** — per `## Applicability` in `references/design-md.md`. They decide whether the
+  design module is offered in Step 4.
 
 If no lint/typecheck/test tool exists at all (e.g. a Docker-config repo), note that the verification
 module will degrade to code-review-only and the test + coverage gates are N/A.
@@ -179,10 +183,10 @@ in Step 6b only after `setup-todo-backlog` actually runs, so selecting it with v
 deselected is a no-op, and so is selecting it on a machine where the skill is unavailable. If the
 repo has no build tooling, flag the verification module as degraded and let them keep or skip it.
 
-On repos with source code the verification module now includes a required overall-repo coverage gate
+On repos with source code the verification module includes a required overall-repo coverage gate
 (default ≥90%, user-adjustable) alongside the test gate — no separate checkbox, it rides with the
 verification module. On a config/no-source repo the test + coverage portion is N/A (the module
-degrades to code-review-only, same as the test gate does today).
+degrades to code-review-only, as the test gate does).
 
 Flag the **worktree auto-bootstrap** module as Claude-Code-only
 (it scaffolds a `.claude/settings.json` hook and a `.worktreeinclude`); on any other host it will be
@@ -203,6 +207,11 @@ while this one reaches the public internet and lands third-party code in the pro
 directory, which the agent then reads as instructions. Selecting it here only **unlocks** the
 module — the real go/no-go sits in Step 6c, once the inferred topics are visible. Same shape as the
 worktree module, which is selected here but still probes, proposes, and confirms in Step 7.
+
+The **Design source of truth (`DESIGN.md`)** module defaults to **ON** when Step 2 found UI signals.
+With no UI signals it is not offered — label it `N/A (no UI)`. A greenfield repo with no signals gets
+one question first, *"Will this repo have a UI?"* — yes → offer it, default ON. No → `N/A (no UI)`.
+`references/design-md.md` under `## Applicability` holds the exact branches.
 
 ### Step 5: Inject the policy modules
 
@@ -260,13 +269,14 @@ For each chosen inject module (verification, git policy, file organization, PRD 
    **Nuclear structural review** or the **Security review** lens ships, and drop the sentence that
    describes a lens which did not ship; when neither ships, drop that bullet and restore the plain
    "run every lens below" sentence — `references/verification-protocol.md` holds the exact wording.
-4. **Tail gates (user-scenarios sync, backlog sweep) — always hold every tail gate back here.**
-   Inject the standard gates only, even when the user-scenarios or TODO backlog modules were
-   selected; hold every tail gate back for Step 6b. Each tail gate points at something only its
-   delegated skill installs — the BDD scenario doc, the `## TODO / Known issues` policy — and this
-   step runs *before* Step 6 delegates, so injecting one now would ship a mandatory gate referencing
-   something that may never exist (the Step 6 availability guard can skip a delegation). Step 6b
-   appends each one after its own delegation succeeds.
+4. **Tail gates (user-scenarios sync, design sync, backlog sweep) — always hold every tail gate back
+   here.** Inject the standard gates only, even when the user-scenarios, design or TODO backlog
+   modules were selected. Hold every tail gate back for Step 6b. Each tail gate points at something
+   a later step installs — the BDD scenario doc, the `DESIGN.md` from Step 5b, the `## TODO / Known
+   issues` policy — and this step runs *before* those steps, so injecting one now would ship a
+   mandatory gate referencing something that may never exist (the Step 6 availability guard can skip
+   a delegation, and Step 5b writes no file when the user declines). Step 6b appends each one after
+   its own prerequisite is in place.
 5. Append the `##` section to the target file. If its heading already exists, **ask** before
    replacing — never silently duplicate.
 6. **Provenance note (once, versioned).** Above the first injected policy `##` section, add a single
@@ -278,6 +288,31 @@ For each chosen inject module (verification, git policy, file organization, PRD 
    version stamp and section list instead of adding a second note. The version stamp is what re-run
    upgrade mode (Step 1) reads. Covers only this skill's injected policy sections; delegated doc-system
    sections (ADRs, changelog, user scenarios) are owned by their own skills and are not listed here.
+
+### Step 5b: Design source of truth (DESIGN.md)
+
+**Guard first.** Run this step only when the design module was selected in Step 4 and the repo
+passes `## Applicability` in `references/design-md.md`. Otherwise skip it — label it `N/A (no UI)`
+or `skipped (not selected)`.
+
+Then follow `references/design-md.md`, which holds the whole procedure:
+
+1. **Get the file.**
+   - **`DESIGN.md` or `design.md` already at the root** → keep it. Never overwrite it. Offer only its
+     missing sections, per `## Existing file`.
+   - **Working repo with UI** → backfill it from the code. This runs always, whatever the user
+     answered in Step 3.
+   - **Greenfield repo with UI intent** → author it with the user, with the `frontend-design` and
+     `hallmark` skills behind the reference's availability guard.
+   - **The user declines** → write no file. Label it `skipped (declined)`.
+2. **Inject the `## Design` block** with `{{DESIGN_FILE}}` and `{{TOKEN_SOURCE}}` substituted, per
+   the reference's `## Substitutions` and `## Injection notes`. No file written or kept → inject no
+   block, since it would point at a file the repo does not have.
+3. **Scope block row.** Add the design-file row to the scope block, under the file's actual name,
+   only when this step wrote or kept a design file. Step 1 omitted it.
+4. **Provenance note.** Add `Design` to the note's section list (Step 5.6) when the block shipped.
+
+This step never changes app code and never writes a placeholder `DESIGN.md`.
 
 ### Step 6: Delegate the doc-system modules
 
@@ -295,17 +330,19 @@ matching skill name); never fail silently and never half-apply.
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).
 
-**Step 6b — append the tail gates (each only after its own delegation succeeded).** Step 5 held them
-all back on purpose. Append them now, in the order they appear in `references/verification-protocol.md`
-— **user-scenarios sync, then backlog sweep**. When the **Commit** gate shipped (Step 5.2), insert each
-tail gate above it — the Commit gate stays last. Append a tail gate only when **all** of these hold
-for it:
+**Step 6b — append the tail gates (each only after its own prerequisite is in place).** Step 5 held
+them all back on purpose. Append them now, in the order they appear in
+`references/verification-protocol.md` — **user-scenarios sync, then design sync, then backlog
+sweep**. When the **Commit** gate shipped (Step 5.2), insert each tail gate above it — the Commit
+gate stays last. Append a tail gate only when **all** of these hold for it:
 
-1. Its module was selected in Step 4 (user scenarios / TODO backlog).
+1. Its module was selected in Step 4 (user scenarios / design / TODO backlog).
 2. The verification module was also selected — the tail gates live inside that block, so with no
    injected verification block there is nothing to append to.
-3. Its delegated skill (`setup-user-scenarios` / `setup-todo-backlog`) was available and actually
-   ran, installing the doc or policy section the gate references.
+3. Its prerequisite is in place, installing the doc or policy section the gate references:
+   - **User-scenarios sync / backlog sweep** → its delegated skill (`setup-user-scenarios` /
+     `setup-todo-backlog`) was available and actually ran.
+   - **Design sync** → no delegated skill. Step 5b wrote or kept a `DESIGN.md`.
 
 Any one failing → **do not append that gate**, and say so in the Step 8 report. Never leave a
 mandatory gate pointing at a doc or section that was never installed. Copy each gate verbatim from
@@ -441,6 +478,13 @@ Confirm in one short message:
   (config/no-source repo).
 - Provenance note added/updated (the versioned italic line naming the skill and stamping the version).
 - PRD gate injected (or skipped, since it is opt-in).
+- **Design source of truth**: `DESIGN.md` written (backfilled or authored), or an existing one kept
+  (naming which missing sections were offered and which were accepted), or `N/A (no UI)`,
+  `skipped (declined)`, or `skipped (not selected)`. Whether the `## Design` block was injected.
+  Which of `frontend-design` / `hallmark` were used, or which were unavailable. Any baseline Do or
+  Don't rule the backfill dropped because the current code breaks it. The Design-in-sync gate:
+  appended, or omitted — naming which condition failed (module not selected, verification module
+  not selected, or no `DESIGN.md` written or kept).
 - Doc-system skills delegated (or skipped, naming any that were `skipped (... unavailable)`).
 - User-scenarios sync gate: appended after a successful `setup-user-scenarios` delegation, or
   omitted — naming which condition failed (module not selected, verification module not selected,
@@ -582,13 +626,26 @@ only; the user runs it.
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).
 - PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
-- The verification tail gates — **user-scenarios sync** and **backlog sweep** — live inside the
-  verification block but are **appended in Step 6b after their own delegation succeeds, never
-  injected in Step 5**. Step 5 runs before Step 6, so injecting one early would point a mandatory
-  gate at a doc or policy the availability guard may have skipped installing. Omit a tail gate
-  unless its module was selected, the verification module was selected, and its delegation actually
-  ran. Append in the fixed order (user-scenarios sync, then backlog sweep); nothing follows them, so
-  omitting one leaves the rest of the block untouched.
+- The verification tail gates — **user-scenarios sync**, **design sync** and **backlog sweep** —
+  live inside the verification block but are **appended in Step 6b after their own prerequisite is
+  in place, never injected in Step 5**. Step 5 runs before Step 5b and Step 6, so injecting one early
+  would point a mandatory gate at a doc or policy that may never be installed. Omit a tail gate
+  unless its module was selected, the verification module was selected, and its prerequisite is in
+  place — its delegation actually ran, or for design sync, Step 5b wrote or kept a `DESIGN.md`.
+  Append in the fixed order (user-scenarios sync, then design sync, then backlog sweep), all above
+  the **Commit** gate when it shipped. Omitting one leaves the rest of the block untouched.
+- **`DESIGN.md` is the design source of truth — code implements it.** Code and `DESIGN.md`
+  disagree → `DESIGN.md` wins and the code is fixed, unless the user decides the code is right —
+  then `DESIGN.md` is updated in the same change.
+- A user-requested visual change updates `DESIGN.md` in the same change as the code. An
+  agent-initiated deviation — a new token, pattern or visual decision — is drafted and asked first.
+- The design backfill (Step 5b) records reality. It lists drift as debt under `## Known
+  inconsistencies`, never redesigns, never changes app code, and never creates a token file. It
+  drops any baseline Do or Don't rule the current code already breaks.
+- Never write a placeholder `DESIGN.md`, and never overwrite an existing `DESIGN.md` or `design.md` —
+  offer only its missing sections.
+- The agent instructions file points at `DESIGN.md` through the `## Design` block and never
+  `@`-imports it — an import would load it in every session.
 - The user-scenarios sync gate makes the scenario doc blocking: a user-visible change left with a
   stale scenario doc fails verification exactly like a failing test, and is reported every time as
   `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
@@ -630,9 +687,10 @@ only; the user runs it.
 - `references/verification-protocol.md` — verification block + stack-detection table + placeholders
   (lint / typecheck / test / `{{COVERAGE_CMD}}` / `{{COVERAGE_THRESHOLD}}`), plus the placeholder-free
   regression-test-for-bug-fixes gate and its degradation paths, plus the conditional tail
-  gates (user-scenarios sync, then backlog sweep — held back in Step 5 and appended in Step 6b,
-  each only after its own delegated skill successfully runs), plus the Code review gate's shared
-  relevance-based triage step, which every lens follows except the nuclear structural review, plus
+  gates (user-scenarios sync, then design sync, then backlog sweep — held back in Step 5 and
+  appended in Step 6b, each only after its own prerequisite is in place), plus the Code review
+  gate's shared relevance-based triage step, which every lens follows except the nuclear structural
+  review, plus
   the **Conditional lenses** bullet that gates the nuclear structural and security lenses on what
   the change set touches.
 - `references/test-setup.md` — no-framework branch: ask the user for a runner + coverage tool,
@@ -640,6 +698,9 @@ only; the user runs it.
 - `references/git-policy.md` — git policy block.
 - `references/file-organization.md` — file organization block.
 - `references/prd-gate.md` — PRD-gate policy block (opt-in; require a PRD before substantial features).
+- `references/design-md.md` — design module (Step 5b): UI applicability, the existing-file,
+  backfill and greenfield flows, the availability guard for `frontend-design` and `hallmark`, and
+  the injected `## Design` block with its `{{TOKEN_SOURCE}}` substitution.
 - `references/backfill-guide.md` — greenfield-vs-working heuristic, survey + grounding rules, and
   the routing table that sends every drafted section to `README.md` or `ARCHITECTURE.md` rather than
   the agent instructions file.
@@ -650,3 +711,5 @@ only; the user runs it.
 
 - `assets/setup-worktree.sh` — generic, package-manager-detecting worktree bootstrap script copied
   into the target as `scripts/setup-worktree.sh`.
+- `assets/DESIGN.template.md` — `DESIGN.md` skeleton in the Google Labs DESIGN.md format (YAML token
+  front matter plus the canonical prose sections), filled by Step 5b.

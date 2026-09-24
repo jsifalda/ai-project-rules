@@ -31,7 +31,6 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Docs & instructions alignment gate | inject | 5 | v1 |
 | Git policy | inject | 5 | v1 |
 | File organization | inject | 5 | v1 |
-| Writing style (ASD-STE100 Simplified Technical English) | inject | 5 | v10 |
 | PRD gate (opt-in, default off) | inject | 5 | v1 |
 | Provenance note (versioned) | inject | 5 | v1 |
 | ADRs | delegate → `setup-adrs` | 6 | v1 |

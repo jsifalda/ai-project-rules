@@ -1,18 +1,17 @@
 # Git Policy Template
 
-Inject the section below into the project's agent instructions file. Copy it verbatim. The
-**Exception** bullet ships only when the verification block ships its **Commit** gate; drop it
-otherwise.
+Inject the section below into the project's agent instructions file. Copy it verbatim. It has no
+`{{...}}` placeholders.
 
 ---
 
 ## Git Policy
 
-- **NEVER commit changes without explicit user approval.** After completing changes and verifying
-  they pass the verification protocol, present a summary and wait for the user to confirm before
-  running `git add` / `git commit`.
-- **Do not push to remote unless the user explicitly tells you to.**
-- When working on the default branch, create a feature branch first rather than committing directly
-  to it.
-- **Exception:** the verification protocol's **Commit** gate creates a local commit on a feature
-  branch without asking. It never pushes.
+- Commit locally when a task passes the verification protocol, or the protocol exempts it. Do not
+  ask first.
+- On the default branch, create a feature branch first. Never commit to the default branch.
+- Stage only this task's files. Never `git add -A` or `git add .`.
+- Keep hooks on. Never commit with `--no-verify`.
+- Never push without an instruction from the user in chat. One instruction covers one push.
+- Never force-push, even when the user asks. Give the user the command to run. This covers `-f`,
+  `--force`, `--force-with-lease` and a `+` refspec.

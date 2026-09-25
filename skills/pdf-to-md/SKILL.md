@@ -1,6 +1,8 @@
 ---
 name: pdf-to-md
 description: Convert a text-based PDF into one clean, structured Markdown file. Extracts with layout-aware spacing (fixes the run-together words plain extraction produces), auto-strips repeated page headers, footers and page numbers, reflows wrapped lines into paragraphs, and maps document structure such as parts, sections and lists to Markdown headings. Use when the user wants to turn a PDF (law, statute, report, manual, handbook, contract, book) into Markdown, or says "convert this PDF to md", "pdf to markdown", or "make a markdown version of this document". Probe the PDF first, then map its structure. Do NOT use for scanned or image-only PDFs that have no text layer and need OCR, for filling in PDF forms, or when the user only wants a single table pulled out of a PDF.
+metadata:
+  version: "1.0"
 ---
 
 # PDF to Markdown

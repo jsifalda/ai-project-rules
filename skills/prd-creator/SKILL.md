@@ -1,6 +1,8 @@
 ---
 name: prd-creator
 description: "Generate a lean Product Requirements Document (PRD) in Markdown from a feature idea, through a structured clarifying-questions interview. Built for planning your own indie side-hustle features, not corporate sign-off. Problem-first and outcome-focused, following a lean template (summary, problem and context, users and use cases, goals and success signals, scope in and out, solution outline with explicit functional requirements, risks and assumptions, open questions). Targets about one page yet stays detailed enough for you or an AI coding agent to build from. Saves each PRD to docs/prds/ and links it from the project README. Use when turning a feature idea into a buildable spec, gathering requirements through clarifying questions, or documenting a side-project feature."
+metadata:
+  version: "1.0"
 ---
 
 # Product Requirements Document (PRD) Creator

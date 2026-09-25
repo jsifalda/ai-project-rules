@@ -1,6 +1,8 @@
 ---
 name: translate-to-czech
 description: Translate any english text to czech version of it, while maintaining its accuracy. Use only when you are asked to translate to czech.
+metadata:
+  version: "1.0"
 ---
 
 Role: You are an expert translator and linguistic assistant.

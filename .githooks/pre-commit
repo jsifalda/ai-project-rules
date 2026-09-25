@@ -6,6 +6,20 @@
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SCANNER="${REPO_ROOT}/scripts/check-universality.sh"
 SKILL_VALIDATOR="${REPO_ROOT}/skills/create-skill/scripts/quick_validate.py"
+SYNCED_SKILLS_LIST="${REPO_ROOT}/scripts/synced-skills.txt"
+
+# True if $1 is an exact whole line in synced-skills.txt (comments/blanks ignored).
+# A missing list file means nothing is exempt.
+is_synced_skill() {
+  local name="$1" line
+  [[ -f "$SYNCED_SKILLS_LIST" ]] || return 1
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    line="${line%$'\r'}"
+    [[ -z "$line" || "$line" == \#* ]] && continue
+    [[ "$line" == "$name" ]] && return 0
+  done < "$SYNCED_SKILLS_LIST"
+  return 1
+}
 
 [[ -x "$SCANNER" ]] || { echo "pre-commit: $SCANNER not found or not executable" >&2; exit 1; }
 
@@ -36,7 +50,9 @@ if [[ -f "$SKILL_VALIDATOR" ]]; then
         *:"$skill_dir":*) continue ;;
       esac
       seen_dirs="$seen_dirs:$skill_dir"
-      if ! python3 "$SKILL_VALIDATOR" "$skill_dir"; then
+      validate_args=("$skill_dir")
+      is_synced_skill "$(basename "$skill_dir")" || validate_args+=(--require-version)
+      if ! python3 "$SKILL_VALIDATOR" "${validate_args[@]}"; then
         echo "pre-commit: skill validation failed for $f" >&2
         fail=1
       fi

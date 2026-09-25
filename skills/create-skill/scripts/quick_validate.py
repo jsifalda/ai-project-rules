@@ -9,7 +9,7 @@ import re
 import yaml
 from pathlib import Path
 
-def validate_skill(skill_path):
+def validate_skill(skill_path, require_version=False):
     """Basic validation of a skill"""
     skill_path = Path(skill_path)
 
@@ -89,13 +89,37 @@ def validate_skill(skill_path):
         if len(description) > 1024:
             return False, f"Description is too long ({len(description)} characters). Maximum is 1024 characters."
 
+    # Optional stricter checks for versioned skills (opt-in via --require-version)
+    if require_version:
+        metadata = frontmatter.get('metadata')
+        if not isinstance(metadata, dict):
+            return False, "metadata must be present and a YAML mapping when --require-version is set"
+
+        version = metadata.get('version')
+        if version is None:
+            return False, "metadata.version is required when --require-version is set"
+        if not isinstance(version, str):
+            return False, (
+                f"metadata.version must be a quoted string, e.g. version: \"1.0\" "
+                f"(got {type(version).__name__}: {version!r} — quote it in YAML)"
+            )
+        if not re.match(r'^\d+\.\d+$', version):
+            return False, f"metadata.version '{version}' must match X.Y (e.g. \"1.0\")"
+
+        upstream = metadata.get('upstream')
+        if upstream is not None:
+            if not isinstance(upstream, str) or not upstream.startswith('https://'):
+                return False, "metadata.upstream must be a string starting with 'https://'"
+
     return True, "Skill is valid!"
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python quick_validate.py <skill_directory>")
+    require_version = '--require-version' in sys.argv[1:]
+    positional = [a for a in sys.argv[1:] if a != '--require-version']
+    if len(positional) != 1:
+        print("Usage: python quick_validate.py <skill_directory> [--require-version]")
         sys.exit(1)
-    
-    valid, message = validate_skill(sys.argv[1])
+
+    valid, message = validate_skill(positional[0], require_version=require_version)
     print(message)
     sys.exit(0 if valid else 1)

@@ -1,6 +1,8 @@
 ---
 name: reddit-post
 description: Create high-engagement Reddit posts (title + body) that follow proven patterns from top-performing posts. Walks the user through a questionnaire to gather context before generating the post. Use when the user wants to create a Reddit post, write content for a subreddit, or needs help crafting viral-worthy Reddit content.
+metadata:
+  version: "1.0"
 ---
 
 # Reddit Post Creator

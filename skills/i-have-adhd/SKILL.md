@@ -4,6 +4,8 @@ description: 'Shape output for a reader with ADHD — lead with the next action,
 disable-model-invocation: true
 license: MIT
 metadata:
+  version: "1.0"
+  upstream: "https://github.com/ayghri/i-have-adhd"
   hermes:
     tags: [ADHD, Output Style, Productivity, Formatting]
     category: productivity

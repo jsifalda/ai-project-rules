@@ -1,6 +1,8 @@
 ---
 name: prompt-enhancer
 description: Transform simple prompts into high-quality, structured prompts that produce better AI results. Use when the user wants to improve a prompt, make it more effective, optimize prompt quality, or enhance prompt clarity. Triggers on requests like "enhance this prompt", "make this prompt better", "optimize this prompt", "improve my prompt", or when the user pastes a prompt and wants it refined.
+metadata:
+  version: "1.0"
 ---
 
 # Prompt Enhancer

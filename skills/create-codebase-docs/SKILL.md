@@ -1,6 +1,8 @@
 ---
 name: create-codebase-docs
 description: Generate an engaging STARTHERE.md codebase guide that explains architecture, decisions, and lessons in plain language with Mermaid diagrams. Also wires up auto-update checks in the project's agent instructions file and links from README.md. Use when onboarding to a project, documenting a codebase, or when user says "create codebase docs", "write STARTHERE", "explain the project", or "document the codebase".
+metadata:
+  version: "1.0"
 ---
 
 ## Purpose

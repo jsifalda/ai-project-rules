@@ -1,6 +1,8 @@
 ---
 name: generate-prd-tasks
 description: Generates a detailed, step-by-step developer task list in Markdown format from a Product Requirements Document (PRD). Use when you have a PRD and need to break it down into high-level parent tasks and granular sub-tasks for implementation. Triggers on requests like "generate tasks from PRD", "create task list for this PRD", or when an implementation plan is needed from a PRD.
+metadata:
+  version: "1.0"
 ---
 
 # Generate PRD Tasks

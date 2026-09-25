@@ -1,6 +1,8 @@
 ---
 name: obsidian-task-extractor
 description: Extract atomic tasks from source notes and add them to To Remember.md with proper formatting. Use when the user wants to extract tasks from a note, create tasks from note content, or add note-based tasks to a recurring tasks file. Triggers on phrases like "extract tasks from note", "add tasks to To Remember", "create tasks from this note", or any request to convert note content into actionable recurring tasks.
+metadata:
+  version: "1.0"
 ---
 
 # Obsidian Task Extractor

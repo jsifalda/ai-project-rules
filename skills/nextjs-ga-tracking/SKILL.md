@@ -1,6 +1,8 @@
 ---
 name: nextjs-ga-tracking
 description: Implements Google Analytics 4 tracking with GDPR-compliant Silktide cookie consent in Next.js projects. Use when the user wants to add GA tracking, implement Google Analytics, set up analytics with cookie consent, or add GDPR-compliant tracking to a Next.js app.
+metadata:
+  version: "1.0"
 ---
 
 # GA4 + Silktide Cookie Consent for Next.js

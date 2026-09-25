@@ -1,7 +1,9 @@
 ---
 name: create-skill
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
+metadata:
+  version: "1.1"
 ---
 
 # Create Skill
@@ -41,7 +43,7 @@ Prefer concise examples over verbose explanations. For deeper guidance on phrasi
 
 ### Referencing Other Skills (confirm first)
 
-Skills should be self-contained. Before a skill's body mentions or references ANY other skill by name — a passing note ("see the X skill"), a cross-link, or an instruction to invoke/delegate to it — STOP and ask the user to confirm that specific reference. Leave it out unless the user explicitly approves it.
+Skills should be self-contained. Before a skill's body names another skill (a passing note such as "see the X skill", a cross-link, or an instruction to invoke or delegate to it), ask the user to confirm that reference. Leave it out unless the user approves it.
 
 This gate is per-reference: confirm each one, not once per skill.
 
@@ -224,10 +226,10 @@ Skill creation involves these steps:
 2. Plan reusable skill contents (scripts, references, assets)
 3. Initialize the skill (run init_skill.py)
 4. Edit the skill (implement resources and write SKILL.md)
-5. Package the skill (run package_skill.py)
+5. Package the skill when it ships as a file (run package_skill.py)
 6. Iterate based on real usage
 
-Follow these steps in order, skipping only if there is a clear reason why they are not applicable.
+Use these steps as an outline. Keep the order only where a step needs the output of an earlier one: initialize before you edit, and validate before you package.
 
 ### Step 1: Understanding the Skill with Concrete Examples
 
@@ -309,7 +311,7 @@ Common pitfalls to avoid while drafting:
 - Internal hostnames (`*.internal`, `*.corp`) and internal Confluence/Linear/Jira IDs — keep them out; reference env vars or ask the user at runtime.
 - Hardcoded secrets, even fake-looking ones — always `$ENV_VAR`, never literals.
 
-Before moving to Step 5, run the scanner:
+Before you finish Step 4, run the scanner:
 
 ```bash
 bash scripts/check-universality.sh skills/<your-skill>/
@@ -340,7 +342,7 @@ Any example files and directories not needed for the skill should be deleted. Th
 
 ##### Frontmatter
 
-Write the YAML frontmatter with `name` and `description`:
+Write the YAML frontmatter with `name`, `description`, and `metadata.version` (see `Required: metadata.version` below):
 
 - `name`: The skill name
 - `description`: This is the primary triggering mechanism for your skill, and helps Claude understand when to use the skill. The description is in context on every request, so tuning it is often the highest-leverage change you can make to a skill — expect bigger wins from description rewrites than from body rewrites.
@@ -362,12 +364,20 @@ Parser-strictness rules trip up long descriptions. Each passes Claude Code's len
 **Always validate before committing:**
 
 ```bash
-python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/
+python skills/create-skill/scripts/quick_validate.py --require-version skills/<your-skill>/
 ```
 
 `quick_validate.py` catches both pitfalls (PyYAML rejects `": "` with `mapping values are not allowed here` plus the offending column; the 1024 check is explicit). The repo's pre-commit hook also runs the validator on every staged `SKILL.md`, but running it manually during authoring gives a faster feedback loop.
 
 **Editing a shipped skill counts.** This class of break most often lands via an *edit* to an existing description weeks after creation, not at creation time — so re-run `quick_validate.py` after ANY change to `name` or `description`, on existing skills as well as new ones. Do not lean on the pre-commit hook to catch it: `core.hooksPath` is per-clone (active only after `bash scripts/install-hooks.sh`) and `git commit --no-verify` skips it, so an unvalidated edit can ship and only fail at load time in a stricter consumer like Copilot CLI.
+
+###### Required: `metadata.version`
+
+- Set `metadata.version` to a quoted major.minor string, starting at `"1.0"`. An unquoted `1.0` parses as a number.
+- Bump the minor on any substantive change to any file in the skill directory. A typo or pure reformatting needs no bump.
+- Bump the major on a breaking change: trigger scope, arguments, or removed behavior.
+- Add `metadata.upstream: "<upstream repo root URL>"` to a skill vendored from another repo.
+- Run `quick_validate.py --require-version` to check both keys.
 
 ###### Optional: `disable-model-invocation`
 
@@ -418,7 +428,7 @@ not block the skill.
 
 ### Step 5: Packaging a Skill
 
-Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:
+When the skill ships as a file (for example, an upload to a Claude app), package it into a .skill file. Skip this step when a sync hook loads the skill from the repo. The packaging process validates the skill first:
 
 - **Before packaging**, re-run `bash scripts/check-universality.sh` (whole-repo scan) to confirm the skill contains no personal data, secrets, or employer-specific content. The pre-commit hook enforces the same check, but running it here gives a faster signal.
 

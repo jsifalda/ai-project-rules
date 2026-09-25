@@ -2,6 +2,8 @@
 name: loop-todos
 disable-model-invocation: true
 description: MANUAL-INVOCATION-ONLY skill — do NOT auto-trigger. Only invoke when the user explicitly types the literal slash command `/loop-todos`. Natural-language phrasing such as 'work through the backlog', 'fix the todos', 'clear the backlog', or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; handle with ordinary tools and, if helpful, ask whether to run `/loop-todos`. When invoked — starts a recurring, self-cancelling loop in the project. Each firing claims one open backlog entry, writes a plan for it, implements that plan, verifies it against the project's own gates, closes the entry, updates stale docs, and opens one pull request per entry via the `ship-pr` skill. Optional interval argument, default 10 minutes, e.g. `/loop-todos 30m`. Do NOT use for creating or formatting a backlog (that's `setup-todo-backlog`), filing or closing one entry by hand, or a one-off task with no backlog involved.
+metadata:
+  version: "1.0"
 ---
 
 # Loop TODOs

@@ -2,6 +2,8 @@
 name: council-v2
 disable-model-invocation: true
 description: "Run a question, idea, or decision through a council of named AI advisors who answer independently, peer-review each other, then a chairman synthesizes one verdict. Slash-only — invoke it with /council-v2, it never auto-fires. Permanent seats — First Principles (delegates to the first-principles-mode skill), The Contrarian, The Outsider, The Expansionist, and The Founder (delegates to the founder-thinking-mode skill). Routed seats join only when the question fits — Stanier (delegates to persona-stanier) for people, teams, orgs, hiring, coaching, 1:1s, performance, OKRs, delegation, or engineering process, and levelsio (delegates to persona-levelsio) for solo or bootstrapped products, side projects, shipping, launching, pricing, distribution, or building in public. Do NOT use for factual lookups, questions with one right answer, trivial decisions, or anything without a real tradeoff and real stakes."
+metadata:
+  version: "1.0"
 ---
 
 # LLM Council v2

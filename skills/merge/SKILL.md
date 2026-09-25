@@ -10,6 +10,8 @@ description: >-
   conflicts with main and push. Optional argument, a base branch name, overrides the detected
   default branch. Do NOT use to open a PR (ship-pr), to merge a PR into main, to rebase, to
   squash, to force-push, or to switch branches.
+metadata:
+  version: "1.0"
 ---
 
 # Merge

@@ -5,6 +5,8 @@ description: >
   or file set, hunting for "code judo" moves that dramatically simplify the implementation
   — not correctness bugs or style nits.
 metadata:
+  version: "1.0"
+  upstream: "https://github.com/intercom/2x-skills"
   user-invocable: true
   argument-hint: "[PR URL, branch, or file paths]"
   keywords: [nuclear, code judo, maintainability audit, harsh review, deep code review]

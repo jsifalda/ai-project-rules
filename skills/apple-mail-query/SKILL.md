@@ -1,6 +1,8 @@
 ---
 name: apple-mail-query
 description: Query the local Apple Mail (Mail.app) database on macOS to list, search, count, or extract content from emails. Always snapshots the SQLite DB first, queries the copy read-only, and suggests cleanup when done. Use when the user asks to "read my apple mail", "find emails from X", "list mail from sender", "search my inbox", "extract from email bodies", or otherwise wants to analyze locally synced Mail.app messages. Do NOT use for sending mail, modifying messages, configuring Mail rules/accounts, Gmail API / IMAP fetch, or non-Apple-Mail clients (Outlook, Thunderbird, Spark).
+metadata:
+  version: "1.0"
 ---
 
 # Apple Mail Query

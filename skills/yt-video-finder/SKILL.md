@@ -2,6 +2,8 @@
 name: yt-video-finder
 description: >-
   Drives a real Chrome browser through Playwright to search YouTube, gather candidate videos, categorize and rate them, read their comments, then synthesize a report that names the single best video for the user's criteria. Use when the user says find the best youtube video about X, search youtube for a video on X, pick the best youtube video for X, which youtube video should I watch on X, or otherwise wants one recommended YouTube video chosen against stated criteria such as topic, purpose, upload recency, length, language, or channel. Do NOT use to download videos, do NOT use the YouTube Data API (this skill drives a real browser via Playwright, not the API), and do NOT use for non-YouTube video sites like Vimeo or TikTok.
+metadata:
+  version: "1.0"
 ---
 
 # YouTube Video Finder

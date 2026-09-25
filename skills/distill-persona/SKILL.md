@@ -1,6 +1,8 @@
 ---
 name: distill-persona
 description: Distill a leader's worldview from their interview transcripts into a reusable advisor persona. Produces a principles markdown (principles, mental models, recurring patterns, verbatim quotes, grouped by domain), a role markdown (description, core questions, mental models, tone), and a paste-ready CLAUDE.md activation snippet — all from the "Distilling Leadership Wisdom" methodology. Asks one question at a time. Use when the user says "distill a persona from these transcripts", "build a leader's advisor persona", "extract leadership principles from interviews", "turn these podcast transcripts into a CLAUDE persona", or "create an advisor role from a leader's talks". Do NOT use for summarising a single article or note (use summarise-text or summarise-url), improving a prompt (prompt-enhancer), customer or user personas for product work (this skill is for leadership advisor personas only), or fetching transcripts (skill takes already-gathered local files, not URLs).
+metadata:
+  version: "1.0"
 ---
 
 # Distill Persona

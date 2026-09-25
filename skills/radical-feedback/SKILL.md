@@ -1,6 +1,8 @@
 ---
 name: radical-feedback
 description: Diagnose and improve feedback using Kim Scott's Radical Candor framework — the Care Personally and Challenge Directly axes and their four quadrants — or generate well-structured feedback for a situation from scratch. Use when the user wants to give someone feedback, says "radical feedback", "help me give feedback", "improve this feedback", "is this too harsh or too soft", "how do I tell my report or colleague that…", or pastes a feedback message and asks whether it lands. Do NOT use for formal performance-review documents or HR paperwork, customer or product-feedback analysis, code review, or generic praise with no behavior-change intent.
+metadata:
+  version: "1.0"
 ---
 
 # Radical Feedback

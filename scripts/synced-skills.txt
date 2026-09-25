@@ -1,0 +1,11 @@
+# Skills a sync script overwrites or skips on re-sync.
+# The pre-commit hook validates them without --require-version.
+defuddle
+domain-modeling
+grill-with-docs
+handoff
+json-canvas
+obsidian-bases
+obsidian-cli
+obsidian-markdown
+prototype

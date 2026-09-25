@@ -1,6 +1,9 @@
 ---
 name: find-skills
 description: Finds agent skills in the public skills.sh registry and clones an approved one into the current project. Checks the project and user skill folders first, searches the registry with curl, ranks candidates by install count, enriches them with GitHub stars, license, and last push, then shows a table and waits for approval. Reads every file of an approved skill for security problems before it lands, writes the files verbatim into the project skill directory, runs the host project gates, and offers a docs mention. Never installs a package, and never writes to the user-level skill folder. Use when the user says "is there a skill for X", "find a skill for X", "any skill that does X", "install a skill that does X", or "I wish I had help with X". Do NOT use for ordinary how-to questions, for authoring a new skill from scratch, for updating a skill the project already holds, or for any request that needs a package manager install.
+metadata:
+  version: "1.0"
+  upstream: "https://github.com/vercel-labs/skills"
 ---
 
 # Find Skills

@@ -1,6 +1,8 @@
 ---
 name: add-mcp-api
 description: Create a phased implementation plan for an existing application that needs a remote Model Context Protocol API. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, product code implementation, or general API planning.
+metadata:
+  version: "1.0"
 ---
 
 # Plan a Remote MCP API

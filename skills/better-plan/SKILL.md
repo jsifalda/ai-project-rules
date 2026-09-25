@@ -1,6 +1,8 @@
 ---
 name: better-plan
 description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor. Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, and the session model only orchestrates. Pass --inline to skip the routing and execute in the session. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes. By default it ships the result as a PR via ship-pr, once execution is verified. Use when the user types /better-plan, or asks to plan, grill, model-route, and ship a change in one pass. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
+metadata:
+  version: "1.0"
 ---
 
 # Better Plan — build, grill, route, execute, in one pass

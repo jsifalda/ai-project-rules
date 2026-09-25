@@ -1,6 +1,8 @@
 ---
 name: apple-mail-thread-export
 description: Export Apple Mail conversation threads from a given sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. Use when the user wants to archive, download, or back up all emails from a sender to local .md files, group a sender's mail into thread files, or re-sync an existing mail archive to pick up new messages. Reads the local Mail.app SQLite index read-only through a /tmp snapshot and parses .emlx bodies. Do NOT use for sending or modifying mail, configuring Mail accounts or rules, Gmail API or IMAP fetch, non-Apple-Mail clients (Outlook, Thunderbird, Spark), or extracting attachments (text bodies only).
+metadata:
+  version: "1.0"
 ---
 
 # Apple Mail Thread Export

@@ -1,6 +1,8 @@
 ---
 name: seo-keyword-generator
 description: Generate comprehensive SEO keyword strategies for side project ideas. Walks through a structured questionnaire to understand the project, then produces categorized keywords based on strategic analysis. Use when user wants keywords, SEO strategy, or organic traffic planning for a product or side project.
+metadata:
+  version: "1.0"
 ---
 
 # SEO Keyword Generator

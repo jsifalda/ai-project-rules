@@ -1,6 +1,9 @@
 ---
 name: domain-modeling
 description: Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a CONTEXT.md, or recording or editing an ADR.
+metadata:
+  version: "1.0"
+  upstream: "https://github.com/mattpocock/skills"
 ---
 
 # Domain Modeling

@@ -1,6 +1,8 @@
 ---
 name: setup-todo-backlog
 description: Bootstrap a known-issues backlog in any project. Creates docs/TODO.md from a template, offers to convert an existing flat checklist or id-bearing TODO list into dated immutable ids, and injects a policy into AGENTS.md or CLAUDE.md where an entry is filed only when the user asks for one and closed automatically once evidence shows the defect is gone. Use when setting up a TODO backlog, adding known-issues tracking, scaffolding a defect or tech-debt list, initializing deferred-work tracking, or the user mentions "setup todo backlog". Do NOT use to file or resolve one specific backlog entry (just edit the backlog), to set up changelogs, ADRs, or PRDs, or to manage sprint tickets, roadmap items, or feature requests.
+metadata:
+  version: "1.0"
 ---
 
 # Setup TODO Backlog

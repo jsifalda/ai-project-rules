@@ -11,6 +11,8 @@ description: >-
   score this landing page, what's missing on this page, or pastes landing page text and asks for
   feedback. Asks one question at a time for missing required input. Do NOT use for virality or
   shareability audits, SEO, or accessibility review.
+metadata:
+  version: "1.0"
 ---
 
 # Landing Page Copy

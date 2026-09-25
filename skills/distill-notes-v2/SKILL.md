@@ -1,6 +1,8 @@
 ---
 name: distill-notes-v2
 description: Split mixed raw notes into two outputs, a lossless organized reference for the facts and a sharpened set of maxims for the heuristics. Keeps every number, date, rate, threshold, condition, and obligation verbatim, groups facts by inferred category (deadlines, amounts, deductions, obligations, records), surfaces deadlines and action items, then boils transferable rules of thumb down to maxims of 8 words or fewer. Accepts pasted text, a local file path, or an Obsidian note reference, prints both sections in chat, then asks whether to also save them to a new .md file. Use for notes that mix reference facts with judgment calls, for example tax, medical, or legal notes, meeting minutes, or research logs, or when the user says organize these notes, structure my notes, sort facts from principles, or make a clean reference. Do NOT use when the input is purely principles and you only want lossy maxims, to highlight takeaways inside a note in place, or to build a reusable advisor persona.
+metadata:
+  version: "1.0"
 ---
 
 # Distill Notes v2

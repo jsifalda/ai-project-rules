@@ -1,6 +1,8 @@
 ---
 name: indie-hacker-wrapup
 description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session across lenses (the product you built plus the craft behind it), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
+metadata:
+  version: "1.0"
 ---
 
 # Indie Hacker Wrapup

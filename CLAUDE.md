@@ -12,7 +12,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
-- `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone).
+- `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone), plus `synced-skills.txt` (script-synced skills, exempt from `--require-version`).
 - `.githooks/` — tracked `pre-commit` hook; runs the universality scanner + skill validator on staged files. Activated by `install-hooks.sh` setting `core.hooksPath`.
 - `AGENTS.md` — symlink to `CLAUDE.md`.
 - `changelog/` — one entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md`. See `## Changelog` below.
@@ -29,7 +29,10 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 ## Conventions
 
 - **Skill files** follow the [agentskills.io](https://agentskills.io/specification) spec. Frontmatter requires at least `name` + `description`.
-- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py skills/<your-skill>/` before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Parser-strictness rules to know (each silently passes Claude Code but breaks Copilot CLI):
+- **Skill version**: give every skill a quoted `metadata.version`, starting at `"1.0"`. Bump the minor on any substantive change in its directory, the major on a breaking change.
+  - Give a vendored skill `metadata.upstream`, matching its README `Origin` cell.
+  - After syncing a new skill, add it to `scripts/synced-skills.txt`. After a re-sync, re-add its `metadata` block and bump.
+- **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py --require-version skills/<your-skill>/` (drop the flag for a skill in `scripts/synced-skills.txt`) before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Parser-strictness rules to know (each silently passes Claude Code but breaks Copilot CLI):
   - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
   - `description` must be ≤1024 chars (target ≤950 for headroom).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
@@ -44,7 +47,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
   - Add a row to its `## Modules` table with the delivery type: **inject** (a policy block → add a `references/<name>.md`, substitute placeholders in Step 5), **delegate** (it is its own `setup-*` skill → invoke in Step 6), or **scaffold** (copies a file or hook → Step 7).
   - Add it to the Step 4 module menu (default-selected) so users can opt out per project.
   - Wire it into the matching step (5, 6, or 7) and add it to the Step 8 report line.
-  - Re-run `python skills/create-skill/scripts/quick_validate.py skills/setup-aiengineering/` after editing.
+  - Re-run `python skills/create-skill/scripts/quick_validate.py --require-version skills/setup-aiengineering/` after editing.
 
 ## Identifiers
 
@@ -70,12 +73,6 @@ line and the PR title are exempt and keep the conventional-commit format.
 conventional-commit format for a commit subject and a PR title, and its precedence over the
 style rules, live in `rules/git-ship.md`. Do not restate or re-scope either in this file — a
 second copy drifts.
-
-## Key Rules
-
-- **Simplicity first**: minimal code changes, no side effects.
-- **Root cause, not stopgap**: fix the cause, never the symptom.
-- **Plan mode**: enter plan mode for any non-trivial task (3+ steps).
 
 ## Restrictions
 
@@ -157,7 +154,7 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 ### Step 1 — local gates (free + fast, run these first)
 
 - `bash scripts/check-universality.sh <changed paths>` → must exit 0.
-- `python skills/create-skill/scripts/quick_validate.py skills/<name>/` → must pass, for every touched skill.
+- `python skills/create-skill/scripts/quick_validate.py --require-version skills/<name>/` → must pass, for every touched skill. Drop the flag for a skill in `scripts/synced-skills.txt`.
 - Both scripts already exist in this repo. Reuse them — never reimplement the checks.
 
 ### Step 2 — review lenses (run every lens that fires, in parallel, against the dirty working tree)

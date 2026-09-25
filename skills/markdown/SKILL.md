@@ -1,6 +1,8 @@
 ---
 name: markdown
 description: Create/Refine/Convert any text or content into strictly formatted, export-ready Markdown
+metadata:
+  version: "1.0"
 ---
 
 Your task is to format the provided content into a clean, export-ready Markdown document. 

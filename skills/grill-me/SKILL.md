@@ -1,6 +1,9 @@
 ---
 name: grill-me
 description: Interview the user relentlessly about a plan, design, or decision until reaching shared understanding, working the design tree in rounds and asking every unblocked question in each round. Use when the user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
+metadata:
+  version: "1.0"
+  upstream: "https://github.com/mattpocock/skills"
 ---
 
 Interview the user relentlessly until you reach a shared understanding. Map this as a **design tree**: every decision branches into the decisions that hang off it.

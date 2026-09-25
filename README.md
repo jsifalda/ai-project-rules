@@ -15,7 +15,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
 | `changelog/` | One entry file per agent session, `YYYYMMDDHHMMSS-short-slug.md` |
 | `changelog.md` | **Frozen archive** of pre-`changelog/` entries — do not edit or append |
-| `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, and the upstream skill-sync scripts (see [Upstream skill sync](#upstream-skill-sync)) |
+| `scripts/`, `.githooks/` | Universality scanner, hook installer, the tracked `pre-commit` hook, the upstream skill-sync scripts, and `synced-skills.txt` (see [Upstream skill sync](#upstream-skill-sync)) |
 | `_prds/`, `_tasks/`, `_tickets/` | Generated outputs from the PRD workflow (gitignored) |
 
 ## How it gets into Claude Code & Copilot CLI
@@ -67,7 +67,7 @@ The rule files under `rules/`. The `type` frontmatter is a convention for tools 
 
 ## Skills
 
-Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `description`, and (optional) `metadata` frontmatter, followed by the skill body. See the [agentskills.io spec](https://agentskills.io/specification) for the format. The table below lists every skill in the repo — keep it in sync when you add, remove, or rename one. Each skill name links to its `SKILL.md`; new rows should link the name to `skills/<name>/SKILL.md` the same way.
+Each skill is a directory under `skills/` containing a `SKILL.md` with `name`, `description`, and `metadata.version` frontmatter (plus `metadata.upstream` for a skill vendored from another repo), followed by the skill body. See the [agentskills.io spec](https://agentskills.io/specification) for the format. The table below lists every skill in the repo — keep it in sync when you add, remove, or rename one. Each skill name links to its `SKILL.md`; new rows should link the name to `skills/<name>/SKILL.md` the same way.
 
 The **Depends on** column lists other skills in this repo that the skill invokes or requires to function (`—` if none). It is mandatory: every row must declare its dependencies. A skill that only points the reader to another skill ("use X instead") or is synced from an upstream repo does not "depend on" it — leave the cell `—`.
 
@@ -82,7 +82,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`better-plan`](skills/better-plan/SKILL.md) | Chained planning ritual: enhance the request via prompt-enhancer, build a plan (plan-mode rigor), stress-test it via grill-me, then cost-route each task via op with the session model as orchestrator (pass `--inline` to skip the routing); runs inside plan mode, so the routed plan lands in the plan file and goes through the native approval gate before it executes, then ships it as a PR via ship-pr once verification is green and nothing is left awaiting you. | `grill-me`, `op`, `prompt-enhancer`, `ship-pr` | — |
 | [`brave-submit-site`](skills/brave-submit-site/SKILL.md) | Submit a site URL or bare domain to Brave Search for indexing or re-fetching via the public `search.brave.com/submit-url` form, driven with Playwright; confirms the Success state and explains how to verify indexing later. | — | — |
 | [`claude-allow-home`](skills/claude-allow-home/SKILL.md) | Mark a folder as trusted in Claude Code (sets `hasTrustDialogAccepted`), skipping the interactive trust prompt. | — | — |
-| [`code-review-nuclear`](skills/code-review-nuclear/SKILL.md) | Strict single-axis structural/architectural review of a diff or branch — hunts "code judo" moves that delete whole branches, layers, or abstractions, scored against Fowler smells and a fixed set of non-negotiable standards. Not a correctness, style, or security review. | — | — |
+| [`code-review-nuclear`](skills/code-review-nuclear/SKILL.md) | Strict single-axis structural/architectural review of a diff or branch — hunts "code judo" moves that delete whole branches, layers, or abstractions, scored against Fowler smells and a fixed set of non-negotiable standards. Not a correctness, style, or security review. | — | [intercom/2x-skills](https://github.com/intercom/2x-skills) |
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of AI advisors that analyze, peer-review, and synthesize a verdict. | — | — |
 | [`council-v2`](skills/council-v2/SKILL.md) | Run a decision through a routed council of reasoning modes and personas that analyze, peer-review, and synthesize a verdict. | `first-principles-mode`, `founder-thinking-mode`, `persona-stanier`, `persona-levelsio` | — |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — | — |
@@ -214,7 +214,9 @@ bash scripts/sync-obsidian-skills.sh
 
 The anthropic and mattpocock scripts (not the obsidian one, see the warning above) record every file they write in a sha256 baseline. Once a local edit makes a file diverge from that baseline, the script reports the skill as locally modified and skips it instead of clobbering your changes. `scripts/.sync-state/` is gitignored, so a fresh clone starts with no baseline at all, and everything already on disk reports as locally modified on the first run. That's expected, not a bug. Reach for `--force` once you know the local copy is actually untouched.
 
-The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. Every sync script prints a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root.
+The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. Every sync script prints a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root, and add its name to `scripts/synced-skills.txt` so the pre-commit hook skips `--require-version` for it.
+
+A re-sync that overwrites a skill drops its local `metadata` block. Re-add it, with `metadata.upstream`, and bump `metadata.version`. A mattpocock skill carrying that block reads as locally modified, so its re-sync needs `--force`.
 
 ## Gemini CLI commands
 

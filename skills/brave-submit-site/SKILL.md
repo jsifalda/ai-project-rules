@@ -10,6 +10,8 @@ description: >-
   showing up in Brave. Do NOT use for Google Search Console, Bing Webmaster Tools, IndexNow, or any
   other search engine, for SEO audits, keyword research, or sitemap generation, or for running a
   Brave Search query to read results (that is an ordinary web search).
+metadata:
+  version: "1.0"
 ---
 
 # Brave Submit Site

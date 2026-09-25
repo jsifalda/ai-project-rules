@@ -1,6 +1,8 @@
 ---
 name: landing-page-viral-grill
 description: Audit a landing page against a fixed viral checklist, one verdict per check, then grill the gaps and plan the fixes. Scores every bullet in the checklist file in file order with verbatim quoted evidence, never inventing, merging, or skipping a check. Page-decidable checks are scored; checks about pricing model, positioning, or founder visibility are never scored from markup, they are deferred to a grill-me interview. Emits a gap report, then a remediation plan covering confirmed gaps only. Trigger phrases - "audit my landing page for virality", "run the viral checklist", "why won't this page get shared", "grill my landing page", "check this page against the viral principles". Do NOT use for conversion-rate optimization, SEO audits, accessibility review, or writing new copy. No composite score is ever computed.
+metadata:
+  version: "1.0"
 ---
 
 # Landing Page Viral Grill

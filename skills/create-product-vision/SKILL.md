@@ -1,6 +1,8 @@
 ---
 name: create-product-vision
 description: "Turn a short product or project description into a motivating vision doc covering three angles — motivation (the why and the shift it creates), practical (what using it actually looks like), and product (what it is and what to expect). The tagline ships in three wordings, a motivational main plus practical and product-descriptive alternatives. Use whenever the user wants a vision, mission, or why-this-matters framing for a product, project, tool, or workflow. Triggers — 'write a vision', 'draft a vision for X', 'give this a vision statement', or when the user pastes a short description of something they are building. Produces one tight vision doc (tagline wordings, what it is, what it does, what you get, the shift, success signal), not marketing copy or a pitch deck. Do NOT use to summarise existing text (use summarise-url or summarise-text), to break a goal into tasks (use goal-breakdown), or to plan an MVP launch (use ship-v1)."
+metadata:
+  version: "1.0"
 ---
 
 # Product Vision

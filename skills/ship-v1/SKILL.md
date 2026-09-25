@@ -1,6 +1,8 @@
 ---
 name: ship-v1
 description: Ship the smallest live version of a side project in one weekend, post it, then let real signal decide what to build next. An anti-roadmap protocol for the volume game → shrink scope until the path to live fits a weekend, ship to production, post where your audience is, set a signal checkpoint, then continue, pivot, or drop. Use whenever the user wants to start or launch a side project, says "I have an idea", "what should I build", "help me ship this", "turn this into an MVP", "weekend project", or "I keep starting projects and never finish", or has an early product with no users yet. Trigger even when the words "ship" or "v1" are absent → any time someone has an unvalidated product idea and needs it live fast. Do NOT use for goals with a known outcome and a long path, or products that already have users or a hard deadline → those go to goal-breakdown.
+metadata:
+  version: "1.0"
 ---
 
 # Ship v1

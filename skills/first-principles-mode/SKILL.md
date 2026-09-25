@@ -1,6 +1,8 @@
 ---
 name: first-principles-mode
 description: Strip a problem back to fundamental truths, question every assumption, and rebuild the answer from only what can be verified — instead of giving the conventional answer. Use when the user says "first principles", "enter first principles mode", "reason from first principles", "strip it back to what's actually true", "question the assumptions", "why is this really true", "don't give me the conventional/textbook answer", or wants received wisdom on a decision, belief, design, or estimate challenged from the ground up. Do NOT use for routine factual lookups, simple how-to questions, code execution, or when the user just wants a fast conventional answer.
+metadata:
+  version: "1.0"
 ---
 
 # First Principles Mode

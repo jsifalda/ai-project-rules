@@ -1,6 +1,8 @@
 ---
 name: microsoft-clarity
 description: Implement Microsoft Clarity analytics tracking in Next.js applications. Use when user wants to add Microsoft Clarity, set up heatmaps and session recordings, add analytics tracking to a Next.js app, or integrate Clarity for user behavior insights.
+metadata:
+  version: "1.0"
 ---
 
 # Microsoft Clarity

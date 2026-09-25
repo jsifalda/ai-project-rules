@@ -1,6 +1,8 @@
 ---
 name: highlight-key-takeaways
 description: Highlight the most important takeaways and key learnings inside an Obsidian note by wrapping them in `==text==` (Obsidian highlight syntax). Edits the note in place. Use when the user asks to "highlight key takeaways", "highlight key learnings", "mark the important parts", "find and highlight main points in a note", or similar. Requires a note/file name as input.
+metadata:
+  version: "1.0"
 ---
 
 # Highlight Key Takeaways

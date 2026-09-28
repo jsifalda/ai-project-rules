@@ -91,7 +91,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`create-skill`](skills/create-skill/SKILL.md) | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. | — | — |
 | [`create-svg-image`](skills/create-svg-image/SKILL.md) | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. | — | — |
 | [`create-svg-logo`](skills/create-svg-logo/SKILL.md) | Create professional SVG logos from a description — multiple concepts, layout lockups, colour variations, and a usage-guidelines document. | — | — |
-| [`deep-research`](skills/deep-research/SKILL.md) | Conduct multi-source research with synthesis, citation tracking, and claim verification. | — | — |
+| [`deep-research`](skills/deep-research/SKILL.md) | Decision-grade research, verdict first, dated claims, primary sources, self-validated report. | — | — |
 | [`deep-research-answer`](skills/deep-research-answer/SKILL.md) | Frame the question first (the asker's goal, not only the literal wording), research the alternative angles, then reach a multi-source-verified answer, verdict first (YES, NO, or NOT A YES/NO QUESTION), with verification status, confidence, assumptions, and source footnotes. | `deep-research` | — |
 | [`defuddle`](skills/defuddle/SKILL.md) | Extract clean markdown from web pages with the Defuddle CLI (strips clutter) to save tokens. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) |
 | [`distill-notes`](skills/distill-notes/SKILL.md) | Distill raw notes into a sharp set of standalone maxims (drop 40-60% of ideas, compress to <=8 words, sharpen into antithesis/couplets); returns them in chat, then asks whether to also save to a .md file. | — | — |

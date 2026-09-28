@@ -1,354 +1,264 @@
 #!/usr/bin/env python3
-"""
-Report Validation Script
-Ensures research reports meet quality standards before delivery
-"""
+"""Validate a deep-research chat report (v2). Stdlib only.
 
+Usage: python3 validate_report.py --report report.md [--today YYYY-MM-DD]
+Exit 0 = PASS (warnings allowed), 1 = FAIL.
+"""
 import argparse
+import datetime as dt
 import re
 import sys
-from pathlib import Path
-from typing import List, Tuple, Dict
 
-
-class ReportValidator:
-    """Validates research report quality"""
-
-    def __init__(self, report_path: Path):
-        self.report_path = report_path
-        self.content = self._read_report()
-        self.errors: List[str] = []
-        self.warnings: List[str] = []
-
-    def _read_report(self) -> str:
-        """Read report file"""
-        try:
-            with open(self.report_path, 'r', encoding='utf-8') as f:
-                return f.read()
-        except Exception as e:
-            print(f"❌ ERROR: Cannot read report: {e}")
-            sys.exit(1)
-
-    def validate(self) -> bool:
-        """Run all validation checks"""
-        print(f"\n{'='*60}")
-        print(f"VALIDATING REPORT: {self.report_path.name}")
-        print(f"{'='*60}\n")
-
-        checks = [
-            ("Executive Summary", self._check_executive_summary),
-            ("Required Sections", self._check_required_sections),
-            ("Citations", self._check_citations),
-            ("Bibliography", self._check_bibliography),
-            ("Placeholder Text", self._check_placeholders),
-            ("Content Truncation", self._check_content_truncation),
-            ("Word Count", self._check_word_count),
-            ("Source Count", self._check_source_count),
-            ("Broken Links", self._check_broken_references),
-        ]
-
-        for check_name, check_func in checks:
-            print(f"⏳ Checking: {check_name}...", end=" ")
-            passed = check_func()
-            if passed:
-                print("✅ PASS")
-            else:
-                print("❌ FAIL")
-
-        self._print_summary()
-
-        return len(self.errors) == 0
-
-    def _check_executive_summary(self) -> bool:
-        """Check executive summary exists and is under 250 words"""
-        pattern = r'## Executive Summary(.*?)(?=##|\Z)'
-        match = re.search(pattern, self.content, re.DOTALL | re.IGNORECASE)
-
-        if not match:
-            self.errors.append("Missing 'Executive Summary' section")
-            return False
-
-        summary = match.group(1).strip()
-        word_count = len(summary.split())
-
-        if word_count > 250:
-            self.warnings.append(f"Executive summary too long: {word_count} words (should be ≤250)")
-
-        if word_count < 50:
-            self.warnings.append(f"Executive summary too short: {word_count} words (should be ≥50)")
-
-        return True
-
-    def _check_required_sections(self) -> bool:
-        """Check all required sections are present"""
-        required = [
-            "Executive Summary",
-            "Introduction",
-            "Main Analysis",
-            "Synthesis",
-            "Limitations",
-            "Recommendations",
-            "Bibliography",
-            "Methodology"
-        ]
-
-        # Recommended sections (warnings if missing, not errors)
-        recommended = [
-            "Counterevidence Register",
-            "Claims-Evidence Table"
-        ]
-
-        missing = []
-        for section in required:
-            if not re.search(rf'##.*{section}', self.content, re.IGNORECASE):
-                missing.append(section)
-
-        if missing:
-            self.errors.append(f"Missing sections: {', '.join(missing)}")
-            return False
-
-        # Check recommended sections (warnings only)
-        missing_recommended = []
-        for section in recommended:
-            if not re.search(rf'##.*{section}', self.content, re.IGNORECASE):
-                missing_recommended.append(section)
-
-        if missing_recommended:
-            self.warnings.append(f"Missing recommended sections (for academic rigor): {', '.join(missing_recommended)}")
-
-        return True
-
-    def _check_citations(self) -> bool:
-        """Check citation format and presence"""
-        # Find all citation references [1], [2], etc.
-        citations = re.findall(r'\[(\d+)\]', self.content)
-
-        if not citations:
-            self.errors.append("No citations found in report")
-            return False
-
-        unique_citations = set(citations)
-
-        if len(unique_citations) < 10:
-            self.warnings.append(f"Only {len(unique_citations)} unique sources cited (recommended: ≥10)")
-
-        # Check for consecutive citation numbers
-        citation_nums = sorted([int(c) for c in unique_citations])
-        if citation_nums:
-            max_citation = max(citation_nums)
-            expected = set(range(1, max_citation + 1))
-            missing = expected - set(citation_nums)
-
-            if missing:
-                self.warnings.append(f"Non-consecutive citation numbers, missing: {sorted(missing)}")
-
-        return True
-
-    def _check_bibliography(self) -> bool:
-        """Check bibliography exists, matches citations, and has no truncation placeholders"""
-        pattern = r'## Bibliography(.*?)(?=##|\Z)'
-        match = re.search(pattern, self.content, re.DOTALL | re.IGNORECASE)
-
-        if not match:
-            self.errors.append("Missing 'Bibliography' section")
-            return False
-
-        bib_section = match.group(1)
-
-        # CRITICAL: Check for truncation placeholders (2025 CiteGuard enhancement)
-        truncation_patterns = [
-            (r'\[\d+-\d+\]', 'Citation range (e.g., [8-75])'),
-            (r'Additional.*citations', 'Phrase "Additional citations"'),
-            (r'would be included', 'Phrase "would be included"'),
-            (r'\[\.\.\.continue', 'Pattern "[...continue"'),
-            (r'\[Continue with', 'Pattern "[Continue with"'),
-            (r'etc\.(?!\w)', 'Standalone "etc."'),
-            (r'and so on', 'Phrase "and so on"'),
-        ]
-
-        for pattern_re, description in truncation_patterns:
-            if re.search(pattern_re, bib_section, re.IGNORECASE):
-                self.errors.append(f"⚠️ CRITICAL: Bibliography contains truncation placeholder: {description}")
-                self.errors.append(f"   This makes the report UNUSABLE - complete bibliography required")
-                return False
-
-        # Count bibliography entries [1], [2], etc.
-        bib_entries = re.findall(r'^\[(\d+)\]', bib_section, re.MULTILINE)
-
-        if not bib_entries:
-            self.errors.append("Bibliography has no entries")
-            return False
-
-        # Check citation number continuity (no gaps)
-        bib_nums = sorted([int(n) for n in bib_entries])
-        if bib_nums:
-            expected = list(range(1, bib_nums[-1] + 1))
-            actual = bib_nums
-            missing = [n for n in expected if n not in actual]
-            if missing:
-                self.errors.append(f"Bibliography has gaps in numbering: missing {missing}")
-                return False
-
-        # Find citations in text
-        text_citations = set(re.findall(r'\[(\d+)\]', self.content))
-        bib_citations = set(bib_entries)
-
-        # Check all citations have bibliography entries
-        missing_in_bib = text_citations - bib_citations
-        if missing_in_bib:
-            self.errors.append(f"Citations missing from bibliography: {sorted(missing_in_bib)}")
-            return False
-
-        # Check for unused bibliography entries
-        unused = bib_citations - text_citations
-        if unused:
-            self.warnings.append(f"Unused bibliography entries: {sorted(unused)}")
-
-        return True
-
-    def _check_placeholders(self) -> bool:
-        """Check for placeholder text that shouldn't be in final report"""
-        placeholders = [
-            'TBD', 'TODO', 'FIXME', 'XXX',
-            '[citation needed]', '[needs citation]',
-            '[placeholder]', '[TODO]', '[TBD]'
-        ]
-
-        found_placeholders = []
-        for placeholder in placeholders:
-            if placeholder in self.content:
-                found_placeholders.append(placeholder)
-
-        if found_placeholders:
-            self.errors.append(f"Found placeholder text: {', '.join(found_placeholders)}")
-            return False
-
-        return True
-
-    def _check_content_truncation(self) -> bool:
-        """Check for content truncation patterns (2025 Progressive Assembly enhancement)"""
-        truncation_patterns = [
-            (r'Content continues', 'Phrase "Content continues"'),
-            (r'Due to length', 'Phrase "Due to length"'),
-            (r'would continue', 'Phrase "would continue"'),
-            (r'\[Sections \d+-\d+', 'Pattern "[Sections X-Y"'),
-            (r'Additional sections', 'Phrase "Additional sections"'),
-            (r'comprehensive.*word document that continues', 'Pattern "comprehensive...document that continues"'),
-        ]
-
-        for pattern_re, description in truncation_patterns:
-            if re.search(pattern_re, self.content, re.IGNORECASE):
-                self.errors.append(f"⚠️ CRITICAL: Content truncation detected: {description}")
-                self.errors.append(f"   Report is INCOMPLETE and UNUSABLE - regenerate with progressive assembly")
-                return False
-
-        return True
-
-    def _check_word_count(self) -> bool:
-        """Check overall report length"""
-        word_count = len(self.content.split())
-
-        if word_count < 500:
-            self.warnings.append(f"Report is very short: {word_count} words (consider expanding)")
-        # No upper limit warning - progressive assembly supports unlimited lengths
-
-        return True
-
-    def _check_source_count(self) -> bool:
-        """Check minimum source count"""
-        pattern = r'## Bibliography(.*?)(?=##|\Z)'
-        match = re.search(pattern, self.content, re.DOTALL | re.IGNORECASE)
-
-        if not match:
-            return True  # Already caught in bibliography check
-
-        bib_section = match.group(1)
-        bib_entries = re.findall(r'^\[(\d+)\]', bib_section, re.MULTILINE)
-
-        source_count = len(set(bib_entries))
-
-        if source_count < 10:
-            self.warnings.append(f"Only {source_count} sources (recommended: ≥10)")
-
-        return True
-
-    def _check_broken_references(self) -> bool:
-        """Check for broken internal references"""
-        # Find all markdown links [text](./path)
-        internal_links = re.findall(r'\[.*?\]\((\.\/.*?)\)', self.content)
-
-        broken = []
-        for link in internal_links:
-            # Remove anchor if present
-            link_path = link.split('#')[0]
-            full_path = self.report_path.parent / link_path
-
-            if not full_path.exists():
-                broken.append(link)
-
-        if broken:
-            self.errors.append(f"Broken internal links: {', '.join(broken)}")
-            return False
-
-        return True
-
-    def _print_summary(self):
-        """Print validation summary"""
-        print(f"\n{'='*60}")
-        print(f"VALIDATION SUMMARY")
-        print(f"{'='*60}\n")
-
-        if self.errors:
-            print(f"❌ ERRORS ({len(self.errors)}):")
-            for error in self.errors:
-                print(f"   • {error}")
-            print()
-
-        if self.warnings:
-            print(f"⚠️  WARNINGS ({len(self.warnings)}):")
-            for warning in self.warnings:
-                print(f"   • {warning}")
-            print()
-
-        if not self.errors and not self.warnings:
-            print("✅ ALL CHECKS PASSED - Report meets quality standards!\n")
-        elif not self.errors:
-            print("✅ VALIDATION PASSED (with warnings)\n")
+REQUIRED = ["Verdict", "Evidence", "Conflicts", "Action",
+            "What changes the verdict", "Gaps and dead ends", "Sources"]
+STATUSES = {"verified", "single-source", "conflict", "unverified"}
+CAPS = {"quick": 300, "standard": 700, "deep": 1500}
+FRESH = {"legal": 30, "price": 7, "ground-truth": 7, "health": 30,
+         "technical": 90, "landscape": 90}
+DATE_RE = re.compile(r"\b(20\d\d-\d\d-\d\d)\b")
+REF_RE = re.compile(r"\[(\d+)\]")
+URL_RE = re.compile(r"https?://[^\s)>\]]+")
+EMOJI_RE = re.compile("[\U0001F300-\U0001FAFF\U00002600-\U000027BF"
+                      "\U0001F000-\U0001F2FF\U0001F900-\U0001F9FF]")
+PLACEHOLDER_RE = re.compile(r"\b(TBD|TODO|FIXME)\b|\[citation needed\]|"
+                            r"Content continues|YYYY-MM-DD|\[claim\]", re.I)
+NUM_OK_RE = re.compile(r"\[\d+\]|\bC\d+\b|\(est\.\)|\(unverified\)|"
+                       r"\(computed", re.I)
+TEMPLATE_PH_RE = re.compile(
+    r"\[(?:claim|value|query|result|what|who|settled facts|skipped urls|"
+    r"1 to 2 sentences|test first|check under 10 min|condition that|"
+    r"missing fact)\b[^\]\n]*\]", re.I)
+
+
+def parse_date(s):
+    try:
+        return dt.date.fromisoformat(s)
+    except ValueError:
+        return None
+
+
+def split_sections(text):
+    preamble, sections, order, cur, buf = [], {}, [], None, []
+    for line in text.splitlines():
+        m = re.match(r"^##\s+(.+?)\s*$", line)
+        if m:
+            if cur is not None:
+                sections[cur] = "\n".join(buf)
+            cur, buf = m.group(1).strip(), []
+            order.append(cur)
+        elif cur is None:
+            preamble.append(line)
         else:
-            print("❌ VALIDATION FAILED - Please fix errors before delivery\n")
+            buf.append(line)
+    if cur is not None:
+        sections[cur] = "\n".join(buf)
+    return "\n".join(preamble), sections, order
+
+
+def parse_sources(block):
+    out = {}
+    for line in block.splitlines():
+        m = re.match(r"^\s*\[(\d+)\]\s+(.*)$", line)
+        if not m:
+            continue
+        body = m.group(2)
+        url = URL_RE.search(body)
+        typ = re.search(r"Type:\s*(primary|secondary|lead)\b", body, re.I)
+        chk = re.search(r"Checked\s+(20\d\d-\d\d-\d\d)", body)
+        out[int(m.group(1))] = {
+            "url": url.group(0) if url else None,
+            "type": typ.group(1).lower() if typ else None,
+            "checked": chk.group(1) if chk else None,
+        }
+    return out
+
+
+def parse_table(block):
+    rows = []
+    for line in block.splitlines():
+        s = line.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if not cells or set("".join(cells)) <= set("-: "):
+            continue
+        if cells[0] in ("#", "ID"):
+            continue
+        rows.append(cells)
+    return rows
+
+
+def strip_for_style(text):
+    text = URL_RE.sub("", text)
+    return re.sub(r"`[^`]*`", "", text)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Validate research report quality",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python validate_report.py --report report.md
-  python validate_report.py -r ./documents/Psilocybin_Research_20251104/research_report_20251104_psilocybin.md
-        """
-    )
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--report", required=True)
+    ap.add_argument("--today", default=dt.date.today().isoformat())
+    a = ap.parse_args()
+    today = parse_date(a.today)
+    if today is None:
+        ap.error("--today must be YYYY-MM-DD")
+    try:
+        text = open(a.report, encoding="utf-8").read()
+    except OSError as e:
+        ap.error("cannot read --report: %s" % e)
+    fails, warns = [], []
 
-    parser.add_argument(
-        '--report', '-r',
-        type=str,
-        required=True,
-        help='Path to research report markdown file'
-    )
+    pre, sec, order = split_sections(text)
 
-    args = parser.parse_args()
+    mode_m = re.search(r"Mode:\**\s*(quick|standard|deep)\b", pre, re.I)
+    class_m = re.search(r"Class:\**\s*([a-z-]+)", pre, re.I)
+    mode = mode_m.group(1).lower() if mode_m else None
+    klass = class_m.group(1).lower() if class_m else None
+    if not mode:
+        fails.append("Header: no 'Mode: quick|standard|deep'")
+        mode = "standard"
+    if not klass or klass not in FRESH:
+        fails.append("Header: no valid 'Class:' (%s)" % ", ".join(FRESH))
+        klass = "legal"
 
-    report_path = Path(args.report)
+    # 1 structure
+    missing = [s for s in REQUIRED if s not in sec]
+    if missing:
+        fails.append("Missing sections: " + ", ".join(missing))
+    if order and order[0] != "Verdict":
+        fails.append("First section must be 'Verdict', found '%s'" % order[0])
+    if "Verdict" in sec and len(sec["Verdict"].split()) < 5:
+        fails.append("Verdict is empty or too short")
+    if "Conflicts" in sec and not sec["Conflicts"].strip():
+        fails.append("Conflicts is empty (write 'none' if none)")
+    if "Conflicts" in sec and "disconfirm" not in sec["Conflicts"].lower():
+        fails.append("Conflicts: no 'Disconfirming query' line")
 
-    if not report_path.exists():
-        print(f"❌ ERROR: Report file not found: {report_path}")
-        sys.exit(1)
+    # 2 sources
+    sources = parse_sources(sec.get("Sources", ""))
+    if not sources:
+        fails.append("Sources: no entries in '[N] ...' format")
+    for n, s in sorted(sources.items()):
+        if not s["url"]:
+            fails.append("Source [%d]: no URL" % n)
+        if not s["type"]:
+            fails.append("Source [%d]: no 'Type: primary|secondary|lead'" % n)
+        if not s["checked"]:
+            fails.append("Source [%d]: no 'Checked YYYY-MM-DD'" % n)
 
-    validator = ReportValidator(report_path)
-    passed = validator.validate()
+    body = "\n".join(v for k, v in sec.items() if k != "Sources")
+    cited = {int(x) for x in REF_RE.findall(body)}
+    for n in sorted(cited - set(sources)):
+        fails.append("Citation [%d] has no Sources entry" % n)
+    for n in sorted(set(sources) - cited):
+        warns.append("Source [%d] is never cited" % n)
 
-    sys.exit(0 if passed else 1)
+    # 3 evidence table
+    rows = parse_table(sec.get("Evidence", ""))
+    if not rows:
+        fails.append("Evidence: no table rows")
+    limit = FRESH[klass]
+    for r in rows:
+        rid = r[0] if r else "?"
+        if len(r) < 6:
+            fails.append("Evidence %s: needs 6 columns, has %d" % (rid, len(r)))
+            continue
+        src, checked, status = r[3], r[4], r[5].lower()
+        refs = [int(x) for x in REF_RE.findall(src)]
+        d = parse_date(checked)
+        if status not in STATUSES:
+            fails.append("Evidence %s: status '%s' not in %s"
+                         % (rid, status, sorted(STATUSES)))
+        if not d:
+            fails.append("Evidence %s: Checked '%s' not YYYY-MM-DD" % (rid, checked))
+        elif d > today:
+            fails.append("Evidence %s: Checked date in the future" % rid)
+        elif (today - d).days > limit:
+            fails.append("Evidence %s: stale, %d days old, limit %d for class %s"
+                         % (rid, (today - d).days, limit, klass))
+        if status == "verified":
+            if len(set(refs)) < 2:
+                fails.append("Evidence %s: 'verified' needs 2 sources" % rid)
+            elif not any(sources.get(x, {}).get("type") == "primary" for x in refs):
+                fails.append("Evidence %s: 'verified' needs 1 primary source" % rid)
+            if klass == "ground-truth":
+                fails.append("Evidence %s: ground-truth claims cannot be "
+                             "'verified' from web sources" % rid)
+        if status == "single-source" and len(set(refs)) != 1:
+            fails.append("Evidence %s: 'single-source' needs exactly 1 source" % rid)
+        if status == "conflict" and len(set(refs)) < 2:
+            fails.append("Evidence %s: 'conflict' needs 2+ sources" % rid)
+        if status in ("verified", "single-source", "conflict") and not refs:
+            fails.append("Evidence %s: no [N] in Src column" % rid)
+
+    # 4 action
+    act = sec.get("Action", "")
+    items = [l for l in act.splitlines() if re.match(r"^\s*(\d+\.|-)\s+", l)]
+    if not items:
+        fails.append("Action: no list items")
+    for l in items:
+        if not (DATE_RE.search(l) or re.search(r"\btoday\b|\btest:", l, re.I)):
+            warns.append("Action item has no date: " + l.strip()[:60])
+    has_test = re.search(r"\btests?\b", act, re.I)
+    if klass == "ground-truth" and not has_test:
+        fails.append("Action: ground-truth class needs a Test line")
+    any_primary = any(
+        sources.get(int(x), {}).get("type") == "primary"
+        for r in rows if len(r) >= 4 for x in REF_RE.findall(r[3]))
+    if rows and not any_primary and klass != "landscape" \
+            and not has_test:
+        fails.append("Action: no primary source in Evidence, add a Test line "
+                     "that checks the primary page")
+
+    # 5 numbers in prose sections must be backed by [N], C#, (est.),
+    # or a value already in the Evidence table
+    table_nums = set()
+    for r in rows:
+        if len(r) >= 3:
+            table_nums.update(re.findall(r"\d[\d,.]*", r[2]))
+    for name in ("Verdict", "Action", "Conflicts", "What changes the verdict"):
+        for l in sec.get(name, "").splitlines():
+            stripped = re.sub(r"^\s*\d+\.\s+", "", l)
+            for s in re.split(r"(?<=[.!?])\s+(?=[A-Z])", stripped):
+                probe = re.sub(r'"[^"]*"', "", s)
+                probe = DATE_RE.sub("", probe)
+                for n in sorted(table_nums, key=len, reverse=True):
+                    probe = re.sub(r"(?<![\d,.])%s(?![\d,.])" % re.escape(n), "", probe)
+                probe = URL_RE.sub("", probe)
+                probe = re.sub(r"\b(C\d+|\d{1,2}-minute|10 min|24/7)\b", "", probe)
+                if re.search(r"\d", probe) and not NUM_OK_RE.search(s):
+                    warns.append("%s: number without [N]/C#/(est.): %s"
+                                 % (name, s.strip()[:70]))
+
+    # 6 length
+    words = len(re.findall(r"\S+", pre + "\n" + body))
+    cap = CAPS[mode]
+    if words > cap:
+        fails.append("Length: %d words, cap %d for mode %s" % (words, cap, mode))
+
+    # 7 style and placeholders
+    style = strip_for_style(text)
+    if "\u2014" in style:
+        fails.append("Style: em dash found")
+    if ";" in style:
+        fails.append("Style: semicolon found (%d)" % style.count(";"))
+    if EMOJI_RE.search(style):
+        fails.append("Style: emoji found")
+    ph = PLACEHOLDER_RE.search(style)
+    if ph:
+        fails.append("Placeholder text: '%s'" % ph.group(0))
+    tph = TEMPLATE_PH_RE.search(style)
+    if tph:
+        fails.append("Placeholder text: '%s'" % tph.group(0))
+
+    for w in warns:
+        print("WARN  " + w)
+    for f in fails:
+        print("FAIL  " + f)
+    print("%s  words=%d/%d mode=%s class=%s claims=%d sources=%d"
+          % ("PASS" if not fails else "FAIL", words, cap, mode, klass,
+             len(rows), len(sources)))
+    sys.exit(1 if fails else 0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

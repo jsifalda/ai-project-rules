@@ -13,7 +13,7 @@ description: >-
   code-only install with a known ID (use microsoft-clarity or nextjs-ga-tracking directly), or for
   GA4 user access management.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Setup Analytics
@@ -49,15 +49,27 @@ clarity.ms|clarity.init|G-[A-Z0-9]{6,}|googletagmanager|@next/third-parties|reac
 - Skip GA4 only on a `G-` Measurement ID, a `gtag('config'` call, or a `@next/third-parties` `GoogleAnalytics` component.
 - A `googletagmanager` hit with only a `GTM-` container → report it at the gate and ask.
 - Resolve the production site URL. Order: the Vercel project's production domain, `package.json` `homepage`, the README. None found → ask.
+- Derive the project name from the `origin` remote. Read it with `git remote get-url origin`.
+- Drop a trailing `/` and `.git`, then take the text after the last `/` or `:`.
+- No `origin` remote → use the folder name of the first `worktree` line in `git worktree list --porcelain`.
+- Not a git repo → use the current folder name.
+- Never use the `git rev-parse --show-toplevel` folder name.
+- Split the name on `-`, `_`, `.` and spaces.
+- Capitalize the first letter of each word. Lower-case the rest.
 - Read the existing Clarity projects and GA accounts in a new tab, read-only. Follow the reuse check in each console reference.
 - Suggest time zone and currency from the system locale (`$LANG`, `date +%Z`).
 
 ### 2. Plan gate
 
-- Show one table with every row below, filled with suggestions. Suggest names from the repo name.
+- Always ask the user to confirm the project name first, as one question. Give the derived name as the recommended answer.
+- Ask it also when every resource is reused.
+- Show one table with every row below only after that answer, filled with suggestions.
+- Name each resource to create from the confirmed name: Clarity project, GA property, GA web stream, new GA account.
+- Keep the console name of a reused resource. Never rename it.
 
 | Row | Content |
 |---|---|
+| Project name | the confirmed project name |
 | Services | Clarity, GA4, or one of them, with any skip from preflight |
 | Clarity project | reuse `<name>`, or create `<name>`, industry `<industry>` |
 | Clarity cookies switch | on for opt-out, off for opt-in. Shows any change to a reused project |
@@ -79,6 +91,7 @@ clarity.ms|clarity.init|G-[A-Z0-9]{6,}|googletagmanager|@next/third-parties|reac
 
 - Suggest opt-in when the site targets EEA, UK or CH visitors.
 - Wait for explicit approval of every row. Apply each edit the user makes, then show the table again.
+- A changed `Project name` row → rename every resource to create to match.
 - Never create, accept or install anything before the approval.
 
 ### 3. Provision Clarity
@@ -139,6 +152,7 @@ clarity.ms|clarity.init|G-[A-Z0-9]{6,}|googletagmanager|@next/third-parties|reac
 - Brave Shields or a blocker extension blocks `googletagmanager.com` or `clarity.ms` → ask the user to turn it off for the local URL.
 - `window.google_tag_manager` undefined after load → a blocker stubbed the tag.
 - A dropdown inside a dialog can close the dialog. Set dropdowns first, then text fields.
+- Type the confirmed name exactly in every console name field.
 
 ## Reporting
 

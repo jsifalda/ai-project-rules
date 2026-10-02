@@ -17,7 +17,6 @@ Read the matching file before you start that kind of work. Do not load them othe
 |---|---|
 | Writing, changing or running tests | `rules/testing.md` |
 | Committing, pushing, opening a PR or MR, or any `glab` write | `rules/git-ship.md` |
-| Driving a browser, configuring browser tooling, or a bot-walled site | `rules/browser.md` |
 | Writing a doc, an ADR, a README, or a diagram | `rules/docs-diagrams.md` |
 | Writing or editing an instruction file, a rule, or a `SKILL.md` | `rules/authoring.md` |
 | Starting a new app, or choosing a stack or tooling | `rules/builder.md` |

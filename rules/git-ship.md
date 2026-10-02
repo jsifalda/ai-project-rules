@@ -27,3 +27,4 @@
 
 - Run git as `/usr/bin/git -C <worktree> ...`. A bare `git` is rewritten and the guard refuses it.
 - Run one git command per Bash call. The guard refuses `&&` or `;`.
+- Rename a `worktree-*` branch with no upstream to the repo's branch convention before its first push or `/ship-pr`.

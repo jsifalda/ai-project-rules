@@ -96,7 +96,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`distill-notes`](skills/distill-notes/SKILL.md) | Distill raw notes into a sharp set of standalone maxims (drop 40-60% of ideas, compress to <=8 words, sharpen into antithesis/couplets); returns them in chat, then asks whether to also save to a .md file. | — | — |
 | [`distill-notes-v2`](skills/distill-notes-v2/SKILL.md) | Process notes that mix facts with heuristics — organize the facts losslessly (grouped by category, deadlines flagged, every value verbatim) and distill the heuristics into sharpened maxims; returns both sections in chat, then asks whether to also save to a .md file. | — | — |
 | [`distill-persona`](skills/distill-persona/SKILL.md) | Distill a leader's worldview from interview transcripts into a reusable advisor persona. | — | — |
-| [`domain-modeling`](skills/domain-modeling/SKILL.md) | Build and sharpen a project's domain model — resolve terms into `CONTEXT.md` and record ADRs as you design. | `setup-adrs` (optional) | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| [`domain-modeling`](skills/domain-modeling/SKILL.md) | Build and sharpen a project's domain model — resolve terms into `GLOSSARY.md` and record ADRs as you design. | `setup-adrs` (optional) | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`dpa`](skills/dpa/SKILL.md) | Slash alias for `deep-research-answer`, a short trigger for fast typing. Slash-only. | `deep-research-answer` | — |
 | [`dr`](skills/dr/SKILL.md) | Slash alias for `deep-research`, a short trigger for fast typing. Slash-only. | `deep-research` | — |
 | [`find-skills`](skills/find-skills/SKILL.md) | Find a skill in the public skills.sh registry and clone an approved one into the current project — checks what you already have first, security-reviews every file before it lands, never installs anything globally. | — | [vercel-labs/skills](https://github.com/vercel-labs/skills) |
@@ -168,7 +168,6 @@ Pulls from `anthropics/knowledge-work-plugins`, upstream a plugin marketplace wh
 Flags:
 - `<name> ...`: one or more skill names to sync
 - `--list`, `-l`: print the full upstream catalog grouped by plugin, then exit
-- `--force`, `-f`: overwrite local edits instead of skipping them
 - `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
 - `--help`, `-h`: show usage and exit
 
@@ -177,7 +176,7 @@ Run with no names and it re-syncs the previously-synced set recorded in its stat
 ```bash
 bash scripts/sync-anthropic-skills.sh --list
 bash scripts/sync-anthropic-skills.sh standup incident-response
-bash scripts/sync-anthropic-skills.sh marketing/standup --force
+bash scripts/sync-anthropic-skills.sh marketing/standup
 ```
 
 Before writing a staged skill, this script also runs `scripts/sync-anthropic-contextualize.py` over it: the helper strips links pointing at files that don't exist in this repo and marks unwired connector placeholders. One limitation worth knowing: upstream skills sometimes assume MCP connectors configured at the plugin level, and flattening leaves those behind, so a synced skill that needs external data may need its connector wired up separately.
@@ -188,7 +187,6 @@ Pulls from `mattpocock/skills`, upstream nesting every skill under a category di
 
 Flags:
 - `--list`, `-l`: print the upstream catalog grouped by category, then exit
-- `--force`, `-f`: overwrite locally-modified skills instead of skipping them
 - `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
 - `--help`, `-h`: show usage and exit
 
@@ -197,10 +195,10 @@ This repo carries a curated default set, `prototype` (engineering) and `handoff`
 ```bash
 bash scripts/sync-mattpocock-skills.sh --list
 bash scripts/sync-mattpocock-skills.sh prototype handoff
-bash scripts/sync-mattpocock-skills.sh productivity/handoff --force
+bash scripts/sync-mattpocock-skills.sh productivity/handoff
 ```
 
-These names are refused outright, exit code 2, and `--force` does not bypass the refusal: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.
+These names are refused outright, exit code 2: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.
 
 ### `scripts/sync-obsidian-skills.sh`
 
@@ -210,15 +208,17 @@ Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a f
 bash scripts/sync-obsidian-skills.sh
 ```
 
-> **Warning:** this script has no safety net. Unlike the other sync scripts, there is no sha256 baseline, no manifest, and no `--force` gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of those skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
+> **Warning:** this script has no safety net. Unlike the other sync scripts, there is no sha256 baseline, no manifest, and no refusal gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of those skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
 
 ### Overwrite safety and registering new skills
 
-The anthropic and mattpocock scripts (not the obsidian one, see the warning above) record every file they write in a sha256 baseline. Once a local edit makes a file diverge from that baseline, the script reports the skill as locally modified and skips it instead of clobbering your changes. `scripts/.sync-state/` is gitignored, so a fresh clone starts with no baseline at all, and everything already on disk reports as locally modified on the first run. That's expected, not a bug. Reach for `--force` once you know the local copy is actually untouched.
+The anthropic and mattpocock scripts (not the obsidian one, see the warning above) record every file they write in a sha256 baseline. The first sync to the default destination writes the baseline to `scripts/sync-baselines/anthropic.txt` or `scripts/sync-baselines/mattpocock.txt`, one file per script. Commit that file, so the gate holds on every clone and worktree. A `--dest` run keeps its own baseline under `scripts/.sync-state/`, which is gitignored.
+
+A skill is refused and never overwritten in any of these cases. A local file differs from its baseline hash. A local file has no baseline entry. A baseline file is missing on disk. The skill directory contains a symlink. The skill directory exists but has no baseline entries. A skill whose directory does not exist is new and syncs normally. No flag overrides the refusal. The other skills in the same run still sync. The script exits with code 1 when any download error happened, else with code 2 when it refused anything, else with code 0. To take an upstream update for a refused skill, port it by hand, or delete the skill directory and run the sync again.
 
 The `## Skills` table above is maintained by hand, not generated, so a sync does not register its own output. Every sync script prints a `NEW SKILLS — REGISTER THESE` block naming what landed. After a sync, add a row for each one, linking its `Origin` cell to the upstream repo root, and add its name to `scripts/synced-skills.txt` so the pre-commit hook skips `--require-version` for it.
 
-A re-sync that overwrites a skill drops its local `metadata` block. Re-add it, with `metadata.upstream`, and bump `metadata.version`. A mattpocock skill carrying that block reads as locally modified, so its re-sync needs `--force`.
+The baseline hashes `SKILL.md` without its frontmatter `metadata` block, so adding `metadata.version` and `metadata.upstream` is not a local edit. A re-sync that overwrites a skill drops that block. Re-add `metadata.upstream` and bump `metadata.version` after each re-sync.
 
 ## Gemini CLI commands
 

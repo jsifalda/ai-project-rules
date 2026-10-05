@@ -2,7 +2,7 @@
 name: better-plan
 description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. It sharpens the request via the prompt-enhancer skill, builds a thorough plan with plan-mode rigor, then stress-tests it via the grill-me skill, an interview that resolves each decision branch. For an ADR, a PRD, or a domain-model change, it grills via grill-with-docs instead, and writes its docs after approval. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, with the session model as orchestrator only. Pass --inline to skip the routing. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes, then ships as a PR via ship-pr once verified. Use when the user types /better-plan, or asks to plan, grill, model-route, and ship a change in one pass. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Better Plan — build, grill, route, execute, in one pass
@@ -102,7 +102,7 @@ Answer from the codebase whenever exploring can settle a question.
 In docs mode, invoke **grill-with-docs** instead of grill-me:
 
 - Draft each resolved term and each ADR into a `## Domain docs` section of the plan file, with its target path.
-- Never write `CONTEXT.md` or an ADR file before approval. This overrides domain-modeling's inline updates.
+- Never write `GLOSSARY.md` or an ADR file before approval. This overrides domain-modeling's inline updates.
 - When the grill produced at least one draft, add a first plan task that writes the `## Domain docs` drafts.
 
 When the interview reaches shared understanding, fold the answers back into the plan by

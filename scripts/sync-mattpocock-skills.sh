@@ -16,14 +16,12 @@ BRANCH="main"
 # Args & paths
 # =============================================================================
 
-FORCE="${FORCE:-0}"
 LIST=0
 HELP=0
 DEST=""
 REQUESTED=()
 while [ "$#" -gt 0 ]; do
   case "$1" in
-    --force|-f) FORCE=1 ;;
     --list|-l)  LIST=1 ;;
     --help|-h)  HELP=1 ;;
     --dest)     shift; [ "$#" -gt 0 ] && [ -n "$1" ] || { echo "ERROR: --dest needs a directory"; exit 2; }; DEST="$1" ;;
@@ -49,11 +47,10 @@ Upstream nests every skill under a category dir (engineering, productivity, misc
 deprecated, in-progress). This script flattens that down to skills/<name>/.
 
 USAGE
-  sync-mattpocock-skills.sh [<name> ...] [--list] [--force] [--dest <dir>]
+  sync-mattpocock-skills.sh [<name> ...] [--list] [--dest <dir>]
 
 FLAGS
   --list, -l      Print the upstream catalog grouped by category, then exit.
-  --force, -f     Overwrite locally-modified skills instead of skipping them.
   --dest <dir>    Sync into <dir> instead of the repo's skills/ folder.
   --dest=<dir>    Same flag, joined form. A missing dir is created.
   --help, -h      Print this text and exit.
@@ -78,18 +75,27 @@ PATHS
   State for a --dest    scripts/.sync-state/mattpocock/dests/<hash>/
 
 OVERWRITE SAFETY
-  Every file written is recorded in a sha256 baseline. A local edit makes a file
-  diverge from that baseline, so the skill is reported as locally modified and
-  skipped rather than clobbered. A fresh clone carries no baseline at all, so on
-  the first run everything already on disk reports as locally modified. Re-running
-  with --force is the right response there.
+  Every written file is recorded in a sha256 baseline. The first sync to the default
+  destination writes the baseline to scripts/sync-baselines/mattpocock.txt. Commit
+  that file, so the gate holds on every clone and worktree. SKILL.md is hashed
+  without its frontmatter metadata block. A skill whose directory does not exist is
+  new and syncs normally. A skill is refused and never overwritten when:
+    - a local file differs from its baseline hash
+    - a local file has no baseline entry
+    - a baseline file is missing on disk
+    - the skill directory contains a symlink
+    - the skill directory exists but has no baseline entries
+  There is no override flag. To take an upstream update for a refused skill, port it
+  by hand, or delete the skill directory and re-run.
+  Exit code: 1 if any download error happened, else 2 if anything was refused,
+  else 0.
 
 REFUSED NAMES
   grilling and grill-me are both refused outright. This repo carries the upstream
   grilling body as skills/grill-me/, a deliberate fork. Syncing grilling would add
   a duplicate directory rather than refresh it, and upstream's own grill-me is a
   stub that would overwrite the fork with a skill that does nothing here. Pull an
-  upstream change by hand instead. --force does not bypass either refusal.
+  upstream change by hand instead.
 
 AFTER A SYNC
   Every newly synced skill needs its own row in the '## Skills' table in README.md.
@@ -101,7 +107,7 @@ ENVIRONMENT
 EXAMPLES
   bash scripts/sync-mattpocock-skills.sh --list
   bash scripts/sync-mattpocock-skills.sh prototype handoff
-  bash scripts/sync-mattpocock-skills.sh productivity/handoff --force
+  bash scripts/sync-mattpocock-skills.sh productivity/handoff
   bash scripts/sync-mattpocock-skills.sh prototype --dest ~/other-repo/skills
 HELPTEXT
   exit 0
@@ -156,8 +162,6 @@ refuse_grill_names() {
     echo "" >&2
     echo "To pull an upstream update, copy the new upstream body into" >&2
     echo "skills/grill-me/SKILL.md by hand and leave the existing frontmatter untouched." >&2
-    echo "" >&2
-    echo "--force does not bypass this." >&2
     exit 2
   done
 }
@@ -189,23 +193,28 @@ else
 fi
 [ -w "$LOCAL_SKILLS_DIR" ] || { echo "ERROR: destination is not writable: $LOCAL_SKILLS_DIR"; exit 2; }
 
-# State is per-destination, and gitignored in full. The default dest keeps its
-# baseline directly under STATE_BASE; any other dest gets its own baseline under
-# STATE_BASE/dests/<slug>/, so two targets never share a synced-set or an
-# overwrite baseline. The slug is a hash, not the path, so no local directory
-# name is ever written into the repo.
+# The synced-set is per-destination and gitignored. The default dest keeps it
+# directly under STATE_BASE, any other dest under STATE_BASE/dests/<slug>/, so two
+# targets never share a synced-set. The slug is a hash, not the path, so no local
+# directory name is ever written into the repo.
+# The overwrite baseline (MANIFEST) for the default dest is tracked in git, so the
+# gate holds on a fresh clone and in every worktree. A --dest run keeps its
+# baseline next to its synced-set, untracked.
+# A missing MANIFEST reads as empty. It is created at the first manifest write,
+# never at setup, so --list and refused-only runs leave no stray file behind.
 STATE_BASE="$SCRIPT_DIR/.sync-state/mattpocock"
+BASELINE_DIR="$SCRIPT_DIR/sync-baselines"
 if [ "$LOCAL_SKILLS_DIR" = "$DEFAULT_DEST" ]; then
   STATE_DIR="$STATE_BASE"
+  MANIFEST="$BASELINE_DIR/mattpocock.txt"
 else
   DEST_SLUG="$(printf '%s' "$LOCAL_SKILLS_DIR" | "${SHASUM[@]}" | cut -c1-8)"
   STATE_DIR="$STATE_BASE/dests/$DEST_SLUG"
+  MANIFEST="$STATE_DIR/manifest.txt"
 fi
 STATE_FILE="$STATE_DIR/synced.txt"
-MANIFEST="$STATE_DIR/manifest.txt"
 mkdir -p "$STATE_DIR"
 [ -f "$STATE_FILE" ] || : > "$STATE_FILE"
-[ -f "$MANIFEST" ] || : > "$MANIFEST"
 
 echo "Destination: $LOCAL_SKILLS_DIR"
 
@@ -233,7 +242,7 @@ fi
 
 downloaded=0
 removed=0
-skipped=0
+refused=0
 errors=0
 applied_skills=()
 new_skills=()
@@ -416,13 +425,39 @@ RAW_BASE="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH"
 # Step 3: For each skill — stage upstream, check for local edits, then apply
 # =============================================================================
 
+# A manifest line is "<sha256>  <rel path>". The path is everything after the first
+# two-space separator, so a path may hold spaces. A missing MANIFEST reads as empty.
 # Helper: hash recorded in manifest for a local rel path ("<name>/<rest>")
 manifest_hash() {
-  awk -v p="$1" '$2==p {print $1; exit}' "$MANIFEST"
+  [ -f "$MANIFEST" ] || return 0
+  P="$1" awk '{ path = substr($0, index($0, "  ") + 2) } path == ENVIRON["P"] { print $1; exit }' "$MANIFEST"
 }
-# Helper: current sha256 of a file
+# Helper: every rel path recorded in manifest for one skill
+manifest_paths() {
+  [ -f "$MANIFEST" ] || return 0
+  S="$1" awk '{ path = substr($0, index($0, "  ") + 2) } index(path, ENVIRON["S"] "/") == 1 { print path }' "$MANIFEST"
+}
+# Helper: baseline hash of a file (SKILL.md is hashed without its metadata block)
 file_hash() {
-  "${SHASUM[@]}" "$1" | awk '{print $1}'
+  python3 "$SCRIPT_DIR/sync-baseline-hash.py" "$1"
+}
+# Helper: replace one skill's manifest entries with the hashes of its files on disk.
+# Runs per skill right after that skill is applied, so a later abort never leaves an
+# applied skill without a baseline. The dir and file are created here, on first write.
+write_manifest() {
+  local skill="$1" lf rel
+  mkdir -p "$(dirname "$MANIFEST")"
+  if [ -f "$MANIFEST" ]; then
+    S="$skill" awk '{ path = substr($0, index($0, "  ") + 2) } index(path, ENVIRON["S"] "/") != 1' "$MANIFEST" > "$MANIFEST.tmp"
+  else
+    : > "$MANIFEST.tmp"
+  fi
+  while IFS= read -r lf; do
+    rel="${lf#"$LOCAL_SKILLS_DIR"/}"
+    printf '%s  %s\n' "$(file_hash "$lf")" "$rel" >> "$MANIFEST.tmp"
+  done < <(find "$LOCAL_SKILLS_DIR/$skill" -type f 2>/dev/null)
+  LC_ALL=C sort -t' ' -k3 "$MANIFEST.tmp" -o "$MANIFEST.tmp"
+  mv "$MANIFEST.tmp" "$MANIFEST"
 }
 
 for skill in $TARGET_NAMES; do
@@ -448,24 +483,33 @@ for skill in $TARGET_NAMES; do
   # Capture newness BEFORE the copy step creates the directory.
   was_new=1; [ -d "$local_skill_dir" ] && was_new=0
 
-  # --- Detect local edits against the manifest baseline ---
+  # --- Detect local edits against the manifest baseline (no bypass) ---
   modified_files=()
-  if [ -d "$local_skill_dir" ] && [ "$FORCE" -ne 1 ]; then
+  baseline_paths="$(manifest_paths "$skill")"
+  if [ -d "$local_skill_dir" ]; then
     while IFS= read -r lf; do
       rel="${lf#"$LOCAL_SKILLS_DIR"/}"        # <name>/<rest>
       recorded="$(manifest_hash "$rel")"
       current="$(file_hash "$lf")"
       if [ -z "$recorded" ] || [ "$recorded" != "$current" ]; then
-        modified_files+=("$rel")
+        modified_files+=("~ $rel")
       fi
     done < <(find "$local_skill_dir" -type f 2>/dev/null)
+    while IFS= read -r rel; do
+      [ -n "$rel" ] || continue
+      [ -f "$LOCAL_SKILLS_DIR/$rel" ] || modified_files+=("- $rel")
+    done <<< "$baseline_paths"
+    while IFS= read -r ll; do
+      modified_files+=("~ ${ll#"$LOCAL_SKILLS_DIR"/} (symlink)")
+    done < <(find "$local_skill_dir" -type l 2>/dev/null)
   fi
 
   if [ "${#modified_files[@]}" -gt 0 ]; then
-    echo "[skipped: locally modified] $skill"
-    for mf in "${modified_files[@]}"; do echo "    ~ $mf"; done
-    echo "    re-run with --force to overwrite"
-    skipped=$((skipped + 1))
+    echo "[refused: locally modified] $skill"
+    for mf in "${modified_files[@]}"; do echo "    $mf"; done
+    if [ -z "$baseline_paths" ]; then echo "    (no baseline recorded for this skill)"; fi
+    echo "    revert $local_skill_dir/ to the baseline or delete it, then re-run."
+    refused=$((refused + 1))
     continue
   fi
 
@@ -493,6 +537,7 @@ for skill in $TARGET_NAMES; do
   done <<< "$staged_rel"
 
   find "$local_skill_dir" -type d -empty -delete 2>/dev/null || true
+  write_manifest "$skill"
   applied_skills+=("$skill")
   # Full if-block, not a bare "[ ] && ...": as the last statement of the loop body
   # that would return non-zero whenever was_new is 0, and set -e would abort here.
@@ -502,7 +547,7 @@ for skill in $TARGET_NAMES; do
 done
 
 # =============================================================================
-# Step 4: Persist state (synced names) and manifest (per-file hashes)
+# Step 4: Persist state (synced names). The manifest is written per skill, in the loop.
 # =============================================================================
 
 if [ "${#applied_skills[@]}" -gt 0 ]; then
@@ -512,18 +557,6 @@ if [ "${#applied_skills[@]}" -gt 0 ]; then
     printf '%s\n' "${applied_skills[@]}"
   } | sed '/^[[:space:]]*$/d' | sort -u > "$STATE_FILE.tmp"
   mv "$STATE_FILE.tmp" "$STATE_FILE"
-
-  # manifest.txt = drop old entries for applied skills, re-add fresh hashes
-  applied_re=$(printf '%s\n' "${applied_skills[@]}" | paste -sd'|' -)
-  awk -v re="^($applied_re)/" '$2 !~ re' "$MANIFEST" > "$MANIFEST.tmp" || : > "$MANIFEST.tmp"
-  for skill in "${applied_skills[@]}"; do
-    while IFS= read -r lf; do
-      rel="${lf#"$LOCAL_SKILLS_DIR"/}"
-      printf '%s  %s\n' "$(file_hash "$lf")" "$rel" >> "$MANIFEST.tmp"
-    done < <(find "$LOCAL_SKILLS_DIR/$skill" -type f 2>/dev/null)
-  done
-  sort -k2 "$MANIFEST.tmp" -o "$MANIFEST.tmp"
-  mv "$MANIFEST.tmp" "$MANIFEST"
 fi
 
 # =============================================================================
@@ -536,7 +569,7 @@ echo "Destination: $LOCAL_SKILLS_DIR"
 echo "Requested:  ${REQUESTED[*]}"
 echo "Applied:    ${#applied_skills[@]} ($(IFS=', '; echo "${applied_skills[*]:-none}"))"
 echo "Files:      $downloaded written, $removed removed"
-echo "Skipped:    $skipped (locally modified — use --force)"
+echo "Refused:    $refused (locally modified, see above)"
 echo "Errors:     $errors"
 
 if [ "${#new_skills[@]}" -gt 0 ]; then
@@ -565,4 +598,6 @@ fi
 
 if [ "$errors" -gt 0 ]; then
   exit 1
+elif [ "$refused" -gt 0 ]; then
+  exit 2
 fi

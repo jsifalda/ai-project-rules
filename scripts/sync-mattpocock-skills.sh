@@ -62,12 +62,16 @@ NAMES
   file. That errors out when the state file is empty, which is the case on a
   fresh clone.
 
-CURATED DEFAULT SET
-  This repo intends to carry two skills from upstream.
-    prototype    from the engineering category
-    handoff      from the productivity category
-  A fresh clone has an empty state file, so name both explicitly the first time.
-    bash scripts/sync-mattpocock-skills.sh prototype handoff
+CARRIED SKILLS
+  This repo carries these upstream skills.
+    prototype        synced by this script, engineering category
+    handoff          synced by this script, productivity category
+    grill-me         hand-port of productivity/grilling, see REFUSED NAMES
+    grill-with-docs  hand-port with local edits
+    domain-modeling  hand-port with local edits
+    retro            hand-port with local edits
+  No baseline is committed for them, so a re-sync of any of them is refused (see
+  OVERWRITE SAFETY). Port an upstream change by hand.
 
 PATHS
   Default destination   the repo's skills/ folder
@@ -106,8 +110,8 @@ ENVIRONMENT
 
 EXAMPLES
   bash scripts/sync-mattpocock-skills.sh --list
-  bash scripts/sync-mattpocock-skills.sh prototype handoff
-  bash scripts/sync-mattpocock-skills.sh productivity/handoff
+  bash scripts/sync-mattpocock-skills.sh <name>
+  bash scripts/sync-mattpocock-skills.sh <category>/<name>
   bash scripts/sync-mattpocock-skills.sh prototype --dest ~/other-repo/skills
 HELPTEXT
   exit 0
@@ -333,7 +337,7 @@ if [ "${#REQUESTED[@]}" -eq 0 ]; then
   if [ "${#REQUESTED[@]}" -eq 0 ]; then
     echo "ERROR: no skills named and scripts/.sync-state/mattpocock/synced.txt is empty."
     echo "Run with --list to see what upstream offers, then pass one or more names:"
-    echo "  bash scripts/sync-mattpocock-skills.sh prototype handoff"
+    echo "  bash scripts/sync-mattpocock-skills.sh <name>"
     exit 1
   fi
   echo "No skills named — using previously-synced set: ${REQUESTED[*]}"

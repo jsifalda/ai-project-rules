@@ -136,6 +136,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`qmd-project`](skills/qmd-project/SKILL.md) | Turn any folder into a folder-local qmd semantic index over its nested `.md` files (isolated from the global index, shared models) and ship a project-local `qmd-ask` skill that answers questions from it. | — | — |
 | [`radical-feedback`](skills/radical-feedback/SKILL.md) | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. | — | — |
 | [`reddit-post`](skills/reddit-post/SKILL.md) | Create high-engagement Reddit posts (title + body) from a guided questionnaire. | — | — |
+| [`retro`](skills/retro/SKILL.md) | Look back over a coding session and propose fixes to the agent's environment: checks, pointers and standards. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`rewrite`](skills/rewrite/SKILL.md) | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. Improve mode loads the write-like-human ruleset first so default output reads human. | `write-like-human` | — |
 | [`seo-keyword-generator`](skills/seo-keyword-generator/SKILL.md) | Generate a categorized SEO keyword strategy for a side project via a questionnaire. | — | — |
 | [`setup-adrs`](skills/setup-adrs/SKILL.md) | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed record ADR, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. | — | — |
@@ -190,12 +191,12 @@ Flags:
 - `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
 - `--help`, `-h`: show usage and exit
 
-This repo carries a curated default set, `prototype` (engineering) and `handoff` (productivity). A fresh clone has an empty state file, so name both explicitly the first time.
+This repo carries these upstream skills. `prototype` (engineering) and `handoff` (productivity) came in through this script, and upstream has changed since. `grill-me`, `grill-with-docs`, `domain-modeling` and `retro` are hand-ports with local edits. No baseline is committed for any of them, and the script refuses an existing skill that has no baseline entries, so a re-sync of a skill listed here is refused. Port an upstream change by hand: copy the new upstream body into the local `SKILL.md` and keep the existing frontmatter.
 
 ```bash
 bash scripts/sync-mattpocock-skills.sh --list
-bash scripts/sync-mattpocock-skills.sh prototype handoff
-bash scripts/sync-mattpocock-skills.sh productivity/handoff
+bash scripts/sync-mattpocock-skills.sh <name>
+bash scripts/sync-mattpocock-skills.sh <category>/<name>
 ```
 
 These names are refused outright, exit code 2: `grilling` and `grill-me`. This repo carries the upstream `grilling` skill's body as `skills/grill-me/SKILL.md`, a deliberate fork with a different name. Syncing `grilling` under its own name would add a duplicate directory instead of refreshing the fork. Syncing upstream's own `grill-me` is worse: that name is a stub upstream, and it would overwrite the working fork with a skill that does nothing here. Both `better-plan` and `prd-creator` depend on the `grill-me` name, so this matters beyond the one skill. Pull an upstream change to it by hand instead: copy the upstream body into `skills/grill-me/SKILL.md` and keep the existing frontmatter.

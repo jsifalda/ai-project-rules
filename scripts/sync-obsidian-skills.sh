@@ -45,7 +45,7 @@ Destination:
 
 OVERWRITE HAZARD (read this before running):
   This script has no safety net at all. Unlike the sibling sync scripts,
-  there is no sha256 baseline, no manifest, and no --force gate. Every run
+  there is no sha256 baseline, no manifest, and no refusal gate. Every run
   deletes local files that are not present upstream and overwrites every
   remaining file unconditionally. Any local edit you made to one of the
   five skills above is lost, with no warning and no prompt.
@@ -90,7 +90,7 @@ for skill in "${SKILLS[@]}"; do
 done
 
 echo "WARNING: this sync overwrites the five Obsidian skills unconditionally." >&2
-echo "         There is no baseline and no --force gate. Local edits to them are lost." >&2
+echo "         There is no baseline and no refusal gate. Local edits to them are lost." >&2
 echo "         Commit or stash changes to those skills first if you want to keep them." >&2
 
 # =============================================================================

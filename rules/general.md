@@ -87,8 +87,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # READING FILES
 
-- Read file content with `Read`, using `offset` and `limit`. Never `cat`, `sed -n`, `head` or
-  `tail` a file in Bash.
+- Read file content with `Read`, using `offset` and `limit`.
 - Find the lines first with `grep -n pattern file | head`, then read only that range.
 - Before any code change, find and read all relevant files.
 - Before modifying a function, grep every caller. Understand each call site before changing a
@@ -183,7 +182,7 @@ resolve.
 fix it before proceeding. Modified functionality → update its tests. New functionality → write
 tests. Lint present → run it, fix errors and warnings.
 
-**Phase 3 — Code review.** Run a `code-review` task agent on this session's changes.
+**Phase 3 — Code review.** Run a `code-review` subagent on this session's changes.
 
 - Triage every finding first. Relevance decides the fix. Severity sets the order.
 - Fix every relevant finding at any severity. Reject the rest with a stated reason: wrong about

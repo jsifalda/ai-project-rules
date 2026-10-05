@@ -1,15 +1,15 @@
 ---
 name: better-plan
-description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. First it sharpens your request via the prompt-enhancer skill. Then it builds a thorough implementation plan with plan-mode rigor. Then it stress-tests the plan via the grill-me skill, a relentless interview that resolves each decision branch and revises the plan. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, and the session model only orchestrates. Pass --inline to skip the routing and execute in the session. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes. By default it ships the result as a PR via ship-pr, once execution is verified. Use when the user types /better-plan, or asks to plan, grill, model-route, and ship a change in one pass. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
+description: Chained planning workflow, one pass from a raw request to a hardened, cost-routed plan. It sharpens the request via the prompt-enhancer skill, builds a thorough plan with plan-mode rigor, then stress-tests it via the grill-me skill, an interview that resolves each decision branch. For an ADR, a PRD, or a domain-model change, it grills via grill-with-docs instead, and writes its docs after approval. Then it routes each task to the cheapest capable model via the op skill, Sonnet by default, with the session model as orchestrator only. Pass --inline to skip the routing. It runs in plan mode, so the final plan lands in a plan file you approve before anything executes, then ships as a PR via ship-pr once verified. Use when the user types /better-plan, or asks to plan, grill, model-route, and ship a change in one pass. Do NOT use for a quick one-off plan with no review, to only grill an existing plan, or to only route an existing plan.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Better Plan — build, grill, route, execute, in one pass
 
 Turn a request into a plan that has been stress-tested and cost-routed before any
 code is written, then ship the result. Run the preface, then every stage, in order.
-Stages 1, 1b, 2 and 3 are mandatory and none may be skipped, unless Stage 1b's abort gate fires — that
+Stages 1, 1b, 1c, 2 and 3 are mandatory and none may be skipped, unless Stage 1b's abort gate fires — that
 ends the run before Stage 2. Stage 2b runs only when the execution mode is routed. Stage 4 is
 conditional — it ships only when its own gate passes, and skips cleanly when it does not.
 Stop and surface a blocker rather than guessing.
@@ -51,7 +51,7 @@ Plan mode injects its own workflow guidance (explore, design, write the plan fil
 - The plan file is the single artifact. Every stage edits that same file in place. Never
   open a second one.
 - **grill-me** asks in chat text and writes nothing, so plan mode allows Stage 2 with no
-  exception.
+  exception. In docs mode, **grill-with-docs** writes only to the plan file until approval.
 
 ## Stage 1 — Build the initial plan (plan-mode rigor)
 
@@ -83,12 +83,27 @@ The gate binds hardest when you have already spent many tool calls. A one-line a
 long investigation is a good outcome, not a thin one. Never let the cost of the search set the
 size of the deliverable.
 
+## Stage 1c — Docs mode check
+
+- Set docs mode on when the request is to write an ADR or a PRD.
+- Set it on when the Stage 1 draft adds or redefines a domain term.
+- Set it on when the Stage 1 draft makes a decision that meets domain-modeling's `Offer ADRs sparingly` criteria.
+- Set it off otherwise.
+- Set it on during Stage 2 when the grill meets either condition above. Update the `Docs:` line and continue with grill-with-docs.
+- Record `Docs: on` or `Docs: off` as the second line of the plan, and state the decision in one line in chat.
+
 ## Stage 2 — Grill the plan, then revise
 
 Invoke the **grill-me** skill against the Stage 1 draft. Interview the user
 relentlessly, working the design tree in rounds and asking every unblocked question
 in each round. For every question, give your recommended answer.
 Answer from the codebase whenever exploring can settle a question.
+
+In docs mode, invoke **grill-with-docs** instead of grill-me:
+
+- Draft each resolved term and each ADR into a `## Domain docs` section of the plan file, with its target path.
+- Never write `CONTEXT.md` or an ADR file before approval. This overrides domain-modeling's inline updates.
+- When the grill produced at least one draft, add a first plan task that writes the `## Domain docs` drafts.
 
 When the interview reaches shared understanding, fold the answers back into the plan by
 editing the plan file in place. The revised plan is the input to Stage 2b, or the final
@@ -113,7 +128,8 @@ so what the user approves is the routed plan and not chat output.
 
 The plan file now holds the final plan. Present it for approval.
 
-- **In plan mode (the default path).** Check the file holds the verification method, and the
+- **In plan mode (the default path).** Check the file holds the verification method, the
+  `## Domain docs` section and its writer task when the grill produced a draft, and the
   Stage 2b routing table when the mode is routed, then call `ExitPlanMode`. That approval is
   the go signal. Do not ask for approval in chat as well. Nothing goes into the plan file
   after the exit call.

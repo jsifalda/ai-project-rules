@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v17**
+**Skill version: v18**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -53,6 +53,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | Design source of truth — `DESIGN.md` backfilled from existing UI code or authored with the user, plus a `## Design` rule block (UI repos only, else N/A) | inject + scaffold | 5b | v16 |
 | Design-in-sync gate in the verification protocol (appended only after Step 5b wrote or kept a `DESIGN.md`) | inject | 6b | v16 |
 | CodeRabbit CLI lens reviews untracked files and checks `reviewedFiles` coverage against shipped files, plus a re-review of files changed after the lenses ran | inject | 5 | v17 |
+| Docs gate method — grep docs for removed or renamed names, re-check every edited paragraph, current-state-only docs | inject | 5 | v18 |
 
 ## How the self-audit uses this (Step 8b)
 

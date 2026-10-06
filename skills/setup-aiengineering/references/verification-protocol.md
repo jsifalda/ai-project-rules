@@ -271,6 +271,13 @@ says otherwise.
   changes made any documentation stale:
   - **Project docs** (`README.md`, `docs/`, `ARCHITECTURE.md`, other human-facing docs) — stale
     docs are part of the change, like a failing test: update them now and list what was updated.
+    - Grep the docs for every name this change removed or renamed, such as an env key, path,
+      command or flag. Only a history record may keep one: an ADR, a changelog entry, a resolved
+      backlog entry, a PRD, a plan.
+    - Re-check every sentence of each doc paragraph you edit against the new state. Never carry a
+      sentence forward unread.
+    - Outside history records, describe current state only. Put a migration or upgrade step in the
+      commit or PR body or a changelog entry, never in a current-state doc.
   - **Agent instructions** (`AGENTS.md` / `CLAUDE.md` and any rule files they link) — draft the
     updated wording and **ask the user** before applying. Never silently edit instruction files.
   - **Scope check on the agent instructions.** When this session added anything to that file,

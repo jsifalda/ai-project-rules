@@ -97,8 +97,8 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`distill-notes-v2`](skills/distill-notes-v2/SKILL.md) | Process notes that mix facts with heuristics — organize the facts losslessly (grouped by category, deadlines flagged, every value verbatim) and distill the heuristics into sharpened maxims; returns both sections in chat, then asks whether to also save to a .md file. | — | — |
 | [`distill-persona`](skills/distill-persona/SKILL.md) | Distill a leader's worldview from interview transcripts into a reusable advisor persona. | — | — |
 | [`domain-modeling`](skills/domain-modeling/SKILL.md) | Build and sharpen a project's domain model — resolve terms into `GLOSSARY.md` and record ADRs as you design. | `setup-adrs` (optional) | [mattpocock/skills](https://github.com/mattpocock/skills) |
-| [`dpa`](skills/dpa/SKILL.md) | Slash alias for `deep-research-answer`, a short trigger for fast typing. Slash-only. | `deep-research-answer` | — |
 | [`dr`](skills/dr/SKILL.md) | Slash alias for `deep-research`, a short trigger for fast typing. Slash-only. | `deep-research` | — |
+| [`dra`](skills/dra/SKILL.md) | Slash alias for `deep-research-answer`, a short trigger for fast typing. Slash-only. | `deep-research-answer` | — |
 | [`find-skills`](skills/find-skills/SKILL.md) | Find a skill in the public skills.sh registry and clone an approved one into the current project — checks what you already have first, security-reviews every file before it lands, never installs anything globally. | — | [vercel-labs/skills](https://github.com/vercel-labs/skills) |
 | [`first-principles-mode`](skills/first-principles-mode/SKILL.md) | Strip a problem back to fundamental truths and rebuild the answer from only what's verifiable. | — | — |
 | [`founder-thinking-mode`](skills/founder-thinking-mode/SKILL.md) | Answer in a blunt founder-operator voice — the specific decision, the trade-off, and the real risk. | — | — |

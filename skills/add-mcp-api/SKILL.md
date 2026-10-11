@@ -2,7 +2,7 @@
 name: add-mcp-api
 description: Create a phased implementation plan for an existing application that needs a remote Model Context Protocol API. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, product code implementation, or general API planning.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Plan a Remote MCP API
@@ -16,6 +16,7 @@ Read these files before you inspect the application:
 - [Protocol and authorization](references/protocol-and-auth.md)
 - [Failure prevention](references/traps.md)
 - [Tool selection](references/tool-selection.md)
+- [Claude directory readiness](references/directory-readiness.md)
 - [Plan template](references/plan-template.md)
 
 Read [nginx VPS deployment](references/nginx-vps.md) before you ask the nginx-phase question or include that phase.
@@ -60,6 +61,7 @@ Record the current evidence for:
 - authorization flow, PKCE, metadata, registration, and discovery requirements.
 - token endpoint request format, scope behavior, and connector timeout ceiling.
 - target-client behavior for redirects, streaming, and authorization headers.
+- the Claude directory review criteria and submission steps in [Claude directory readiness](references/directory-readiness.md), unless the user states the connector stays private.
 
 State a dated uncertainty when network access or a source is unavailable. Do not present a cached reference as current protocol authority.
 

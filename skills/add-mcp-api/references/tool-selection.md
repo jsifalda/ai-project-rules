@@ -70,7 +70,7 @@ For each confirmed tool, record these plan inputs:
 | Authorization | Required scope, entitlement, and role checks. |
 | Service call | Existing boundary and allowed operation. |
 | Result | Typed success content and structured expected errors. |
-| Annotation | Read-only, destructive, or external side-effect behavior. |
+| Annotation | Mandatory. The title plus every hint, each set explicitly per [directory readiness](directory-readiness.md#tool-annotations). |
 | Rate limit | Identity-based limit and capacity control. |
 | Audit event | Action, authenticated subject, outcome, and safe metadata. |
 

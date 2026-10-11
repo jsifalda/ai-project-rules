@@ -1,9 +1,9 @@
 ---
 name: deep-research-answer
-description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs two research passes (built-in deep research, then the deep-research skill with independent phrasings), requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Use when the user types /deep-research-answer, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use deep-research), for simple lookups, or for debugging.
+description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs two research passes (built-in deep research, then the deep-research skill with independent phrasings), requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Validates its answer with a stdlib script before showing it. Use when the user types /deep-research-answer, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use deep-research), for simple lookups, or for debugging.
 argument-hint: "The question to research"
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Deep Research Answer
@@ -119,25 +119,24 @@ Add: confidence as a percentage, plus one sentence on what limits it.
 
 ## Step 6. Output format
 
-Return two labelled blocks, nothing else.
+Open with the ANSWER line from Step 1. Then return two labelled blocks, `Quick answer` and `Deep dive`, nothing else. Write each label exactly as shown. Step 7 checks them.
 
 ### Quick answer
 
 Keep this block on one screen.
 
-1. ANSWER line
-2. `Question as researched`: the primary question plus the sub-questions, in two to four lines
-3. Two-sentence plain-language summary
-4. Verification status and confidence, on one line
+1. `Question as researched`: the primary question plus the sub-questions, in two to four lines
+2. Two-sentence plain-language summary
+3. Verification status and confidence, on one line
 
 ### Deep dive
 
 1. Reasoning bullets. One finding per bullet. End each bullet with its footnote number.
 2. One bullet per sub-question, with its finding.
-3. Assumptions made, or "none"
-4. Conflicting evidence found, or "none"
+3. `Assumptions:` followed by the assumptions made, or "none"
+4. `Conflicting evidence:` followed by the conflicts found, or "none"
 5. What would change this answer
-6. Any query added during research, under `Added queries`, or "none"
+6. `Added queries:` followed by any query added during research, or "none"
 7. Sources, as numbered footnotes at the end
 
 ### Concision rules
@@ -148,6 +147,28 @@ Keep this block on one screen.
 - State a fact once. Reference a fact from `Quick answer` in `Deep dive`. Never restate it.
 - Compress by cutting connective prose. Never cut a fact, a number, a date, a unit, a conflict, or a source.
 - Print every number found in research once in the deliverable.
+
+## Step 7. Validate
+
+1. Pick a scratch dir `DRA`. Chat uses `~/dra/`. Claude Code uses the session scratchpad.
+2. Put `validate_answer.py` in `DRA`.
+   - Chat: fetch it with the skills MCP `skill_file` tool. Skill `deep-research-answer`, path `scripts/validate_answer.py`.
+   - Claude Code: copy it from this skill's `scripts/` folder.
+3. Write the draft answer to `DRA/answer.md`.
+4. Run from `DRA`:
+   ```
+   python3 validate_answer.py --answer answer.md
+   ```
+5. FAIL → fix the gap in the answer and run again. Max 3 rounds. Still failing → deliver, and add a `Validation gaps:` line at the end of `Deep dive` that lists each open failure.
+6. Show no script output to the user unless a failure stays open.
+
+The script checks the list below. No shell, or the script is unavailable → check the draft against the list by hand, and say so in one line.
+
+- [ ] The ANSWER line is the first line.
+- [ ] The `Quick answer` and `Deep dive` labels are present, in that order.
+- [ ] `Question as researched` has text.
+- [ ] 5 or more numbered sources, and 1 or more `Type: primary`.
+- [ ] `Assumptions:`, `Conflicting evidence:`, `Added queries:` are each filled or "none".
 
 ## Source footnote format
 

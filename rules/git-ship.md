@@ -29,3 +29,5 @@
 - Run git as `/usr/bin/git -C <worktree> ...`. A bare `git` is rewritten and the guard refuses it.
 - Rename a `worktree-*` branch with no upstream to the repo's branch convention before its first push or `/ship-pr`.
 - Derive the repo name from `/usr/bin/git -C <worktree> rev-parse --path-format=absolute --git-common-dir` or the remote URL. Never from the worktree folder name.
+- Set up a fresh worktree before its first gate, commit or dev server.
+- Copy each `.env*` from the main checkout with `cp`, never reading it. Then install the project's dependencies.

@@ -6,6 +6,7 @@
 - Without an explicit chat instruction, never run `glab mr close`, `mr delete`, `mr merge`, `issue close`, `issue delete`, `repo delete` or `release delete`.
 - Stop and state what and why to get that instruction. Never assume it.
 - Default to read-only `glab`: `mr view`, `mr list`, `mr diff`, `ci view`, `issue view`. These need no approval.
+- Include every file the user names for a PR. Think one should stay out → ask first. Never drop it silently.
 
 ## Messages
 
@@ -26,5 +27,5 @@
 ## Worktrees (`.claude/worktrees/*`)
 
 - Run git as `/usr/bin/git -C <worktree> ...`. A bare `git` is rewritten and the guard refuses it.
-- Run one git command per Bash call. The guard refuses `&&` or `;`.
 - Rename a `worktree-*` branch with no upstream to the repo's branch convention before its first push or `/ship-pr`.
+- Derive the repo name from `/usr/bin/git -C <worktree> rev-parse --path-format=absolute --git-common-dir` or the remote URL. Never from the worktree folder name.

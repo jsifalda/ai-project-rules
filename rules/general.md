@@ -27,6 +27,7 @@ Read the matching file before you start that kind of work. Do not load them othe
   speculative abstraction, config, or indirection for an unstated need.
 - Fix the root cause, never the symptom.
 - Touch only what is necessary. No side effects, no new bugs.
+- Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.
 - Fulfill the request in full, with the follow-ups it directly implies.
 - Never take a significant action beyond the request without confirmation. Asked how → explain,
   do not do it.
@@ -60,6 +61,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Write detailed specs upfront.
 - Study prior art before designing. Start from how established products solve it. Name the
   reference in the plan, then challenge it from first principles and say why you deviate.
+- Never close an open design question by calling it out of scope, in a plan or a grill. Ask the user.
 
 # RESTRICTIONS
 
@@ -76,14 +78,12 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # SECRETS & ENV FILES
 
-- Never open, read, `cat`, `grep`, `source` or edit a global env, shell-config, or credential
-  file: `~/.zshenv`, `~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, `~/.profile`, `~/.netrc`,
-  `~/.npmrc`, `~/.aws/credentials`, `~/.ssh/*`, `~/.config/**/credentials*`, any `.env*`.
-  Listing names with `ls` is fine. This overrides `# READING FILES`.
+- Never open, read, `cat`, `grep`, `source` or edit a global env or credential file: `~/.zshenv`, `~/.netrc`, `~/.npmrc`, `~/.aws/credentials`, `~/.ssh/*`, `~/.config/**/credentials*`, any `.env*`. Listing names with `ls` is fine. This overrides `# READING FILES`.
+- A shell config or home dotfile must change (`~/.zshrc`, `~/.bashrc`, `~/.bash_profile`, `~/.profile`, `~/.gitconfig`, `~/CLAUDE.md`) → edit it directly. Locate lines with `grep -n pattern file | cut -d: -f1`. Skip every line that `grep -nE '(KEY|TOKEN|SECRET|PASSWORD|AUTH)[A-Z_]*=' file | cut -d: -f1` lists. Report the file and the change.
 - Never print a secret value to the transcript, from any source. No masked or partial values,
   not even a prefix.
 - Presence-check, never value-check: `[ -n "$FOO" ] && echo set`. Names only: `env | cut -d= -f1`.
-- A global env file must change → stop and hand over the exact line to add.
+- A file in the first rule of this section must change → stop and hand over the exact line to add, with a placeholder for any secret value.
 
 # READING FILES
 
@@ -94,6 +94,7 @@ Read the matching file before you start that kind of work. Do not load them othe
   signature or behavior.
 - Never re-read a file range already in the conversation and unchanged.
 - One Bash call, one purpose. Never chain several file reads with `&&`.
+- Run one git command per Bash call. Never chain git with `&&` or `;`. A command a repo's instructions spell out overrides this.
 - Broad exploration across many files → an `Explore` subagent.
 - Long Bash output → pipe through `grep`, `head` or `tail`. Test, lint and build failures keep
   their full output.
@@ -184,6 +185,7 @@ tests. Lint present → run it, fix errors and warnings.
 
 **Phase 3 — Code review.** Run a `code-review` subagent on this session's changes.
 
+- Skip this phase for a mechanical git task (pull, conflict resolution, push, rebase) unless asked. A repo's own verification protocol still applies.
 - Triage every finding first. Relevance decides the fix. Severity sets the order.
 - Fix every relevant finding at any severity. Reject the rest with a stated reason: wrong about
   the code, out of scope, contradicts a convention, or taste with no defect. Never queue a

@@ -77,7 +77,7 @@ second copy drifts.
 ## Restrictions
 
 - Never push to remote git unless user explicitly says to.
-- Never install anything, anywhere — no global, `--user`, venv, or one-off installs, for any purpose. Ask first. Full policy + ask-first protocol: RESTRICTIONS in `rules/general.md`.
+- Never install outside a project — no global, `--user`, or one-off installs. A project's declared dependencies are always allowed. Full policy + ask-first protocol: RESTRICTIONS in `rules/general.md`.
 
 ## Universality requirement
 

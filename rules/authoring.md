@@ -14,6 +14,7 @@
 - Use the same word for the same thing. No synonyms.
 - Never restate a rule stated elsewhere. Point to it. The always-loaded summary of this file is the one exception.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
+- Never hardcode a repo name, repo list, project slug or person in a skill, a shared `AGENTS.md` or a template. Discover it at runtime.
 
 ## Move
 

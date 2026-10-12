@@ -16,7 +16,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 | trigger | file |
 |---|---|
 | Writing, changing or running tests | `rules/testing.md` |
-| Committing, pushing, opening a PR or MR, or any `glab` write | `rules/git-ship.md` |
+| Committing, pushing, opening a PR or MR, any `glab` write, or working in a git worktree | `rules/git-ship.md` |
 | Writing a doc, an ADR, a README, or a diagram | `rules/docs-diagrams.md` |
 | Writing or editing an instruction file, a rule, or a `SKILL.md` | `rules/authoring.md` |
 | Starting a new app, or choosing a stack or tooling | `rules/builder.md` |
@@ -67,10 +67,11 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 - Never push to a remote without an explicit user instruction.
 - Destructive git and `glab` operations, and commit or MR format → `rules/git-ship.md`.
-- Never install anything, anywhere, for any purpose. Package, library, tool, or binary.
-  Global, `--user`, venv, or one-off. A single throwaway task is not an exception.
-- Every installer is covered, package managers and `curl … | sh` bootstraps alike, plus direct
+- Never install anything outside a project, for any purpose. Package, library, tool, or binary.
+  Global, `--user`, system, or one-off. A single throwaway task is not an exception.
+- The ban covers every installer, package managers and `curl … | sh` bootstraps alike, plus direct
   downloads into `/usr/local/bin` or `~/.local/bin`.
+- Install a project's declared dependencies freely, with its own package manager, into that project only.
 - Check for a no-install path first. Native `Read` reads PDFs. Built-in CLIs, `git`, and the
   `node` or `python` standard library cover most one-off needs.
 - Genuinely needed and absent → stop and ask in chat: what, why, and the suggested command.
@@ -168,8 +169,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Latest blocked → install the newest that works and report package, version used, latest not
   usable, and reason. Never downgrade in silence.
 - Never upgrade an existing dependency unless asked. One far behind or unmaintained → say so.
-- A new package still goes through the ask-first rule in `# RESTRICTIONS`. Propose, do not
-  install.
+- Adding a new package goes through the ask-first protocol in `# RESTRICTIONS`. Propose, do not install.
 
 # IMPLEMENTATION VERIFICATION PROTOCOL
 

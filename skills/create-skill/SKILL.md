@@ -3,7 +3,7 @@ name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Create Skill
@@ -280,7 +280,7 @@ Skip this step only if the skill being developed already exists, and iteration o
 
 When creating a new skill from scratch, always run the `init_skill.py` script. The script conveniently generates a new template skill directory that automatically includes everything a skill requires, making the skill creation process much more efficient and reliable.
 
-Usage:
+Usage (script paths in Steps 3 and 5 are relative to this skill's directory):
 
 ```bash
 scripts/init_skill.py <skill-name> --path <output-directory>
@@ -299,9 +299,11 @@ After initialization, customize or remove the generated SKILL.md and example fil
 
 When editing the (newly-generated or existing) skill, remember that the skill is being created for another instance of Claude to use. Include information that would be beneficial and non-obvious to Claude. Consider what procedural knowledge, domain-specific details, or reusable assets would help another Claude instance execute these tasks more effectively.
 
-#### Universality Pre-flight (MANDATORY for this repo)
+#### Universality Pre-flight (MANDATORY)
 
-If you are authoring this skill inside the `~/instructions` repo (or any public/shared instruction repo), the skill MUST be **universal** — usable by any reader on any machine, with zero personal data, secrets, employer-specific names, internal URLs, or hardcoded identities. Read the full policy in the [`## Universality requirement`](../../CLAUDE.md#universality-requirement) section of `CLAUDE.md` before writing any content.
+Every skill, public or private, must not hardcode a repo name, repo list, project slug or person. Discover them at runtime. Repo-specific values belong in that repo's own config.
+
+If you are authoring this skill inside a public or shared instruction repo, the skill MUST be **universal** — usable by any reader on any machine, with zero personal data, secrets, employer-specific names, internal URLs, or hardcoded identities. Read that repo's root `CLAUDE.md` (its `## Universality requirement` section, where one exists) before writing any content.
 
 Common pitfalls to avoid while drafting:
 
@@ -310,8 +312,9 @@ Common pitfalls to avoid while drafting:
 - Employer / team / internal-project names — parametrise or drop entirely.
 - Internal hostnames (`*.internal`, `*.corp`) and internal Confluence/Linear/Jira IDs — keep them out; reference env vars or ask the user at runtime.
 - Hardcoded secrets, even fake-looking ones — always `$ENV_VAR`, never literals.
+- Repo names, repo lists, project slugs. In a repo with the universality scanner, add your own repo names to its `scripts/universality-denylist.txt` so the scanner catches them.
 
-Before you finish Step 4, run the scanner:
+In a repo that ships `scripts/check-universality.sh`, run the scanner before you finish Step 4:
 
 ```bash
 bash scripts/check-universality.sh skills/<your-skill>/

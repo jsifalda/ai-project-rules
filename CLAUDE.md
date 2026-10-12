@@ -8,7 +8,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 ## Repository Layout
 
-- `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session and opens with a trigger table routing to every other rule file. On demand only: `authoring.md` (how to write an instruction, plus the counts ban), `testing.md`, `git-ship.md`, `docs-diagrams.md`, and `builder.md` (task-first stack guidance, and when to load the `frontend-design` and `hallmark` skills together). `tailwind.md` has no trigger of its own — `builder.md` names it under `## Related rules`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
+- `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session and opens with a trigger table routing to the other rule files. On demand only: `authoring.md` (how to write an instruction, plus the counts ban), `testing.md`, `git-ship.md`, `docs-diagrams.md`, `review-tiers.md` (loaded from the Verification Protocol's `When it fires` section), and `builder.md` (task-first stack guidance, and when to load the `frontend-design` and `hallmark` skills together). `tailwind.md` has no trigger of its own — `builder.md` names it under `## Related rules`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
@@ -136,6 +136,7 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 
 - Every substantive change, before the task is reported done.
 - Skips only: a changelog-only entry, a single typo, pure reformatting.
+- Classify the review tier first, per `rules/review-tiers.md`. The tier sets which Step 2 and Step 5 reviews run, and whether runtime verification runs. Every other step still runs.
 - **Integration-only exemption — Step 2 lenses only.** When the session's only change is integrating
   already-reviewed work — a merge, rebase, cherry-pick, or revert — and it authored no new lines
   beyond selecting among existing sides, skip Step 2 entirely (every lens). Everything else still

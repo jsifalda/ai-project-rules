@@ -1,6 +1,6 @@
 # Remote MCP API Plan Template
 
-**Use this template only after the user confirms the candidate-tool table in [tool selection](tool-selection.md) and answers the nginx-phase question. Use [protocol and authorization](protocol-and-auth.md) and [failure prevention](traps.md) for selected facts. Use [nginx VPS deployment](nginx-vps.md) only when that path is selected.**
+**Use this template only after the user confirms the candidate-tool table in [tool selection](tool-selection.md) and answers the nginx-phase question. Use [protocol and authorization](protocol-and-auth.md), [failure prevention](traps.md), and [directory readiness](directory-readiness.md) for selected facts. Use [nginx VPS deployment](nginx-vps.md) only when that path is selected.**
 
 **Copy only the content below the horizontal rule into the plan. Do not copy this title or this note.**
 
@@ -17,6 +17,7 @@
 - Selected transport: `<transport and protocol evidence>`
 - Selected authorization design: `<existing provider, existing library, in-app server, or public access>`
 - Selected deployment path: `<existing platform or nginx VPS>`
+- Directory submission: `<included, or skipped because the user states the connector stays private>`
 - Primary evidence: `<current URLs and access date>`
 - Repository evidence: `<paths and symbols>`
 - Assumptions and uncertainties: `<blocking status and owner>`
@@ -76,13 +77,15 @@ Plan the following work:
 - Add the stable MCP endpoint on the canonical origin.
 - Apply token validation, scope checks, entitlement checks, identity-based limits, and audit events inside every tool path.
 - Build an application rate limiter keyed by the authenticated subject when the inventory finds none. Name the storage for that limiter.
-- Set accurate tool titles and behavior annotations.
+- Set each tool title and every hint per [directory readiness](directory-readiness.md#tool-annotations).
+- Write descriptions, error messages, and result payloads per the matching sections of [directory readiness](directory-readiness.md).
+- Add the registry guard test from [directory readiness](directory-readiness.md#verification).
 - Return structured expected errors without protected data.
 - Return a protocol-layer authorization failure as an HTTP status code with the challenge header. Return 401 for an absent or invalid token. Return 403 with an `insufficient_scope` challenge for a scope failure. Return 400 for a malformed authorization request. Carry only business failures in the structured tool errors.
 - Configure streaming, request handling, and timeout budgets from measured tool behavior and client limits.
 - Preserve required protocol headers through the selected application and deployment layers.
 
-Negative-path checks: malformed protocol request, missing or invalid token, token audience mismatch, missing or wrong `resource` parameter, valid token with wrong scope, valid token with no entitlement, forged user or tenant input, limit exceeded, slow operation, downstream error, and unsupported client behavior.
+Negative-path checks: malformed protocol request, missing or invalid token, token audience mismatch, missing or wrong `resource` parameter, valid token with wrong scope, valid token with no entitlement, forged user or tenant input, limit exceeded, slow operation, downstream error, unmapped domain error, error that names an absent action or tool, oversized third-party text field, and unsupported client behavior.
 
 ## Phase 4. Deploy on the selected path
 
@@ -123,7 +126,7 @@ Run these rungs in order. Record the command class, result, and evidence locatio
 12. Restart the application process or its equivalent deployment unit and confirm recovery.
 13. Connect each target client and complete an authenticated call for each confirmed tool.
 
-Include a local verification path when hosted authorization blocks an inspection client. Test discovery, authorization, and tools independently before target-client connection testing.
+Include a local verification path, per [directory readiness](directory-readiness.md#verification), when hosted authorization blocks an inspection client. Test discovery, authorization, and tools independently before target-client connection testing.
 
 ## Phase 5. Document operation and support
 
@@ -141,10 +144,31 @@ Plan operator documentation for:
 
 Do not place secret values, token values, authorization codes, or customer data in examples.
 
-## Phase 6. Publish the tool page last
+## Phase 6. Prepare the directory submission
+
+Goal: Make the verified connector ready for Claude directory review.
+
+Include this phase by default. Mark it skipped only when the user states that the connector stays private.
+
+Plan the following work from [directory readiness](directory-readiness.md):
+
+- Build the listing assets: the privacy policy, the support page, and the icon set.
+- Draft the public docs page at its final URL.
+- Review the privacy policy against the data that each confirmed tool reads and writes.
+- Write the reviewer seed and the reviewer setup steps.
+- Write the submission-kit doc.
+- Run every tool through the MCP Inspector and a custom connector in Claude.
+- Submit through the directory portal.
+- Pause each seeded active entity after the review ends.
+
+Negative-path checks: tool flagged in the portal, listing field over its limit, privacy policy without a required topic, second seed run, reviewer access after a trial end, and seeded entity still active after review.
+
+## Phase 7. Publish the tool page last
 
 Goal: Describe only the deployed and verified connection.
 
 Schedule this phase after the Connection verification ladder passes and target clients complete authenticated tool calls. Plan public content that names only supported tools, scopes, user outcomes, limitations, supported clients, and the verified connection process.
+
+When Phase 6 applies, publish its docs page before the directory listing publish date.
 
 Do not publish claims before the deployed tool registry and documented connection flow prove them.

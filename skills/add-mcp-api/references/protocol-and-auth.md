@@ -1,6 +1,6 @@
 # Protocol and authorization
 
-> Fact status: reviewed 2026-09-20. Recheck every `[PRIMARY]` claim against the linked primary sources before a plan becomes binding. The active protocol and connector behavior can change.
+> Fact status: reviewed 2026-09-20. Claude client facts reviewed 2026-10-11. Recheck every `[PRIMARY]` claim against the linked primary sources before a plan becomes binding. The active protocol and connector behavior can change.
 
 ## Contents
 
@@ -61,6 +61,20 @@ Confirm the active connector requirements for:
 - callback and host restrictions; and
 - the connector request timeout.
 
+### Claude client
+
+- Register the callback `https://claude.ai/api/mcp/auth_callback` for claude.ai, Claude Desktop, mobile, and Cowork. `[PRIMARY]`
+- Accept a loopback redirect on any port for Claude Code, at `http://localhost/callback` and `http://127.0.0.1/callback`. `[PRIMARY]`
+- Advertise `"client_id_metadata_document_supported": true` and list `"none"` in `token_endpoint_auth_methods_supported`, and accept public clients at the token endpoint. Claude selects client ID metadata documents only when both are present. Otherwise Claude falls back to Dynamic Client Registration. `[PRIMARY]`
+- Put the intended authorization server first in `authorization_servers`. Claude uses only the first entry. `[PRIMARY]`
+- Set the protected-resource `resource` value to the exact MCP URL, path included. `[PRIMARY]`
+- Advertise `code_challenge_methods_supported: ["S256"]`. `[PRIMARY]`
+- List `offline_access` in `scopes_supported` for a refresh token. Claude requests it only when listed. `[PRIMARY]`
+- Answer discovery, registration, and token requests within 10 seconds, and refresh requests within 30 seconds. `[PRIMARY]`
+- Return `invalid_grant` for a dead refresh token. `[PRIMARY]`
+- Send `WWW-Authenticate` on a 401 response. Claude ignores the header on a 200 response. `[PRIMARY]`
+- Apply the payload and timeout limits in [directory readiness](directory-readiness.md#payload-and-timeouts).
+
 ## Tokens and scopes
 
 - Store access and refresh tokens so a database leak does not expose reusable token values. Prefer opaque tokens and store only a secure hash. `[PRIMARY]`
@@ -109,7 +123,7 @@ Before planning implementation:
 
 ## Primary sources
 
-The dated deep links below point at revision `2026-07-28`, which is a snapshot. The unversioned specification index resolves to the current revision, so use it as the always-current entry point. Some clients still implement the 2025 revisions, so a server may need to answer more than one revision era.
+The dated deep links below point at revision `2026-07-28`, which is a snapshot. The unversioned specification index resolves to the current revision, so use it as the always-current entry point. Some clients still implement the 2025 revisions, so a server may need to answer more than one revision era. Claude follows the 2025-03-26, 2025-06-18, and 2025-11-25 authorization specifications.
 
 - [MCP specification](https://modelcontextprotocol.io/specification) `[PRIMARY]`
 - [MCP transport specification](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports) `[PRIMARY]`
@@ -121,4 +135,5 @@ The dated deep links below point at revision `2026-07-28`, which is a snapshot. 
 - [RFC 7591 dynamic client registration](https://www.rfc-editor.org/rfc/rfc7591) `[PRIMARY]`. This document settles the legacy dynamic registration request and response.
 - [RFC 8707 resource indicators](https://www.rfc-editor.org/rfc/rfc8707) `[PRIMARY]`. This document settles the `resource` parameter and the audience restriction of an access token.
 - [RFC 9207 issuer identification](https://www.rfc-editor.org/rfc/rfc9207) `[PRIMARY]`. This document settles the `iss` parameter and the metadata flag that advertises it.
-- [Claude custom integration guidance](https://support.claude.com/en/articles/11175166-about-custom-integrations-using-remote-mcp) `[PRIMARY]`
+- [Claude custom integration guidance](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp) `[PRIMARY]`
+- [Claude connector authentication](https://claude.com/docs/connectors/building/authentication) `[PRIMARY]`. This document settles the Claude client facts above.

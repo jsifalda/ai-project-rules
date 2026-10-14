@@ -4,7 +4,7 @@ The canonical list of AI-engineering baseline concerns this skill installs. It i
 Step 8b coverage self-audit, and it defines what each skill version contains, so re-run upgrade mode
 (Step 1) can tell an older setup what it is missing.
 
-**Skill version: v19**
+**Skill version: v20**
 
 Bump this number whenever a concern is added below (see the maintainer loop at the bottom). The
 version stamped into a repo's provenance note is compared against this number on every re-run.
@@ -55,6 +55,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 | CodeRabbit CLI lens reviews untracked files and checks `reviewedFiles` coverage against shipped files, plus a re-review of files changed after the lenses ran | inject | 5 | v17 |
 | Docs gate method — grep docs for removed or renamed names, re-check every edited paragraph, current-state-only docs | inject | 5 | v18 |
 | Scoped checks while iterating, every gate once in full before presenting, lint, typecheck and tests last, after review fixes | inject | 5 | v19 |
+| Worktree Gate — every plan checks for a Claude Code worktree in a git repo, else its first step switches into a new one and runs the bootstrap | inject | 7c | v20 |
 
 ## How the self-audit uses this (Step 8b)
 
@@ -81,7 +82,7 @@ When a new baseline gap is found, do not patch it as a one-off in a target repo.
 
 1. Add the concern as a row here with `Since: v<next>`.
 2. Bump **Skill version** above.
-3. Wire it into the matching step (inject → Step 5, delegate → Step 6, scaffold → Step 7).
+3. Wire it into the step its `Step` column names.
 4. Re-running the skill on any older repo now detects the version gap and offers the new concern.
 
 That is the loop this checklist exists to close: gaps propagate through re-runs, not through a PR

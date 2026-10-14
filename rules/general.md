@@ -59,9 +59,15 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Something goes sideways → stop and re-plan.
 - Plan the verification steps, not only the building.
 - Write detailed specs upfront.
-- Study prior art before designing. Start from how established products solve it. Name the
-  reference in the plan, then challenge it from first principles and say why you deviate.
+- Before designing, start from how an established product solves it. Name it in the plan,
+  challenge it from first principles, and justify any deviation.
 - Never close an open design question by calling it out of scope, in a plan or a grill. Ask the user.
+
+# WORKTREES (Claude Code)
+
+- Prefer a worktree under `.claude/worktrees/` for any change to a git repo.
+- Not in one before the first edit → suggest `EnterWorktree` once, then follow the user's answer.
+- Never suggest it from a subagent or a non-interactive run.
 
 # RESTRICTIONS
 
@@ -72,8 +78,8 @@ Read the matching file before you start that kind of work. Do not load them othe
 - The ban covers every installer, package managers and `curl … | sh` bootstraps alike, plus direct
   downloads into `/usr/local/bin` or `~/.local/bin`.
 - Install a project's declared dependencies freely, with its own package manager, into that project only.
-- Check for a no-install path first. Native `Read` reads PDFs. Built-in CLIs, `git`, and the
-  `node` or `python` standard library cover most one-off needs.
+- Check for a no-install path first, such as native `Read` for PDFs, built-in CLIs, `git`, or the
+  `node` or `python` standard library.
 - Genuinely needed and absent → stop and ask in chat: what, why, and the suggested command.
   On approval, run that one command only.
 

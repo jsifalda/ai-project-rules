@@ -4,4 +4,6 @@
 - Shortened the prior-art and no-install-path rules to partly offset the new always-loaded lines.
 - `setup-aiengineering` injects a Worktree Gate (Step 7c, baseline v20, skill 1.3): in a git repo, every plan checks for a Claude Code worktree, else its first step switches into a new one and runs the bootstrap script.
 - Fixed the baseline checklist's maintainer loop, which named the wrong step for some delivery types.
+- `setup-aiengineering` Step 7 probes the main checkout for gitignored config, so a run inside a worktree still finds `.env` and `.mcp.json`. Its Rules line now matches the step's ask-even-when-empty flow.
+- Dropped a retention reminder from the writing-style rule in `rules/general.md`.
 - Why: a worktree isolates each change, so parallel sessions do not collide in one checkout.

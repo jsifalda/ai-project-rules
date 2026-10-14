@@ -112,8 +112,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # WRITING STYLE
 
-- All prose in ASD-STE100 Simplified Technical English. It does not expire during a long task.
-  Project rules and skills can override it.
+- All prose in ASD-STE100 Simplified Technical English. Project rules and skills can override it.
 - Exempt: code, structured config, and terse CLI output. Commit subjects and PR titles have
   their own format, in `rules/git-ship.md`.
 - Answer first. Headings, bullets, tables.

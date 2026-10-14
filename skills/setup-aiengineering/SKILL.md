@@ -433,7 +433,9 @@ If chosen (and host gate passed):
    - **WorktreeCreate guard (first):** if the target `.claude/settings.json` already has a
      `hooks.WorktreeCreate` entry, Claude ignores `.worktreeinclude` — warn the user to copy local
      config inside that hook instead, and skip the rest of this substep.
-   - **Probe** the repo root for gitignored config: `.env`, `.env.local`, `.env.*` (excluding
+   - **Probe** the main checkout root for gitignored config, also when the skill runs in a
+     worktree. Find it as the parent of `git rev-parse --path-format=absolute --git-common-dir`, and
+     run each `git check-ignore` there. Probe for: `.env`, `.env.local`, `.env.*` (excluding
      `*.example` / `*.sample`), `config/secrets*`, `*.local`, and `.mcp.json`. Run
      `git check-ignore <path>` on each match — Claude copies a file only when it is gitignored *and*
      matched. `.mcp.json` (local MCP servers, e.g. Playwright MCP) is host-local and usually
@@ -509,7 +511,7 @@ Confirm in one short message:
 - Worktree Gate injected, or `N/A (not a git repo)`, or skipped with the worktree module.
 - `.worktreeinclude` created/updated (with which files, noting whether a gitignored `.mcp.json` was
   carried over — or, if absent, that the MCP-config reminder was added to the agent instructions),
-  skipped (no gitignored config or user declined), or N/A (a `WorktreeCreate` hook is present).
+  skipped (the probe and the ask added nothing, or user declined), or N/A (a `WorktreeCreate` hook is present).
 - Whether `README.md` / `ARCHITECTURE.md` were backfilled from the implementation or left as
   templates — naming which file each drafted section landed in, and which pointers the agent file
   received.
@@ -634,7 +636,7 @@ only; the user runs it.
   separate opt-out, is injected verbatim with no `{{...}}` placeholders, and is skipped outside a
   git repo.
 - `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
-  `WorktreeCreate` hook is present or no gitignored config is found.
+  `WorktreeCreate` hook is present, or when the probe and the ask add nothing.
 - Always carry a gitignored `.mcp.json` into `.worktreeinclude` when present (local MCP servers are
   otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
   instructions instead (Step 7b).

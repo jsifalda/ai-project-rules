@@ -133,6 +133,14 @@ says otherwise.
 > **Exemption:** when changes are **solely** to markdown/docs (`*.md`), skip this protocol — no
 > impact on builds, types, or tests.
 
+**While iterating**, run only the checks scoped to the changed packages, their dependents, and the
+screens the change touches.
+
+**Before presenting**, run every gate below once in full. Run the lint, typecheck, and test gates
+that this block lists last, after the last code edit, including review fixes and edits a later gate
+makes. A full run of them before that edit is an iteration check only. The task is not complete
+until every gate passes.
+
 - **Lint** — `{{LINT_CMD}}` must pass with zero warnings and zero errors.
 - **Typecheck** — `{{TYPECHECK_CMD}}` must exit with **zero errors total**. "Pre-existing" errors
   do not get a pass: if the typechecker reports errors — even in files you did not touch — fix them
@@ -253,15 +261,16 @@ says otherwise.
       public interface without approval.
     - **Ambiguous** → ask. A rejection needs a reason you can state. With no reason either way, the
       finding is not rejected.
-    - Fix in severity order, highest first. Then re-run the gates this fix could break.
+    - Fix in severity order, highest first. Then run the lint, typecheck, and test gates in full,
+      per the **Before presenting** rule.
     - Report every finding with its verdict — `fixed`, `rejected (reason)`, or `waiting on you`.
       State a rejected or deferred finding as a plain finding in the report. Never collect one into a
       queue, and never offer to file it as a tracked entry.
   - **The review runs once per task.** Every lens runs one time, on one tree. After the fixes
-    land, re-run only the deterministic gates the fix could break — never a lens outside the
-    exception below, and never this gate. A finding that would need a review of the fix to
-    surface is reported to the user, not chased with another pass. A fix you are not confident
-    in is reported instead of applied.
+    land, run the lint, typecheck, and test gates in full, per the **Before presenting** rule —
+    never a lens outside the exception below, and never this gate. A finding that would need a
+    review of the fix to surface is reported to the user, not chased with another pass. A fix you
+    are not confident in is reported instead of applied.
     - **Exception — files no lens saw.** A file added or changed after the lenses ran was never
       reviewed, unless its only post-lens change is a fix of a triaged finding or a later gate
       of this protocol wrote it. Before commit, run the CodeRabbit CLI lens, with its coverage

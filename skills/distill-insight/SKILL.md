@@ -47,25 +47,6 @@ metadata:
 - Put Z where the host memory format allows when you save to memory.
 - Place the rule in the section of the target file that matches its topic. No section matches: name a new section in the draft.
 
-## Target order`.
-9. Search the loaded instructions and the target file for an existing rule on this case.
-10. Show the existing rule verbatim with a proposed edit when it already covers the case. Do not draft a new rule.
-11. Quote both sides and propose a resolution when the draft contradicts a loaded rule.
-12. Continue with the draft when a contradiction exists. A contradiction does not block it.
-13. Show the exact rule text and the target file path. Do not save yet.
-14. Wait for an explicit yes.
-15. Save only the approved version, then report where you saved it.
-
-## Rule text
-
-- Write the saved rule as one line under 25 words.
-- Use the rule form of the target file. The file has none: use "When X, do Y."
-- Show "because Z" in the draft.
-- Drop "because Z" from a rule saved to an instruction file.
-- Put Z on the memory's Why line when you save to memory, in the host agent's memory format.
-- Match the target file's existing format.
-- Place the rule in the section of the target file that matches its topic.
-
 ## Target order
 
 - Take the first target below that exists. A target is missing: move to the next.

@@ -1,0 +1,21 @@
+name: OAuth token check
+
+on:
+  push:
+    branches: [ci/oauth-token-check]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Claude with the subscription token
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          npm install -g @anthropic-ai/claude-code@2.1.301 >/dev/null 2>&1
+          claude -p "Reply with the single word OK." --output-format json > out.json
+          jq '{subtype, is_error, duration_ms, total_cost_usd, result, models: (.modelUsage | keys)}' out.json
+          jq -e '.is_error == false' out.json

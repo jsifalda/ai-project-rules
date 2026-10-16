@@ -1,6 +1,6 @@
 # Claude directory readiness
 
-> Fact status: reviewed 2026-10-11. Recheck each rule against the [sources](#sources) before a plan becomes binding.
+> Fact status: reviewed 2026-10-11. Connector identity facts reviewed 2026-10-15. Recheck each rule against the [sources](#sources) before a plan becomes binding.
 
 ## Contents
 
@@ -11,6 +11,7 @@
 - [Errors](#errors)
 - [Payload and timeouts](#payload-and-timeouts)
 - [Conversation data and service scope](#conversation-data-and-service-scope)
+- [Connector identity](#connector-identity)
 - [Listing assets](#listing-assets)
 - [Reviewer account and seed](#reviewer-account-and-seed)
 - [Verification](#verification)
@@ -89,11 +90,28 @@
 - Return no ads, sponsored content, or paid placement.
 - Use Streamable HTTP. Use no SSE transport, resource subscriptions, sampling, or draft capabilities.
 
+## Connector identity
+
+- Make every icon from the application's existing brand mark. Never redraw it. Only scale, pad, or add a background.
+- Keep one source file for the brand mark and one committed command that regenerates the whole icon set.
+- Define the icon set in one manifest: file, format, pixel size, and theme. Generate the files and the advertised `icons` from it.
+- Default the icon set to square PNGs at 48, 128, 512, and 1024 pixels, an `any`-size SVG, a favicon, and an apple-touch icon.
+- Add each size that a target client or the directory portal names.
+- Advertise a PNG at every size. Never make the SVG the only entry.
+- Make the icon set read on light and dark backgrounds. Use an opaque tile, or one variant per background with `theme` set to it.
+- Preview each icon on every background it targets before you ship it.
+- Record a missing vector source as a non-blocking open question. Ship the PNG files, and never trace the brand mark.
+- Copy each published listing icon into the set unchanged, and pin it with a content-hash test. Change it only on an explicit user decision.
+- Add `title`, `websiteUrl`, and `icons` to the server info. Change no existing server info value.
+- Build `websiteUrl` and each icon `src` as absolute HTTPS URLs on the canonical public origin, per [failure prevention](traps.md).
+- Serve every advertised icon with no authentication, no redirect, and a content type that matches its bytes.
+
 ## Listing assets
 
 - Publish a privacy policy that covers data collection, use and storage, third-party sharing, retention, and contact information.
 - Publish a support page with a contact channel, not only a mailto link.
-- Make a square PNG icon at 512 and 1024 pixels, plus a favicon and an apple-touch icon.
+- Take the listing icon from the icon set in [Connector identity](#connector-identity).
+- State in the plan that the Claude docs give no icon spec, and that the directory portal holds the exact upload rules.
 - Publish a public docs page before the listing publish date.
 - Show the exact MCP URL with a copy button on the docs page.
 - State on the docs page that the user pastes the MCP path, not the docs path.
@@ -124,6 +142,8 @@
 - Run every verification in a separate worktree with its own database and queue prefix when the production checkout holds the live database.
 - Add a guard test that reads the real `tools/list` and `initialize` wire JSON.
 - Fail the guard test on a missing title, a missing explicit hint, a name over 64 characters, or a directive phrase.
+- Connect a real MCP client per supported protocol revision. Fail the guard test when any received server info lacks `title`, `websiteUrl`, or `icons`.
+- Add an icon test that matches each advertised icon to its manifest entry, `theme` included, and checks the file's bytes against `mimeType` and `sizes`.
 
 ## Portal steps and limits
 
@@ -169,3 +189,4 @@
 - [Test your connector](https://claude.com/docs/connectors/building/testing)
 - [Anthropic Software Directory Policy](https://support.claude.com/en/articles/13145358-anthropic-software-directory-policy)
 - [Get started with custom connectors using remote MCP](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
+- [MCP icons](https://modelcontextprotocol.io/specification/2026-07-28/basic#icons)

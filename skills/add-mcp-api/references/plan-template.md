@@ -13,6 +13,7 @@
 - Application: `<name and runtime>`
 - Target clients: `<clients and current documentation URLs>`
 - Canonical public origin: `<configuration name, not a secret>`
+- Brand mark source and published listing icon: `<paths, or none>`
 - Confirmed tools: `<tool names, outcomes, scopes, and impact>`
 - Selected transport: `<transport and protocol evidence>`
 - Selected authorization design: `<existing provider, existing library, in-app server, or public access>`
@@ -79,19 +80,20 @@ Plan the following work:
 - Build an application rate limiter keyed by the authenticated subject when the inventory finds none. Name the storage for that limiter.
 - Set each tool title and every hint per [directory readiness](directory-readiness.md#tool-annotations).
 - Write descriptions, error messages, and result payloads per the matching sections of [directory readiness](directory-readiness.md).
-- Add the registry guard test from [directory readiness](directory-readiness.md#verification).
+- Add the registry guard test and the icon test from [directory readiness](directory-readiness.md#verification).
+- Build the icon set and add the server identity per [directory readiness](directory-readiness.md#connector-identity).
 - Return structured expected errors without protected data.
 - Return a protocol-layer authorization failure as an HTTP status code with the challenge header. Return 401 for an absent or invalid token. Return 403 with an `insufficient_scope` challenge for a scope failure. Return 400 for a malformed authorization request. Carry only business failures in the structured tool errors.
 - Configure streaming, request handling, and timeout budgets from measured tool behavior and client limits.
 - Preserve required protocol headers through the selected application and deployment layers.
 
-Negative-path checks: malformed protocol request, missing or invalid token, token audience mismatch, missing or wrong `resource` parameter, valid token with wrong scope, valid token with no entitlement, forged user or tenant input, limit exceeded, slow operation, downstream error, unmapped domain error, error that names an absent action or tool, oversized third-party text field, and unsupported client behavior.
+Negative-path checks: malformed protocol request, missing or invalid token, token audience mismatch, missing or wrong `resource` parameter, valid token with wrong scope, valid token with no entitlement, forged user or tenant input, limit exceeded, slow operation, downstream error, unmapped domain error, error that names an absent action or tool, oversized third-party text field, advertised icon without a file, icon fetch that needs authentication, changed published listing icon, and unsupported client behavior.
 
 ## Phase 4. Deploy on the selected path
 
 Goal: Make the MCP endpoint and discovery documents reachable without changing their security properties.
 
-For every deployment path, plan explicit controls for canonical origin, HTTPS, metadata routes, header preservation, streaming, request limits, timeout budgets, safe access logs, restart behavior, and rollback.
+For every deployment path, plan explicit controls for canonical origin, HTTPS, metadata routes, public icon routes and their cache headers, header preservation, streaming, request limits, timeout budgets, safe access logs, restart behavior, a rebuild after icon changes, and rollback.
 
 ### Nginx VPS deployment phase
 
@@ -116,15 +118,16 @@ Run these rungs in order. Record the command class, result, and evidence locatio
 2. Verify the certificate and every canonical redirect.
 3. Fetch each required discovery document from a public network.
 4. Confirm the MCP endpoint and discovery documents remain on the canonical host.
-5. Send an unauthenticated request and confirm the selected discovery mechanism answers. Confirm a 401 that carries a `WWW-Authenticate` header naming `resource_metadata`, or confirm the well-known protected-resource document serves the same location.
-6. Send a token that lacks a required scope and confirm a 403 response with an `insufficient_scope` challenge.
-7. Send an authenticated request and confirm required authorization and protocol headers reach the application.
-8. Exercise a slow supported operation below each configured timeout.
-9. Confirm streamed output arrives before the response completes when streaming applies.
-10. Confirm access logs exclude authorization codes, tokens, and sensitive request data.
-11. Verify capacity controls protect the service without making source IP a user quota.
-12. Restart the application process or its equivalent deployment unit and confirm recovery.
-13. Connect each target client and complete an authenticated call for each confirmed tool.
+5. Fetch each advertised icon from a public network with no credentials. Confirm the status, content type, pixel size, and cache policy per [failure prevention](traps.md).
+6. Send an unauthenticated request and confirm the selected discovery mechanism answers. Confirm a 401 that carries a `WWW-Authenticate` header naming `resource_metadata`, or confirm the well-known protected-resource document serves the same location.
+7. Send a token that lacks a required scope and confirm a 403 response with an `insufficient_scope` challenge.
+8. Send an authenticated request and confirm required authorization and protocol headers reach the application.
+9. Exercise a slow supported operation below each configured timeout.
+10. Confirm streamed output arrives before the response completes when streaming applies.
+11. Confirm access logs exclude authorization codes, tokens, and sensitive request data.
+12. Verify capacity controls protect the service without making source IP a user quota.
+13. Restart the application process or its equivalent deployment unit and confirm recovery.
+14. Connect each target client, confirm the server title and icon where that client displays them, and complete an authenticated call for each confirmed tool.
 
 Include a local verification path, per [directory readiness](directory-readiness.md#verification), when hosted authorization blocks an inspection client. Test discovery, authorization, and tools independently before target-client connection testing.
 
@@ -152,16 +155,17 @@ Include this phase by default. Mark it skipped only when the user states that th
 
 Plan the following work from [directory readiness](directory-readiness.md):
 
-- Build the listing assets: the privacy policy, the support page, and the icon set.
+- Build the listing assets: the privacy policy and the support page. Take the listing icon from the Phase 3 icon set.
+- State that the Claude docs give no icon spec. Check the listing icon against the upload rules in the portal.
 - Draft the public docs page at its final URL.
 - Review the privacy policy against the data that each confirmed tool reads and writes.
 - Write the reviewer seed and the reviewer setup steps.
 - Write the submission-kit doc.
-- Run every tool through the MCP Inspector and a custom connector in Claude.
+- Run every tool through the MCP Inspector or a custom connector in Claude.
 - Submit through the directory portal.
 - Pause each seeded active entity after the review ends.
 
-Negative-path checks: tool flagged in the portal, listing field over its limit, privacy policy without a required topic, second seed run, reviewer access after a trial end, and seeded entity still active after review.
+Negative-path checks: tool flagged in the portal, listing field over its limit, listing icon that breaks a portal upload rule, privacy policy without a required topic, second seed run, reviewer access after a trial end, and seeded entity still active after review.
 
 ## Phase 7. Publish the tool page last
 

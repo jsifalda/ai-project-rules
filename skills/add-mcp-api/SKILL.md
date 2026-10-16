@@ -2,7 +2,7 @@
 name: add-mcp-api
 description: Create a phased implementation plan for an existing application that needs a remote Model Context Protocol API. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, product code implementation, or general API planning.
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Plan a Remote MCP API
@@ -42,7 +42,7 @@ Keep this stage read-only. Map the existing application before you propose tools
 3. Locate authorization, entitlement, rate-limit, audit, validation, and error conventions.
 4. Map existing service boundaries and their public operations.
 5. Identify data classes, destructive operations, and operations with slow downstream work.
-6. Identify the target MCP clients, public origin, and current deployment limits.
+6. Identify the target MCP clients, public origin, current deployment limits, brand mark source, any published listing icon, and static-file pipeline.
 7. Read the repository's own agent instructions, decision records, architecture notes, and changelog. Record every capability that the project removed, banned, or superseded on purpose.
 8. Record evidence as file paths, symbols, configuration names, and public documentation URLs. Do not copy secrets or private values.
 
@@ -61,6 +61,7 @@ Record the current evidence for:
 - authorization flow, PKCE, metadata, registration, and discovery requirements.
 - token endpoint request format, scope behavior, and connector timeout ceiling.
 - target-client behavior for redirects, streaming, and authorization headers.
+- server info location, identity fields, and icon rules for each supported protocol revision.
 - the Claude directory review criteria and submission steps in [Claude directory readiness](references/directory-readiness.md), unless the user states the connector stays private.
 
 State a dated uncertainty when network access or a source is unavailable. Do not present a cached reference as current protocol authority.

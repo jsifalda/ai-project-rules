@@ -75,7 +75,6 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 
 | Skill | What it does | Depends on | Origin |
 | --- | --- | --- | --- |
-| [`add-mcp-api`](skills/add-mcp-api/SKILL.md) | Plan a remote MCP API for an existing application. | — | — |
 | [`apple-mail-query`](skills/apple-mail-query/SKILL.md) | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). | — | — |
 | [`apple-mail-thread-export`](skills/apple-mail-thread-export/SKILL.md) | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. | — | — |
 | [`audit-instructions`](skills/audit-instructions/SKILL.md) | Audit every instruction loaded in the current session's context and report all contradictions — inventories atomic rules, normalises each to a WHEN/DO/ON/UNLESS form, compares only overlapping triggers, and classifies each clash by type with verbatim evidence, severity, and paste-ready fix wording. Reports only, never rewrites. Slash-only. | — | — |
@@ -113,6 +112,7 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`handoff`](skills/handoff/SKILL.md) | Compact the current conversation into a handoff document for another agent to pick up. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`highlight-key-takeaways`](skills/highlight-key-takeaways/SKILL.md) | Highlight the key takeaways in an Obsidian note with `==highlight==` syntax, in place. | — | — |
 | [`i-have-adhd`](skills/i-have-adhd/SKILL.md) | Reshape every response for an ADHD reader — action first, numbered steps, restated state, concrete time estimates, no preamble or closers. Invoked bare mid-session with work in flight, it opens by catching you up on where the work stands. Manual-invoke only. | — | [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) |
+| [`implement-mcp-api`](skills/implement-mcp-api/SKILL.md) | Plan a remote MCP API for an existing application in plan mode, then implement it after approval. | — | — |
 | [`indie-hacker-wrapup`](skills/indie-hacker-wrapup/SKILL.md) | End-of-session ritual that mines the session across lenses (the product built and the craft behind it), scores angles against a resonance bar, and drafts the strongest build-in-public post (or declines when nothing clears it), tracking past angles to repeat one only on stronger evidence. | `write-like-human` | — |
 | [`json-canvas`](skills/json-canvas/SKILL.md) | Create and edit JSON Canvas (`.canvas`) files — nodes, edges, groups, connections. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) |
 | [`landing-page-copy`](skills/landing-page-copy/SKILL.md) | Write a landing page from a product description, or improve an existing one (paste, file, or URL) — both driven by a scored loop over a conversion blueprint that rewrites what fails and re-scores until it converges. | `create-product-vision`, `defuddle` | — |

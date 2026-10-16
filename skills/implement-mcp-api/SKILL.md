@@ -1,13 +1,15 @@
 ---
-name: add-mcp-api
-description: Create a phased implementation plan for an existing application that needs a remote Model Context Protocol API. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, product code implementation, or general API planning.
+name: implement-mcp-api
+description: Create a phased implementation plan that adds a remote Model Context Protocol API to an existing application. The plan is the input for implementation. Run this skill inside plan mode, for example /plan in Claude Code, and the approved plan executes in the same step. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add or implement an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, or general API planning.
 metadata:
-  version: "1.2"
+  version: "2.0"
 ---
 
-# Plan a Remote MCP API
+# Plan and Implement a Remote MCP API
 
-Produce an evidence-based implementation plan. Do not write product code, change application files, install packages, configure infrastructure, or publish public copy.
+Produce an evidence-based implementation plan. The plan is the input for implementation. Run this skill inside plan mode, for example `/plan` in Claude Code, so that the user approves the plan and it executes in the same step.
+
+Until the user approves the plan in plan mode, do not write product code, change application files, install packages, configure infrastructure, or publish public copy. Outside plan mode, deliver the plan only. Given a plan the user already approved, read the references, then skip to Execute after approval.
 
 ## Read the references
 
@@ -110,4 +112,8 @@ Place public tool-page work last. Do not plan public claims until deployed tools
 
 ## Deliver
 
-Return only the implementation plan and a concise assumptions list. Mark unresolved facts as blocking or non-blocking. Do not add code, configuration, migration, package, or deployment commands outside the plan.
+Before approval, return only the implementation plan and a concise assumptions list. In plan mode, write them into the plan file so that the user can approve and execute the plan. Mark unresolved facts as blocking or non-blocking. Do not add code, configuration, migration, package, or deployment commands outside the plan.
+
+## Execute after approval
+
+After the user approves the plan in plan mode, or given a plan the user already approved, implement the plan phase by phase. Keep applying [Failure prevention](references/traps.md) and the Connection verification ladder. Ask again before the Claude directory submission and before any public copy goes live.

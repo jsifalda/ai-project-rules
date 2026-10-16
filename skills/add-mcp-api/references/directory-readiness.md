@@ -98,10 +98,10 @@
 - Default the icon set to square PNGs at 48, 128, 512, and 1024 pixels, an `any`-size SVG, a favicon, and an apple-touch icon.
 - Add each size that a target client or the directory portal names.
 - Advertise a PNG at every size. Never make the SVG the only entry.
-- Make each icon read on light and dark backgrounds. Use an opaque tile, or one variant per background with `theme` set to that background.
-- Preview each icon on a light and a dark background before you ship it.
+- Make the icon set read on light and dark backgrounds. Use an opaque tile, or one variant per background with `theme` set to it.
+- Preview each icon on every background it targets before you ship it.
 - Record a missing vector source as a non-blocking open question. Ship the PNG files, and never trace the brand mark.
-- Pin each published listing icon with a content-hash test. Change the pin only on an explicit user decision.
+- Copy each published listing icon into the set unchanged, and pin it with a content-hash test. Change it only on an explicit user decision.
 - Add `title`, `websiteUrl`, and `icons` to the server info. Change no existing server info value.
 - Build `websiteUrl` and each icon `src` as absolute HTTPS URLs on the canonical public origin, per [failure prevention](traps.md).
 - Serve every advertised icon with no authentication, no redirect, and a content type that matches its bytes.
@@ -142,7 +142,7 @@
 - Run every verification in a separate worktree with its own database and queue prefix when the production checkout holds the live database.
 - Add a guard test that reads the real `tools/list` and `initialize` wire JSON.
 - Fail the guard test on a missing title, a missing explicit hint, a name over 64 characters, or a directive phrase.
-- Connect a real MCP client and read the server info it receives. Fail the guard test when it lacks `title`, `websiteUrl`, or `icons`.
+- Connect a real MCP client per supported protocol revision. Fail the guard test when any received server info lacks `title`, `websiteUrl`, or `icons`.
 - Add an icon test that matches each advertised icon to its manifest entry, `theme` included, and checks the file's bytes against `mimeType` and `sizes`.
 
 ## Portal steps and limits

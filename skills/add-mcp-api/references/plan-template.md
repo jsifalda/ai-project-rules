@@ -80,7 +80,7 @@ Plan the following work:
 - Build an application rate limiter keyed by the authenticated subject when the inventory finds none. Name the storage for that limiter.
 - Set each tool title and every hint per [directory readiness](directory-readiness.md#tool-annotations).
 - Write descriptions, error messages, and result payloads per the matching sections of [directory readiness](directory-readiness.md).
-- Add the registry guard test from [directory readiness](directory-readiness.md#verification).
+- Add the registry guard test and the icon test from [directory readiness](directory-readiness.md#verification).
 - Build the icon set and add the server identity per [directory readiness](directory-readiness.md#connector-identity).
 - Return structured expected errors without protected data.
 - Return a protocol-layer authorization failure as an HTTP status code with the challenge header. Return 401 for an absent or invalid token. Return 403 with an `insufficient_scope` challenge for a scope failure. Return 400 for a malformed authorization request. Carry only business failures in the structured tool errors.

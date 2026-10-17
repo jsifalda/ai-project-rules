@@ -2,7 +2,7 @@
 name: implement-mcp-api
 description: Create a phased implementation plan that adds a remote Model Context Protocol API to an existing application. The plan is the input for implementation. Run this skill inside plan mode, for example /plan in Claude Code, and the approved plan executes in the same step. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add or implement an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, or general API planning.
 metadata:
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Plan and Implement a Remote MCP API
@@ -44,7 +44,7 @@ Keep this stage read-only. Map the existing application before you propose tools
 3. Locate authorization, entitlement, rate-limit, audit, validation, and error conventions.
 4. Map existing service boundaries and their public operations.
 5. Identify data classes, destructive operations, and operations with slow downstream work.
-6. Identify the target MCP clients, public origin, current deployment limits, brand mark source, any published listing icon, and static-file pipeline.
+6. Identify the target MCP clients, public origin, current deployment limits, brand mark source, any published listing icon, and static-file pipeline. By default, target every standard client that uses client ID metadata documents, such as Claude, ChatGPT, and VS Code, not one vendor.
 7. Read the repository's own agent instructions, decision records, architecture notes, and changelog. Record every capability that the project removed, banned, or superseded on purpose.
 8. Record evidence as file paths, symbols, configuration names, and public documentation URLs. Do not copy secrets or private values.
 
@@ -61,6 +61,7 @@ Record the current evidence for:
 - supported transport and protocol revision.
 - public HTTPS reachability and canonical-origin rules.
 - authorization flow, PKCE, metadata, registration, and discovery requirements.
+- the client ID metadata document draft and each target client's published document.
 - token endpoint request format, scope behavior, and connector timeout ceiling.
 - target-client behavior for redirects, streaming, and authorization headers.
 - server info location, identity fields, and icon rules for each supported protocol revision.

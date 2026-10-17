@@ -67,7 +67,7 @@ Plan the selected authorization design from current protocol evidence:
 - Publish each current required authorization and resource metadata document.
 - Build public metadata URLs from explicit deployment configuration.
 
-Negative-path checks: rejected authorization request, rejected redirect, invalid proof, expired grant, reused credential, unknown scope, invalid token, token audience mismatch, missing or wrong `resource` parameter, revoked grant, missing authorization, and altered public URL headers.
+Negative-path checks: rejected authorization request, rejected redirect, invalid proof, expired grant, reused credential, unknown scope, invalid token, token audience mismatch, missing or wrong `resource` parameter, revoked grant, missing authorization, altered public URL headers, anonymous authorize request that causes no outbound fetch, client ID on a private address, client ID whose DNS answers a private address, any redirect during the document fetch, client ID with dot segments, registered `javascript:` redirect URI, client document that declares `private_key_jwt` and lists `none`, the first new fetch over the per-user limit, a client document that names a shared-secret method, a `client_name` with control characters or excess length, a sign-in return path to another origin or a script, a custom-scheme redirect URI, a loopback redirect URI on another port, and an oversized or slow document.
 
 ## Phase 3. Add the MCP transport and tool gates
 
@@ -118,7 +118,7 @@ Run these rungs in order. Record the command class, result, and evidence locatio
 2. Verify the certificate and every canonical redirect.
 3. Fetch each required discovery document from a public network.
 4. Confirm the MCP endpoint and discovery documents remain on the canonical host.
-5. Fetch each advertised icon from a public network with no credentials. Confirm the status, content type, pixel size, and cache policy per [failure prevention](traps.md).
+5. Fetch each advertised icon from a public network with no credentials. Confirm the status, content type, pixel size, and cache policy per [failure prevention](traps.md) and [directory readiness](directory-readiness.md#connector-identity).
 6. Send an unauthenticated request and confirm the selected discovery mechanism answers. Confirm a 401 that carries a `WWW-Authenticate` header naming `resource_metadata`, or confirm the well-known protected-resource document serves the same location.
 7. Send a token that lacks a required scope and confirm a 403 response with an `insufficient_scope` challenge.
 8. Send an authenticated request and confirm required authorization and protocol headers reach the application.

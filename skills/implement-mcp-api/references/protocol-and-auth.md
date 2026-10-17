@@ -1,12 +1,13 @@
 # Protocol and authorization
 
-> Fact status: reviewed 2026-09-20. Claude client facts reviewed 2026-10-11. Recheck every `[PRIMARY]` claim against the linked primary sources before a plan becomes binding. The active protocol and connector behavior can change.
+> Fact status: reviewed 2026-09-20. Claude client facts reviewed 2026-10-11. Client ID metadata document facts and the ChatGPT and VS Code client facts reviewed 2026-10-17. Recheck every `[PRIMARY]` claim against the linked primary sources before a plan becomes binding. `[OBSERVED]` marks a client document value or client behavior observed on 2026-10-16, not a documented claim. Fetch the client's document again before a plan relies on the value. The active protocol and connector behavior can change.
 
 ## Contents
 
 - [Transport and public URL](#transport-and-public-url)
 - [Authorization server](#authorization-server)
 - [OAuth and discovery](#oauth-and-discovery)
+- [Client ID metadata documents](#client-id-metadata-documents)
 - [Connector interoperability](#connector-interoperability)
 - [Tokens and scopes](#tokens-and-scopes)
 - [Tool contracts](#tool-contracts)
@@ -19,7 +20,7 @@
 - Use a public HTTPS endpoint for a connector that must work from cloud, web, desktop, and mobile clients. `[PRIMARY]`
 - Prefer stateless Streamable HTTP when the active SDK and target clients support it. Keep one stable endpoint. `[PRIMARY]`
 - Set the public origin from deployment configuration, such as `APP_PUBLIC_URL`. Do not derive issuer, discovery, redirect, or resource URLs from request host or forwarded headers.
-- Keep the MCP endpoint and OAuth discovery documents on that configured origin where practical.
+- Keep the MCP endpoint, the OAuth discovery documents, and the authorization and token routes on that configured origin.
 - Do not redirect an authenticated MCP request across hosts. Disable proxy response buffering on streaming paths.
 
 ## Authorization server
@@ -49,6 +50,37 @@ Do not use a static API key for user-specific access. The access token must iden
 - The server never passes a received access token through to an upstream API. `[PRIMARY]`
 - Validate `Origin` when present. Do not reject a request only because it has no `Origin` header unless the active protocol requires it. `[PRIMARY]`
 
+## Client ID metadata documents
+
+- Accept a client ID only when it is an HTTPS URL with a path, no fragment, and no user name or password. `[PRIMARY]`
+- Refuse a client ID whose path is only the root.
+- Refuse a client ID with a dot segment in its path. `[PRIMARY]`
+- Refuse a client ID whose parsed `href` differs from the raw string.
+- Fetch the document only for a signed-in user. Check the session and the entitlement before you resolve the client.
+- Resolve a token or refresh request from the client data saved with the grant. Never fetch the document there.
+- Read the entitlement from the database, not from a session claim.
+- Limit new fetches per authenticated user. Count only real fetches, never a cache hit or a caller that joins a fetch already in progress.
+- Fetch over HTTPS only, with `Accept: application/json` and a `User-Agent` that names the authorization server.
+- Refuse a private, loopback, link-local, CGNAT, unique-local, multicast, or reserved address. Link-local includes the cloud metadata address `169.254.169.254`.
+- Refuse an IPv4-mapped or NAT64 IPv6 address, and any IPv6 address outside global unicast.
+- Check an IP-literal host before you connect.
+- Pin the connection to the checked address.
+- Limit total time and body bytes. Count the bytes while the body streams.
+- Follow no redirect during the document fetch. `[PRIMARY]`
+- Accept status 200 only.
+- Require the document's `client_id` to equal the requested client ID exactly. `[PRIMARY]`
+- Parse the document with a non-strict schema that ignores unknown fields.
+- Treat the client as public when its `token_endpoint_auth_method` is `none` or absent, or its `token_endpoint_auth_methods_supported` lists `none`.
+- Refuse a document that names a `client_secret_*` or other shared-secret method, or that holds `client_secret`. `[PRIMARY]`
+- Never fail a public-client token request only because it carries `client_assertion`. As an alternative, verify the assertion and advertise `private_key_jwt`.
+- Apply every fetch check to `jwks_uri` when you verify a client assertion. `[PRIMARY]`
+- Accept a presented `redirect_uri` only when it matches a registered entry and it is HTTPS, or HTTP on a loopback host.
+- Let only the port differ for a loopback redirect URI. `[PRIMARY]`
+- Refuse every other redirect URI scheme, even a registered one.
+- Cache a document for the lifetime that its HTTP cache headers give, minus its `Age` value. Clamp that lifetime between a minimum and a maximum.
+- Bound the cache entry count. Never cache a failure.
+- Clean and display `client_name` per [failure prevention](traps.md).
+
 ## Connector interoperability
 
 A hosted connector can call the server from provider infrastructure rather than from the user's device. Therefore a hosted connector cannot reach a localhost, stdio, or private-network endpoint. Use a publicly reachable HTTPS origin for broad connector support. `[PRIMARY]`
@@ -65,6 +97,9 @@ Confirm the active connector requirements for:
 
 - Register the callback `https://claude.ai/api/mcp/auth_callback` for claude.ai, Claude Desktop, mobile, and Cowork. `[PRIMARY]`
 - Accept a loopback redirect on any port for Claude Code, at `http://localhost/callback` and `http://127.0.0.1/callback`. `[PRIMARY]`
+- claude.ai, Claude Desktop, and mobile use the client ID `https://claude.ai/oauth/mcp-oauth-client-metadata`. Its document registers `https://claude.ai/api/mcp/auth_callback` and declares the method `none`. `[OBSERVED]`
+- Claude Code uses the client ID `https://claude.ai/oauth/claude-code-client-metadata`. Its document registers `http://localhost/callback` and `http://127.0.0.1/callback`, and declares the method `none`. `[OBSERVED]`
+- Never guess a client ID. On a deployed server, read the client IDs in use from the grant records, per [directory readiness](directory-readiness.md#verification). Otherwise read each one from its published document.
 - Advertise `"client_id_metadata_document_supported": true` and list `"none"` in `token_endpoint_auth_methods_supported`, and accept public clients at the token endpoint. Claude selects client ID metadata documents only when both are present. Otherwise Claude falls back to Dynamic Client Registration. `[PRIMARY]`
 - Put the intended authorization server first in `authorization_servers`. Claude uses only the first entry. `[PRIMARY]`
 - Set the protected-resource `resource` value to the exact MCP URL, path included. `[PRIMARY]`
@@ -74,6 +109,20 @@ Confirm the active connector requirements for:
 - Return `invalid_grant` for a dead refresh token. `[PRIMARY]`
 - Send `WWW-Authenticate` on a 401 response. Claude ignores the header on a 200 response. `[PRIMARY]`
 - Apply the payload and timeout limits in [directory readiness](directory-readiness.md#payload-and-timeouts).
+
+### ChatGPT client
+
+- ChatGPT uses the client ID `https://chatgpt.com/oauth/client.json`. `[OBSERVED]`
+- Its document registers the redirect URI `https://chatgpt.com/connector_platform_oauth_redirect`. `[OBSERVED]`
+- Its document declares `token_endpoint_auth_method: private_key_jwt`, lists `["none", "private_key_jwt"]` in `token_endpoint_auth_methods_supported`, and holds a `jwks_uri`. `[OBSERVED]`
+- Accept ChatGPT as a public client per [Client ID metadata documents](#client-id-metadata-documents).
+- Emit the `iss` authorization-response parameter per [Authorization server](#authorization-server). ChatGPT relies on it. `[OBSERVED]`
+
+### VS Code client
+
+- VS Code uses the client ID `https://vscode.dev/oauth/client-metadata.json`. `[OBSERVED]`
+- Its document registers `https://vscode.dev/redirect` and `http://127.0.0.1:33418/`, and declares the method `none`. `[OBSERVED]`
+- Its host serves the document with `Cache-Control: no-store`. `[OBSERVED]`
 
 ## Tokens and scopes
 
@@ -135,5 +184,8 @@ The dated deep links below point at revision `2026-07-28`, which is a snapshot. 
 - [RFC 7591 dynamic client registration](https://www.rfc-editor.org/rfc/rfc7591) `[PRIMARY]`. This document settles the legacy dynamic registration request and response.
 - [RFC 8707 resource indicators](https://www.rfc-editor.org/rfc/rfc8707) `[PRIMARY]`. This document settles the `resource` parameter and the audience restriction of an access token.
 - [RFC 9207 issuer identification](https://www.rfc-editor.org/rfc/rfc9207) `[PRIMARY]`. This document settles the `iss` parameter and the metadata flag that advertises it.
+- [OAuth client ID metadata document draft](https://datatracker.ietf.org/doc/draft-ietf-oauth-client-id-metadata-document/) `[PRIMARY]`. This document settles the client ID URL form, the document fetch, and the `client_id` match.
+- [RFC 8252 OAuth for native apps](https://www.rfc-editor.org/rfc/rfc8252) `[PRIMARY]`. This document settles loopback redirect URIs and their variable port.
+- [RFC 9700 OAuth security best current practice](https://www.rfc-editor.org/rfc/rfc9700) `[PRIMARY]`. This document settles exact redirect URI matching and open-redirector attacks.
 - [Claude custom integration guidance](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp) `[PRIMARY]`
 - [Claude connector authentication](https://claude.com/docs/connectors/building/authentication) `[PRIMARY]`. This document settles the Claude client facts above.

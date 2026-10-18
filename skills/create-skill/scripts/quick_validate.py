@@ -42,9 +42,11 @@ def validate_skill(skill_path, require_version=False):
     # 'argument-hint' and 'disable-model-invocation' are Claude Code skill keys
     # (manual-invocation control, slash-arg hints); allowed so third-party skills
     # synced verbatim (e.g. via sync-mattpocock-skills) pass without mutation.
+    # 'context', 'agent' and 'model' are Claude Code keys that run a skill as a
+    # forked subagent of a given type and model.
     ALLOWED_PROPERTIES = {
         'name', 'description', 'license', 'allowed-tools', 'metadata',
-        'argument-hint', 'disable-model-invocation',
+        'argument-hint', 'disable-model-invocation', 'context', 'agent', 'model',
     }
 
     # Check for unexpected properties (excluding nested keys under metadata)

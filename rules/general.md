@@ -188,7 +188,7 @@ resolve.
 fix it before proceeding. Modified functionality → update its tests. New functionality → write
 tests. Lint present → run it, fix errors and warnings.
 
-**Phase 3 — Code review.** Run a `code-review` subagent on this session's changes.
+**Phase 3 — Code review.** Run the `code-review` skill on this session's changes.
 
 - Skip this phase for a mechanical git task (pull, conflict resolution, push, rebase) unless asked. A repo's own verification protocol still applies.
 - Triage every finding first. Relevance decides the fix. Severity sets the order.

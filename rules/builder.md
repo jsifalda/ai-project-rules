@@ -7,9 +7,12 @@ paths:
 
 ## How to pick a stack (task-first, challenge everything)
 
-- The stack is never a given. Start from what THIS task actually needs, not from a favorite list.
+- The stack is never a given. Start from what THIS task needs. A better fit than the defaults below exists → recommend it.
 - Judge every choice on: problem constraints, expected scale, runtime/target platform, team + maintenance load, longevity, and cost. Pick the best fit for those.
-- If a better solution exists than the defaults below, say so and recommend it. Challenge the defaults ruthlessly, reason from first principles, never reach for one just because it is the default.
+- Name the dominant complexity first: domain, scale or accidental. Pick quality tooling for that one.
+  - Domain → typed domain models and a scenario test harness.
+  - Scale → metric-gated staged rollout.
+  - Accidental → fewer technologies.
 - Existing repo → its established conventions win. Match what is already there instead of imposing this list.
 
 ## Current defaults (starting bias only, override when the task says so)
@@ -45,6 +48,3 @@ paths:
   buttons, and the one `@layer base` fix that restores it. Read it when the stack for this task
   includes Tailwind v4 and shadcn/ui, and apply the fix while the global stylesheet is being
   written. Skip for non-Tailwind projects and for Tailwind v3.
-- This pointer reaches only as far as this file does. An agent that never loads `builder.md` never
-  learns the trap exists — an existing repo already on Tailwind v4 is the gap, and closing it needs
-  a trigger the consuming project owns.

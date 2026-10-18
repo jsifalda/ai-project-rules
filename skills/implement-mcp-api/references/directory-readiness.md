@@ -136,10 +136,13 @@
 
 - Run every tool through the MCP Inspector or a custom connector in Claude before you submit.
 - List the tools with the `tools/list` method of the `@modelcontextprotocol/inspector` CLI over HTTP transport.
-- Script the real OAuth flow as the allowed client when the authorization server allow-lists client hosts.
+- Script the real OAuth flow as a real target client, with its published client ID.
 - Sign in, authorize with PKCE S256, and read the code from the redirect `Location` header without following it.
 - Exchange that code at the token endpoint. Fall back to a token minted in a local database.
+- Save the live client ID metadata document of each target client as a test fixture. Keep a regression test that each fixture still passes the client checks.
+- On a deployed server, read the client IDs in use from the authorization server's grant records before you change a client check.
 - Run every verification in a separate worktree with its own database and queue prefix when the production checkout holds the live database.
+- After each deploy, run the client checks per target client from the production host. Write no grant. Confirm each target client passes, and a private-address client ID and a `javascript:` redirect URI fail.
 - Add a guard test that reads the real `tools/list` and `initialize` wire JSON.
 - Fail the guard test on a missing title, a missing explicit hint, a name over 64 characters, or a directive phrase.
 - Connect a real MCP client per supported protocol revision. Fail the guard test when any received server info lacks `title`, `websiteUrl`, or `icons`.

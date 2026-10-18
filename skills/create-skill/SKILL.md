@@ -3,7 +3,7 @@ name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Create Skill
@@ -398,7 +398,7 @@ inbound callers before you set the flag — the README `Depends on` column names
 writes into the user's repo *and* is a delegation target, the guard is that skill's own
 confirmation gate, not this flag.
 
-Beyond `name`, `description`, `disable-model-invocation`, `license`, `allowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
+Beyond `name`, `description`, `disable-model-invocation`, `argument-hint`, `context`, `agent`, `model`, `license`, `allowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
 
 ##### Body
 

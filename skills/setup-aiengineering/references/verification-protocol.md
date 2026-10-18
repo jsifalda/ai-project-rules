@@ -187,8 +187,11 @@ until every gate passes.
   Otherwise run the lenses below in parallel on this session's changes. The **Harness-native code
   review** and **CodeRabbit CLI** lenses run on every change. The **Nuclear structural review** and
   **Security review** lenses run when their trigger fires — see **Conditional lenses**:
-  - **Harness-native code review** — invoke your harness's `code-review` agent (Claude Code:
-    `Agent` tool with `subagent_type: "code-review"`; Copilot CLI: the `code-review` skill). Cover
+  - **Harness-native code review** — invoke your harness's `code-review` skill on every change
+    since `{{DEFAULT_BRANCH}}`, committed and uncommitted, untracked files included (Claude Code:
+    the `Skill` tool with `skill: "code-review"` and that scope in `args`; a personal
+    `code-review` skill, when installed, replaces the bundled one; Copilot CLI: the `code-review`
+    skill). Cover
     bugs, security, logic errors, race conditions, unhandled edge cases, and the project's own
     conventions.
   - **CodeRabbit CLI** — `cr review --agent --base {{DEFAULT_BRANCH}} --include-untracked`. Collect every

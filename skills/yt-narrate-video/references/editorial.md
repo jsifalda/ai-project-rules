@@ -17,7 +17,7 @@ Each chapter, in this order:
 1. **Head**: marker lamp, "N of M", a link to the start second (`https://youtu.be/<id>?t=<seconds>`, or the platform's own deep-link form).
 2. **Title**: a concrete phrase from the moment ("The same pothole"), not an abstraction ("Resilience").
 3. **Narration**: 2 to 4 short paragraphs. Re-tell the scene and the argument in your own words. Keep the speaker's stories concrete: numbers, places, objects, the order things happened.
-4. **Illustration** (most chapters): a watercolor of an object or place from the story. Caption adds meaning, it does not describe the picture.
+4. **Illustration** (most chapters): an inline SVG scene of an object or place from the story (see `references/illustrations.md`). Caption adds meaning, it does not describe the picture.
 5. **Quote** (at most one per chapter, only for the line that names the idea).
 6. **Interactive** (count from the scale table in `references/genres.md`): only where the idea has a shape, a trade-off, a break-even, a distribution, or a before/after. A chart that only restates the paragraph is decoration. Cut it.
 7. **Takeaway**: one short line in the takeaway form for the genre, plus an apply line (the label from the lens table) that applies it to the reader's world. Mark the apply lines as your interpretation in the footer.
@@ -48,7 +48,7 @@ Every chapter carries one marker: `go`, `yield` or `stop` in `data-s`. The marke
 - Paraphrase the transcript. Never paste long runs of it into the page.
 - Quotes: under 15 words each, at most one per chapter, always attributed.
 - Do not reproduce song lyrics, poems or book passages the speaker reads aloud. Describe them.
-- Illustrations are original. Paint objects, places and anonymous silhouettes. Never paint an identifiable real person, a film still, a logo, album art, or a known character.
+- Illustrations are original. Draw objects, places and anonymous silhouettes. Never draw an identifiable real person, a film still, a logo, album art, or a known character.
 - Do not embed remote images or historical photos. Published pages block remote images, and sandbox downloads are usually blocked. Say so to the user and offer original illustrations instead.
 - Credit the source video, the original shows, and any fact-check sources in the footer.
 
@@ -73,8 +73,8 @@ The one memorable element is the signal rail. Keep everything else quiet.
 
 Run before publishing. Screenshot with `scripts/shoot.py` and look at the images.
 
-- Hero image and headline read at a glance on a phone.
-- Every chapter has a working timestamp link.
+- Hero illustration and headline read at a glance on a phone.
+- Every chapter has a working timestamp link, when the source is a video.
 - No figure text smaller than about 11px on a 390px screen.
 - Dark mode: charts readable, no hard-coded dark text on dark paper.
 - No JS errors in the screenshot run.

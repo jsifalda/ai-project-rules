@@ -9,6 +9,7 @@
 - Never delete a test only because it is tautological.
 - Assert through the public interface, never internals. This binds thin wrappers too.
 - Prefer a deep module: a small interface over a large implementation.
+- Make invalid states unrepresentable where possible. Still test valid error outcomes through the public interface.
 
 ## TDD
 

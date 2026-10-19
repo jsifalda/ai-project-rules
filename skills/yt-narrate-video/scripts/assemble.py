@@ -1,42 +1,78 @@
 #!/usr/bin/env python3
-"""Inline images into the page and downscale them for the web.
+"""Check a finished narrated page. Standard library only.
 
-Usage: python3 assemble.py page.html images_dir out.html [--width 1100] [--hero-width 1400] [--quality 76]
-Every {{IMG:name}} in page.html becomes a base64 data URI of images_dir/name.jpg (or .png).
-Fails if an image is missing or a {{PLACEHOLDER}} is left unfilled.
+Usage: python3 assemble.py page.html
+Fails (exit 1) on a leftover {{token}}, a bad <img> src or SVG <image> href (empty, remote, or a missing local file),
+a remote srcset URL on <img> or <source>, a leftover data-sample attribute (sample art),
+a duplicate id, or an em-dash in visible text. Otherwise prints '<path>: ok, <size> MB' and exits 0.
 """
-import argparse, base64, os, re, sys
-import cv2
+import argparse, os, re, sys
+from html.parser import HTMLParser
+from urllib.parse import unquote, urlsplit
+
+DASH = chr(0x2014)
+HIDDEN = {'script', 'style', 'noscript', 'template'}
+REMOTE = ('http:', 'https:', '//')
+
+class Scan(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.hidden, self.srcs, self.dashes = 0, [], []
+        self.samples, self.ids, self.srcsets = [], {}, []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in HIDDEN: self.hidden += 1
+        at, line = dict(attrs), self.getpos()[0]
+        if tag == 'img': self.srcs.append(at.get('src'))
+        if tag == 'image': self.srcs.append(at.get('href') or at.get('xlink:href'))
+        if tag in ('img', 'source') and at.get('srcset'): self.srcsets.append(at['srcset'])
+        if 'data-sample' in at: self.samples.append(f'line {line}: <{tag}> has data-sample')
+        if at.get('id'): self.ids.setdefault(at['id'], []).append(line)
+
+    def handle_endtag(self, tag):
+        if tag in HIDDEN and self.hidden: self.hidden -= 1
+
+    def handle_data(self, data):
+        i = data.find(DASH)
+        if self.hidden or i < 0: return
+        line = self.getpos()[0] + data[:i].count('\n')
+        self.dashes.append(f'line {line}: ...{data[max(0, i - 20):i + 20].strip()}...'.replace('\n', ' '))
+
+def img_problem(src, base):
+    if src is None or not src.strip(): return 'img with no src'
+    src = src.strip()
+    if src.lower().startswith(REMOTE): return f'remote img src: {src[:60]}'
+    if src.lower().startswith('data:') or src.startswith('#'): return None
+    rel = unquote(urlsplit(src).path)
+    if os.path.isabs(rel): return f'absolute img path: {src[:60]}'
+    if not rel or not os.path.isfile(os.path.join(base, rel)): return f'missing img file: {src[:60]}'
+    return None
+
+def srcset_problems(value):
+    urls = [c.split()[0] for c in value.split(',') if c.strip()]
+    return [f'remote srcset URL: {u[:60]}' for u in urls if u.lower().startswith(REMOTE)]
 
 ap = argparse.ArgumentParser()
-ap.add_argument('page'); ap.add_argument('images'); ap.add_argument('out')
-ap.add_argument('--width', type=int, default=1100)
-ap.add_argument('--hero-width', type=int, default=1400)
-ap.add_argument('--quality', type=int, default=76)
+ap.add_argument('page')
 a = ap.parse_args()
 
 html = open(a.page, encoding='utf-8').read()
-missing = []
-
-def uri(m):
-    name = m.group(1)
-    for ext in ('.jpg', '.jpeg', '.png'):
-        path = os.path.join(a.images, name + ext)
-        if os.path.exists(path):
-            break
-    else:
-        missing.append(name); return m.group(0)
-    im = cv2.imread(path)
-    w = a.hero_width if name == 'hero' else a.width
-    if im.shape[1] > w:
-        im = cv2.resize(im, (w, int(im.shape[0] * w / im.shape[1])), interpolation=cv2.INTER_AREA)
-    ok, buf = cv2.imencode('.jpg', im, [cv2.IMWRITE_JPEG_QUALITY, a.quality, cv2.IMWRITE_JPEG_PROGRESSIVE, 1])
-    return 'data:image/jpeg;base64,' + base64.b64encode(buf.tobytes()).decode()
-
-html = re.sub(r'\{\{IMG:([\w-]+)\}\}', uri, html)
-left = re.findall(r'\{\{(?:[A-Z0-9_]+|IMG:[^{}]*)\}\}', html)
-if missing: print('MISSING images:', ', '.join(missing)); sys.exit(1)
-if left: print('UNFILLED placeholders:', ', '.join(sorted(set(left)))); sys.exit(1)
-os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
-open(a.out, 'w', encoding='utf-8').write(html)
-print(f'{a.out}: {len(html)/1e6:.2f} MB')
+scan = Scan()
+scan.feed(html); scan.close()
+base = os.path.dirname(os.path.abspath(a.page))
+found = {
+    'UNFILLED tokens': sorted(set(re.findall(r'\{\{[^{}]*\}\}', html))),
+    'BAD images': [p for p in (img_problem(s, base) for s in scan.srcs) if p],
+    'BAD srcset': [p for v in scan.srcsets for p in srcset_problems(v)],
+    'SAMPLE art left': scan.samples,
+    'DUPLICATE ids': [f'{k}: lines {", ".join(map(str, v))}' for k, v in scan.ids.items() if len(v) > 1],
+    'EM-DASH in visible text': scan.dashes,
+}
+bad = False
+for kind, items in found.items():
+    if items:
+        bad = True
+        print(f'{kind} ({len(items)}):')
+        for item in items: print('  ' + item)
+if bad: sys.exit(1)
+print(f'{a.page}: ok, {os.path.getsize(a.page) / 1e6:.2f} MB')

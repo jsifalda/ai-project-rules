@@ -1,8 +1,8 @@
 ---
 name: yt-narrate-video
-description: Turn any YouTube link into a beautiful interactive narrated web page in an editorial New Yorker or NYT-graphics style. Works for every genre (podcasts, talks, tutorials, lectures, documentaries, reviews, music, vlogs, Shorts) and any URL form (youtu.be, watch, shorts, live, embed, with timestamps or playlists). It re-tells the whole video chapter by chapter with timestamp links, picks a genre lens for the takeaways, adds original watercolor illustrations painted with OpenCV, interactive data-viz figures, fact-check boxes and a filterable deck of all takeaways. Use when the user shares a YouTube link and asks to narrate it, make an artifact, page or explainer from it, visualize it, or turn it into a scrollytelling piece. Do NOT use for a plain chat summary or bullet takeaways with no page, a transcript-only request, downloading or editing video, or slide decks.
+description: Turn any YouTube link into a beautiful interactive narrated web page in an editorial New Yorker or NYT-graphics style. Works for every genre (podcasts, talks, tutorials, lectures, documentaries, reviews, music, vlogs, Shorts) and any URL form (youtu.be, watch, shorts, live, embed, with timestamps or playlists). It re-tells the whole video chapter by chapter with timestamp links, picks a genre lens for the takeaways, adds original inline SVG illustrations, interactive data-viz figures, fact-check boxes and a filterable deck of all takeaways. Use when the user shares a YouTube link and asks to narrate it, make an artifact, page or explainer from it, visualize it, or turn it into a scrollytelling piece. Do NOT use for a plain chat summary or bullet takeaways with no page, a transcript-only request, downloading or editing video, or slide decks.
 metadata:
-  version: "1.0"
+  version: "2.0"
 ---
 
 # YouTube Narrate Video
@@ -11,15 +11,14 @@ Build one self-contained HTML page that narrates a YouTube video from start to f
 
 Bundled files, at paths relative to this skill's directory (not the working directory):
 - `scripts/yt_url.py`: normalizes any YouTube link (id, start second, kind, deep-link template) and parses creator chapters from a description.
-- `assets/template.html`: page shell. Tokens, light and dark themes, marker rail, sticky chapter bar, chapter pattern, configurable `LENS`, auto-built takeaway deck, mobile text scaling.
-- `scripts/watercolor.py` + `scripts/scene_example.py`: OpenCV watercolor engine and a full example scene.
-- `scripts/assemble.py`: inlines and downsizes images. Fails on missing images or unfilled placeholders.
-- `scripts/shoot.py`: Playwright screenshots at 1360px and 390px.
+- `assets/template.html`: page shell. Tokens, light and dark themes, inline SVG illustration slots with theme classes, marker rail, sticky chapter bar, chapter pattern, configurable `LENS`, auto-built takeaway deck, mobile text scaling.
+- `scripts/assemble.py`: checks the finished page. Fails on an unfilled `{{...}}` token, a remote or missing image, sample art (`data-sample`), a duplicate id, or an em-dash in visible text.
+- `scripts/shoot.py`: headless screenshots with a system Chrome or Chromium at 1360px and 390px, one dark-mode shot, and JS errors. Skips with a message when no browser is found.
 - `references/genres.md`: genre detection, lens table, per-genre recipes, scale by length, transcript fallbacks. Read first.
 - `references/editorial.md`: chapter recipe, lens rules, writing rules, copyright and likeness rules, design tokens, checklist.
-- `references/watercolor.md`: engine API and scene lessons.
+- `references/illustrations.md`: inline SVG scene rules and examples.
 - `references/interactives.md`: the tested figure patterns. Read the contents list, then only what you use.
-- Runtime needs: Python 3 with `opencv-python`, `numpy` and `Pillow` for painting and assembly, plus `playwright` with Chromium for `shoot.py`. `yt_url.py` uses the standard library only.
+- Runtime needs: Python 3 standard library, and optionally a system Chrome or Chromium for screenshots.
 
 ## Workflow
 
@@ -33,11 +32,11 @@ Bundled files, at paths relative to this skill's directory (not the working dire
 
 5. **Fact-check.** Search the most specific factual claims (one to three for Ideas, more for Story and Lecture). Record a verdict for each. These become `.check` boxes.
 
-6. **Paint.** Copy `scripts/scene_example.py` into a scenes script with one function per image, plus a hero. Keep `watercolor.py` in the same folder as the copy, because the script imports it from its own folder. Render, tile a contact sheet, view it, fix the weakest scenes, render again. Follow `references/watercolor.md`.
+6. **Illustrate.** Copy `assets/template.html` to the page. Draw the hero and one scene per illustrated chapter as inline SVG in its slots, colored only through the theme classes, with repeated shapes from `rep()`. Follow `references/illustrations.md`.
 
-7. **Write the page.** Copy `assets/template.html`. Fill every `{{PLACEHOLDER}}`, including the `LENS` names and `{{APPLY_LABEL}}`. Keep each `{{IMG:name}}` token, because `assemble.py` replaces it with `images/<name>.jpg`, `.jpeg` or `.png`. Name the hero image `hero`. Repeat the chapter pattern per chapter. Adapt figures from `references/interactives.md`, or invent new ones with the same helpers when an idea has a shape no pattern fits. Follow `references/editorial.md`, especially paraphrase over quotation, no lyrics, and notes on invented numbers.
+7. **Write the page.** Fill every `{{PLACEHOLDER}}` in that page, including the `LENS` names and `{{APPLY_LABEL}}`. Repeat the chapter pattern per chapter. Adapt figures from `references/interactives.md`, or invent new ones with the same helpers when an idea has a shape no pattern fits. Follow `references/editorial.md`, especially paraphrase over quotation, no lyrics, and notes on invented numbers.
 
-8. **Assemble and critique.** Run `python3 scripts/assemble.py page.html images/ out/page.html`, then `python3 scripts/shoot.py out/page.html shots/ ".hero" "#<figId>"` with one quoted selector per figure. View the screenshots. Fix overlap, small text, dark-mode contrast and JS errors until the checklist in `references/editorial.md` passes.
+8. **Check and critique.** Run `python3 scripts/assemble.py page.html`, then `python3 scripts/shoot.py page.html shots/ <id> ...` with one element id per figure (no id shoots the top of the page). View the screenshots. Fix overlap, small text, dark-mode contrast and JS errors until the checklist in `references/editorial.md` passes.
 
 9. **Deliver.** Where a tool can publish a hosted page (for example a claude.ai Artifact publish action), publish it with a fitting icon. Otherwise save it to the outputs folder and present it. The page uses no remote images and only Google Fonts.
 
@@ -46,6 +45,7 @@ Bundled files, at paths relative to this skill's directory (not the working dire
 ## Defaults
 
 - The whole video, in order. Compress long stretches, never skip them.
+- A source that is not a video (a note, book chapters): skip step 1, use chapter labels in place of timestamps, drop `data-t` and the watch links, and make no youtu.be links.
 - Quotes under 15 words, at most one per chapter. Never song lyrics.
 - No photos or likenesses of real people, no logos, no remote images.
 - Every chart with invented numbers says so in a note.

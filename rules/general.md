@@ -201,8 +201,11 @@ Changed functionality → update its tests. New functionality → write tests.
 
 **Phase 4 — End to end.** Before you report any task done, run its changed behavior once, end to end, as its user would.
 
-- Apply it to every task with an observable outcome: code, config, a script, a skill, a workflow. Read-only work is exempt.
-- Pick the domain's own check: a command, the test suite, a browser, a phone simulator, a skill on a sample request.
-- Run only safe checks: local, sandbox, dry-run or read-only. Never production, real user data, outward sends, destructive or paid actions.
+- Apply it to every task with an observable outcome: code, config, a script, a skill, a rule, a workflow.
+- Read-only work is exempt.
+- Pick the domain's own check: a command, the test suite, a browser, a phone simulator.
+- Run only safe checks: local, sandbox, dry-run, or a read-only production probe that returns no user data and changes no state.
+- Never touch real user data, send a message, write to an external service, or run a destructive, paid or other production action.
+- Check a skill, rule or instruction file with a fresh agent on a sample request within these safe checks.
 - Only an unsafe check exists → do not run it. Report `e2e: n/a (unsafe, <what stays unverified>)` and hand the user the exact command.
 - Report one line: `e2e: <check> → <observed result>`, or `e2e: n/a (<reason>, <what stays unverified>)`.

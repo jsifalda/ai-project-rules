@@ -178,15 +178,14 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # IMPLEMENTATION VERIFICATION PROTOCOL
 
-Run every phase after any code change. The task is not complete until every phase passes.
+Run Phases 1-3 after any code change, and Phase 4 per its own scope. The task is not complete until every phase that applies passes.
 A phase fails → fix, then re-run all phases.
 
 **Phase 1 — Build.** Run the project build. Zero compile errors. Address warnings. All types
 resolve.
 
-**Phase 2 — Tests and lint.** Run the full suite. Zero failures. Your change breaks a test →
-fix it before proceeding. Modified functionality → update its tests. New functionality → write
-tests. Lint present → run it, fix errors and warnings.
+**Phase 2 — Tests and lint.** Suite present → run it in full: zero failures. Lint present → run it: zero errors and warnings.
+Changed functionality → update its tests. New functionality → write tests.
 
 **Phase 3 — Code review.** Run the `code-review` skill on this session's changes.
 
@@ -199,3 +198,11 @@ tests. Lint present → run it, fix errors and warnings.
   state it with the proposed fix and ask first. A review never grows the change.
 - Never apply a finding that changes what a rule requires. Draft the wording, show it, ask.
 - Present what the review returned and what you did with each finding.
+
+**Phase 4 — End to end.** Before you report any task done, run its changed behavior once, end to end, as its user would.
+
+- Apply it to every task with an observable outcome: code, config, a script, a skill, a workflow. Read-only work is exempt.
+- Pick the domain's own check: a command, the test suite, a browser, a phone simulator, a skill on a sample request.
+- Run only safe checks: local, sandbox, dry-run or read-only. Never production, real user data, outward sends, destructive or paid actions.
+- Only an unsafe check exists → do not run it. Report `e2e: n/a (unsafe, <what stays unverified>)` and hand the user the exact command.
+- Report one line: `e2e: <check> → <observed result>`, or `e2e: n/a (<reason>, <what stays unverified>)`.

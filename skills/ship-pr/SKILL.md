@@ -76,8 +76,10 @@ ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || { echo "ABORT: no origin 
 # Reduce a remote URL to host + path, so the two transports for one repo compare equal:
 #   https://github.com/acme/widget.git  ->  github.com/acme/widget
 #   git@github.com:acme/widget.git      ->  github.com/acme/widget
+#   ssh://git@ssh.github.com:443/acme/widget.git  ->  ssh.github.com/acme/widget
+# Strip a port from the scheme form only. In the scp form `git@host:12345/r`, 12345 is an owner.
 norm_remote() {
-  printf '%s' "$1" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
+  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)([^/@]*@)?([^/:]+):[0-9]+/#\1\2\3/#; s#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
 }
 
 # `get-url` returns the FETCH url. If a repo really pushes to a DIFFERENT repo, the branch
@@ -91,7 +93,7 @@ HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##
 # Host/owner/repo of origin, parsed from the URL text alone, so this stays network-free.
 # https://github.com/o/r.git, git@github.com:o/r.git and ssh://git@github.com/o/r all give github.com/o/r.
 # gh --repo takes HOST/OWNER/REPO, so a GitHub Enterprise remote keeps its host.
-# Every gh call in Phase 3b names this slug (or a PR URL). In a fork clone made with
+# Every gh call in the main GitHub block of Phase 3b names this slug (or a PR URL). In a fork clone made with
 # `gh repo clone`, gh's default repo is the upstream, and a bare `gh pr create` opens
 # the PR there.
 ORIGIN_SLUG=$(norm_remote "$ORIGIN_URL")
@@ -416,7 +418,7 @@ Run the block for the detected provider. Each one echoes the values Phase 4 repo
 set -e
 DEFAULT_BRANCH="<default-branch>"
 ORIGIN_SLUG="<origin-slug>"   # from Phase 1 `origin_slug=`
-BRANCH="<branch-from-3a>"     # from 3a `branch=`, which may carry a -2 / -3 suffix
+BRANCH=$(git rev-parse --abbrev-ref HEAD)   # read, never pasted: a branch name can hold $(...)
 
 # Every gh call below names the origin repo (--repo) or the PR (its URL). Never rely on
 # gh's default repo: in a fork clone made with `gh repo clone` it is the upstream.
@@ -434,11 +436,11 @@ BODY
   # An OPEN PR for this branch may already exist — return that URL instead of an error.
   # List with --state open. A CLOSED or MERGED PR for this branch would report a stale
   # URL as if the ship had succeeded. `gh pr view --repo <slug>` needs a PR argument and
-  # fails without one, so use `gh pr list`, which filters by head. --author "@me" and --base
-  # keep an open PR from another fork or into another base out of the result.
+  # fails without one, so use `gh pr list`, which filters by head. The isCrossRepository
+  # filter and --base keep an open PR from another fork or into another base out of the result.
   PR_URL=$(gh pr list --repo "$ORIGIN_SLUG" --head "$BRANCH" --base "$DEFAULT_BRANCH" \
-             --state open --author "@me" \
-             --json url -q '.[0].url' 2>/dev/null || true)
+             --state open \
+             --json url,isCrossRepository -q 'map(select(.isCrossRepository|not))[0].url' 2>/dev/null || true)
   [ -n "$PR_URL" ] || { echo "ABORT: branch pushed; PR not created — run: gh pr create --repo \"$ORIGIN_SLUG\" --base \"$DEFAULT_BRANCH\""; exit 1; }
 fi
 

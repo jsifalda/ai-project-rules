@@ -52,6 +52,8 @@ Read the matching file before you start that kind of work. Do not load them othe
 - "Cannot reproduce" is a finding. A bug absent in a clean environment → say so at once, and
   what it implies. Dig further only if asked.
 - Never offer a menu of fixes that omits "no change needed" when that is true.
+- Credits, quota or auth failure → never resend until the user fixes it. Switch tool or report.
+  Denied → report, never route around it.
 
 # PLAN MODE DEFAULT
 
@@ -73,10 +75,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 - Never push to a remote without an explicit user instruction.
 - Destructive git and `glab` operations, and commit or MR format → `rules/git-ship.md`.
-- Never install anything outside a project, for any purpose. Package, library, tool, or binary.
-  Global, `--user`, system, or one-off. A single throwaway task is not an exception.
-- The ban covers every installer, package managers and `curl … | sh` bootstraps alike, plus direct
-  downloads into `/usr/local/bin` or `~/.local/bin`.
+- Never install a package, library, tool or binary outside a project, by any installer, `curl … | sh` or direct download. Global, `--user`, system or one-off.
 - Install a project's declared dependencies freely, with its own package manager, into that project only.
 - Check for a no-install path first, such as native `Read` for PDFs, built-in CLIs, `git`, or the
   `node` or `python` standard library.

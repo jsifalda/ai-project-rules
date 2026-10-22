@@ -31,4 +31,4 @@
 - Derive the repo name from `/usr/bin/git -C <worktree> rev-parse --path-format=absolute --git-common-dir` or the remote URL. Never from the worktree folder name.
 - Set up a fresh worktree before its first gate, commit or dev server.
 - Copy each `.env*` from the main checkout with `cp`, never reading it. Then install the project's dependencies.
-- `cd` to the main checkout before `git worktree remove`.
+- `cd` to the main checkout, then run `/usr/bin/git -C <worktree> worktree remove <worktree>`.

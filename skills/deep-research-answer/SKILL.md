@@ -3,7 +3,7 @@ name: deep-research-answer
 description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs two research passes (built-in deep research, then the deep-research skill with independent phrasings), requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Validates its answer with a stdlib script before showing it. Use when the user types /deep-research-answer, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use deep-research), for simple lookups, or for debugging.
 argument-hint: "The question to research"
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Deep Research Answer
@@ -119,7 +119,7 @@ Add: confidence as a percentage, plus one sentence on what limits it.
 
 ## Step 6. Output format
 
-Open with the ANSWER line from Step 1. Then return two labelled blocks, `Quick answer` and `Deep dive`, nothing else. Write each label exactly as shown. Step 7 checks them.
+Open with the ANSWER line from Step 1. Then return two labelled blocks, `Quick answer` and `Deep dive`, nothing else. Write each label and field name exactly as shown, with no emoji before it, even when the reply format asks for one. Put each block label alone on its line, with no list marker. Step 7 checks them.
 
 ### Quick answer
 

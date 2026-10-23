@@ -2,7 +2,7 @@
 name: ship-pr
 description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
 metadata:
-  version: "2.0"
+  version: "2.2"
 ---
 
 # Ship PR
@@ -76,8 +76,16 @@ ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || { echo "ABORT: no origin 
 # Reduce a remote URL to host + path, so the two transports for one repo compare equal:
 #   https://github.com/acme/widget.git  ->  github.com/acme/widget
 #   git@github.com:acme/widget.git      ->  github.com/acme/widget
+#   ssh://git@ssh.github.com:443/acme/widget.git  ->  ssh.github.com/acme/widget
+# Strip a port from the scheme form only. In the scp form `git@host:12345/r`, 12345 is an owner.
 norm_remote() {
-  printf '%s' "$1" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
+  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)([^/@]*@)?([^/:]+):[0-9]+/#\1\2\3/#; s#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
+}
+
+# A scheme-form URL can hold `user:token@`. Strip it before an abort message prints the URL.
+# The scp form `git@host:o/r` holds no secret.
+redact_url() {
+  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)[^/]*@#\1#'
 }
 
 # `get-url` returns the FETCH url. If a repo really pushes to a DIFFERENT repo, the branch
@@ -85,14 +93,32 @@ norm_remote() {
 # "fetch over HTTPS, push over SSH, same repo" is a normal setup and must not abort.
 PUSH_URL=$(git remote get-url --push origin 2>/dev/null) || PUSH_URL="$ORIGIN_URL"
 if [ "$(norm_remote "$PUSH_URL")" != "$(norm_remote "$ORIGIN_URL")" ]; then
-  echo "ABORT: origin fetch and push point at different repos — push goes to $PUSH_URL"; exit 1
+  echo "ABORT: origin fetch and push point at different repos — push goes to $(redact_url "$PUSH_URL")"; exit 1
 fi
 HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#[:/].*$##')
+# Host/owner/repo of origin, parsed from the URL text alone, so this stays network-free.
+# https://github.com/o/r.git, git@github.com:o/r.git and ssh://git@github.com/o/r all give github.com/o/r.
+# gh --repo takes HOST/OWNER/REPO, so a GitHub Enterprise remote keeps its host.
+# Every gh call in the main GitHub block of Phase 3b names this slug (or a PR URL). In a fork clone made with
+# `gh repo clone`, gh's default repo is the upstream, and a bare `gh pr create` opens
+# the PR there.
+ORIGIN_SLUG=$(norm_remote "$ORIGIN_URL")
+case "$ORIGIN_SLUG" in
+  *//*) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
+  */*/*) ;;
+  *) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
+esac
 case "$HOST" in
   github.com|*.github.*) PROVIDER=gh ;;
   gitlab.com|*gitlab*)   PROVIDER=glab ;;
   *) echo "ABORT: unsupported remote host: $HOST"; exit 1 ;;
 esac
+# GitLab allows subgroups (host/g/sub/r). GitHub allows only host/owner/repo.
+if [ "$PROVIDER" = gh ]; then
+  case "$ORIGIN_SLUG" in
+    */*/*/*) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
+  esac
+fi
 
 # presence only — a shell builtin, ~0ms, no network
 command -v "$PROVIDER" >/dev/null 2>&1 || { echo "ABORT: $PROVIDER not installed"; exit 1; }
@@ -100,7 +126,7 @@ command -v "$PROVIDER" >/dev/null 2>&1 || { echo "ABORT: $PROVIDER not installed
 DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null | sed 's|^origin/||')
 if [ -z "$DEFAULT_BRANCH" ]; then   # network fallback only when the local ref is unset
   if [ "$PROVIDER" = gh ]; then
-    DEFAULT_BRANCH=$(gh repo view --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)
+    DEFAULT_BRANCH=$(gh repo view "$ORIGIN_SLUG" --json defaultBranchRef -q .defaultBranchRef.name 2>/dev/null)
   else
     DEFAULT_BRANCH=$(glab repo view -F json 2>/dev/null | jq -r '.default_branch // empty')
   fi
@@ -130,6 +156,7 @@ echo "ahead=$AHEAD"
 echo "provider=$PROVIDER"
 echo "host=$HOST"
 echo "default_branch=$DEFAULT_BRANCH"
+echo "origin_slug=$ORIGIN_SLUG"
 echo "user_name=$(git config user.name)"
 
 echo "--- status ---";   printf '%s\n' "$PORCELAIN"
@@ -175,6 +202,7 @@ Read the result like this:
 - Any `ABORT:` line ends the run. Print that reason and stop.
 - `default_branch=` empty — ask the user once for the default branch, then continue.
 - `default_branch=` is read from the local `refs/remotes/origin/HEAD`, which is set at clone time and never refreshed here. A refresh is a network call on every run, which is the cost this skill exists to avoid. If the remote renamed its default branch, that local ref goes stale and the PR targets the wrong base. The symptom is loud — `gh pr create` rejects a base that no longer exists — and `git remote set-head origin -a` repairs it. Run that once if you see it.
+- `origin_slug=` is the `host/owner/repo` of `origin`. Pass it to Phase 3b as `ORIGIN_SLUG`.
 - `mode=committed` means the branch is already committed and Phase 3a only pushes. `--- commits ---` lists the commits the PR will carry, oldest first, and it is the source for the title and body in Phase 2.
 - `--- status ---` is the file inventory for Phase 2 and Phase 3a. Do not fetch it again.
 - `--- conventions ---` and `--- pr template ---` carry the repo's own rules. These files often
@@ -192,7 +220,7 @@ If signals conflict or are absent, fall back to:
 - Commit: conventional commits (`type: subject` or `type(scope): subject`)
 - Branch: `<type>/<kebab-slug>`
 
-Do **not** look up the upstream repo slug here. The fork fallback in Phase 3b is the only consumer, that path is almost never taken, and the lookup is a network call. Phase 3b gets it lazily.
+Do **not** look up the upstream repo slug here. The fork fallback in Phase 3b is the only consumer, that path is almost never taken, and the lookup is a network call. Phase 3b gets it lazily. Phase 1 `origin_slug=` is the `host/owner/repo` of `origin`, parsed from the remote URL with no network call. The main GitHub block in Phase 3b passes it to every `gh` call. The fork fallback sets its own value.
 
 ## Phase 2 — Derive branch name, commit message, PR title and body
 
@@ -402,10 +430,15 @@ Run the block for the detected provider. Each one echoes the values Phase 4 repo
 ```bash
 set -e
 DEFAULT_BRANCH="<default-branch>"
+ORIGIN_SLUG="<origin-slug>"   # from Phase 1 `origin_slug=`
+BRANCH=$(git rev-parse --abbrev-ref HEAD)   # read, never pasted: a branch name can hold $(...)
 
+# Every gh call below names the origin repo (--repo) or the PR (its URL). Never rely on
+# gh's default repo: in a fork clone made with `gh repo clone` it is the upstream.
 # Do NOT pass --assignee to the create. Assignment is best-effort, and a rejected
 # assignee fails the whole create — which would lose the PR over a non-critical step.
 if ! PR_URL=$(gh pr create \
+  --repo "$ORIGIN_SLUG" \
   --base "$DEFAULT_BRANCH" \
   --title "<title>" \
   --body "$(cat <<'BODY'
@@ -414,21 +447,26 @@ if ! PR_URL=$(gh pr create \
 BODY
 )"); then
   # An OPEN PR for this branch may already exist — return that URL instead of an error.
-  # Filter on state. `gh pr view` also resolves a CLOSED or MERGED PR for this branch,
-  # and returning one of those would report a stale URL as if the ship had succeeded.
-  PR_URL=$(gh pr view --json url,state -q 'select(.state=="OPEN") | .url' 2>/dev/null || true)
-  [ -n "$PR_URL" ] || { echo "ABORT: branch pushed; PR not created — run: gh pr create --base \"$DEFAULT_BRANCH\""; exit 1; }
+  # List with --state open. A CLOSED or MERGED PR for this branch would report a stale
+  # URL as if the ship had succeeded. `gh pr view --repo <slug>` needs a PR argument and
+  # fails without one, so use `gh pr list`, which filters by head. The isCrossRepository
+  # filter and --base keep an open PR from another fork or into another base out of the result.
+  PR_URL=$(gh pr list --repo "$ORIGIN_SLUG" --head "$BRANCH" --base "$DEFAULT_BRANCH" \
+             --state open \
+             --json url,isCrossRepository -q 'map(select(.isCrossRepository|not))[0].url' 2>/dev/null || true)
+  [ -n "$PR_URL" ] || { echo "ABORT: branch pushed; PR not created — run: gh pr create --repo \"$ORIGIN_SLUG\" --base \"$DEFAULT_BRANCH\""; exit 1; }
 fi
 
 # dedicated post-create assign step — never blocks the ship
-gh pr edit --add-assignee "@me" >/dev/null 2>&1 || true
+# Address the PR by URL. The URL carries the repo.
+gh pr edit "$PR_URL" --add-assignee "@me" >/dev/null 2>&1 || true
 
-PR_ASSIGNEES=$(gh pr view --json assignees -q '[.assignees[].login] | join(",")' 2>/dev/null || true)
+PR_ASSIGNEES=$(gh pr view "$PR_URL" --json assignees -q '[.assignees[].login] | join(",")' 2>/dev/null || true)
 echo "pr=$PR_URL"
 echo "assignee=$PR_ASSIGNEES"
 ```
 
-`--add-assignee "@me"` self-assigns the PR to you (resolved server-side). It runs after the create, so a repo that lets you push but not assign still gets its PR. The read-back on the next line is what the report prints, so a failed assign shows as `NOT set`, never as a silent success.
+`--add-assignee "@me"` self-assigns the PR to you (resolved server-side). The PR URL names the repo, so the assign and the read-back reach the right repo in a fork clone. It runs after the create, so a repo that lets you push but not assign still gets its PR. The read-back on the next line is what the report prints, so a failed assign shows as `NOT set`, never as a silent success.
 
 **GitLab:** create the MR first, then self-assign in a **separate** step. Do NOT pass `--assignee` to `glab mr create` — it is a known silent no-op (glab injects a `/assignee` quick-action into the description instead of setting the assignee field, and when that doesn't process you get `ok created` with an empty assignee and no warning — glab issues #974/#878/#358). `glab mr update --assignee` writes the assignee field directly via the PUT update endpoint, so it actually sticks.
 
@@ -583,8 +621,9 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Working tree clean and default branch unknown | `default branch unknown — ask the user, then re-run` |
 | Working tree clean and no local `origin/<default>` ref | `no local ref for origin/<default> — run: git fetch origin <default>` |
 | No `origin` remote | `no origin remote configured` |
+| `origin` URL has no `host/owner/repo` path | `cannot read host/owner/repo from origin URL: <url>` (credentials removed). Also fires for a GitHub path that is not `owner/repo` |
 | Unsupported provider host | `unsupported remote host: <host>` |
-| `origin` fetch and push URLs differ after host+path normalization | `origin fetch and push point at different repos — push goes to <url>` |
+| `origin` fetch and push URLs differ after host+path normalization | `origin fetch and push point at different repos — push goes to <url>` (credentials removed) |
 | Revert or sequencer operation in progress | `<operation> in progress — finish or abort it first` |
 | Provider CLI not installed | `<gh\|glab> not installed` |
 | Default branch detection failed | ask the user once |
@@ -602,7 +641,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Derived branch equals the default branch | `refusing to commit to the default branch` |
 | Committed mode on the default branch at Phase 3a | `refusing to push the default branch` |
 | Committed mode cannot list the commits to push | `cannot list the commits to push` |
-| PR creation failed after push | `branch pushed; PR not created — run: gh pr create --base <default>` (GitLab: `branch pushed; MR not created — run: glab mr create --target-branch <default> --fill=false`) |
+| PR creation failed after push | `branch pushed; PR not created — run: gh pr create --repo <slug> --base <default>` (GitLab: `branch pushed; MR not created — run: glab mr create --target-branch <default> --fill=false`) |
 | PR creation failed after a fork push | `branch pushed to fork; PR not created — run: gh pr create --repo <slug> --base <default> --head <login>:<branch>` |
 | Upstream slug lookup failed on the fork path | `cannot resolve the upstream repo — run: gh repo view --json nameWithOwner` |
 | GitHub login lookup failed on the fork path | `cannot resolve your GitHub login — run: gh api user -q .login` |

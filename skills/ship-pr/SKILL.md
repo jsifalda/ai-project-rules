@@ -2,7 +2,7 @@
 name: ship-pr
 description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
 metadata:
-  version: "2.1"
+  version: "2.2"
 ---
 
 # Ship PR
@@ -82,12 +82,18 @@ norm_remote() {
   printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)([^/@]*@)?([^/:]+):[0-9]+/#\1\2\3/#; s#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
 }
 
+# A scheme-form URL can hold `user:token@`. Strip it before an abort message prints the URL.
+# The scp form `git@host:o/r` holds no secret.
+redact_url() {
+  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)[^/]*@#\1#'
+}
+
 # `get-url` returns the FETCH url. If a repo really pushes to a DIFFERENT repo, the branch
 # lands on one and the PR opens on the other. Compare host+path, not the raw strings —
 # "fetch over HTTPS, push over SSH, same repo" is a normal setup and must not abort.
 PUSH_URL=$(git remote get-url --push origin 2>/dev/null) || PUSH_URL="$ORIGIN_URL"
 if [ "$(norm_remote "$PUSH_URL")" != "$(norm_remote "$ORIGIN_URL")" ]; then
-  echo "ABORT: origin fetch and push point at different repos — push goes to $PUSH_URL"; exit 1
+  echo "ABORT: origin fetch and push point at different repos — push goes to $(redact_url "$PUSH_URL")"; exit 1
 fi
 HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#[:/].*$##')
 # Host/owner/repo of origin, parsed from the URL text alone, so this stays network-free.
@@ -98,14 +104,21 @@ HOST=$(printf '%s' "$ORIGIN_URL" | sed -E 's#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##
 # the PR there.
 ORIGIN_SLUG=$(norm_remote "$ORIGIN_URL")
 case "$ORIGIN_SLUG" in
+  *//*) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
   */*/*) ;;
-  *) echo "ABORT: cannot read host/owner/repo from origin URL: $ORIGIN_URL"; exit 1 ;;
+  *) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
 esac
 case "$HOST" in
   github.com|*.github.*) PROVIDER=gh ;;
   gitlab.com|*gitlab*)   PROVIDER=glab ;;
   *) echo "ABORT: unsupported remote host: $HOST"; exit 1 ;;
 esac
+# GitLab allows subgroups (host/g/sub/r). GitHub allows only host/owner/repo.
+if [ "$PROVIDER" = gh ]; then
+  case "$ORIGIN_SLUG" in
+    */*/*/*) echo "ABORT: cannot read host/owner/repo from origin URL: $(redact_url "$ORIGIN_URL")"; exit 1 ;;
+  esac
+fi
 
 # presence only — a shell builtin, ~0ms, no network
 command -v "$PROVIDER" >/dev/null 2>&1 || { echo "ABORT: $PROVIDER not installed"; exit 1; }
@@ -608,9 +621,9 @@ Nothing else. No trailing summary, no narrative paragraph.
 | Working tree clean and default branch unknown | `default branch unknown — ask the user, then re-run` |
 | Working tree clean and no local `origin/<default>` ref | `no local ref for origin/<default> — run: git fetch origin <default>` |
 | No `origin` remote | `no origin remote configured` |
-| `origin` URL has no `host/owner/repo` path | `cannot read host/owner/repo from origin URL: <url>` |
+| `origin` URL has no `host/owner/repo` path | `cannot read host/owner/repo from origin URL: <url>` (credentials removed). Also fires for a GitHub path that is not `owner/repo` |
 | Unsupported provider host | `unsupported remote host: <host>` |
-| `origin` fetch and push URLs differ after host+path normalization | `origin fetch and push point at different repos — push goes to <url>` |
+| `origin` fetch and push URLs differ after host+path normalization | `origin fetch and push point at different repos — push goes to <url>` (credentials removed) |
 | Revert or sequencer operation in progress | `<operation> in progress — finish or abort it first` |
 | Provider CLI not installed | `<gh\|glab> not installed` |
 | Default branch detection failed | ask the user once |

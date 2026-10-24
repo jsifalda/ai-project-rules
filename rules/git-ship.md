@@ -8,6 +8,13 @@
 - Default to read-only `glab`: `mr view`, `mr list`, `mr diff`, `ci view`, `issue view`. These need no approval.
 - Include every file the user names for a PR. Think one should stay out → ask first. Never drop it silently.
 
+## Ranges
+
+- Range a diff or log against `origin/<default>`, never a bare local default branch name.
+- Resolve `<default>` from the `ref:` line of `git ls-remote --symref origin HEAD`.
+- `origin/<default>` missing → `git fetch origin +<default>:refs/remotes/origin/<default>` first.
+- No `origin` remote or no `ref:` line → ask.
+
 ## Messages
 
 - Use conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`, optional `(scope)`.

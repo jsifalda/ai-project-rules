@@ -11,6 +11,9 @@
 ## Ranges
 
 - Range a diff or log against `origin/<default>`, never a bare local default branch name.
+- Resolve `<default>` from the `ref:` line of `git ls-remote --symref origin HEAD`.
+- `origin/<default>` missing → `git fetch origin +<default>:refs/remotes/origin/<default>` first.
+- No `origin` remote or no `ref:` line → ask.
 
 ## Messages
 

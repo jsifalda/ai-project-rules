@@ -19,6 +19,8 @@ fixture double-escape 'echo \\$1';          fail double-escape
 fixture braced 'printf "%s" "${1}"';        pass braced
 fixture word-after 'echo $1abc';            pass word-after
 fixture escaped 'costs \$1.00';             pass escaped
+fixture accent-after 'echo $1é';            fail accent-after
+fixture arabic-digit 'echo $١';             pass arabic-digit
 mkdir -p "$D/front-only"
 printf -- '---\nname: front-only\ndescription: costs $1\nmetadata:\n  version: "1.0"\n---\n\nbody\n' > "$D/front-only/SKILL.md"
 pass front-only

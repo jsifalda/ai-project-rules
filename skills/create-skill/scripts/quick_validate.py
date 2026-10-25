@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Claude Code substitutes this form with the skill invocation arguments on load.
 # A single backslash escapes it, so `\$1` stays literal and is allowed.
-BARE_POSITIONAL_PARAM = re.compile(r'(?<!(?<!\\)\\)\$(\d+)(?!\w)')
+BARE_POSITIONAL_PARAM = re.compile(r'(?<!(?<!\\)\\)\$(\d+)(?!\w)', re.ASCII)
 
 def validate_skill(skill_path, require_version=False):
     """Basic validation of a skill"""

@@ -9,6 +9,10 @@ import re
 import yaml
 from pathlib import Path
 
+# Claude Code substitutes this form with the skill invocation arguments on load.
+# A single backslash escapes it, so `\$1` stays literal and is allowed.
+BARE_POSITIONAL_PARAM = re.compile(r'(?<!(?<!\\)\\)\$(\d+)(?!\w)')
+
 def validate_skill(skill_path, require_version=False):
     """Basic validation of a skill"""
     skill_path = Path(skill_path)
@@ -112,6 +116,18 @@ def validate_skill(skill_path, require_version=False):
         if upstream is not None:
             if not isinstance(upstream, str) or not upstream.startswith('https://'):
                 return False, "metadata.upstream must be a string starting with 'https://'"
+
+    frontmatter_end_line = content[:match.end()].count('\n') + 1
+    for line_number, line in enumerate(content.splitlines(), 1):
+        if line_number <= frontmatter_end_line:
+            continue
+        param = BARE_POSITIONAL_PARAM.search(line)
+        if param:
+            return False, (
+                f"SKILL.md line {line_number}: bare positional parameter '{param.group(0)}'. "
+                f"Claude Code replaces it with a skill argument. "
+                f"Write '${{{param.group(1)}}}' in shell code, or '\\{param.group(0)}' for literal text."
+            )
 
     return True, "Skill is valid!"
 

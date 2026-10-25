@@ -26,6 +26,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Simplicity first. Make the simplest change that meets the current requirement. No
   speculative abstraction, config, or indirection for an unstated need.
 - Fix the root cause, never the symptom.
+- Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, but never correctness, a caveat or a test.
 - Touch only what is necessary. No side effects, no new bugs.
 - Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.
 - Fulfill the request in full, with the follow-ups it directly implies.
@@ -35,6 +36,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Always read `AGENTS.md` or `CLAUDE.md` first.
 - Read the surrounding code, its tests and its config before an edit. Integrate idiomatically.
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
+- Settle a fact with the code or a tool before you ask. Ask only a question whose answer changes what you do.
 - Consider several approaches, as a senior developer would.
 
 # ARCHITECTURE
@@ -114,7 +116,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - All prose in ASD-STE100 Simplified Technical English. Project rules and skills can override it.
 - Exempt: code, structured config, and terse CLI output. Commit subjects and PR titles have
   their own format, in `rules/git-ship.md`.
-- Answer first. Headings, bullets, tables.
+- Answer first: the result, then what needs the user (a decision, a failure, a risk). Routine success gets one line. Headings, bullets, tables.
 - Cut any sentence that does not change what the reader does. No recap, no restating the code.
 - Never drop a caveat, a step, or a number. Compress into clauses, not paragraphs.
 
@@ -126,7 +128,8 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Use `async/await` for asynchronous code.
 - No magic numbers. Name every constant.
 - Use `fetch` for HTTP. Never `axios`, `superagent`, or another library.
-- Never swallow an error silently. Log it or propagate it.
+- Never swallow an error silently. Log or propagate it.
+- Keep routine success quiet in what you build. Send no ping or alert that needs no action.
 - No convention in the repo → camelCase for variables and functions, PascalCase for classes
   and components.
 

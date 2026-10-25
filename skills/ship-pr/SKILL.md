@@ -2,7 +2,7 @@
 name: ship-pr
 description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
 metadata:
-  version: "2.2"
+  version: "2.3"
 ---
 
 # Ship PR
@@ -78,14 +78,15 @@ ORIGIN_URL=$(git remote get-url origin 2>/dev/null) || { echo "ABORT: no origin 
 #   git@github.com:acme/widget.git      ->  github.com/acme/widget
 #   ssh://git@ssh.github.com:443/acme/widget.git  ->  ssh.github.com/acme/widget
 # Strip a port from the scheme form only. In the scp form `git@host:12345/r`, 12345 is an owner.
+# Braces are required: Claude Code replaces a bare $<digit> in a SKILL.md with a skill argument.
 norm_remote() {
-  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)([^/@]*@)?([^/:]+):[0-9]+/#\1\2\3/#; s#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
+  printf '%s' "${1}" | sed -E 's#^([a-zA-Z0-9+.-]+://)([^/@]*@)?([^/:]+):[0-9]+/#\1\2\3/#; s#^[a-zA-Z0-9+.-]+://##; s#^[^/@]*@##; s#:#/#; s#/+$##; s#\.git$##'
 }
 
 # A scheme-form URL can hold `user:token@`. Strip it before an abort message prints the URL.
 # The scp form `git@host:o/r` holds no secret.
 redact_url() {
-  printf '%s' "$1" | sed -E 's#^([a-zA-Z0-9+.-]+://)[^/]*@#\1#'
+  printf '%s' "${1}" | sed -E 's#^([a-zA-Z0-9+.-]+://)[^/]*@#\1#'
 }
 
 # `get-url` returns the FETCH url. If a repo really pushes to a DIFFERENT repo, the branch

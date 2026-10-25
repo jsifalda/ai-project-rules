@@ -3,7 +3,7 @@ name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Create Skill
@@ -307,12 +307,13 @@ If you are authoring this skill inside a public or shared instruction repo, the 
 
 Common pitfalls to avoid while drafting:
 
-- Absolute paths like `/Users/<name>/...` — use `~`, `${HOME}`, or `$(dirname "$0")`-derived paths instead.
+- Absolute paths like `/Users/<name>/...` — use `~`, `${HOME}`, or `$(dirname "${0}")`-derived paths instead.
 - Real names, emails, handles, Slack/Atlassian account IDs — replace with placeholders or runtime lookups.
 - Employer / team / internal-project names — parametrise or drop entirely.
 - Internal hostnames (`*.internal`, `*.corp`) and internal Confluence/Linear/Jira IDs — keep them out; reference env vars or ask the user at runtime.
 - Hardcoded secrets, even fake-looking ones — always `$ENV_VAR`, never literals.
 - Repo names, repo lists, project slugs. In a repo with the universality scanner, add your own repo names to its `scripts/universality-denylist.txt` so the scanner catches them.
+- A bare `$<digit>` in a SKILL.md, in code or prose. Claude Code replaces it with a skill argument when the skill loads. Write `${1}` in shell code, or `\$1` for literal text. `quick_validate.py` rejects the bare form.
 
 In a repo that ships `scripts/check-universality.sh`, run the scanner before you finish Step 4:
 
@@ -433,7 +434,7 @@ not block the skill.
 
 When the skill ships as a file (for example, an upload to a Claude app), package it into a .skill file. Skip this step when a sync hook loads the skill from the repo. The packaging process validates the skill first:
 
-- **Before packaging**, re-run `bash scripts/check-universality.sh` (whole-repo scan) to confirm the skill contains no personal data, secrets, or employer-specific content. The pre-commit hook enforces the same check, but running it here gives a faster signal.
+- **Before packaging**, re-run `bash scripts/check-universality.sh` from the repo root (whole-repo scan) to confirm the skill contains no personal data, secrets, or employer-specific content. The pre-commit hook enforces the same check, but running it here gives a faster signal.
 
 ```bash
 scripts/package_skill.py <path/to/skill-folder>
@@ -451,8 +452,8 @@ The packaging script will:
 
    - YAML frontmatter format and required fields
    - Skill naming conventions and directory structure
-   - Description completeness and quality
-   - File organization and resource references
+   - Description presence, length and characters
+   - No bare `$<digit>` in the body
 
 2. **Package** the skill if validation passes, creating a .skill file named after the skill (e.g., `my-skill.skill`) that includes all files and maintains the proper directory structure for distribution. The .skill file is a zip file with a .skill extension.
 

@@ -3,7 +3,7 @@ name: setup-aiengineering
 disable-model-invocation: true
 description: Bootstrap AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios/design gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, writes a DESIGN.md source of truth for UI repos (backfilled from code), delegates doc systems to setup-adrs, setup-changelog, setup-user-scenarios and setup-todo-backlog, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude, and injects a Worktree Gate. Stack-agnostic — detects build/test commands (Node, Python, Go, Rust, config/IaC) and degrades without them. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author one ADR or changelog entry, to edit one existing policy section, or to set up one sub-system (call that setup skill directly).
 metadata:
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Setup AI Engineering
@@ -29,7 +29,7 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 | Design source of truth (`DESIGN.md`) — UI repos only, default ON when UI signals exist | inject + scaffold (`references/design-md.md`, `assets/DESIGN.template.md`, Step 5b) |
 | ADRs | delegate → `setup-adrs` |
 | Changelog | delegate → `setup-changelog` |
-| User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b) |
+| User scenarios (BDD) + its blocking verification gate | delegate → `setup-user-scenarios` (gate appended in Step 6b, and it offers `generate-user-scenarios` on existing PRDs) |
 | TODO backlog (known-issues list + a close-only end-of-session sweep, entries filed only on request) — opt-in | delegate → `setup-todo-backlog` |
 | Worktree auto-bootstrap, with the Worktree Gate (every plan starts in a Claude Code worktree) | scaffold (`assets/setup-worktree.sh` + SessionStart hook, plus a detected `.worktreeinclude`) + inject (`references/worktree-gate.md`, Step 7c) |
 | Skill discovery (search the registry for skills that fit this repo) — opt-in | delegate → `find-skills` |
@@ -51,12 +51,12 @@ This runs for every repo type — a config-only repo still gets an `AGENTS.md`.
 
 **Inject the scope block (always, not a module).** Read `references/instructions-scope.md` and place
 its block at the very **top** of the target file, above the provenance note and above every `##`
-section. Apply its `## Substitutions` — drop the `ARCHITECTURE.md` row when the ADR module will not
-run, drop the `docs/adr/` row when no ADR system is set up, drop the `DESIGN.md` row since Step 5b
-adds it, and never point a rule at a file the repo does not have. This is not a Step 4 menu item
-and cannot be deselected: it defines what the file this skill creates is *for*, so a target repo
-never gets one without it. Idempotent — a block
-already containing `This file is agent instructions only.` is updated in place, never duplicated.
+section. Apply its `## Substitutions` to the files the repo has now. Drop the `ARCHITECTURE.md` and
+`docs/adr/` rows unless those already exist, since Step 6a adds them once `setup-adrs` creates them.
+Drop the `DESIGN.md` row, since Step 5b adds it. Never point a rule at a file the repo does not have.
+This is not a Step 4 menu item and cannot be deselected: it defines what the file this skill creates is
+*for*, so a target repo never gets one without it. Idempotent — a block already containing
+`This file is agent instructions only.` is updated in place, never duplicated.
 
 Everything after this point obeys that block. **This skill never writes documentation into the agent
 instructions file** — no overview, no stack list, no command table, no directory tree, no list of
@@ -98,8 +98,8 @@ Typical offenders and their homes:
 | Repo layout, directory tree, key-files list, architecture recap | `ARCHITECTURE.md` | `README.md` |
 | Gotchas, traps, "things that bite" lists | `docs/adr/` — one ADR per trap, holding the full context | `ARCHITECTURE.md`, else `README.md` |
 
-**Resolve the destination file before removing anything.** `ARCHITECTURE.md` and `docs/adr/` exist
-only where the ADR module ran, so take the fallback when they do not — the same chain
+**Resolve the destination file before removing anything.** `ARCHITECTURE.md` and `docs/adr/` may not
+exist yet, so check each and take the fallback when it is absent — the same chain
 `references/instructions-scope.md` uses. Never cut a section out toward a directory or file that is
 not there.
 
@@ -333,6 +333,12 @@ matching skill name); never fail silently and never half-apply.
 Each appends its own distinctly-headed `##` section, so they stack safely with Step 5. Let each
 skill run its own assess/prompt logic (e.g. `setup-adrs` asks before drafting `ARCHITECTURE.md`).
 
+**Step 6a: add the ADR scope block rows.** After `setup-adrs` runs, add the template's
+`ARCHITECTURE.md` row to the scope block when that file now exists. Add its `docs/adr/` row, under
+the directory `setup-adrs` chose, when that directory now exists. Move any content home Step 1
+merged into another row back to its restored row. Add the `## Architecture` pointer with the
+`ARCHITECTURE.md` row. Skip a row the block already has.
+
 **Step 6b — append the tail gates (each only after its own prerequisite is in place).** Step 5 held
 them all back on purpose. Append them now, in the order they appear in
 `references/verification-protocol.md` — **user-scenarios sync, then design sync, then backlog
@@ -469,8 +475,8 @@ If chosen (and host gate passed):
 
 Confirm in one short message:
 - Agent file created/located; `CLAUDE.md → AGENTS.md` symlink (if created).
-- Scope block injected or updated in place, and which content-home rows were dropped for files this
-  repo does not have.
+- Scope block injected or updated in place, which content-home rows Step 6a restored after
+  `setup-adrs` created their files, and which rows stay dropped because their files are still absent.
 - Documentation-drift scan: the sections found, which were moved and to where, and which the user
   declined to move (name them — a declined section is not a clean file).
 - If this was a re-run in upgrade mode: which version the repo was on and which newer concerns were
@@ -500,6 +506,8 @@ Confirm in one short message:
 - User-scenarios sync gate: appended after a successful `setup-user-scenarios` delegation, or
   omitted — naming which condition failed (module not selected, verification module not selected,
   or the delegation was skipped).
+- PRD scenario seeding: the `setup-user-scenarios` Step 3b result as that skill reported it, or
+  `skipped (module not selected)` / `skipped (setup-user-scenarios unavailable)` when the delegation did not run.
 - TODO backlog delegated to `setup-todo-backlog`, or skipped since it is opt-in and was not
   selected, or `skipped (setup-todo-backlog unavailable)`.
 - Backlog sweep gate: appended after a successful delegation, or omitted — naming which condition
@@ -573,126 +581,21 @@ only; the user runs it.
 
 ## Rules
 
-- Inject into the project's existing agent file (first match: `AGENTS.md` → root `CLAUDE.md` →
-  `.claude/CLAUDE.md`). If none, create `AGENTS.md` and symlink `CLAUDE.md → AGENTS.md`. Never
-  overwrite a real `CLAUDE.md` with a symlink.
-- **The agent instructions file holds directives and read-first pointers only.** This skill never
-  writes documentation there — no overview, no stack list, no command table, no directory tree, no
-  list of project traps. Those go to `README.md` / `ARCHITECTURE.md` / `docs/adr/`, and the agent
-  file gets a pointer that names its trigger. The test is not "does it instruct?": a body of project
-  knowledge written as imperatives is still knowledge, and still does not belong.
-- The scope block (`references/instructions-scope.md`) is injected in Step 1 for every repo and is
-  **not a deselectable module** — it defines what the file this skill creates is for. Idempotent:
-  update an existing block in place, never add a second.
-- Never point a rule at a file the repo does not have. `ARCHITECTURE.md` exists only when the ADR
-  module ran — with it deselected or `setup-adrs` unavailable, route that content to `README.md` and
-  drop the row from the scope block.
-- Backfill (Step 3) writes to `README.md` and `ARCHITECTURE.md`, create-or-append, never clobbering
-  a heading the user already owns. It never creates `ARCHITECTURE.md` — that is `setup-adrs`' job.
-- **The structure / key-files half of the backfill is drafted in Step 3 and written in Step 6d,
-  never in Step 3.** Step 3 runs before the module menu and before the ADR delegation, so
-  `ARCHITECTURE.md` cannot exist there and a branch on it is always false — the same trap the tail
-  gates avoid by waiting for Step 6b. Step 6d discards the draft when `setup-adrs` already populated
-  the file, appends when it holds only the template, and falls back to `README.md` when it is
-  absent.
-- The re-run documentation-drift scan **reports and offers, never moves on its own**. It runs on
-  every re-run, same-version included, since accretion has nothing to do with the version stamp. A
-  declined section is named in the Step 8 report, never left invisible.
-- Never inject an empty or guessed command — drop the gate instead. One exception: the coverage
-  half of the **Tests and coverage** gate, which has a written degraded form in
-  `references/verification-protocol.md` — inject that rather than dropping the whole gate. Confirm the detected
-  lint/typecheck/test/coverage commands with the user before they ship into a mandatory gate; never
-  auto-run the test or coverage command during setup.
-- Coverage threshold is user-adjustable (default 90) and enforced overall via the runner's fail-under
-  mechanism (scope = overall repository %). A repo's current coverage may be below it — that is fine.
-- Never auto-install test dependencies. When a source repo has no test framework, offer to set one up
-  via `references/test-setup.md` (ask for a runner + coverage tool, scaffold minimal config, emit the
-  install command for the user to run) rather than silently dropping coverage; a config/no-source repo
-  makes the test + coverage gates N/A.
-- Regression gate for bug fixes has no `{{...}}` placeholder — it is tool-agnostic prose, and it
-  degrades along paths keyed off source code, not tooling: **enforced** in a source repo with a
-  test framework; kept as **dormant, unenforced prose** in a source repo without one; **dropped**
-  only in a config/no-source repo, alongside the test and coverage gates.
-- Never duplicate a `##` section — detect the heading and ask before replacing.
-- Stamp one visible italic provenance note above the injected policy sections naming the
-  `setup-aiengineering` skill, stamping the current **Skill version** (from `baseline-checklist.md`),
-  and listing the sections it generated; idempotent (update the version stamp and list, never add a
-  second note). The version stamp is what re-run upgrade mode reads. Distinct from the global
-  no-self-attribution rule — this is user-requested skill provenance, not model attribution.
-- Versioned re-runs — on re-run, read the provenance note's stamped version; if older than the
-  current skill version, offer the newer concerns from `baseline-checklist.md` and refresh drifted
-  blocks (diff-and-ask, never clobber). A new baseline gap is fixed by adding a checklist row and
-  bumping the version, not by patching one repo.
-- Always end with the Step 8b coverage self-audit against `baseline-checklist.md`; surface every
-  `not covered` concern explicitly, never omit one silently.
-- Guard every delegated skill (Step 6), the `find-skills` delegation (Step 6c), and the optional
-  **Nuclear structural review** lens for availability; if a skill is absent, label it
-  `skipped (... unavailable)` and tell the user, never fail silently.
-- Backfill only for working repos, only on user opt-in, and only grounded in real files.
-- Idempotent — re-running detects existing sections/hooks and asks rather than clobbering.
-- The worktree module (Step 7) is Claude-Code-only (gated on `CLAUDECODE=1`); on any other host skip
-  it and label it `N/A (host is not Claude Code)`.
-- The Worktree Gate (Step 7c) ships only with the worktree module, after its host gate. It has no
-  separate opt-out, is injected verbatim with no `{{...}}` placeholders, and is skipped outside a
-  git repo.
-- `.worktreeinclude` is probe-then-ask, root-only, and merge-not-clobber; skip it when a
-  `WorktreeCreate` hook is present, or when the probe and the ask add nothing.
-- Always carry a gitignored `.mcp.json` into `.worktreeinclude` when present (local MCP servers are
-  otherwise lost in new worktrees); when absent, add the one-line MCP-config reminder to the agent
-  instructions instead (Step 7b).
-- PRD gate is opt-in (default off) and injected verbatim — it has no `{{...}}` placeholders.
-- The verification tail gates — **user-scenarios sync**, **design sync** and **backlog sweep** —
-  live inside the verification block but are **appended in Step 6b after their own prerequisite is
-  in place, never injected in Step 5**. Step 5 runs before Step 5b and Step 6, so injecting one early
-  would point a mandatory gate at a doc or policy that may never be installed. Omit a tail gate
-  unless its module was selected, the verification module was selected, and its prerequisite is in
-  place — its delegation actually ran, or for design sync, Step 5b wrote or kept a `DESIGN.md`.
-  Append in the fixed order (user-scenarios sync, then design sync, then backlog sweep), all above
-  the **Commit** gate when it shipped. Omitting one leaves the rest of the block untouched.
-- **`DESIGN.md` is the design source of truth — code implements it.** Code and `DESIGN.md`
-  disagree → `DESIGN.md` wins and the code is fixed, unless the user decides the code is right —
-  then `DESIGN.md` is updated in the same change.
-- A user-requested visual change updates `DESIGN.md` in the same change as the code. An
-  agent-initiated deviation — a new token, pattern or visual decision — is drafted and asked first.
-- The design backfill (Step 5b) records reality. It lists drift as debt under `## Known
-  inconsistencies`, never redesigns, never changes app code, and never creates a token file. It
-  drops any baseline Do or Don't rule the current code already breaks.
-- Never write a placeholder `DESIGN.md`, and never overwrite an existing `DESIGN.md` or `design.md` —
-  offer only its missing sections.
-- The agent instructions file points at `DESIGN.md` through the `## Design` block and never
-  `@`-imports it — an import would load it in every session.
-- The user-scenarios sync gate makes the scenario doc blocking: a user-visible change left with a
-  stale scenario doc fails verification exactly like a failing test, and is reported every time as
-  `passed` / `failed` / `n/a (not user-visible)` rather than skipped silently. It rides with the
-  user-scenarios module, so selecting that module with verification deselected is a no-op.
-- TODO backlog module is opt-in (default off) and delegated to `setup-todo-backlog`; its injected
-  policy files an entry only when the user asks for one — the agent never offers, suggests, or
-  drafts one — while **closing stays evidence-gated and automatic**, never approval-gated.
-- The GitHub-App offer (Step 9) is Claude-Code-only (gated on `CLAUDECODE=1`) and GitHub-only.
-  It suggests the built-in `/install-github-app` — never an action the skill performs. Skip
-  silently on non-Claude-Code hosts or non-GitHub repos; note-and-skip if the workflows exist.
-- The **Security review** lens rides inside the **Code review** gate, defaults ON, and self-gates
-  on the host's security-review capability; when absent the injected lens labels itself `skipped
-  (security review unavailable)` — never skip silently. It invokes the harness built-in (Claude
-  Code: `/security-review`) and does not require the `security-guidance` plugin.
-- The **Nuclear structural review** and **Security review** lenses are conditional per change. The
-  injected **Conditional lenses** bullet names each trigger — security-relevant surfaces for the one,
-  a new or restructured production module for the other — and an unsure call runs the lens. A lens
-  whose trigger did not fire is reported `n/a (trigger not met: ...)`, never omitted.
-- The **Code review** gate triages findings by relevance, not severity. Severity sets only the
-  order of work. Fix a relevant finding at any severity, including `minor` and `trivial`. Reject a
-  finding that is not relevant, and state the reason — do not queue it for the user. Never apply a
-  finding that changes what a rule requires on its own, at any severity — draft it, show it, and
-  ask. The **Nuclear structural review** lens stays exempt: its findings are structural proposals,
-  not defects, so surface them for the user and never apply them on your own.
-- The security-guidance plugin offer (Step 9b) is Claude-Code-only, fires only when the security
-  review lens was selected and the plugin is not already installed, and is a suggestion only —
-  never install it.
-- Skill discovery (Step 6c) is opt-in (default off) and delegated to `find-skills`. This skill
-  infers the search topics, because `find-skills` takes a topic query and has no codebase-scan
-  mode. Per-topic approval and security review always stay with `find-skills` — never pre-approve a
-  candidate and never waive a review on the user's behalf. A GitHub rate-limit 403 halts the loop,
-  and the report names every unattempted topic.
+- Keep the agent instructions file to directives and read-first pointers. Project knowledge goes to
+  `README.md`, `ARCHITECTURE.md`, or `docs/adr/`.
+- Never clobber or duplicate. Ask before replacing existing content in a section, hook, or file.
+  Appending or merging new lines is not replacing. Only the scope block and provenance note are
+  replaced without asking.
+- Never run an install command, and never auto-run the test or coverage command during setup. A
+  delegated skill keeps its own user-approved steps (Step 6c).
+- Never point a rule or gate at a file, doc, or section the repo does not have.
+- Guard every delegated or optional skill for availability, label each skip, and report each
+  skill's outcome in Step 8.
+- Always run the Step 8b self-audit before the Step 9 and Step 9b closing offers.
+- Treat the provenance note as skill provenance, not model attribution. A no-self-attribution rule
+  never blocks it.
+- Never `@`-import `DESIGN.md` into the agent instructions file. Point at it through the `## Design`
+  block.
 
 ## References
 

@@ -1,8 +1,8 @@
 ---
 name: setup-user-scenarios
-description: Bootstrap a BDD-formatted user-scenarios inventory in any project. Creates `docs/user-scenarios.md` with a Conventions section, frozen domain prefixes, seeded example scenarios, and a Coverage Matrix, then injects a doc-sync policy into `AGENTS.md` or `CLAUDE.md` so future agents must keep the doc in sync with user-visible changes. Use when the user asks to "set up user scenarios", "bootstrap a user-scenarios doc", "add a scenarios inventory", "scenarios setup", or wants to replicate the pattern in a new repo. Do NOT use for one-off scenario edits in an existing doc, for generating end-to-end tests, for changelog setup (see `setup-changelog`), or for PRD breakdown into stories (see `prd-breakdown`).
+description: Bootstrap a BDD-formatted user-scenarios inventory in any project. Creates `docs/user-scenarios.md` with a Conventions section, frozen domain prefixes, seeded example scenarios, and a Coverage Matrix, then injects a doc-sync policy into `AGENTS.md` or `CLAUDE.md` so future agents must keep the doc in sync with user-visible changes. Then offers to generate scenarios into existing PRDs under docs/prds/ via generate-user-scenarios. Use when the user asks to "set up user scenarios", "bootstrap a user-scenarios doc", "add a scenarios inventory", "scenarios setup", or wants to replicate the pattern in a new repo. Do NOT use for one-off scenario edits in an existing doc, for generating end-to-end tests, for changelog setup (see `setup-changelog`), or for PRD breakdown into stories.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # User Scenarios Setup
@@ -51,11 +51,21 @@ If `docs/user-scenarios.md` already exists, **ask the user** before overwriting.
 
 If the `docs/` directory does not exist, create it.
 
+### Step 3b: Seed scenarios into existing PRDs
+
+Run this step after Step 3, whether Step 3 wrote the doc or kept an existing one. Skip it when the user chose to abort.
+
+1. **Guard availability.** Confirm the `generate-user-scenarios` skill is available on this machine. If it is not, skip this step and report `skipped (generate-user-scenarios unavailable)`.
+2. **Find PRDs to seed.** List each `docs/prds/*.md` that has no `## User Scenarios` section. Report every other PRD as `already seeded`. If none is left, skip this step and report `no PRDs to seed`. Never skip silently.
+3. **Ask once.** Ask the user one multi-select question that lists every PRD to seed, all selected by default. Report each deselected PRD as `declined`. If the user deselects all, report only `skipped (declined)`.
+4. **Delegate.** Invoke `generate-user-scenarios` with the selected PRD paths. It reads the frozen domains from `docs/user-scenarios.md` and writes a `## User Scenarios` section into each PRD. A PRD the skill stops on without writing → report `not seeded (<reason>)`.
+5. **Leave the inventory alone.** This step writes PRDs only. `docs/user-scenarios.md` stays as Step 3 left it. A PRD scenario moves into the inventory when its code ships, per the injected policy.
+
 ### Step 4: Inject the doc-sync policy
 
-Read [references/policy-template.md](references/policy-template.md). Replace `{{DOMAIN_LIST}}` with the same backticked domain list from Step 3.
+Read [references/policy-template.md](references/policy-template.md). Replace `{{DOMAIN_LIST}}` with the backticked frozen prefixes in `docs/user-scenarios.md`: Step 2's list when Step 3 wrote the doc, the kept doc's list when Step 3 was skipped.
 
-**If Step 3 was skipped because an existing `docs/user-scenarios.md` was kept as-is**, check the ID scheme that existing doc actually uses. If it is not the dated `<DOMAIN>-YYYY-MM-DD-slug` scheme this skill produces, do not inject a policy that claims dated ids. Substitute the scheme the existing doc actually uses into the policy's id wording instead, and state which scheme was used in the Step 5 report, so nobody later assumes the ids are dated when they are not.
+**If Step 3 was skipped because an existing `docs/user-scenarios.md` was kept as-is**, check the ID scheme that existing doc actually uses. If it is not the dated `<DOMAIN>-YYYY-MM-DD-slug` scheme this skill produces, do not inject a policy that claims dated ids. Substitute the scheme the existing doc actually uses into the policy's id wording instead, and state which scheme was used in the Step 5 report, so nobody later assumes the ids are dated when they are not. In that case also replace item 2 of the policy's `### When adding or modifying user-facing behavior` list with: "If the change implements a PRD with a `## User Scenarios` section, copy the scenarios this change implements, give each an ID in this scheme, and update any scenario the build changed."
 
 Append the substituted block to the target instructions file from Step 1. If none of `AGENTS.md`, `.claude/CLAUDE.md`, `CLAUDE.md` exist, create `AGENTS.md` at project root containing only the policy block (with a top-level title heading).
 
@@ -66,6 +76,7 @@ Append the substituted block to the target instructions file from Step 1. If non
 Confirm to the user, in a single short message:
 
 - `docs/user-scenarios.md` created (or skipped if user chose to)
+- Step 3b result: each PRD by path as `seeded`, `already seeded`, `declined`, or `not seeded (<reason>)`, or `no PRDs to seed`, `skipped (declined)`, or `skipped (generate-user-scenarios unavailable)`
 - Policy injected into `<target file path>` (or replaced / skipped)
 - If `docs/user-scenarios.md` already existed and was kept as-is, which ID scheme the injected policy documents — so nobody later assumes dated ids when the repo doesn't use them
 - Frozen domains seeded: `<comma-separated domain list from Step 2>`

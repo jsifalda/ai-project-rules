@@ -51,11 +51,14 @@ loses, and the reader who finds the stale copy trusts it.
 
 ## Substitutions
 
-- **`ARCHITECTURE.md`** — keep it only when the ADR module ran and that file exists. If it does not,
-  drop its row and merge its content home into `README.md`. Never point a rule at a file the repo
-  does not have.
-- **`docs/adr/`** — use the ADR directory the ADR module actually chose. If no ADR system was set
-  up, drop that row too, and route trap context to `ARCHITECTURE.md`, else `README.md`.
+- **`ARCHITECTURE.md`** — keep it only when that file exists. If it does not, drop its row and merge
+  its content home into `README.md`. SKILL.md Step 6a adds the row once `setup-adrs` creates the
+  file. Never point a rule at a file the repo does not have.
+- **The `## Architecture` example** — omit it while `ARCHITECTURE.md` does not exist. SKILL.md Step
+  6a adds it with the row.
+- **`docs/adr/`** — use the ADR directory the repo actually has. If none exists yet, drop that row
+  too, and route trap context to `ARCHITECTURE.md`, else `README.md`. SKILL.md Step 6a adds the row,
+  under the directory `setup-adrs` chose, once that skill creates it.
 - **`DESIGN.md`** — omit this row in Step 1. SKILL.md Step 5b adds it only when it wrote or kept a
   design file, under that file's actual name (`DESIGN.md` or `design.md`). Never point a rule at
   a file the repo does not have.

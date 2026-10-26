@@ -14,7 +14,8 @@
 ### When adding or modifying user-facing behavior
 
 1. Add or update a scenario in `docs/user-scenarios.md` with a stable `<DOMAIN>-YYYY-MM-DD-slug` ID (today's date, plus a 2-5 word kebab-case slug for the behavior) and Given/When/Then steps **written in user-facing voice** (see Conventions → Scenario voice).
-2. Add a `Verified by:` line pointing to a real test file under the project's source tree, or `TODO` if no test exists yet (then create a follow-up task).
-3. Append (or update) the matching row in the Coverage Matrix.
+2. If the change implements a PRD with a `## User Scenarios` section, copy the scenarios this change implements, with their IDs, instead of writing new ones, and update any scenario the build changed.
+3. Add a `Verified by:` line pointing to a real test file under the project's source tree, or `TODO` if no test exists yet (then create a follow-up task).
+4. Append (or update) the matching row in the Coverage Matrix.
 
 Changes solely to `docs/user-scenarios.md` are documentation-only and skip code verification protocols.

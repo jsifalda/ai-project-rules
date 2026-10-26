@@ -20,8 +20,12 @@ tweaks, config, and chores are exempt. Do not gate them.
    Prompt the user to create one with the `/prd-creator` skill. If `/prd-creator` is not installed in
    this environment, tell the user and ask them to add it before proceeding — do not hand-roll a
    substitute.
-2. **Draft the plan from the PRD.** Once the PRD exists, use it as the source for the implementation
-   plan. Scope, functional requirements, and success signals come from the PRD, not a fresh guess.
+2. **Generate scenarios into the PRD.** When the PRD has no `## User Scenarios` section yet, run the
+   `/generate-user-scenarios` skill with that PRD's path. If the skill is not installed in this
+   environment, tell the user and continue. A missing skill never blocks the work.
+3. **Draft the plan from the PRD.** Once the PRD exists, use it and its user scenarios, when present,
+   as the source for the implementation plan. Scope, functional requirements, success signals, and
+   the behaviors to build come from the PRD, not a fresh guess.
 
 **Before starting ANY implementation plan**, read every PRD under `docs/prds/*.md` for business
 context, so the work reflects the product's goals, constraints, and prior decisions — not just the

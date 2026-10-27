@@ -2,7 +2,7 @@
 name: ship-pr
 description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
 metadata:
-  version: "2.3"
+  version: "2.4"
 ---
 
 # Ship PR
@@ -30,7 +30,7 @@ without first removing every dependent skill's ship step.
 
 Go from a dirty working tree, or a committed branch not yet on a PR, to an open PR/MR in one pass. Auto-derive everything from the change and the repo's own conventions. No per-step confirmations.
 
-The skill runs the four phases in strict order. The hot path costs **three tool calls**: one for Phase 1, one for Phase 3a, one for Phase 3b. Phase 2 is reasoning, and Phase 4 is text. Keep each phase in one bash block. Do not split a block into per-command calls — each extra call is a full model round-trip, and the round-trips, not the commands, are what make this skill slow.
+The skill runs the four phases in strict order. The hot path costs **three tool calls** in committed mode and **four** in dirty mode: one for Phase 1, one or two for Phase 3a, one for Phase 3b. Phase 2 is reasoning, and Phase 4 is text. Run each bash block as one call. Do not split a block into per-command calls — each extra call is a full model round-trip, and the round-trips, not the commands, are what make this skill slow.
 
 Abort on the first failure with a one-line reason — do not retry with `--no-verify`, `--force`, or any other bypass flag. (Sole exception: on GitHub, a push denied for lack of write access triggers the fork fallback in Phase 3b — an alternate destination, not a bypass.)
 
@@ -279,9 +279,9 @@ Decide:
 
 ## Phase 3 — Execute
 
-Two bash blocks: 3a branches, stages, commits and pushes; 3b opens the PR/MR and reads the assignee back. Stop on the first failure — do NOT retry with `--no-verify`, `--no-gpg-sign`, `--force`, or `--amend`. The sole exception is a push denied for lack of write access on GitHub, which triggers the fork fallback in 3b (an alternate destination, not a bypass).
+3a branches, stages, commits and pushes, as one bash block in committed mode and two in dirty mode (stage, then commit and push); 3b opens the PR/MR and reads the assignee back. Stop on the first failure — do NOT retry with `--no-verify`, `--no-gpg-sign`, `--force`, or `--amend`. The sole exception is a push denied for lack of write access on GitHub, which triggers the fork fallback in 3b (an alternate destination, not a bypass).
 
-### 3a. Branch, stage, commit, push — one block
+### 3a. Branch, stage, commit, push
 
 #### Committed mode (mode=committed)
 
@@ -399,6 +399,16 @@ while IFS= read -r P; do
 done <<'PATHS'
 <one path per line, secret-filtered>
 PATHS
+```
+
+Run the second block only when the first exits 0.
+
+```bash
+set -e
+DEFAULT_BRANCH="<default-branch>"
+CAND=$(git rev-parse --abbrev-ref HEAD)   # read, never pasted: a branch name can hold $(...)
+[ -n "$DEFAULT_BRANCH" ] || { echo "ABORT: default branch unknown — ask the user, then re-run"; exit 1; }
+[ "$CAND" != "$DEFAULT_BRANCH" ] || { echo "ABORT: refusing to commit to the default branch"; exit 1; }
 
 git commit -m "$(cat <<'MSG'
 <subject>
@@ -411,10 +421,11 @@ echo "commit=$(git rev-parse --short HEAD)"   # echo BEFORE the push, for the sa
 git push -u origin "$CAND"
 ```
 
-Rules for this block:
+Rules for these blocks:
 
-- `set -e` is what makes it safe to bundle. A failed hook stops the block before the push.
-- Never redirect stderr in this block. A pre-commit hook's error must reach the user verbatim.
+- `set -e` stops each block on its first failure. The second block runs only after the first exits 0, so a failed staging guard never reaches the commit, and a failed hook stops before the push.
+- Never put two heredocs in one Bash call. Claude Code 2.1.309+ misreads a heredoc on the line right after another heredoc's terminator and asks for approval, which an unattended run auto-denies. That is why staging and commit are separate blocks.
+- Never redirect stderr in these blocks. A pre-commit hook's error must reach the user verbatim.
 - No `--no-verify`. If a pre-commit hook fails, fix the underlying issue (or surface it to the user) — do not bypass.
 - If the commit fails, do not run `--amend` to "retry". Create a NEW commit after fixing.
 - Never `--force` or `--force-with-lease` on the push.

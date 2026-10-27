@@ -35,11 +35,10 @@ def normalize(path):
 
 
 def paths_overlap(a, b):
-    a, b = normalize(a), normalize(b)
-    if not a or not b or a == b:
+    a, b = normalize(a).rstrip("/"), normalize(b).rstrip("/")
+    if not a or not b:
         return True
-    return (a.endswith("/") and b.startswith(a)) or (
-        b.endswith("/") and a.startswith(b))
+    return a == b or b.startswith(a + "/") or a.startswith(b + "/")
 
 
 def first_overlap(files_a, files_b):

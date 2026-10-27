@@ -220,6 +220,18 @@ class CheckPlanTest(unittest.TestCase):
         for directory in ("src/.", "src/routes/.."):
             self.assertTrue(check_lanes.paths_overlap(directory, "src/create.py"), directory)
 
+    def test_directory_without_trailing_slash_overlaps_paths_under_it(self):
+        self.assertTrue(check_lanes.paths_overlap("src/routes", "src/routes/create.py"))
+        self.assertTrue(check_lanes.paths_overlap("src/routes/create.py", "src/routes"))
+        self.assertIn("lane-overlap", codes_after(set_unit("api-list", files=["src"])))
+
+    def test_directory_with_and_without_trailing_slash_overlap(self):
+        self.assertTrue(check_lanes.paths_overlap("src/routes", "src/routes/"))
+
+    def test_sibling_with_shared_name_prefix_does_not_overlap(self):
+        self.assertFalse(check_lanes.paths_overlap("src/rout", "src/routes/create.py"))
+        self.assertFalse(check_lanes.paths_overlap("src/routes/create.py", "src/rout"))
+
     def test_earlier_foundation_owning_directory_overlaps_later_lane_file(self):
         def change(p):
             unit_of(p, "api-F")["files"] = ["src/"]

@@ -9,4 +9,3 @@ obsidian-bases
 obsidian-cli
 obsidian-markdown
 prototype
-retro

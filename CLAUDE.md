@@ -10,6 +10,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 - `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session and opens with a trigger table routing to the other rule files. On demand only: `authoring.md` (how to write an instruction, plus the counts ban), `testing.md`, `git-ship.md`, `docs-diagrams.md`, `review-tiers.md` (loaded from the Verification Protocol's `When it fires` section), and `builder.md` (task-first stack guidance, and when to load the `frontend-design` and `hallmark` skills together). `tailwind.md` has no trigger of its own — `builder.md` names it under `## Related rules`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
+- `archive/` — retired instructions, kept for reference. The sync hook reads only `skills/`, so nothing here loads. `archive/skills/<name>/` holds a retired skill.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
 - `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone), plus `synced-skills.txt` (script-synced skills, exempt from `--require-version`).
@@ -32,6 +33,12 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Skill version**: give every skill a quoted `metadata.version`, starting at `"1.0"`. Bump the minor on any substantive change in its directory, the major on a breaking change.
   - Give a vendored skill `metadata.upstream`, matching its README `Origin` cell.
   - After syncing a new skill, add it to `scripts/synced-skills.txt`. After a re-sync, re-add its `metadata` block and bump.
+- **Archive a skill** instead of deleting it:
+  - Move it with `git mv skills/<name> archive/skills/<name>`.
+  - Move its README row from `## Skills` to `## Archive`, and fix the link path.
+  - Remove it from `scripts/synced-skills.txt` and from any sync script's carried list.
+  - Remove or reword every pointer to it in a live skill or rule.
+  - Never edit an archived skill, except to fix a universality or policy violation. Restore it to `skills/` with `git mv` first for any other change.
 - **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py --require-version skills/<your-skill>/` (drop the flag for a skill in `scripts/synced-skills.txt`) before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Parser-strictness rules to know (each silently passes Claude Code but breaks Copilot CLI):
   - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
   - `description` must be ≤1024 chars (target ≤950 for headroom).
@@ -56,7 +63,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Why**: "next number" needs a global read of every existing item first. Two agents on two branches or worktrees read the same state and pick the same number, and the collision only shows up at merge — after inbound references already point at the wrong item. Date-plus-slug is chosen from local information only, so parallel authors never collide.
 - **Copy these in-repo precedents**, don't reinvent: `setup-adrs` (`YYYY-MM-DD-slug`), `setup-todo-backlog` (`TODO-YYYY-MM-DD-slug`), `changelog/` (`YYYYMMDDHHMMSS-slug`).
 - **Ids are immutable once landed.** Supersede, never re-date or renumber an existing one — renumbering breaks every inbound reference silently.
-- **Not covered by this rule** — ordinary ordinals aren't identifiers, leave them alone: numbered list steps, hierarchical PRD task ordinals (`1.0` / `1.1` / `2.0`), citation markers (`[1]`, `[2]`), semver versions, and filenames an external CLI produces. Also explicitly out of scope: `create-implementation-plan`'s within-document ids (`REQ-001`, `TASK-001`, etc.) — that document is single-author with no cross-file handles, so a counter there is fine.
+- **Not covered by this rule** — ordinary ordinals aren't identifiers, leave them alone: numbered list steps, hierarchical PRD task ordinals (`1.0` / `1.1` / `2.0`), citation markers (`[1]`, `[2]`), semver versions, filenames an external CLI produces, and anything under `archive/`.
 
 ## Counts
 

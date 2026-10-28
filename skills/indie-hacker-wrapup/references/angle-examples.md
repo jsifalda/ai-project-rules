@@ -13,7 +13,7 @@ The weak version is almost always a craft-process observation that is true but f
 Session: flipped a spend dashboard from counting only the "extra" overage to counting real gross AI usage. Employer work.
 
 - **Weak (craft):** "Test theater. My tests passed after a sort-key flip, but they would have passed without it because the fixture set both values equal." True, mildly interesting to engineers, forgettable to everyone else.
-- **Strong (reversal, Lens B):** "You are probably reading your AI spend wrong. If you only track the overage beyond your plan's included budget, you are blind to everything the plan absorbs. The real number is gross usage." Same session. A reader can check it on their own bill tonight.
+- **Strong (reversal, Lens B):** "You are probably reading your AI spend wrong. If you only track the overage beyond your plan's included budget, you are blind to everything the plan absorbs." Same session. A reader can check it on their own bill tonight.
 
 Why it wins: it survives the employer-privacy filter because the lesson is universal (no org, no real numbers), and a stranger cares because they share the blind spot.
 
@@ -22,7 +22,7 @@ Why it wins: it survives the employer-privacy filter because the lesson is unive
 Session: built a tool that measures AI-tool spend, using a workflow that itself burned several model tiers and two AI code reviewers.
 
 - **Weak (atomic):** "I used cheaper models for grunt tasks and kept the expensive one for hard reasoning." A generic, already-logged routing tip — and a banned cliché (see the novelty gate).
-- **Strong (synthesized irony):** "I built a dashboard to measure AI spend with a workflow that was itself a heavy AI spend. The tool and the way I made it are the same story." Only visible if you synthesize in Step 2. Atomic extraction walks past it.
+- **Strong (synthesized irony):** "I built a dashboard to measure AI spend with a workflow that was itself a heavy AI spend." Only visible if you synthesize in Step 2. Atomic extraction walks past it.
 
 ### Pair 3 — specific-story archetype (personal project, be specific)
 
@@ -47,6 +47,15 @@ Session: found a no-auth way to pull a Google Doc as clean markdown.
 - **Weak:** "Learned you can export Google Docs to markdown." Vague, sounds like a docs page.
 - **Strong (resource, give the exact thing):** "Any Google Doc share link → clean markdown, no API, no auth: hit the `/export?format=md` endpoint on the doc id. Drops straight into a pipeline." The reader can paste it and use it in ten seconds. A resource post earns its slot by being immediately actionable, not by being a hot take.
 
+### Pair 6 — strong-opinion archetype (Lens C stance)
+
+Session: migrated a GitHub notification digest to a new scheduler, then asked whether it was needed at all. It had sent 58 notifications in 8 days, most about the owner's own PRs. Switched it off in the same session.
+
+- **Weak (incident + maxim):** "Migrated my digest to a new scheduler. Lesson: question your automations." A process story that ends on a moral everyone has heard.
+- **Strong (stance, decision first):** "I switched off my GitHub digest the same evening I moved it to a new scheduler. Then I counted: 58 pings in 8 days, most about my own PRs." Opens on the decision, the number is the proof, no moral at the end. The reader draws it.
+
+Why it wins: the decision is the content, and a builder recognises the urge to polish automation nobody needs. It passes the inside-baseball guard because the number and the urge are not specific to agent tooling.
+
 ## The novelty gate, worked
 
 The originality check is the fourth bar, and it is where most generic angles die. Run it after the first three pass.
@@ -54,7 +63,7 @@ The originality check is the fourth bar, and it is where most generic angles die
 Candidate: "Built it, but never deployed it — you can max every 'done' axis and still have zero users because you never shipped."
 
 - Usable? Sort of. Surprise? Mild. Stranger cares? Maybe.
-- Original? **No.** This is "built ≠ shipped," the single most repeated maxim in the indie-hacker canon. Reject it — unless the session adds a twist that is genuinely new. Here the twist might be: "I had 126 passing tests, 8 ADRs, a vision doc, and an SEO plan — every proxy for done except the one that makes signal. The polish was the procrastination." That reframes the cliché into something specific and self-implicating. Without a twist that sharp, it does not ship.
+- Original? **No.** This is "built ≠ shipped," the single most repeated maxim in the indie-hacker canon. Reject it — unless the session adds a twist that is genuinely new. Here the twist might be: "I had 126 passing tests, 8 ADRs, a vision doc, and an SEO plan — every proxy for done except the one that makes signal." That reframes the cliché into something specific and self-implicating. Without a twist that sharp, it does not ship.
 
 The point: session-specific detail does not buy originality. A stale idea with fresh numbers is still stale. Find the twist or drop it.
 
@@ -67,7 +76,7 @@ Candidate: "A migration default silently answers two questions at once, what new
 - Stranger cares? Yes. It is a trap they can now avoid.
 - Original? Yes. Not a canonical maxim, and the framing is not one you see repeated.
 
-Clears every check, so it is a candidate. Rank it against the others by how hard it clears, then dedup against the ledger by theme.
+Clears every check, so it is a candidate. It is not a stance, so it ranks below any Lens C stance that also clears and that the inside-baseball guard does not demote. Rank it against the other non-stance angles by how hard it clears, then dedup against the ledger by theme.
 
 Candidate: "Renamed a service file and updated its imports."
 

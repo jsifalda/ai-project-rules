@@ -1,8 +1,8 @@
 ---
 name: indie-hacker-wrapup
-description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session across lenses (the product you built plus the craft behind it), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
+description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session across lenses (the product you built, the craft behind it, and the stance you took), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Indie Hacker Wrapup
@@ -58,11 +58,21 @@ Lens B is repo-aware. Decide first whether this session is your own indie projec
 - **Employer or client work** → mine only the universal, transferable lesson the work taught, stripped of every employer specific. No org or repo identity, no internal metrics, no confidential detail. The lesson travels; the context stays behind.
 - **Unsure which** → treat it as employer work and keep it universal. The privacy filter below is why.
 
-**Under-mining guard.** If every candidate you are holding is a Lens-A craft angle and not one is Lens B, you under-looked. Go back to what was built and who it is for before moving on. A session that shipped a real product almost always has a Lens-B angle.
+**Lens C — your stance (what you decided and why).** A takeaway qualifies if it is at least one of:
+
+- something you killed, parked, or refused to build
+- an option you rejected, with the reason
+- a change of mind
+- a pushback on the agent's proposal
+- a simplification you forced (cut a feature, a step, a summary)
+
+Read the user's own messages for these moments, plus the agent's replies right around them, since the user's messages are often terse. Ignore messages that only exercise the tooling and record no real decision, such as test prompts. Apply the Lens B rule on your own project versus employer or client work to every stance.
+
+**Under-mining guard.** If every candidate you are holding is a Lens-A craft angle and not one is Lens B or Lens C, you under-looked. Go back to what was built and who it is for, and to what you decided, before moving on. A session that shipped a real product almost always has a Lens-B angle.
 
 **Inside-baseball guard.** Most sessions here are meta-work on the agent setup itself — model routing, code-review agents, statusline tokens, CLAUDE.md gates, doc-sync. Those fascinate the person who did them and bore everyone else. For every candidate, ask: would this land with someone who does NOT build AI agents or use Claude Code? If no, it is niche-of-niche → demote it hard, and prefer the Lens-B product/domain angle over the Lens-A agent-config angle. An angle about the thing you built beats an angle about how you configured the tool that built it.
 
-The hard filters, applied to every candidate on both lenses before it becomes real:
+The hard filters, applied to every candidate on every lens before it becomes real:
 
 - **Privacy.** Drop anything employer-confidential, client- or teammate-identifying, NDA-bound, or personally sensitive. Never put private work content into a public draft.
 - **Grounded.** Every angle traces to something that happened in this session. If making it interesting needs invented detail, it does not qualify.
@@ -75,16 +85,16 @@ The strongest posts often connect two facts the session kept separate. Example s
 
 ## Step 3 — Score, dedup, decide, record
 
-**Score against an absolute bar first.** For each candidate, from either lens, check the bar below. Every check must pass:
+**Score against an absolute bar first.** For each candidate, from any lens, check the bar below. Every check must pass:
 
 - **Usable.** Does it teach the reader something they can act on?
 - **Surprise.** Is there a concrete number, a reversal, or a genuine surprise in it?
 - **Stranger cares.** Would a stranger who does not know you stop scrolling and care?
 - **Original.** Is the core claim something the reader has NOT already seen a hundred times? An angle that reduces to a generic build-in-public maxim fails here unless this session adds a genuinely new twist. Reject on sight, no matter how specific the session detail dressed around it: "built ≠ shipped", "just ship it / ship volume", "use cheaper models for grunt work", "trust but verify", "green tests can still be wrong", "done is better than perfect", "talk to your users", "distribution is the only moat", "AI wrote 90% of my code". If your angle is one of these with a new coat of paint, it is not original. Kill it or find the twist that is actually new.
 
-An angle must clear every check to be a candidate. If nothing clears the bar → say so plainly, in a line or two, and stop. Do not force a weak post. A skipped post beats a generic one, and most sessions should yield zero or one, not five — if you are holding five, your bar slipped. Rank whatever clears the bar by how hard it clears it. That ranking, not ledger novelty, sets the shortlist order.
+An angle must clear every check to be a candidate. If nothing clears the bar → say so plainly, in a line or two, and stop. Do not force a weak post. A skipped post beats a generic one, and most sessions should yield zero or one, not five — if you are holding five, your bar slipped. Rank whatever clears the bar in two groups. Lens C stance angles rank first, and every other angle follows. A stance that the inside-baseball guard demotes loses that first place and joins the second group, where the guard demotes it like any other angle. Inside each group, rank by how hard each angle clears the bar. If no stance clears the bar, rank every angle by how hard it clears it. This ranking, not ledger novelty, sets the shortlist order.
 
-**Diversify the shortlist by archetype.** A shortlist of five contrarian-reversal takes is one post written five ways — that monotony is what makes wrap-ups read generic. When you have more than one candidate, spread them across distinct post archetypes rather than stacking the same shape. Archetypes to draw from: specific-story-with-tension (what broke, what you did, how it turned), strong-opinion / hot-take, useful-resource or how-to (a concrete thing the reader can go use), honest-failure (what went wrong and the cost), counterintuitive-data (a real number that upends an assumption). If every survivor is the same archetype, keep only the single strongest and say so, rather than padding with clones.
+**Diversify the shortlist by archetype.** A shortlist of five contrarian-reversal takes is one post written five ways — that monotony is what makes wrap-ups read generic. When you have more than one candidate, spread them across distinct post archetypes rather than stacking the same shape. Archetypes to draw from: specific-story-with-tension (what broke, what you did, how it turned), strong-opinion / hot-take (where Lens C angles land), useful-resource or how-to (a concrete thing the reader can go use), honest-failure (what went wrong and the cost), counterintuitive-data (a real number that upends an assumption). If every survivor is the same archetype, keep only the single strongest and say so, rather than padding with clones.
 
 **Then dedup against the ledger from Step 0.** Dedup is theme-and-evidence aware, not binary. Work at the theme level first: group candidates and ledger rows by their `theme:` tag (infer it for legacy rows), because the recurring failure here is the same theme resurfacing session after session under new specifics.
 
@@ -116,7 +126,9 @@ X-native craft:
 - Open with a hook. The first line has to stop the scroll on its own.
 - One idea per post. Cut everything that does not serve it.
 - Concrete over generic. Real numbers, the real tool, what actually broke.
-- Lead with the specific scene, not the lesson. Open on the concrete thing that happened and let the takeaway land after — a post that opens on the generalized maxim ("built ≠ shipped") reads as advice everyone has heard. The specific moment is what earns the general point.
+- Lead with the specific scene, not the lesson. Open on the concrete thing that happened and let the reader draw the takeaway — a post that opens on the generalized maxim ("built ≠ shipped") reads as advice everyone has heard. The specific moment is what earns the general point.
+- A stance post opens with the decision in first person (I killed, I refused, I dropped), then the session fact as proof. The decision is its specific scene.
+- Never end on a maxim or a moral. End on the fact or the number. A closing one-line lesson reads as advice the reader has heard before, and it undoes the specific scene.
 - No hashtag spam, no engagement bait, no thread theatrics.
 - Keep it inside a single tweet by default. If the idea genuinely needs room, offer a thread version instead of cramming.
 

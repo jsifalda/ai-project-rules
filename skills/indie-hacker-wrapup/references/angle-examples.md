@@ -22,7 +22,7 @@ Why it wins: it survives the employer-privacy filter because the lesson is unive
 Session: built a tool that measures AI-tool spend, using a workflow that itself burned several model tiers and two AI code reviewers.
 
 - **Weak (atomic):** "I used cheaper models for grunt tasks and kept the expensive one for hard reasoning." A generic, already-logged routing tip — and a banned cliché (see the novelty gate).
-- **Strong (synthesized irony):** "I built a dashboard to measure AI spend with a workflow that was itself a heavy AI spend. The tool and the way I made it are the same story." Only visible if you synthesize in Step 2. Atomic extraction walks past it.
+- **Strong (synthesized irony):** "I built a dashboard to measure AI spend with a workflow that was itself a heavy AI spend." Only visible if you synthesize in Step 2. Atomic extraction walks past it.
 
 ### Pair 3 — specific-story archetype (personal project, be specific)
 
@@ -46,6 +46,15 @@ Session: found a no-auth way to pull a Google Doc as clean markdown.
 
 - **Weak:** "Learned you can export Google Docs to markdown." Vague, sounds like a docs page.
 - **Strong (resource, give the exact thing):** "Any Google Doc share link → clean markdown, no API, no auth: hit the `/export?format=md` endpoint on the doc id. Drops straight into a pipeline." The reader can paste it and use it in ten seconds. A resource post earns its slot by being immediately actionable, not by being a hot take.
+
+### Pair 6 — strong-opinion archetype (Lens C stance)
+
+Session: migrated a GitHub notification digest to a new scheduler, then asked whether it was needed at all. It had sent 58 notifications in 8 days, most about the owner's own PRs. Switched it off in the same session.
+
+- **Weak (incident + maxim):** "Migrated my digest to a new scheduler. Lesson: question your automations." A process story that ends on a moral everyone has heard.
+- **Strong (stance, decision first):** "I switched off my GitHub digest the same evening I moved it to a new scheduler. Then I counted: 58 pings in 8 days, most about my own PRs." Opens on the decision, the number is the proof, no moral at the end. The reader draws it.
+
+Why it wins: the decision is the content, and a builder recognises the urge to polish automation nobody needs. It passes the inside-baseball guard because the number and the urge are not specific to agent tooling.
 
 ## The novelty gate, worked
 

@@ -10,6 +10,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | --- | --- |
 | `rules/` | Always-apply rule files (`type: "always_apply"` frontmatter) — coding standards, restrictions, writing style (ASD-STE100) |
 | `skills/` | Agent skills following the [agentskills.io](https://agentskills.io/specification) spec. Each subdir has a `SKILL.md` |
+| `archive/` | Retired instructions, kept for reference. The sync hook reads only `skills/`, so nothing in `archive/` loads. `archive/skills/<name>/` holds a retired skill |
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
 | `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |
@@ -86,7 +87,6 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`council`](skills/council/SKILL.md) | Run a question or decision through a council of AI advisors that analyze, peer-review, and synthesize a verdict. | — | — |
 | [`council-v2`](skills/council-v2/SKILL.md) | Run a decision through a routed council of reasoning modes and personas that analyze, peer-review, and synthesize a verdict. | `first-principles-mode`, `founder-thinking-mode`, `persona-stanier`, `persona-levelsio` | — |
 | [`create-codebase-docs`](skills/create-codebase-docs/SKILL.md) | Generate an engaging `STARTHERE.md` codebase guide (architecture, decisions, Mermaid diagrams) and wire up auto-update checks. | — | — |
-| [`create-implementation-plan`](skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — | — |
 | [`create-product-vision`](skills/create-product-vision/SKILL.md) | Turn a short product or project description into one tight, motivating vision doc covering motivation, practical, and product angles, with the tagline offered in several wordings (motivational main, practical and product-descriptive alternatives). | `write-like-human` | — |
 | [`create-skill`](skills/create-skill/SKILL.md) | Guide for authoring or updating a skill — SKILL.md structure, conventions, and validation. | — | — |
 | [`create-svg-image`](skills/create-svg-image/SKILL.md) | Generate production-quality SVG images (banners, cards, OG images, badges) from a text description. | — | — |
@@ -141,7 +141,6 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`qmd-project`](skills/qmd-project/SKILL.md) | Turn any folder into a folder-local qmd semantic index over its nested `.md` files (isolated from the global index, shared models) and ship a project-local `qmd-ask` skill that answers questions from it. | — | — |
 | [`radical-feedback`](skills/radical-feedback/SKILL.md) | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. | — | — |
 | [`reddit-post`](skills/reddit-post/SKILL.md) | Create high-engagement Reddit posts (title + body) from a guided questionnaire. | — | — |
-| [`retro`](skills/retro/SKILL.md) | Look back over a coding session and propose fixes to the agent's environment: checks, pointers and standards. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | [`rewrite`](skills/rewrite/SKILL.md) | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. Improve mode loads the write-like-human ruleset first so default output reads human. | `write-like-human` | — |
 | [`seo-keyword-generator`](skills/seo-keyword-generator/SKILL.md) | Generate a categorized SEO keyword strategy for a side project via a questionnaire. | — | — |
 | [`setup-adrs`](skills/setup-adrs/SKILL.md) | Bootstrap an Architecture Decision Record (ADR) system in any project — ADR dir + template + seed record ADR, `ARCHITECTURE.md` recap, and an ADR policy injected into AGENTS.md/CLAUDE.md. | — | — |
@@ -163,6 +162,15 @@ The **Origin** column marks skills pulled from an upstream repo — link to that
 | [`yt-video-finder`](skills/yt-video-finder/SKILL.md) | Drive a real Chrome browser via Playwright to search YouTube, shortlist and rate candidates by engagement + comments, then pick the single best video for the user's criteria and write it up. | — | — |
 
 _(Inside Claude Code you may also see skills loaded from other sources; this table covers the skills defined in this repo — `ls skills/`.)_
+
+## Archive
+
+Retired skills, kept for reference. The sync hook does not link them. CLAUDE.md under Conventions has the archive steps.
+
+| Skill | What it does | Depends on | Origin |
+| --- | --- | --- | --- |
+| [`create-implementation-plan`](archive/skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — | — |
+| [`retro`](archive/skills/retro/SKILL.md) | Look back over a coding session and propose fixes to the agent's environment: checks, pointers and standards. | — | [mattpocock/skills](https://github.com/mattpocock/skills) |
 
 ## Upstream skill sync
 
@@ -197,7 +205,7 @@ Flags:
 - `--dest <dir>`: sync into `<dir>` instead of this repo's `skills/` (also `--dest=<dir>`)
 - `--help`, `-h`: show usage and exit
 
-This repo carries these upstream skills. `prototype` (engineering) and `handoff` (productivity) came in through this script, and upstream has changed since. `grill-me`, `grill-with-docs`, `domain-modeling` and `retro` are hand-ports with local edits. No baseline is committed for any of them, and the script refuses an existing skill that has no baseline entries, so a re-sync of a skill listed here is refused. Port an upstream change by hand: copy the new upstream body into the local `SKILL.md` and keep the existing frontmatter.
+This repo carries these upstream skills. `prototype` (engineering) and `handoff` (productivity) came in through this script, and upstream has changed since. `grill-me`, `grill-with-docs` and `domain-modeling` are hand-ports with local edits. No baseline is committed for any of them, and the script refuses an existing skill that has no baseline entries, so a re-sync of a skill listed here is refused. Port an upstream change by hand: copy the new upstream body into the local `SKILL.md` and keep the existing frontmatter.
 
 ```bash
 bash scripts/sync-mattpocock-skills.sh --list

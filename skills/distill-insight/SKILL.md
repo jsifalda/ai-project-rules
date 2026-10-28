@@ -1,8 +1,8 @@
 ---
 name: distill-insight
-description: Turn a session failure into one reusable rule so the same class of mistake does not repeat. Reads the current session, or a past session log the user names, states the failure with evidence, digs to the root-cause decision, and drafts one checkable rule plus its early trigger. Flags any loaded instruction the draft contradicts, and proposes an edit instead when an existing rule already covers the case. Picks the save target in order, the project CLAUDE.md or AGENTS.md, then the global instructions file for a rule that fits every project, then memory. Saves nothing until the user approves the exact text. Use when the user types /distill-insight, corrects the agent, says don't do that again, or when the same failure repeats in a session. Do NOT use for a whole-session review of the agent's environment (use retro), to audit every loaded instruction for contradictions (use audit-instructions), or to summarise a session.
+description: Turn a session failure into one reusable rule so the same class of mistake does not repeat. Reads the current session, or a past session log the user names, states the failure with evidence, digs to the root-cause decision, and drafts one checkable rule plus its early trigger. Flags any loaded instruction the draft contradicts, and proposes an edit instead when an existing rule already covers the case. Picks the save target in order, the project CLAUDE.md or AGENTS.md, then the global instructions file for a rule that fits every project, then memory. Saves nothing until the user approves the exact text. Use when the user types /distill-insight, corrects the agent, says don't do that again, or when the same failure repeats in a session. Do NOT use for a whole-session review of the agent's environment, to audit every loaded instruction for contradictions (use audit-instructions), or to summarise a session.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Distill Insight
@@ -29,7 +29,7 @@ metadata:
 6. Search the loaded instructions and the target file for an existing rule on this case.
 7. An existing rule covers the case: make its file the target and propose an edit to that rule, not a new rule.
 8. Otherwise write one universal rule that prevents this whole class of mistake in any project.
-9. Use the form "When X, do Y, because Z."
+9. Write it per `## Rule text`.
 10. Make the rule specific and checkable. "Be careful" does not count.
 11. Name the trigger: the early signal that should bring this rule to mind next time.
 12. Quote both sides and propose a resolution edit when the draft contradicts a loaded rule. A contradiction does not block the draft.

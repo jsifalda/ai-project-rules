@@ -69,7 +69,6 @@ CARRIED SKILLS
     grill-me         hand-port of productivity/grilling, see REFUSED NAMES
     grill-with-docs  hand-port with local edits
     domain-modeling  hand-port with local edits
-    retro            hand-port with local edits
   No baseline is committed for them, so a re-sync of any of them is refused (see
   OVERWRITE SAFETY). Port an upstream change by hand.
 

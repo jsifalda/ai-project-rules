@@ -13,7 +13,7 @@ The weak version is almost always a craft-process observation that is true but f
 Session: flipped a spend dashboard from counting only the "extra" overage to counting real gross AI usage. Employer work.
 
 - **Weak (craft):** "Test theater. My tests passed after a sort-key flip, but they would have passed without it because the fixture set both values equal." True, mildly interesting to engineers, forgettable to everyone else.
-- **Strong (reversal, Lens B):** "You are probably reading your AI spend wrong. If you only track the overage beyond your plan's included budget, you are blind to everything the plan absorbs. The real number is gross usage." Same session. A reader can check it on their own bill tonight.
+- **Strong (reversal, Lens B):** "You are probably reading your AI spend wrong. If you only track the overage beyond your plan's included budget, you are blind to everything the plan absorbs." Same session. A reader can check it on their own bill tonight.
 
 Why it wins: it survives the employer-privacy filter because the lesson is universal (no org, no real numbers), and a stranger cares because they share the blind spot.
 
@@ -63,7 +63,7 @@ The originality check is the fourth bar, and it is where most generic angles die
 Candidate: "Built it, but never deployed it — you can max every 'done' axis and still have zero users because you never shipped."
 
 - Usable? Sort of. Surprise? Mild. Stranger cares? Maybe.
-- Original? **No.** This is "built ≠ shipped," the single most repeated maxim in the indie-hacker canon. Reject it — unless the session adds a twist that is genuinely new. Here the twist might be: "I had 126 passing tests, 8 ADRs, a vision doc, and an SEO plan — every proxy for done except the one that makes signal. The polish was the procrastination." That reframes the cliché into something specific and self-implicating. Without a twist that sharp, it does not ship.
+- Original? **No.** This is "built ≠ shipped," the single most repeated maxim in the indie-hacker canon. Reject it — unless the session adds a twist that is genuinely new. Here the twist might be: "I had 126 passing tests, 8 ADRs, a vision doc, and an SEO plan — every proxy for done except the one that makes signal." That reframes the cliché into something specific and self-implicating. Without a twist that sharp, it does not ship.
 
 The point: session-specific detail does not buy originality. A stale idea with fresh numbers is still stale. Find the twist or drop it.
 
@@ -76,7 +76,7 @@ Candidate: "A migration default silently answers two questions at once, what new
 - Stranger cares? Yes. It is a trap they can now avoid.
 - Original? Yes. Not a canonical maxim, and the framing is not one you see repeated.
 
-Clears every check, so it is a candidate. Rank it against the others by how hard it clears, then dedup against the ledger by theme.
+Clears every check, so it is a candidate. It is not a stance, so it ranks below any Lens C stance that also clears and that the inside-baseball guard does not demote. Rank it against the other non-stance angles by how hard it clears, then dedup against the ledger by theme.
 
 Candidate: "Renamed a service file and updated its imports."
 

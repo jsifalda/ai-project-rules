@@ -26,6 +26,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Simplicity first. Make the simplest change that meets the current requirement. No
   speculative abstraction, config, or indirection for an unstated need.
 - Fix the root cause, never the symptom.
+- Before you deliver, check your output as its owner would. Fix every defect your tools can fix in it. Flag only the rest.
 - Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, but never correctness, a caveat or a test.
 - Touch only what is necessary. No side effects, no new bugs.
 - Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.

@@ -26,7 +26,6 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Simplicity first. Make the simplest change that meets the current requirement. No
   speculative abstraction, config, or indirection for an unstated need.
 - Fix the root cause, never the symptom.
-- Before you deliver, check your output as its owner would. Fix every defect your tools can fix in it. Flag only the rest.
 - Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, but never correctness, a caveat or a test.
 - Touch only what is necessary. No side effects, no new bugs.
 - Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.
@@ -204,6 +203,7 @@ Changed functionality → update its tests. New functionality → write tests.
 
 **Phase 4 — End to end.** Before you report any task done, run its changed behavior once, end to end, as its user would.
 
+- Fix each defect the run finds that no ask-first rule gates. Flag the rest.
 - Apply it to every task with an observable outcome: code, config, a script, a skill, a rule, a workflow.
 - Read-only work is exempt.
 - Pick the domain's own check: a command, the test suite, a browser, a phone simulator.

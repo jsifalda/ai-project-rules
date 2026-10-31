@@ -54,7 +54,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - "Cannot reproduce" is a finding. A bug absent in a clean environment → say so at once, and
   what it implies. Dig further only if asked.
 - Never offer a menu of fixes that omits "no change needed" when that is true.
-- Credits, quota or auth failure → never resend until the user fixes it. Switch tool or report.
+- Credits, quota or auth failure → never call that tool until it is fixed. Switch or report.
   Denied → report, never route around it.
 
 # PLAN MODE DEFAULT

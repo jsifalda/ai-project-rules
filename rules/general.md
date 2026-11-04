@@ -36,6 +36,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Always read `AGENTS.md` or `CLAUDE.md` first.
 - Read the surrounding code, its tests and its config before an edit. Integrate idiomatically.
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
+- Measure each number you report when a safe check exists. Label every number you did not measure or cite as an estimate and state its basis.
 - Settle a fact with the code or a tool before you ask. Ask only a question whose answer changes what you do.
 - Consider several approaches, as a senior developer would.
 

@@ -1,27 +1,14 @@
 ---
 name: unslop
 description: >-
-  RESTRICTED-INVOCATION skill, do NOT auto-trigger on a phrase match. The only entry points are the literal slash command /unslop, the user naming unslop and asking to run it, a step of a skill whose README Depends on cell lists unslop, or the agent itself when the task needs this exact output and it states the reason in one line first. Loose phrasing like "clean this up" or "make it less AI" is an ANTI-TRIGGER, answer directly and offer /unslop. When invoked, edits given text to cut AI tells against numbered pattern rules (AI vocabulary, em dashes, colon overuse, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keeps meaning and tone. Do NOT use to draft new prose, use write-like-human, or for general grammar and style polish, use rewrite.
+  Run a numbered AI-pattern pass over existing text to cut AI tells (AI vocabulary, em dashes, colon overuse, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keep its meaning and tone. Use when the user asks to unslop text, remove AI tells, cut the slop, de-slop a draft, or check prose for AI patterns, or when a task asks to clean already-drafted text of AI tells. Do NOT use to draft new prose, use write-like-human, or for general grammar and style polish, use rewrite.
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
-  version: "1.0"
+  version: "1.1"
   upstream: "https://github.com/cursor/plugins"
 ---
 
 # Unslop
-
-## Invocation (check this first)
-
-These are the only entry points:
-
-1. The user types the literal slash command `/unslop`.
-2. The user names the `unslop` skill and asks to run it.
-3. A step of a skill whose README `Depends on` cell lists `unslop`.
-4. The agent itself, when the current task needs this skill's exact output. State the reason in one line before you invoke it.
-
-Anything else is an anti-trigger. Loose phrasing such as "clean this up", "make it less AI" or "edit this text" does not load this skill. Answer directly and offer `/unslop`.
-
-This rule is prompt-enforced. The skill carries no `disable-model-invocation` flag, because that flag removes the skill from the Skill tool, so entry points 3 and 4 would fail.
 
 Edit text to remove AI patterns. Scan for the patterns below, then rewrite. Preserve meaning and match the intended tone.
 

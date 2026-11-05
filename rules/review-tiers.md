@@ -4,7 +4,7 @@
 
 - Classify the change before the first review or verification gate. Judge the diff, not the request.
 - Print one line, then continue without waiting: `Review tier: N because <reason>; reply with a tier number to override`.
-- Run Phase 4 of `rules/general.md` at every tier.
+- Run Phase 4 of `rules/general.md` per its own scope, at every tier.
 
 ## Tiers
 

@@ -143,7 +143,7 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 
 - Every substantive change, before the task is reported done.
 - Skips only: a changelog-only entry, a single typo, pure reformatting.
-- Classify the review tier first, per `rules/review-tiers.md`. The tier sets which Step 2 and Step 5 reviews run. Every other step still runs, and so does Phase 4 of `rules/general.md`.
+- Classify the review tier first, per `rules/review-tiers.md`. The tier sets which Step 2 and Step 5 reviews run. Every other step still runs, and so does Phase 4 of `rules/general.md`, per its own scope.
 - **Integration-only exemption — Step 2 lenses only.** When the session's only change is integrating
   already-reviewed work — a merge, rebase, cherry-pick, or revert — and it authored no new lines
   beyond selecting among existing sides, skip Step 2 entirely (every lens). Everything else still

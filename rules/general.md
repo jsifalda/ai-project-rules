@@ -105,8 +105,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - One Bash call, one purpose. Never chain several file reads with `&&`.
 - Run one git command per Bash call. Never chain git with `&&` or `;`. A command a repo's instructions spell out overrides this.
 - Broad exploration across many files → an `Explore` subagent.
-- Long Bash output → pipe through `grep`, `head` or `tail`. Test, lint and build failures keep
-  their full output.
+- Long output → save to a file, then `grep`, `head` or `tail` it. Re-run only after a fix. Read failures in full.
 
 # FILE LENGTH
 

@@ -51,13 +51,9 @@ Read the matching file before you start that kind of work. Do not load them othe
   channel.
 
 # CHEAPEST REMEDY FIRST
-
-- Report "cannot reproduce" at once, with what it implies. Dig further only if asked.
-- Before a long run, check whether its caches are cold in this checkout. Cold → reuse a warm
-  cache or take a cheaper path first.
 - Never offer a menu of fixes that omits "no change needed" when that is true.
 - Credits, quota or auth failure → never call that tool until it is fixed. Switch or report.
-  Denied → report, never route around it.
+  Denied → report.
 
 # PLAN MODE DEFAULT
 
@@ -83,8 +79,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Install a project's declared dependencies freely, with its own package manager, into that project only.
 - Check for a no-install path first, such as native `Read` for PDFs, built-in CLIs, `git`, or the
   `node` or `python` standard library.
-- Genuinely needed and absent → stop and ask in chat: what, why, and the suggested command.
-  On approval, run that one command only.
+- Genuinely needed and absent → stop and ask in chat: what, why, and the suggested command. On approval, run that one command only.
 
 # SECRETS & ENV FILES
 
@@ -142,8 +137,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Only: a non-obvious why, a cited external constraint, a correctness trap, or an API contract
   the signature cannot show (side effects, errors, units, threads, ownership). "It is complex"
   does not qualify. Simplify instead.
-- Never add or edit a comment outside your change. Delete one only when your change made it
-  wrong. A comment that contradicts the code is a defect.
+- Never add or edit a comment outside your change. Delete one only when your change made it wrong. A comment that contradicts the code is a defect.
 - Tooling directives are not comments. Never remove one (`eslint-disable`, `@ts-expect-error`,
   `# noqa`).
 

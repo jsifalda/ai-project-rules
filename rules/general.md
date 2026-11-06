@@ -16,7 +16,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 | trigger | file |
 |---|---|
 | Writing, changing or running tests | `rules/testing.md` |
-| Writing or changing code, a script or config; adding, choosing or upgrading a dependency | `rules/coding.md` |
+| Writing, changing or reviewing code, a script or config; adding, choosing or upgrading a dependency | `rules/coding.md` |
 | Committing, pushing, any PR or MR work, a `glab` write, or a git worktree | `rules/git-ship.md` |
 | Writing a doc, an ADR, a README, or a diagram | `rules/docs-diagrams.md` |
 | Writing or editing an instruction file, a rule, or a `SKILL.md` | `rules/authoring.md` |

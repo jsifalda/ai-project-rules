@@ -8,7 +8,7 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 
 | Path | Purpose |
 | --- | --- |
-| `rules/` | Always-apply rule files (`type: "always_apply"` frontmatter) — coding standards, restrictions, writing style (ASD-STE100) |
+| `rules/` | Rule files — the always-loaded core (restrictions, writing style in ASD-STE100) and on-demand rules for coding, testing, git, docs, authoring and stack choice |
 | `skills/` | Agent skills following the [agentskills.io](https://agentskills.io/specification) spec. Each subdir has a `SKILL.md` |
 | `archive/` | Retired instructions, kept for reference. The sync hook reads only `skills/`, so nothing in `archive/` loads. `archive/skills/<name>/` holds a retired skill |
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
@@ -55,9 +55,10 @@ The shape of a working deployment, if you want to reproduce it:
 
 The rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
-- `rules/general.md` — always-loaded core: principles, architecture, restrictions, secrets handling, reading files, coding standards, dependency management, writing style, and the implementation verification protocol. It opens with a trigger table routing to the on-demand rule files below.
+- `rules/general.md` — always-loaded core: principles, architecture, restrictions, secrets handling, reading files, writing style, and the implementation verification protocol. It opens with a trigger table routing to the on-demand rule files below.
 - `rules/authoring.md` — how to write an instruction: directives only, no rationale, the five-point always-loaded test, the token budget, and the ban on stating how many items a set holds. Loads when writing or editing an instruction file, a rule, or a `SKILL.md`.
 - `rules/testing.md` — coverage, TDD, concurrent test runs, and the ban on waiting real wall-clock in a test. Loads when writing, changing or running tests.
+- `rules/coding.md` — coding standards, comment rules, TypeScript, and dependency management. Loads when writing or changing code, a script or config, or adding, choosing or upgrading a dependency.
 - `rules/git-ship.md` — destructive git and `glab` operations, diff and log ranges, commit message format, and MR/PR descriptions. Loads when committing, pushing, doing any PR or MR work, running a `glab` write, or working in a git worktree.
 - `rules/review-tiers.md` — the review tier (0, 1, 2) that sets how many review gates run, the one-line tier announcement, and the no-retry rule for CodeRabbit errors. Loads before any review or verification gate.
 - `rules/docs-diagrams.md` — documentation and diagram rules. Loads when writing a doc, an ADR, a README, or a diagram.

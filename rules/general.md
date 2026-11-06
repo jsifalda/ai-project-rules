@@ -52,8 +52,9 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # CHEAPEST REMEDY FIRST
 
-- "Cannot reproduce" is a finding. A bug absent in a clean environment → say so at once, and
-  what it implies. Dig further only if asked.
+- Report "cannot reproduce" at once, with what it implies. Dig further only if asked.
+- Before a long run, check whether its caches are cold in this checkout. Cold → reuse a warm
+  cache or take a cheaper path first.
 - Never offer a menu of fixes that omits "no change needed" when that is true.
 - Credits, quota or auth failure → never call that tool until it is fixed. Switch or report.
   Denied → report, never route around it.

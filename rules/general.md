@@ -24,8 +24,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 ## Core principles
 
-- Simplicity first. Make the simplest change that meets the current requirement. No
-  speculative abstraction, config, or indirection for an unstated need.
+- Simplicity first. Make the simplest change that meets the requirement. No speculative abstraction or config.
 - Fix the root cause, never the symptom.
 - Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, but never correctness, a caveat or a test.
 - Touch only what is necessary. No side effects, no new bugs.
@@ -55,6 +54,16 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Never offer a menu of fixes that omits "no change needed" when that is true.
 - Credits, quota or auth failure → never call that tool until it is fixed. Switch or report.
   Denied → report.
+
+# BLOCKERS
+
+- Pursue the goal, not the plan. Swap a target that blocks for another that serves the same goal.
+- Captcha, bot wall, quota or login wall → take another route yourself.
+- A denial, a permission refusal or a policy block is not a blocker. Report it.
+- Route only with accounts, credentials and tools the user gave or authorized.
+- Never hand the user a blocker you can route around. Every ask-first rule in this file still applies.
+- Batch status into one end-of-task report. A stop another rule requires still happens at once.
+- Report each account, login, OAuth grant or credential you used, by name, never the value.
 
 # PLAN MODE DEFAULT
 

@@ -3,7 +3,7 @@ name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Create Skill
@@ -128,7 +128,7 @@ A skill should only contain essential files that directly support its functional
 - CHANGELOG.md
 - etc.
 
-The skill should only contain the information needed for an AI agent to do the job at hand. It should not contain auxilary context about the process that went into creating it, setup and testing procedures, user-facing documentation, etc. Creating additional documentation files just adds clutter and confusion.
+The skill should only contain the information needed for an AI agent to do the job at hand. It should not contain auxiliary context about the process that went into creating it, setup and testing procedures, user-facing documentation, etc. Creating additional documentation files just adds clutter and confusion.
 
 ### Progressive Disclosure Design Principle
 
@@ -244,8 +244,6 @@ For example, when building an image-editor skill, relevant questions include:
 - "I can imagine users asking for things like 'Remove the red-eye from this image' or 'Rotate this image'. Are there other ways you imagine this skill being used?"
 - "What would a user say that should trigger this skill?"
 
-To avoid overwhelming users, avoid asking too many questions in a single message. Start with the most important questions and follow up as needed for better effectiveness.
-
 Conclude this step when there is a clear sense of the functionality the skill should support.
 
 ### Step 2: Planning the Reusable Skill Contents
@@ -359,7 +357,7 @@ Write the YAML frontmatter with `name`, `description`, and `metadata.version` (s
 
 Parser-strictness rules trip up long descriptions. Each passes Claude Code's lenient frontmatter parser and fails Copilot CLI's spec-compliant one — meaning a skill can land that loads fine for the author but breaks every other consumer.
 
-1. **No `": "` (colon + space) inside the description.** The `description` value is a YAML plain scalar (YAML 1.2 §7.3.3); `": "` is reserved as the key/value separator and terminates the value mid-string. Use ` — ` (em-dash) or `, ` instead. If `": "` is genuinely needed, switch to a folded block scalar (`description: >-` with the body indented on the next line).
+1. **No `": "` (colon + space) inside the description.** The `description` value is a YAML plain scalar (YAML 1.2 §7.3.3); `": "` is reserved as the key/value separator, so a strict parser rejects the line. Use ` — ` (em-dash) or `, ` instead. If `": "` is genuinely needed, switch to a folded block scalar (`description: >-` with the body indented on the next line).
    - Bad: `…via the slash command: runs end-to-end…`
    - Good: `…via the slash command — runs end-to-end…`
 
@@ -399,7 +397,7 @@ inbound callers before you set the flag — the README `Depends on` column names
 writes into the user's repo *and* is a delegation target, the guard is that skill's own
 confirmation gate, not this flag.
 
-Beyond `name`, `description`, `disable-model-invocation`, `argument-hint`, `context`, `agent`, `model`, `license`, `allowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
+Beyond `name`, `description`, `disable-model-invocation`, `argument-hint`, `context`, `agent`, `model`, `license`, `allowed-tools`, `disallowed-tools`, and `metadata`, do not include other fields in YAML frontmatter.
 
 ##### Body
 

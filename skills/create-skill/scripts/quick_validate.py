@@ -48,9 +48,10 @@ def validate_skill(skill_path, require_version=False):
     # synced verbatim (e.g. via sync-mattpocock-skills) pass without mutation.
     # 'context', 'agent' and 'model' are Claude Code keys that run a skill as a
     # forked subagent of a given type and model.
+    # 'disallowed-tools' is a Claude Code key that removes tools while the skill runs.
     ALLOWED_PROPERTIES = {
         'name', 'description', 'license', 'allowed-tools', 'metadata',
-        'argument-hint', 'disable-model-invocation', 'context', 'agent', 'model',
+        'argument-hint', 'disable-model-invocation', 'context', 'agent', 'model', 'disallowed-tools',
     }
 
     # Check for unexpected properties (excluding nested keys under metadata)

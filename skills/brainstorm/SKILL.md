@@ -8,7 +8,7 @@ metadata:
 # Brainstorm
 
 0. Rephrase.
-   - Say in one line: "Running /rephrase to confirm what you want to brainstorm."
+   - Say in one line: "Running /rephrase to restate what you want to brainstorm."
    - Then invoke the `rephrase` skill.
    - If the skill is not available, restate in your own words the user's goal and the problem they are trying to solve.
    - After that, restate it as one "How might we..." question.

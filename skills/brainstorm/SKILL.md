@@ -18,8 +18,10 @@ metadata:
    - Analogy: how does another industry solve this?
    - Constraint: what if we had 1 day, zero money, or 10x budget?
 2. Mark the obvious ideas. Replace each with a stranger one.
+   - An obvious idea is one the user would list without help.
 3. Converge.
-   - Score each idea on impact (1-5) and effort (1-5).
+   - Score each idea on impact (1-5) and effort (1 = easy, 5 = hard).
+   - Rank by high impact, then low effort.
    - Show the top 3 with one line each: what it is, why it might work, the riskiest assumption.
 4. Give one next step under 1 hour for the top idea.
 
@@ -27,5 +29,5 @@ metadata:
 
 - No filtering during step 1.
 - Each idea gets a name and one specific sentence.
-- No technique jargon in the output.
+- No technique jargon in the output, lens names included.
 - Explain your reasoning for the scores and the top 3.

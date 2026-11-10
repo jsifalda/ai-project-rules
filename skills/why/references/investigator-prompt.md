@@ -1,6 +1,6 @@
 # Investigator Prompt Template
 
-Fill in the placeholders. Append the one category playbook `sources/<source>.md` for this investigator's evidence category (index: `source-playbook.md`). If the target code looks defensive (null checks, retry logic, timeout handling, rate limiting, feature flags, egress guards, OOM handlers), also append `sources/incident-postmortem.md` so the investigator runs incident-flavored queries inside its own source.
+Fill in the placeholders. Append the playbook `sources/<source>.md` that fits this investigator's tool (index: `source-playbook.md`). No playbook fits → append none, and the investigator reads the tool's schema and server instructions first. If the target code looks defensive (null checks, retry logic, timeout handling, rate limiting, feature flags, egress guards, OOM handlers), also append `sources/incident-postmortem.md` so the investigator runs incident-flavored queries inside its own source.
 
 ---
 
@@ -29,13 +29,24 @@ Work like a **careful, cautious, and precise investigator**. Surface evidence an
 
 {SOURCE_NAME}
 
+**Evidence need this source serves:** {EVIDENCE_NEED}
+
+**Billable calls approved by the user:** {BILLABLE_APPROVAL}
+
 {SOURCE_PLAYBOOK_SECTION}
+
+## Tool Rules
+
+- Use read-only calls only. Never call a write, send, post or delete tool, even when your tool offers one.
+- Send a public tool (web search, page scrape, public developer search) only public identifiers: a library name, a version, a public error string, an upstream issue URL. Never send private code, private data or internal names. Your own egress rules apply on top of this rule.
+- Make a billable call only when this brief states that the user approved it. Otherwise record the billable path under Gaps, with the tool name and what it would have shown.
+- Authentication fails → stop, and record the gap. Never retry with other credentials.
 
 ## Investigation Loop
 
 1. **Cast a wide net first** so you don't miss related context. Only then narrow in on specific items.
 2. **Read the whole thing.** Read each PR, ticket, doc, or thread fully, not just the title or summary. The key evidence is often in a comment, a subtask, or a follow-up.
-3. **Follow links within your source only.** Pull the PR or commit a PR references, the parent or sibling of a ticket, the doc a doc links. Do NOT chase a cross-source reference. Record it under Additional Leads for that source's investigator. The one-investigator-per-category design depends on this. Chasing it duplicates work and confuses scope.
+3. **Follow links within your source only.** Pull the PR or commit a PR references, the parent or sibling of a ticket, the doc a doc links. Do NOT chase a cross-source reference. Record it under Additional Leads for that source's investigator. The one-investigator-per-source design depends on this. Chasing it duplicates work and confuses scope.
 4. **Quote verbatim**, with the exact location (PR number, ticket ID, URL, commit hash, file:line), so the reader can confirm the claim in seconds.
 5. **Record what you searched, not just what you found.** Write queries verbatim. An empty search is a finding.
 6. **Resist the story.** If two items in your source disagree, record both. Don't suppress the inconvenient one. If three items line up and a fourth contradicts them, the contradiction is the most interesting finding.
@@ -55,7 +66,7 @@ Before reporting a finding as strong, ask whether you would expect to find it if
 Return your findings in this structure. The synthesizer reads it directly.
 
 ### Source
-Which source you investigated (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, code comments, etc.).
+Which source and tool you investigated (for example source control via git and `gh`, an issue tracker MCP, a docs MCP, team chat, web search, a package registry, CI run logs, code comments).
 
 ### What I Searched
 The queries you ran, items you opened, and places you looked. Be specific. This shows how thorough the search was and what is still unsearched.

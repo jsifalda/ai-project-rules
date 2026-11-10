@@ -4,7 +4,7 @@ Fill in the placeholders.
 
 ---
 
-You are answering a "why" question about a piece of code by synthesizing findings from investigators who searched different historical sources (source control, issue / ticket tracker, long-form documents, real-time team chat, infrastructure observability, error / exception tracking, product analytics warehouse, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
+You are answering a "why" question about a piece of code by synthesizing findings from investigators who searched different sources, each picked for this question (for example source control, an issue tracker, long-form documents, team chat, observability, error tracking, an analytics warehouse, web search, a package registry, CI logs, and code comments). Produce a confidence-weighted, evidence-cited narrative that says honestly what the evidence supports, and just as honestly what it doesn't.
 
 ## The Question
 
@@ -20,9 +20,9 @@ You are answering a "why" question about a piece of code by synthesizing finding
 
 {ALL_INVESTIGATOR_FINDINGS}
 
-## Sources That Weren't Searched
+## Source Plan
 
-{SKIPPED_SOURCES_WITH_REASONS}
+{SOURCE_PLAN_WITH_OUTCOMES}
 
 ## Epistemics Framework
 
@@ -98,13 +98,14 @@ Specific gaps: "We searched the issue tracker for [query1], [query2], [query3] a
 
 What was actually searched, so the user can judge coverage and redirect:
 
-- **Source control history**: {file paths}, {number of commits reviewed}, PRs #{numbers}, and code comments searched. Or "Not searched. This should not happen because git and `gh` or `glab` are always expected."
-- **Issue / ticket tracker**: {ticket IDs and keyword searches}. Or "Not searched. No matching MCP available in this environment."
-- **Long-form documents**: {page titles and search queries}. Or "Not searched. No matching MCP available in this environment."
-- **Real-time team chat**: {channels searched, date ranges, queries}. Or "Not searched. No matching MCP available in this environment."
-- **Infrastructure observability**: {dashboards, monitors, metrics, logs, traces, or incidents searched}. Or "Not searched. No matching MCP available in this environment."
-- **Error / exception tracking**: {issues, events, or releases searched}. Or "Not searched. No matching MCP available in this environment."
-- **Product analytics warehouse**: {fully-qualified tables queried, the time windows, and the numeric summaries (counts, percentiles, first/last-seen timestamps) that bore on the question}. Or "Not searched. No matching MCP available in this environment."
+One line per planned source, in this shape:
+
+- **{evidence need} → {tool used}**: {what was searched: queries, items opened, date ranges, tables and time windows with their numeric summaries}.
+- **{evidence need} → {fallback tool} (best tool {name} absent)**: {what was searched}.
+- **{evidence need} → gap**: {the reason: best tool absent with no fallback, authentication failed, or billable with no approval}. It would have shown {what}.
+- **{source} → skipped**: {the written skip reason}.
+
+Source control is always one line. A gap there should not happen, because git and `gh` or `glab` are always expected.
 
 ### Confidence Summary
 

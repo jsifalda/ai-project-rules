@@ -1,8 +1,8 @@
 # Source playbooks
 
-The why skill spawns one investigator per available evidence category, each reading a single source-specific playbook below. The playbooks are concrete examples for common MCPs. Adapt them for a different MCP in the same category.
+The why skill plans its sources per question, then spawns one investigator per chosen source. The playbooks below are examples for common tools, not a closed set. Adapt one for a different tool of the same kind.
 
-| Category | Playbook | Example MCP it documents |
+| Source | Playbook | Example tool it documents |
 |---|---|---|
 | Source control history | [`code-archaeology.md`](./sources/code-archaeology.md) | git, `gh`, `glab` |
 | Issue / ticket tracker | [`linear.md`](./sources/linear.md) | Linear (adapt for Jira, GitHub Issues, Plane, Shortcut) |
@@ -15,3 +15,5 @@ The why skill spawns one investigator per available evidence category, each read
 Cross-cutting:
 
 - [`incident-postmortem.md`](./sources/incident-postmortem.md). Add this if the target code looks defensive (null checks, retry, timeout, rate limit, feature flag, egress guard, OOM handler).
+
+No playbook fits the chosen tool → the investigator reads the tool's schema and server instructions first, then follows the Investigation Loop in [`investigator-prompt.md`](./investigator-prompt.md).

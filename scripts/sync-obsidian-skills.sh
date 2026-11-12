@@ -236,7 +236,7 @@ if [ "${#new_skills[@]}" -gt 0 ]; then
   echo ""
   echo "=== NEW SKILLS — REGISTER THESE in the '## Skills' table in README.md ==="
   echo "(Hand-maintained catalog, rows alphabetical. Add one row per skill:"
-  echo "   [\`<name>\`](skills/<name>/SKILL.md) | What it does | Depends on | Origin"
+  echo "   [\`<name>\`](skills/<name>/SKILL.md) | What it does | Depends on | Origin | disable-model-invocation"
   echo " Origin = https://github.com/kepano/obsidian-skills"
   echo " Curate the one-liner from each description below — don't paste it whole.)"
   python3 -c "

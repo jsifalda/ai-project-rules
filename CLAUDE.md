@@ -45,10 +45,11 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
 - **README lists are manually maintained — keep them in sync.** There is no generator — drift only stays out if every skill/command change touches the README too.
-  - The `## Skills` table in `README.md` has one row per skill, with these columns: skill name, one-line summary, `Depends on`, and `Origin`.
-  - When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`) **and fill its `Depends on` and `Origin` cells**.
+  - The `## Skills` table in `README.md` has one row per skill, with these columns: skill name, one-line summary, `Depends on`, `Origin`, and `disable-model-invocation`.
+  - When you add, remove, or rename a skill under `skills/`, update that table in the same change — add/remove/rename the row (skill name + a one-line summary drawn from its `SKILL.md` `description`) **and fill its `Depends on`, `Origin` and `disable-model-invocation` cells**.
   - `Depends on`: list every other repo skill this one invokes/requires to function, or `—` if none — disambiguation pointers ("use X instead") and sync-provenance are not dependencies, leave this cell `—` for those.
   - `Origin`: if the skill was synced from an upstream repo (see the sync scripts in `scripts/`), link the cell to that upstream repo's root (e.g. `mattpocock/skills`, `kepano/obsidian-skills`); `—` for skills native to this repo.
+  - `disable-model-invocation`: `true` when the skill's `SKILL.md` frontmatter sets `disable-model-invocation: true`, else `—`.
   - Likewise, when you add or remove a `gemini-cli/commands/*.toml`, update the "Current commands" list in `README.md`.
 - **New skills → consider `setup-aiengineering`.** When you add a skill under `skills/`, ask the user one question: is this a repo-bootstrapping or engineering-standards concern a project should adopt as part of its baseline setup (like ADRs, changelog, verification gates)? Most skills are not. Content, writing, research, persona, and one-off tool skills answer no and move on. If yes, fold it into `skills/setup-aiengineering/SKILL.md` as a module:
   - Add a row to its `## Modules` table with the delivery type: **inject** (a policy block → add a `references/<name>.md`, substitute placeholders in Step 5), **delegate** (it is its own `setup-*` skill → invoke in Step 6), or **scaffold** (copies a file or hook → Step 7).

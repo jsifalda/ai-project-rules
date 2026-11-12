@@ -102,10 +102,11 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # READING FILES
 
-- Read file content with `Read`, using `offset` and `limit`. Never `cat` or `sed` a file you will `Edit`.
+- Read file content with `Read`, using `offset` and `limit`.
 - Find the lines first with `grep -n pattern file | head`, then read only that range.
 - Before any code change, find and read all relevant files.
-- Before you modify a function, grep and read every call site.
+- Before modifying a function, grep every caller. Understand each call site before changing a
+  signature or behavior.
 - Never re-read a file range already in the conversation and unchanged.
 - One Bash call, one purpose. Never chain several file reads with `&&`.
 - Run one git command per Bash call. Never chain git with `&&` or `;`. A command a repo's instructions spell out overrides this.

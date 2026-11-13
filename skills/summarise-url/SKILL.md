@@ -2,7 +2,7 @@
 name: summarise-url
 description: Fetch a URL's content, return a structured summary (main idea, key practical takeaways, actionable step-by-step plan), then distill the same content into a sharp set of standalone maxims, both in one reply. Use when the user pastes a link and asks to summarise it, says "summarise this url", "summarise this article/post/page", "what does this link say", or shares a link and wants the takeaways. Do NOT use when the input is pasted text, a local file, or an Obsidian note, use `summarise-text` instead.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Summarise URL
@@ -48,6 +48,6 @@ there is nothing to distill and why. The summary still stands on its own.
 
 ## Guidelines
 
-- reason from first principles and explain your thought process; if you're making assumptions, state them clearly
+- reason from first principles, and state each assumption you make
 - write like a human, no fluff, no cringe, & prefer bullet points
 - be concise (use minimal words to deliver the message)

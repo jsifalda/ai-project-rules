@@ -3,7 +3,7 @@ name: frontend-design
 description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when building or restyling any user-facing web UI in a greenfield or side project, including components, pages, landing pages, dashboards, artifacts, posters, and React/HTML/CSS layouts, and including incidental UI added mid-task, not only explicit design requests. Generates creative, polished code that avoids generic AI aesthetics. In an existing repo, defer to that project's established design conventions first.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
@@ -35,7 +35,7 @@ Focus on:
 - **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
 - **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
 
-NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+Avoid these defaults: Inter, Roboto, Arial or system fonts, purple gradients on white, a cream or off-white background, italic accent words in headlines, numbered "01/02/03" section labels, monospace eyebrow labels, pill-shaped buttons. If a result still looks templated, name what it used and avoid that too.
 
 Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
 

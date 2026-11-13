@@ -2,7 +2,7 @@
 name: seo-keyword-generator
 description: Generate comprehensive SEO keyword strategies for side project ideas. Walks through a structured questionnaire to understand the project, then produces categorized keywords based on strategic analysis. Use when user wants keywords, SEO strategy, or organic traffic planning for a product or side project.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # SEO Keyword Generator
@@ -33,7 +33,7 @@ Do NOT proceed to analysis until you have a clear project description.
 
 ### Phase 2: Strategic Analysis
 
-Perform a chain-of-thought analysis before generating any keywords. Cover every area described in `references/strategic-analysis.md`. Present the analysis as a summary to the user for validation.
+Before generating any keywords, analyse the project across every area described in `references/strategic-analysis.md`. Present the analysis as a summary to the user for validation.
 
 **Output format for analysis:**
 ```

@@ -2,7 +2,7 @@
 name: council
 description: "Run any question, idea, or decision through a council of AI advisors who independently analyze it, peer-review each other anonymously, and synthesize a final verdict. Based on Karpathy's LLM Council methodology. MANDATORY TRIGGERS: 'council this', 'run the council', 'war room this', 'pressure-test this', 'stress-test this', 'debate this'. STRONG TRIGGERS (use when combined with a real decision or tradeoff): 'should I X or Y', 'which option', 'what would you do', 'is this the right move', 'validate this', 'get multiple perspectives', 'I can't decide', 'I'm torn between'. Do NOT trigger on simple yes/no questions, factual lookups, or casual 'should I' without a meaningful tradeoff. DO trigger when the user presents a genuine decision with stakes, multiple options, and context that suggests they want it pressure-tested from multiple angles."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # LLM Council
@@ -35,8 +35,7 @@ If question is too vague, ask ONE clarifying question then proceed.
 ### Step 1: Frame the question (context enrichment)
 
 Before framing, **scan workspace for context** (max 30 seconds):
-- `MEMORY.md`, `USER.md`, `USER_PULSE.md` — business context, preferences, constraints
-- `memory/` folder — recent context, past decisions
+- The memory store and user-context files your global instructions name, if any — preferences, constraints, past decisions
 - Any files user referenced
 - Recent council transcripts (avoid re-counciling same ground)
 

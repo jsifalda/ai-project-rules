@@ -2,7 +2,7 @@
 name: hallmark
 description: "Anti-AI-slop design skill for greenfield pages, audits, redesigns, and design extraction from URLs or screenshots. Use when the user asks to build a new app or landing page, wants to redesign something, invokes Hallmark by name, or uses audit/redesign/study."
 metadata:
-  version: "1.0"
+  version: "1.1"
   upstream: "https://github.com/Nutlope/hallmark"
 ---
 
@@ -281,7 +281,7 @@ Before loading any visual ruleset, **read the slim index at [`references/macrost
 
 If the previous output was Specimen (light · high-contrast-serif · warm), the next can be Studio (light · high-contrast-serif · chromatic-green) — the *accent hue* differs. But the next can't be Newsprint (light · roman-serif · warm) which only differs on display style and shares both paper band and accent — pick a more distant theme.
 
-The per-theme axis values live as comments at the top of each theme's tokens block in [`site/css/tokens.css`](../../site/css/tokens.css). When in doubt, name your candidate theme out loud and identify its three axis values; if two of three match the previous output, redirect.
+Name your candidate theme and its three axis values out loud. If two of three match the previous output, redirect.
 
 **State your pick.** Before writing any code, say "Macrostructure: <name>. Theme: <name>. Differs from the last on: <axes>." in plain text. This is a deliberate accountability step — picking on the page (not in your head) prevents the default-attractor sameness that kept the skill emitting Specimen output.
 
@@ -388,10 +388,6 @@ The non-negotiables live in [`references/`](references/). **Be precise about wha
 - [`verbs/audit.md`](references/verbs/audit.md), [`verbs/redesign.md`](references/verbs/redesign.md) — load only when that verb runs.
 - [`study.md`](references/study.md) — load only when `hallmark study` runs.
 
-**Human-only (do NOT auto-load):**
-- [`../../docs/recipes.md`](../../docs/recipes.md) — eight worked briefs for human readers.
-- [`../../docs/study-examples.md`](../../docs/study-examples.md) — three worked DNA-extractions for human readers.
-
 ### 4. Decide on hero enrichment
 
 Most pages don't need it. The strongest hero is often a typographic one. **Reach for [`hero-enrichment.md`](references/hero-enrichment.md) only when the brief points there** — a SaaS / dev-tool brief wants a demo video or mockup; a bakery / café / atelier brief wants a hand-built illustration; a manifesto wants nothing.
@@ -411,7 +407,7 @@ Before emitting any code, output a tight summary of what you're about to ship. T
 **Format** (Markdown bullets, not ASCII boxes — they render reliably across every chat client and terminal):
 
 ```markdown
-**Hallmark · v1.1.0**
+**Hallmark**
 
 - **Macrostructure** · Stat-Led
 - **Theme** · Plain (#fff paper · cool greys · ink-blue accent)

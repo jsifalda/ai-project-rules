@@ -3,7 +3,7 @@ name: setup-aiengineering
 disable-model-invocation: true
 description: Bootstrap AI-engineering best practices in any repo — injects agent-instruction policy blocks (mandatory verification protocol with lint/typecheck/test/coverage/review/docs-alignment/user-scenarios/design gates, git policy, file organization, and an optional PRD gate) into AGENTS.md/CLAUDE.md, writes a DESIGN.md source of truth for UI repos (backfilled from code), delegates doc systems to setup-adrs, setup-changelog, setup-user-scenarios and setup-todo-backlog, and scaffolds a worktree auto-bootstrap hook plus a detected .worktreeinclude, and injects a Worktree Gate. Stack-agnostic — detects build/test commands (Node, Python, Go, Rust, config/IaC) and degrades without them. Use when the user says "set up ai engineering", "scaffold best practices in this repo", or runs /setup-aiengineering. Do NOT use to author one ADR or changelog entry, to edit one existing policy section, or to set up one sub-system (call that setup skill directly).
 metadata:
-  version: "1.5"
+  version: "1.6"
 ---
 
 # Setup AI Engineering
@@ -40,14 +40,14 @@ TypeScript app, a Python service, and a Docker-config repo each get a correct, w
 
 Pick the target by first match: `AGENTS.md` at root → `CLAUDE.md` at root → `.claude/CLAUDE.md`.
 
-- **None exist** → create `AGENTS.md` at root (with a `# <Project> — Agent Instructions` title), then
-  `ln -s AGENTS.md CLAUDE.md` at root so Claude Code reads the same file.
+- **None exist** → create `CLAUDE.md` at root (with a `# <Project> — Agent Instructions` title), then
+  `ln -s CLAUDE.md AGENTS.md` at root so every agent reads the same file.
 - **Only `AGENTS.md` exists, no `CLAUDE.md`** → create the `CLAUDE.md → AGENTS.md` symlink.
-- **A real `CLAUDE.md` exists** → never overwrite it with a symlink. If it's a separate file from
+- **A real `CLAUDE.md` exists, not linked to `AGENTS.md`** → never overwrite it with a symlink. If it's a separate file from
   `AGENTS.md`, inject into `AGENTS.md` and tell the user `CLAUDE.md` is separate to reconcile.
-- **`CLAUDE.md` already symlinks to `AGENTS.md`** → one file, inject once.
+- **`CLAUDE.md` and `AGENTS.md` are one file** (either is a symlink to the other) → inject once.
 
-This runs for every repo type — a config-only repo still gets an `AGENTS.md`.
+This runs for every repo type — a config-only repo still gets an agent instructions file.
 
 **Inject the scope block (always, not a module).** Read `references/instructions-scope.md` and place
 its block at the very **top** of the target file, above the provenance note and above every `##`
@@ -151,7 +151,7 @@ module will degrade to code-review-only and the test + coverage gates are N/A.
 
 Detect greenfield vs working repo (heuristic in `references/backfill-guide.md`).
 
-- **Greenfield** → fresh `AGENTS.md` title + the scope block + chosen policy blocks only.
+- **Greenfield** → fresh agent-file title + the scope block + chosen policy blocks only.
 - **Working repo** → ask: *"This repo already has code. Want me to draft its project docs — overview,
   detected tech stack, dev commands, key files — from the current implementation?"* On **yes**, do
   the read-only survey and write a grounded body following `references/backfill-guide.md` (only
@@ -474,7 +474,7 @@ If chosen (and host gate passed):
 ### Step 8: Verify and report
 
 Confirm in one short message:
-- Agent file created/located; `CLAUDE.md → AGENTS.md` symlink (if created).
+- Agent file created/located; the `CLAUDE.md`/`AGENTS.md` symlink and which file it points to (if created).
 - Scope block injected or updated in place, which content-home rows Step 6a restored after
   `setup-adrs` created their files, and which rows stay dropped because their files are still absent.
 - Documentation-drift scan: the sections found, which were moved and to where, and which the user

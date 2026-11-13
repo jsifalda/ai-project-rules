@@ -2,7 +2,7 @@
 name: distill-notes-v2
 description: Split mixed raw notes into two outputs, a lossless organized reference for the facts and a sharpened set of maxims for the heuristics. Keeps every number, date, rate, threshold, condition, and obligation verbatim, groups facts by inferred category (deadlines, amounts, deductions, obligations, records), surfaces deadlines and action items, then boils transferable rules of thumb down to maxims of 8 words or fewer. Accepts pasted text, a local file path, or an Obsidian note reference, prints both sections in chat, then asks whether to also save them to a new .md file. Use for notes that mix reference facts with judgment calls, for example tax, medical, or legal notes, meeting minutes, or research logs, or when the user says organize these notes, structure my notes, sort facts from principles, or make a clean reference. Do NOT use when the input is purely principles and you only want lossy maxims, to highlight takeaways inside a note in place, or to build a reusable advisor persona.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Distill Notes v2
@@ -98,7 +98,19 @@ A borderline FACT/HEURISTIC call is itself an assumption — record it for the A
     bigger impact".
   - **A process** → sequence → "Make it small, perfect it, then scale".
 
-### Step 4 — Format and output
+### Step 4 — Self-test before output
+
+- Did any fact get dropped? Restore it. Facts are lossless.
+- Does every fact keep its exact numbers, dates, and conditions? No rounding, no paraphrase.
+- Did I add any fact, idea, example, or maxim not in the source? Remove it.
+- Did I make a judgment call without stating it? Add it to Assumptions.
+- Was any missing context critical enough that I should have asked instead of guessed? Ask now.
+- Are deadlines and action items surfaced, not buried?
+- Is each heuristic a real maxim, not a summary sentence?
+- If the source had no heuristics, the Principles section is omitted, not padded. Same for a
+  source with no facts and the Reference section.
+
+### Step 5 — Format and output
 
 Print the sections in chat, clearly separated, in this order:
 
@@ -124,15 +136,3 @@ user says yes.
     overwritten.
   - Report the saved path in chat.
 - **On no** — stop. Leave nothing on disk.
-
-### Step 5 — Self-test before output
-
-- Did any fact get dropped? Restore it. Facts are lossless.
-- Does every fact keep its exact numbers, dates, and conditions? No rounding, no paraphrase.
-- Did I add any fact, idea, example, or maxim not in the source? Remove it.
-- Did I make a judgment call without stating it? Add it to Assumptions.
-- Was any missing context critical enough that I should have asked instead of guessed? Ask now.
-- Are deadlines and action items surfaced, not buried?
-- Is each heuristic a real maxim, not a summary sentence?
-- If the source had no heuristics, the Principles section is omitted, not padded. Same for a
-  source with no facts and the Reference section.

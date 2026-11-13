@@ -2,7 +2,7 @@
 name: setup-notifications
 description: Set up Claude Code push notifications via a webhook (e.g. n8n) so you get pinged when Claude needs your input or goes idle (optionally, also at the end of every turn). Use when the user says "notify me when the task is done", "send me a notification when Claude needs me", "set up notifications", or runs Claude Code in tmux / mobile SSH (Termius) where native notifications don't exist.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Setup notifications
@@ -49,13 +49,13 @@ Slack, etc.):
    existing hooks like `SessionStart`). Add `Notification` by default:
 
    ```json
-   "Notification": [ { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/notify-webhook.sh" } ] } ]
+   "Notification": [ { "hooks": [ { "type": "command", "command": "bash <HOME>/.claude/hooks/notify-webhook.sh" } ] } ]
    ```
    Only if the user explicitly opted into per-turn pings, also add `Stop`:
    ```json
-   "Stop":         [ { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/notify-webhook.sh" } ] } ]
+   "Stop":         [ { "hooks": [ { "type": "command", "command": "bash <HOME>/.claude/hooks/notify-webhook.sh" } ] } ]
    ```
-   Use the absolute path (Claude Code does not expand `~` in every context); validate the
+   Replace `<HOME>` with the absolute home path (Claude Code does not expand `~` in every context); validate the
    file with `jq . settings.json`.
 
 4. **Verify** end-to-end (the test actually fires the webhook — fine, it's the user's own):

@@ -2,7 +2,7 @@
 name: highlight-key-takeaways
 description: Highlight the most important takeaways and key learnings inside an Obsidian note by wrapping them in `==text==` (Obsidian highlight syntax). Edits the note in place. Use when the user asks to "highlight key takeaways", "highlight key learnings", "mark the important parts", "find and highlight main points in a note", or similar. Requires a note/file name as input.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Highlight Key Takeaways
@@ -57,7 +57,7 @@ Allocate top-down (in Step 4). Lower tiers only get highlighted if the higher ti
   - The single core thesis / one-line summary of the whole piece (max 1)
   - A principle, law, framework, or organizing model the note is built around (max 3) — named or not
 
-- **Tier 2 — highlight if slots remain (max 2–3 each):**
+- **Tier 2 — highlight if slots remain (max 2 each):**
   - Research findings, stats, or quoted data that anchor the argument (e.g. "zero relationship")
   - Decisive rules the author insists on ("reject X", "always Y", "never Z")
 

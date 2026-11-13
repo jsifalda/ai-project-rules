@@ -16,7 +16,7 @@ first shipped in. `Since` lets re-run mode compute the delta for a repo stamped 
 
 | Concern | Delivery | Step | Since |
 |---------|----------|------|-------|
-| Agent instructions file (`AGENTS.md` + `CLAUDE.md` symlink) | scaffold | 1 | v1 |
+| Agent instructions file (`CLAUDE.md` + `AGENTS.md` symlink) | scaffold | 1 | v1 |
 | Agent-instructions scope rule — directives and read-first pointers only, documentation lives in `README.md` / `ARCHITECTURE.md` / `docs/adr/` | inject | 1 | v13 |
 | Re-run scans the agent file for documentation sections and offers to relocate them | behaviour | 1 | v13 |
 | Stack detection (package manager, lint/typecheck/test, default branch) | detect | 2 | v1 |

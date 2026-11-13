@@ -1,27 +1,14 @@
 ---
 name: why
 description: >-
-  RESTRICTED-INVOCATION skill, do NOT auto-trigger on a phrase match. The only entry points are the literal slash command /why, the user naming why and asking to run it, a step of a skill whose README Depends on cell lists why, or the agent itself when the task needs this exact output and it states the reason in one line first. Loose phrasing like "why is this like this" or "why do we do X" is an ANTI-TRIGGER, answer directly and offer /why. When invoked, investigates why code works the way it does, design rationale, why we picked Y, regressions, postmortems, or data-backed thresholds. Plans the evidence the question needs, picks the best tool per need, checks which tools are present (built-in, MCP, CLI), and queries each present source in parallel, then returns a cited, confidence-tiered read on decisions and tradeoffs. Do NOT use for how code works at runtime, use how.
+  Investigates why code works the way it does, design rationale, why we picked Y, regressions, postmortems, or data-backed thresholds. Plans the evidence the question needs, picks the best tool per need, checks which tools are present (built-in, MCP, CLI), and queries each present source in parallel, then returns a cited, confidence-tiered read on decisions and tradeoffs. Use when the user types /why, or asks why is this like this, why do we do X, what was the reason for Y, or when did this regress. Do NOT use for how code works at runtime, use how.
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
-  version: "1.1"
+  version: "1.2"
   upstream: "https://github.com/cursor/plugins"
 ---
 
 # Why
-
-## Invocation (check this first)
-
-These are the only entry points:
-
-1. The user types the literal slash command `/why`.
-2. The user names the `why` skill and asks to run it.
-3. A step of a skill whose README `Depends on` cell lists `why`.
-4. The agent itself, when the current task needs this skill's exact output. State the reason in one line before you invoke it.
-
-Anything else is an anti-trigger. Loose phrasing such as "why is this like this", "why do we do X" or "what was the reason for Y" does not load this skill. Answer directly and offer `/why`.
-
-This rule is prompt-enforced. The skill carries no `disable-model-invocation` flag, because that flag removes the skill from the Skill tool, so entry points 3 and 4 would fail.
 
 Investigate the motivation and intent behind code. The companion `how` skill answers what the code does and how it works. `why` answers what forces led to its shape.
 

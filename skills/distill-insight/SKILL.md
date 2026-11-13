@@ -2,7 +2,7 @@
 name: distill-insight
 description: Turn session failures into one reusable rule so the same class of mistake does not repeat. Reads the current session or a named log, groups the failures by shared root cause, climbs from the symptom to the behaviour behind it, and drafts one checkable rule plus its early trigger. Tests that the rule prevents every failure in the group, and that a global rule names nothing from the session. Proposes an edit when an existing rule covers the case, and flags any loaded instruction the draft contradicts. Picks the save target by scope, the global or shared rules for a rule that fits every project, else the project CLAUDE.md or AGENTS.md, then memory. Saves nothing until the user approves the exact text. Use when the user types /distill-insight, corrects the agent, says don't do that again, or a failure repeats. Do NOT use to review the whole agent environment, to audit every loaded instruction (use audit-instructions), or to summarise a session.
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Distill Insight
@@ -62,6 +62,7 @@ metadata:
 
 ## Target order
 
+- Propose a lint rule, type, CI check, hook or test first when one can catch the failure. Draft the prose rule only as the fallback.
 - Pick the target by the rule's scope, after the redraft steps end.
 1. The project's `CLAUDE.md` or `AGENTS.md`, for a rule that does not pass the first two checks in `## Universality test`.
 2. The global instructions, a shared rules file they import, or a shared rules repo the user names, for a rule that passes the first two checks in `## Universality test`. Take it even when target 1 exists.

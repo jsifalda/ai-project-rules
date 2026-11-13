@@ -1,10 +1,10 @@
 ---
 name: learn-taste
 description: >-
-  RESTRICTED-INVOCATION skill, do NOT auto-trigger on a phrase match. The only entry points are the literal slash command /learn-taste, the user naming learn-taste and asking to run it, a step of a skill whose README Depends on cell lists learn-taste, or the agent itself when the task needs this exact output and it states the reason in one line first. Phrasing like "remember this", "don't do that again" or "save my preference" is an ANTI-TRIGGER. When invoked, collects every correction the user made in a session (explicit ones, silent edits to files you wrote, repeated nudges, reverts, confirmed non-obvious choices), generalizes each to the right level, confirms its why, and proposes it as a rule or a check. Writes only the approved rules, by scope, to DESIGN.md, the project CLAUDE.md or AGENTS.md, the global rules, or memory. Do NOT use to distill one rule from one repeated failure, use distill-insight.
+  Collects every correction the user made in a session (explicit ones, silent edits to files you wrote, repeated nudges, reverts, confirmed non-obvious choices), generalizes each to the right level, confirms its why, and proposes it as a rule or a check. Writes only the approved rules, by scope, to DESIGN.md, the project CLAUDE.md or AGENTS.md, the global rules, or memory. Use when the user types /learn-taste, or asks to learn from all their corrections across the whole session, capture their taste, or turn this session's feedback into rules. Do NOT use to save one fact or preference on "remember this" or "save my preference" (the global memory rules own that), or to distill one rule from one repeated failure, use distill-insight.
 license: "MIT, Copyright (c) 2026 Emil Kowalski"
 metadata:
-  version: "1.0"
+  version: "1.1"
   upstream: "https://github.com/emilkowalski/skills"
 ---
 
@@ -12,17 +12,6 @@ metadata:
 
 - Turn each correction the user made into a rule with its reason, and write it where the next agent reads it.
 - Change only the approved rule files and checks. Never change other code, and never add a rule the user did not express.
-
-## Invocation (check this first)
-
-These are the only entry points:
-
-1. The user types the literal slash command `/learn-taste`.
-2. The user names the `learn-taste` skill and asks to run it.
-3. A step of a skill whose README `Depends on` cell lists `learn-taste`.
-4. The agent itself, when the current task needs this skill's exact output. State the reason in one line before you invoke it.
-
-Any other phrasing → answer directly and offer `/learn-taste`.
 
 ## Hard rules
 

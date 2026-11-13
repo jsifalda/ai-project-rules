@@ -7,7 +7,7 @@ paths:
 
 # Core
 
-Every rule in this file is mandatory.
+Follow every rule in this file.
 
 ## Tier 2 rules — load on trigger
 
@@ -38,7 +38,6 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
 - Measure each number you report when a safe check exists. Label every number you did not measure or cite as an estimate and state its basis.
 - Settle a fact with the code or a tool before you ask. Ask only a question whose answer changes what you do.
-- Consider several approaches, as a senior developer would.
 
 # ARCHITECTURE
 
@@ -67,7 +66,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # PLAN MODE DEFAULT
 
-- Use plan mode for any task of three or more steps, or with an architectural decision.
+- Use plan mode for a task with an architectural decision or a change across several files.
 - Something goes sideways → stop and re-plan.
 - Plan the verification steps, not only the building.
 - Write detailed specs upfront.

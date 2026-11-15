@@ -1,17 +1,17 @@
 ---
 name: setup-skills-autorefresh
 disable-model-invocation: true
-description: Set up auto-refresh syncing of agent skills into Claude Code on this machine. Registers a SessionStart hook in ~/.claude/settings.json that, at every session start, symlinks each skill folder (any subfolder holding a SKILL.md) from a source folder you choose into ~/.claude/skills/ so they auto-load, and prunes ones you removed. Takes the source folder as a parameter, and if you don't give one it asks and recommends this repo's own skills/ dir, then verifies the path exists and holds at least one skill first. Idempotent — re-running re-points the source and migrates any older hook registration. Use when the user says "set up skills auto-refresh", "install the skills sync hook", "auto-sync my skills into Claude Code", "make my skills folder auto-load every session", or runs /setup-skills-autorefresh. Do NOT use for unrelated settings.json changes (permissions, env, model, other hooks) or one-off manual skill copying.
+description: Set up auto-refresh syncing of agent skills into Claude Code on this machine. Registers a SessionStart hook in the profile dir settings.json (~/.claude by default, or CLAUDE_CONFIG_DIR) that, at every session start, symlinks each skill folder (any subfolder holding a SKILL.md) from a source folder you choose into its skills/ folder so they auto-load, and prunes ones you removed. Takes the source folder as a parameter, and if you don't give one it asks and recommends this repo's own skills/ dir, then verifies the path exists and holds at least one skill first. Idempotent — re-running re-points the source and migrates any older hook registration. Use when the user says "set up skills auto-refresh", "install the skills sync hook", "auto-sync my skills into Claude Code", "make my skills folder auto-load every session", or runs /setup-skills-autorefresh. Do NOT use for unrelated settings.json changes (permissions, env, model, other hooks) or one-off manual skill copying.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 ## What this does
 
-Registers a `SessionStart` hook in Claude Code's `~/.claude/settings.json` that runs
+Registers a `SessionStart` hook in Claude Code's `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json` that runs
 `sync-skills.js` (bundled in this skill's `scripts/`) at the start of every session.
 The hook symlinks each skill folder (`<name>/SKILL.md`) found under a **source folder
-you choose** into `~/.claude/skills/`, and prunes symlinks for skills that no longer
+you choose** into `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`, and prunes symlinks for skills that no longer
 exist. Result — drop a skill into that folder and it auto-loads next session, on any
 machine where you've run this once.
 
@@ -44,13 +44,13 @@ whatever folder you point it at.
    least one `<skill>/SKILL.md` — and **refuses invalid paths**. If it errors, ask the
    user for a corrected path and retry. On success it backs up `settings.json` to
    `.bak`, registers the hook idempotently, runs it once so symlinks exist immediately,
-   and removes any stale pre-repo hook copy at `~/.claude/hooks/sync-skills.js`.
+   and removes any stale pre-repo hook copy at `${CLAUDE_CONFIG_DIR:-~/.claude}/hooks/sync-skills.js`.
 
 3. **Verify:**
 
    ```bash
-   grep sync-skills ~/.claude/settings.json   # shows the registered command + your folder
-   ls -la ~/.claude/skills/                   # skill symlinks now present
+   grep sync-skills "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"   # shows the registered command + your folder
+   ls -la "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/"                   # skill symlinks now present
    ```
 
    Then restart Claude Code — the "Syncing skills..." status fires at session start and
@@ -67,9 +67,11 @@ whatever folder you point it at.
 - **Timing** — Claude Code enumerates skills at session start, so a brand-new skill
   first appears in the *next* session. The installer's one-time run creates the symlink
   immediately, but enumeration still happens at startup.
-- **Custom config dir** — set `CLAUDE_CONFIG_DIR` to edit `<dir>/settings.json` instead
-  of `~/.claude/settings.json`.
+- **Custom config dir** — with an absolute `CLAUDE_CONFIG_DIR`, the installer edits
+  `<dir>/settings.json` and the hook links into `<dir>/skills/`, instead of `~/.claude`. A
+  relative value is ignored by the hook, which then uses `~/.claude`, while the installer
+  still edits the relative path. Always pass an absolute path.
 - **Scope** — installs the Claude Code hook only. A separate Copilot CLI variant
   (copy-based) is not handled here.
-- **Rollback** — restore `~/.claude/settings.json.bak`, or delete the `sync-skills.js`
+- **Rollback** — restore `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json.bak`, or delete the `sync-skills.js`
   entry from `hooks.SessionStart`.

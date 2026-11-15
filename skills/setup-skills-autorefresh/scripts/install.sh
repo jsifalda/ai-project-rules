@@ -2,8 +2,8 @@
 # install.sh — register the skills auto-sync hook for Claude Code.
 #
 # Wires sync-skills.js (its sibling in this dir) into Claude Code's
-# ~/.claude/settings.json as a SessionStart hook, so every session start
-# symlinks the skills under <skills-source-dir> into ~/.claude/skills/.
+# ${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json as a SessionStart hook, so every session start
+# symlinks the skills under <skills-source-dir> into ${CLAUDE_CONFIG_DIR:-~/.claude}/skills/.
 #
 # Usage:
 #   bash install.sh <skills-source-dir>

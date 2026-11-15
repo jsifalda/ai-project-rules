@@ -34,6 +34,11 @@ paths:
 * Tauri when multi-platform/hybrid (mobile + desktop) is needed
 * Silktide consent manager for the cookie banner
 
+## Guardrails (new app)
+
+- On day one, add lint bans for the stack's known footguns, CI-checked import boundaries and one folder per feature.
+- Fail CI on each ban. Never make a ban warn-only.
+
 ## Design (new UI and redesigns)
 
 - New site, app, landing page, or component in a greenfield or side project, or a redesign of one → load the `frontend-design` skill and the `hallmark` skill together, before the first line of UI code.

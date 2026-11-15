@@ -15,6 +15,11 @@
 - `origin/<default>` missing → `git fetch origin +<default>:refs/remotes/origin/<default>` first.
 - No `origin` remote or no `ref:` line → ask.
 
+## Scope
+
+- Keep each PR or MR to one purpose. Split unrelated changes into separate ones.
+- Keep each commit atomic.
+
 ## Messages
 
 - Use conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`, optional `(scope)`.

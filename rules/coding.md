@@ -18,6 +18,10 @@
 - Never add or edit a comment outside your change. Delete one only when your change made it wrong. A comment that contradicts the code is a defect.
 - Tooling directives are not comments. Never remove one (`eslint-disable`, `@ts-expect-error`, `# noqa`).
 
+## Enforcement
+
+- Catch a repeated review finding or correction with a lint rule, type, CI check, hook or test. A new tool or package → ask first.
+
 ## TypeScript
 
 - TypeScript for new code where possible.

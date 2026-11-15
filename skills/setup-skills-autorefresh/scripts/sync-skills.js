@@ -2,13 +2,13 @@
 
 // sync-skills.js — SessionStart hook that auto-syncs Claude Code skills.
 // Scans the source directory(ies) given as CLI args for skill folders (each
-// containing SKILL.md) and creates directory symlinks in ~/.claude/skills/.
+// containing SKILL.md) and creates directory symlinks in ${CLAUDE_CONFIG_DIR:-~/.claude}/skills/.
 //
 // Usage:
 //   node sync-skills.js <skills-dir> [<skills-dir> ...]
 //
 // The source folder is configured by the setup-skills-autorefresh installer,
-// which bakes it into the SessionStart hook command in ~/.claude/settings.json.
+// which bakes it into the SessionStart hook command in ${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json.
 // To change the synced folder, re-run that installer with a different path.
 //
 // Filtering: edit WHITELIST / BLACKLIST below to include/exclude specific skills.
@@ -20,8 +20,17 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const SKILLS_DIR = path.join(os.homedir(), '.claude', 'skills');
-const COMMANDS_DIR = path.join(os.homedir(), '.claude', 'commands');
+const envConfigDir = process.env.CLAUDE_CONFIG_DIR;
+const CONFIG_BASE =
+  envConfigDir && path.isAbsolute(envConfigDir) ? envConfigDir : path.join(os.homedir(), '.claude');
+const SKILLS_DIR = path.join(CONFIG_BASE, 'skills');
+const COMMANDS_DIR = path.join(CONFIG_BASE, 'commands');
+
+if (envConfigDir && !path.isAbsolute(envConfigDir)) {
+  console.error(
+    `[sync-skills] WARNING: CLAUDE_CONFIG_DIR is not absolute (${envConfigDir}), using ${CONFIG_BASE}`
+  );
+}
 
 // Source directory(ies) — passed as CLI args by the registered hook command.
 // Resolved to absolute paths so the created symlinks always have stable targets.
@@ -54,7 +63,7 @@ function migrateLegacyCommands() {
     const fullPath = path.join(COMMANDS_DIR, entry);
     try {
       const target = fs.readlinkSync(fullPath);
-      if (SOURCES.some((s) => target.startsWith(s))) {
+      if (SOURCES.some((s) => target === s || target.startsWith(s + path.sep))) {
         fs.unlinkSync(fullPath);
         migrated++;
       }
@@ -64,13 +73,13 @@ function migrateLegacyCommands() {
   }
   if (migrated > 0) {
     console.log(
-      `[sync-skills] Migrated: removed ${migrated} legacy symlinks from ~/.claude/commands/`
+      `[sync-skills] Migrated: removed ${migrated} legacy symlinks from ${COMMANDS_DIR}/`
     );
   }
 }
 
 function syncSkills() {
-  // Ensure ~/.claude/skills/ exists
+  // Ensure the skills dir exists
   if (!fs.existsSync(SKILLS_DIR)) {
     fs.mkdirSync(SKILLS_DIR, { recursive: true });
   }

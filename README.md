@@ -21,9 +21,9 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 
 ## How it gets into Claude Code & Copilot CLI
 
-A `SessionStart` hook symlinks every `skills/*/` folder into `~/.claude/skills/`, so skills appear automatically inside Claude Code at every session start — no manual install step.
+A `SessionStart` hook symlinks every `skills/*/` folder into `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`, so skills appear automatically inside Claude Code at every session start — no manual install step.
 
-The canonical hook script lives in this repo at `skills/setup-skills-autorefresh/scripts/sync-skills.js`. It syncs whatever **source folder is passed to it as an argument** (and prunes symlinks for skills you've removed). Register it on a machine with the bundled `setup-skills-autorefresh` skill, which bakes the folder into the hook command in `~/.claude/settings.json`:
+The canonical hook script lives in this repo at `skills/setup-skills-autorefresh/scripts/sync-skills.js`. It syncs whatever **source folder is passed to it as an argument** (and prunes symlinks for skills you've removed). Register it on a machine with the bundled `setup-skills-autorefresh` skill, which bakes the folder into the hook command in `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`:
 
 ```bash
 bash skills/setup-skills-autorefresh/scripts/install.sh ~/instructions/skills
@@ -158,7 +158,7 @@ The **`disable-model-invocation`** column shows `true` when the skill's `SKILL.m
 | [`setup-changelog`](skills/setup-changelog/SKILL.md) | Bootstrap a per-session changelog system in any project (creates `changelog/`, adds the policy to AGENTS.md/CLAUDE.md). | — | — | — |
 | [`setup-notifications`](skills/setup-notifications/SKILL.md) | Set up Claude Code push notifications via a webhook (e.g. n8n), so you get pinged when Claude needs your input or goes idle, optionally also at the end of every turn. | — | — | — |
 | [`setup-rtk`](skills/setup-rtk/SKILL.md) | Install RTK (Rust Token Killer) on a machine for a single Claude Code profile — binary (Homebrew or official install script) + the `rtk hook claude` PreToolUse hook in settings.json, via RTK's own `rtk init`. | — | — | `true` |
-| [`setup-skills-autorefresh`](skills/setup-skills-autorefresh/SKILL.md) | Install the SessionStart hook that auto-syncs skills from a chosen folder into `~/.claude/skills/`. | — | — | `true` |
+| [`setup-skills-autorefresh`](skills/setup-skills-autorefresh/SKILL.md) | Install the SessionStart hook that auto-syncs skills from a chosen folder into `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`. | — | — | `true` |
 | [`setup-todo-backlog`](skills/setup-todo-backlog/SKILL.md) | Bootstrap a known-issues backlog in any project — `docs/TODO.md` with dated immutable ids, optional checklist conversion, and a policy where entries are filed only on request and closed automatically on evidence. | — | — | — |
 | [`setup-user-scenarios`](skills/setup-user-scenarios/SKILL.md) | Bootstrap a BDD user-scenarios inventory (`docs/user-scenarios.md`) + doc-sync policy in a project, then offer to seed scenarios into existing PRDs. | `generate-user-scenarios` (optional) | — | — |
 | [`ship-pr`](skills/ship-pr/SKILL.md) | `/ship-pr`, or the ship step of a skill that depends on it — go from a dirty working tree, or a committed branch, to an open PR/MR (self-assigned to you) in one pass. | — | — | — |

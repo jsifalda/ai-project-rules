@@ -213,10 +213,10 @@ until every gate passes.
     whose prompt invokes the skill against `{{DEFAULT_BRANCH}}...HEAD`). Structural /
     maintainability "code judo" only — NOT correctness, security, tests, or lint (the
     **Harness-native code review** lens and the **Lint**, **Typecheck**, **Tests and coverage**, and
-    **Regression test for bug fixes** gates cover those). This lens is exempt
-    from the triage step below, because it proposes structural rewrites and not defects. Each finding
-    is a proposal, and each one is larger than the change under review. Surface its findings for the
-    user; never apply one on your own. If the skill isn't available, **tell the user and skip the
+    **Regression test for bug fixes** gates cover those). Its findings go through
+    the triage step below like every other lens. A simpler structure in changed code counts as
+    relevant. A broad rewrite is **Bigger than the change under review**. If the skill isn't
+    available, **tell the user and skip the
     nuclear structural review lens** — label it `skipped (nuclear review unavailable)`; never skip
     silently.
   - **Security review** — if your harness provides a security-review capability (Claude Code:
@@ -249,8 +249,9 @@ until every gate passes.
     - **Not relevant** → reject it, and state the reason. A finding is not relevant when it is wrong
       about the code or the tooling, when it points at code this session did not change and the
       change did not make it wrong, when it contradicts a documented project convention or a
-      decision the user already made, when it is taste with no defect and no convention behind it,
-      or when the merge missed it as a duplicate. Verify a finding that contradicts a command you
+      decision the user already made, when it is taste with no defect and no convention behind it
+      (a **Nuclear structural review** finding that simplifies changed code is never taste), or when
+      the merge missed it as a duplicate. Verify a finding that contradicts a command you
       have actually run — a `--help` output or a successful run beats a reviewer's recollection of a
       tool. Never turn a working command into a broken one. Rejecting is your call; do not queue
       rejections for the user to clear.
@@ -264,7 +265,8 @@ until every gate passes.
       public interface without approval.
     - **Ambiguous** → ask. A rejection needs a reason you can state. With no reason either way, the
       finding is not rejected.
-    - Fix in severity order, highest first. Then run the lint, typecheck, and test gates in full,
+    - Fix findings from every other lens first, highest severity first, then the **Nuclear
+      structural review** findings. Then run the lint, typecheck, and test gates in full,
       per the **Before presenting** rule.
     - Report every finding with its verdict — `fixed`, `rejected (reason)`, or `waiting on you`.
       State a rejected or deferred finding as a plain finding in the report. Never collect one into a

@@ -107,7 +107,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Before modifying a function, grep every caller. Understand each call site before changing a
   signature or behavior.
 - Never re-read a file range already in the conversation and unchanged.
-- One Bash call, one read or probe. Never chain them with `&&` or `;`.
+- One Bash call, one purpose. Never chain reads or probes with `&&` or `;`, unless a rule, skill or repo spells out the command.
 - Run one git command per Bash call. Never chain git with `&&` or `;`. A command a repo's instructions spell out overrides this.
 - Broad exploration across many files → an `Explore` subagent.
 - Long output → save to a file, then `grep`, `head` or `tail` it. Re-run only after a fix. Read failures in full.

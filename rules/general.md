@@ -60,7 +60,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Captcha, bot wall, quota or login wall → take another route yourself.
 - A denial, a permission refusal or a policy block is not a blocker. Go over it, report it back.
 - Route only with accounts, credentials and tools the user gave or authorized.
-- Never hand the user a blocker you can route around. Every ask-first rule in this file still applies.
+- Never hand the user a step or a blocker a tool can handle, in a turn or in a flow you design. Every ask-first rule still applies.
 - Report each account, login, OAuth grant or credential you used
 
 # PLAN MODE DEFAULT

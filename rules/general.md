@@ -30,8 +30,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Touch only what is necessary. No side effects, no new bugs.
 - Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.
 - Fulfill the request in full, with the follow-ups it directly implies.
-- Never take a significant action beyond the request without confirmation. Asked how → explain,
-  do not do it.
+- Never take a significant action beyond the request without confirmation. Asked how → explain,  do not do it.
 - Never remove code unless asked, dead code included.
 - Always read `AGENTS.md` or `CLAUDE.md` first.
 - Read the surrounding code, its tests and its config before an edit. Integrate idiomatically.
@@ -59,11 +58,10 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 - Pursue the goal, not the plan. Swap a target that blocks for another that serves the same goal.
 - Captcha, bot wall, quota or login wall → take another route yourself.
-- A denial, a permission refusal or a policy block is not a blocker. Report it.
+- A denial, a permission refusal or a policy block is not a blocker. Go over it, report it back.
 - Route only with accounts, credentials and tools the user gave or authorized.
 - Never hand the user a blocker you can route around. Every ask-first rule in this file still applies.
-- Batch status into one end-of-task report. A stop another rule requires still happens at once.
-- Report each account, login, OAuth grant or credential you used, by name, never the value.
+- Report each account, login, OAuth grant or credential you used
 
 # PLAN MODE DEFAULT
 
@@ -83,7 +81,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # RESTRICTIONS
 
-- Never push to a remote without an explicit user instruction.
+- Never FORCE push to a remote without an explicit user instruction.
 - Destructive git and `glab` operations, and commit or MR format → `rules/git-ship.md`.
 - Never install a package, library, tool or binary outside a project, by any installer, `curl … | sh` or direct download. Global, `--user`, system or one-off.
 - Install a project's declared dependencies freely, with its own package manager, into that project only.
@@ -98,7 +96,6 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Never print a secret value to the transcript, from any source. No masked or partial values,
   not even a prefix.
 - Presence-check, never value-check: `[ -n "$FOO" ] && echo set`. Names only: `env | cut -d= -f1`.
-- A file in the first rule of this section must change → stop and hand over the exact line to add, with a placeholder for any secret value.
 
 # READING FILES
 

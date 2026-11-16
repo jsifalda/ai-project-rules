@@ -1,17 +1,19 @@
 ---
 name: brave-submit-site
+disable-model-invocation: true
 description: >-
   Submit a website URL or bare domain to Brave Search for indexing or re-fetching, through the
   public form at search.brave.com/submit-url driven with Playwright browser automation. Normalizes
   the input, fills and submits the form, confirms the Success state before reporting, handles
   several sites in one run by reloading the form between submissions, and explains how to verify
-  indexing later. Use when the user asks to submit a site to Brave, get a domain indexed in Brave
-  Search, add a site to Brave, ask Brave to re-crawl or re-fetch a page, or says their site is not
-  showing up in Brave. Do NOT use for Google Search Console, Bing Webmaster Tools, IndexNow, or any
-  other search engine, for SEO audits, keyword research, or sitemap generation, or for running a
-  Brave Search query to read results (that is an ordinary web search).
+  indexing later. Slash-only, invoke it with /brave-submit-site, it never auto-fires. Use when the
+  user asks to submit a site to Brave, get a domain indexed in Brave Search, add a site to Brave,
+  ask Brave to re-crawl or re-fetch a page, or says their site is not showing up in Brave. Do NOT
+  use for Google Search Console, Bing Webmaster Tools, IndexNow, or any other search engine, for SEO
+  audits, keyword research, or sitemap generation, or for running a Brave Search query to read
+  results (that is an ordinary web search).
 metadata:
-  version: "1.0"
+  version: "2.0"
 ---
 
 # Brave Submit Site

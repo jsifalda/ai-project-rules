@@ -1,6 +1,6 @@
 ---
 name: dra
-description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs a built-in deep research pass, then a dr skill pass with independent phrasings, requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Validates its answer with a stdlib script before showing it. Use when the user types /dra, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use dr), for simple lookups, or for debugging.
+description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs the dr skill on the framed phrasings, then again on independent phrasings, requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Validates its answer with a stdlib script before showing it. Use when the user types /dra, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use dr), or for debugging.
 argument-hint: "The question to research"
 metadata:
   version: "3.0"
@@ -69,12 +69,12 @@ For the third case, state in one sentence why a binary answer does not apply (op
 
 Run both passes. Do not skip the second.
 
-### Pass A. Built-in deep research
+### Pass A. dr skill, framed phrasings
 
-- Run the native deep research capability on the primary question and on every sub-question.
+- Invoke the `dr` skill on the primary question and on every sub-question, with the Pass A phrasings from the frame.
 - Record every source it returns.
 
-### Pass B. dr skill
+### Pass B. dr skill, independent phrasings
 
 - Invoke the `dr` skill on the primary question and on every sub-question.
 - Phrase each query from the angles in the frame, not from the literal wording. Do not repeat a Pass A query.

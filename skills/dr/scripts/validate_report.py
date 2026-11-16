@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a deep-research chat report (v2). Stdlib only.
+"""Validate a dr chat report (v2). Stdlib only.
 
 Usage: python3 validate_report.py --report report.md [--today YYYY-MM-DD]
 Exit 0 = PASS (warnings allowed), 1 = FAIL.

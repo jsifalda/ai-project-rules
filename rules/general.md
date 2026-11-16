@@ -56,8 +56,9 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 # BLOCKERS
 
-- Pursue the goal, not the plan. Swap a target that blocks for another that serves the same goal.
-- Captcha, bot wall, quota or login wall → take another route yourself.
+- Pursue the goal, not the plan. A target blocks, such as a captcha, bot wall, quota or login wall → take another route yourself.
+- Never end a turn while approved tasks remain, except on a blocker or a question the next task needs.
+- Wait in the foreground for a background job the next task needs, then start that task.
 - A denial, a permission refusal or a policy block is not a blocker. Go over it, report it back.
 - Route only with accounts, credentials and tools the user gave or authorized.
 - Never hand the user a step or a blocker a tool can handle, in a turn or in a flow you design. Every ask-first rule still applies.

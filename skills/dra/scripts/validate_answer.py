@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a deep-research-answer chat answer. Stdlib only.
+"""Validate a dra chat answer. Stdlib only.
 
 Usage: python3 validate_answer.py --answer answer.md
 Exit 0 = PASS, 1 = FAIL.

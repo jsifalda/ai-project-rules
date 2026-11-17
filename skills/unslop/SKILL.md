@@ -4,13 +4,13 @@ description: >-
   Apply numbered AI-pattern rules while drafting prose, or run them as a pass over existing text, to cut AI tells (AI vocabulary, em dashes, semicolons, colon overuse, hype, cliches, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keep the meaning and tone. Use when drafting user-facing prose such as an email, a post, a doc, landing copy or a summary, or when the user asks to unslop text, remove AI tells, cut the slop, de-slop a draft, write like a human, humanise this, or check prose for AI patterns. Do NOT use for code, commit messages, JSON or YAML, terse CLI output or quick chat replies, or for general grammar and style polish, use rewrite.
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
-  version: "1.2"
+  version: "1.3"
   upstream: "https://github.com/cursor/plugins"
 ---
 
 # Unslop
 
-Draft with the patterns below, or scan existing text for them and rewrite. Preserve meaning and match the intended tone.
+Edit text to remove AI patterns. Scan for the patterns below, then rewrite. Preserve meaning and match the intended tone.
 
 ## Patterns to detect and fix
 
@@ -37,7 +37,7 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 15. **Boldface and asterisk emphasis.** Don't bold every proper noun or acronym. Use no asterisk emphasis inside a sentence. Rule 16 covers bold lead-ins.
 16. **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
 17. **Title case headings.** Use sentence case.
-18. **Emojis.** Remove them from prose, headings and bullets.
+18. **Emojis.** Remove decorative emojis from prose, headings and bullets. Keep an emoji that carries meaning, such as a response choice or a status mark.
 19. **Curly quotes.** Use straight quotes.
 
 ### Communication artifacts
@@ -72,14 +72,3 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 36. **Cliches and fluff phrases, used as figures of speech.** "move the needle", "touch base", "moat", "Here's the rub", "tough pill to swallow", "Then it hit me", "Learned this the hard way", "Let's explore", "squeaky wheels", "soak up", "a fluke". Cut them or state the plain fact.
 37. **Redundancy.** Cut anything the previous sentence already said.
 38. **Address the reader as "you" when you draft.** "You save time with these steps", not "Users save time".
-
-## Verification
-
-One re-read is not enough. Loop until a pass is clean.
-
-1. Read the whole text sentence by sentence, as if you say it out loud.
-2. Flag every sentence that breaks a rule. Quote it and name the rule number.
-3. Rewrite each flagged sentence. Replace it, do not soften it. Keep the author's voice.
-4. Run step 1 again on the rewritten text.
-
-Stop when a full pass flags nothing. Cap at 3 passes. Text that still reads as AI after pass 3 → return it with one line that names what still reads as AI and why. Text of one or two sentences needs one careful pass.

@@ -2,7 +2,7 @@
 name: indie-hacker-wrapup
 description: End-of-session ritual that mines the current conversation for X/Twitter-worthy takeaways and drafts a build-in-public post. Runs directly on invocation — no permission question — reading the session across lenses (the product you built, the craft behind it, and the stance you took), scoring candidates against an absolute resonance bar, filtering out anything employer-confidential or personally identifying, and refusing to force a post when nothing clears the bar. Surfaces a ranked shortlist, then drafts the chosen angle as a copy-paste-ready post. Tracks angles it has already pitched so it repeats one only when a new session is clearly stronger evidence. Use when you type /indie-hacker-wrapup, or say wrap up this session, draft a learning from this session for X, or session takeaways for twitter. Do NOT use for general prose writing, for summarising the session into notes, or to invent posts not grounded in what actually happened.
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Indie Hacker Wrapup
@@ -119,7 +119,7 @@ Get today's date from `date +%F` and the profile from `basename "${CLAUDE_CONFIG
 
 ## Step 4 — Draft the chosen post
 
-Draft the picked angle as a single X post. Load the `unslop` skill and apply its full ruleset to every line. Before you output, run its Verification loop on the draft.
+Draft the picked angle as a single X post. Load the `unslop` skill and apply its full ruleset to every line. Before you output, re-read the draft against those rules and strip any violation.
 
 X-native craft:
 

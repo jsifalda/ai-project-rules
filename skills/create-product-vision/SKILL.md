@@ -2,7 +2,7 @@
 name: create-product-vision
 description: "Turn a short product or project description into a motivating vision doc covering three angles — motivation (the why and the shift it creates), practical (what using it actually looks like), and product (what it is and what to expect). The tagline ships in three wordings, a motivational main plus practical and product-descriptive alternatives. Use whenever the user wants a vision, mission, or why-this-matters framing for a product, project, tool, or workflow. Triggers — 'write a vision', 'draft a vision for X', 'give this a vision statement', or when the user pastes a short description of something they are building. Produces one tight vision doc (tagline wordings, what it is, what it does, what you get, the shift, success signal), not marketing copy or a pitch deck. Do NOT use to summarise existing text (use summarise-url or summarise-text), to break a goal into tasks (use goal-breakdown), or to plan an MVP launch (use ship-v1)."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Product Vision
@@ -14,7 +14,7 @@ Turn a short description of something being built into one tight, motivating vis
 - **Cover all three angles, every time.** A vision that only inspires leaves the reader unsure what the product is. One that only lists features leaves them unsure why to care. Hit all three (below).
 - **Stay grounded in the description.** Never invent features, metrics, or claims the author did not give. If a detail is missing and matters, ask (see below), don't fabricate.
 - **Tight by default.** Short sections, bullets, one page or less. No preamble, no "Here is your vision".
-- **Human prose.** Load and apply the `write-like-human` ruleset before writing. No em-dashes, semicolons, asterisks for emphasis, or filler. Use `→` for the shift.
+- **Human prose.** Load and apply the `unslop` rules while you draft. No em-dashes, semicolons, asterisks for emphasis, or filler. Use `→` for the shift.
 
 ## The three angles
 

@@ -1,16 +1,16 @@
 ---
 name: unslop
 description: >-
-  Run a numbered AI-pattern pass over existing text to cut AI tells (AI vocabulary, em dashes, colon overuse, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keep its meaning and tone. Use when the user asks to unslop text, remove AI tells, cut the slop, de-slop a draft, or check prose for AI patterns, or when a task asks to clean already-drafted text of AI tells. Do NOT use to draft new prose, use write-like-human, or for general grammar and style polish, use rewrite.
+  Apply numbered AI-pattern rules while drafting prose, or run them as a pass over existing text, to cut AI tells (AI vocabulary, em dashes, semicolons, colon overuse, hype, cliches, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keep the meaning and tone. Use when drafting user-facing prose such as an email, a post, a doc, landing copy or a summary, or when the user asks to unslop text, remove AI tells, cut the slop, de-slop a draft, write like a human, humanise this, or check prose for AI patterns. Do NOT use for code, commit messages, JSON or YAML, terse CLI output or quick chat replies, or for general grammar and style polish, use rewrite.
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
-  version: "1.1"
+  version: "1.2"
   upstream: "https://github.com/cursor/plugins"
 ---
 
 # Unslop
 
-Edit text to remove AI patterns. Scan for the patterns below, then rewrite. Preserve meaning and match the intended tone.
+Draft with the patterns below, or scan existing text for them and rewrite. Preserve meaning and match the intended tone.
 
 ## Patterns to detect and fix
 
@@ -32,12 +32,12 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 
 ### Style
 
-13. **Em dash overuse.** Avoid em dashes entirely. Use periods or commas only (no parentheses, no en dashes, no hyphen-as-dash substitutes). If a thought needs separation, end the sentence or use a comma.
+13. **Em dash overuse.** Avoid em dashes entirely. Use a period, a comma, or `→` (right arrow). Do not use parentheses, en dashes or hyphens as dash substitutes. If a thought needs separation, end the sentence, use a comma, or join the two parts with `→`.
 14. **Colon overuse.** Colons are fine before a list or example, not as mid-sentence connectors. "If you're coming from traditional automation: instead of registering event handlers, you describe conditions" adds nothing with the colon. Rewrite to let the point stand on its own without comparison framing. "Describing when the scheduler should fire works best as plain English." Same meaning, no crutch punctuation.
-15. **Boldface overuse.** Don't bold every proper noun or acronym.
+15. **Boldface and asterisk emphasis.** Don't bold every proper noun or acronym. Use no asterisk emphasis inside a sentence. Rule 16 covers bold lead-ins.
 16. **Inline-header lists.** The tell is a bold label and colon that restates the line: "**Performance:** Performance improved...". Convert those to prose. A bold lead-in that ends in a period, names the item, and is followed by genuinely new detail ("**Schema in TypeScript.** Tables live in one file.") is fine, not a tell.
 17. **Title case headings.** Use sentence case.
-18. **Decorative emojis.** Remove from headings and bullets.
+18. **Emojis.** Remove them from prose, headings and bullets.
 19. **Curly quotes.** Use straight quotes.
 
 ### Communication artifacts
@@ -48,7 +48,7 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 ### Filler
 
 23. **Filler phrases.** "In order to" becomes "To". "Due to the fact that" becomes "Because". Delete "It is important to note that".
-24. **Excessive hedging.** "could potentially possibly be argued that it might" becomes "may".
+24. **Excessive hedging.** "could potentially possibly be argued that it might" becomes "may". Say "does" when you mean it does, not "could" or "might". Keep a real caveat as one plain clause.
 25. **Generic conclusions.** "The future looks bright." State specific plans or facts.
 
 ### Jargon
@@ -63,4 +63,23 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 30. **Cut adverbs, or use a stronger verb.** "runs quickly" becomes "is fast" or the number, and "significantly improves" becomes the measured delta. An adverb propping up a weak verb means the verb is wrong.
 31. **Prefer the plain word.** "utilize" and "leverage" become "use", "facilitate" becomes "help", "numerous" becomes "many", "in the event that" becomes "if". The fancier synonym is rarely clearer.
 32. **Mannered prose.** Metaphor or flourish where a literal phrase exists: aphorisms ("wire it or delete it"), rhetorical fragments for effect, personified code ("the plan holds it"), figurative verbs ("rides along", "stands on"), stock framing phrases. "A dial worth turning" becomes "a parameter worth varying". Say what you mean. Rule 26 covers the metaphor nouns.
-33. **Over-compression.** Dropped articles, verbless fragments, symbol-speak, and abbreviations that make the reader decode instead of read. "Parser rejects bad date → exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Write whole sentences with their articles and verbs, and spell out arrows and abbreviations.
+33. **Over-compression.** Dropped articles, verbless fragments, and abbreviations that make the reader decode instead of read. "Parser rejects bad date, exit 2, no write" becomes "The parser rejects a bad date, exits with code 2, and writes nothing." Write whole sentences with their articles and verbs, and spell out abbreviations. `→` is fine anywhere, chains included. An arrow can stand in for the verb, so "parse → validate → write" is not a verbless fragment. Rule 13 allows it.
+
+### Voice and punctuation
+
+34. **Semicolons.** Use none. Use a period, a comma, or `→`.
+35. **Marketing hype.** "cutting-edge", "unparalleled", "game-changer", "seamless", "revolutionary". "Our cutting-edge expense tracker delivers unparalleled results" becomes "Our tool tracks expenses."
+36. **Cliches and fluff phrases, used as figures of speech.** "move the needle", "touch base", "moat", "Here's the rub", "tough pill to swallow", "Then it hit me", "Learned this the hard way", "Let's explore", "squeaky wheels", "soak up", "a fluke". Cut them or state the plain fact.
+37. **Redundancy.** Cut anything the previous sentence already said.
+38. **Address the reader as "you".** "You save time with these steps", not "Users save time".
+
+## Verification
+
+One re-read is not enough. Loop until a pass is clean.
+
+1. Read the whole text sentence by sentence, as if you say it out loud.
+2. Flag every sentence that breaks a rule. Quote it and name the rule number.
+3. Rewrite each flagged sentence. Replace it, do not soften it. Keep the author's voice.
+4. Run step 1 again on the rewritten text.
+
+Stop when a full pass flags nothing. Cap at 3 passes. Text that still reads as AI after pass 3 → return it with one line that names what still reads as AI and why. Text of one or two sentences needs one careful pass.

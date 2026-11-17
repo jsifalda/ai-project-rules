@@ -67,11 +67,11 @@ Rule numbers are stable ids that other skills cite. A removed rule leaves a gap.
 
 ### Voice and punctuation
 
-34. **Semicolons.** Use none. Use a period, a comma, or `→`.
+34. **Semicolons.** Use none. Rule 13 lists the substitutes.
 35. **Marketing hype.** "cutting-edge", "unparalleled", "game-changer", "seamless", "revolutionary". "Our cutting-edge expense tracker delivers unparalleled results" becomes "Our tool tracks expenses."
 36. **Cliches and fluff phrases, used as figures of speech.** "move the needle", "touch base", "moat", "Here's the rub", "tough pill to swallow", "Then it hit me", "Learned this the hard way", "Let's explore", "squeaky wheels", "soak up", "a fluke". Cut them or state the plain fact.
 37. **Redundancy.** Cut anything the previous sentence already said.
-38. **Address the reader as "you".** "You save time with these steps", not "Users save time".
+38. **Address the reader as "you" when you draft.** "You save time with these steps", not "Users save time".
 
 ## Verification
 

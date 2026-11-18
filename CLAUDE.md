@@ -136,6 +136,14 @@ cp scripts/universality-denylist.txt.example scripts/universality-denylist.txt
 
 Don't bypass — fix the source. Replace the leaked value with a placeholder, env var, or runtime lookup. If the content genuinely belongs in *some* file, it belongs in the agent's private global memory, not in this public repo.
 
+## Sibling repo sync
+
+- A user may keep a private sibling instruction repo whose `CLAUDE.md` mirrors these sections: the Verification Protocol, the Changelog rules, the Conventions, and the Identifiers, Counts and Writing Style sections.
+- A session that changes one of these sections stops before it reports done, and asks the user whether to port the change to the sibling. Offer it every time. Never port silently.
+- Take the sibling's location from the user or the agent's private memory, never from this file.
+- A change outside these sections needs no port, and neither does a public-only part inside them, such as the scanner gate in Step 1, the CodeRabbit egress authorization, Step 6 and `### Commit the entry (autocommit)`. Saying that out loud still counts as the offer.
+- The sibling's own `CLAUDE.md` decides how the port ships.
+
 ## Verification Protocol (MANDATORY)
 
 > **Repo-local, and it OVERRIDES any markdown-only verification exemption.** In this repo the instructions *are* the product — a `SKILL.md` or rule edit ships to every consumer, so it gets reviewed like code.
@@ -164,7 +172,7 @@ Don't bypass — fix the source. Replace the leaked value with a placeholder, en
 
 - `bash scripts/check-universality.sh <changed paths>` → must exit 0.
 - `python skills/create-skill/scripts/quick_validate.py --require-version skills/<name>/` → must pass, for every touched skill. Drop the flag for a skill in `scripts/synced-skills.txt`.
-- Both scripts already exist in this repo. Reuse them — never reimplement the checks.
+- These scripts already exist in this repo. Reuse them — never reimplement the checks.
 
 ### Step 2 — review lenses (run every lens that fires, in parallel, against the dirty working tree)
 
@@ -206,7 +214,7 @@ CodeRabbit's severities, highest first: `critical`, `major`, `minor`. It may als
 
 - After auto-fixes, re-run Step 1 **and every Step 2 lens that fires** — not CodeRabbit alone. A fix can introduce a defect only another lens sees. Re-evaluate which lenses fire each round against the round's own diff: an auto-fix that newly touches an agent-facing prompt makes the prompt-audit lens eligible even when round 1 did not run it.
 - Budget: one extra round. Further loops need user approval. The budget exists because each `cr review` costs credits — it binds CodeRabbit, so a further loop of the local lenses alone is free and needs no approval.
-- A file added or changed after the lenses ran was never reviewed, unless its only post-lens change is a Step 4 fix or it is the Step 6 changelog entry → run CodeRabbit and the harness-native lens once more before Step 6, and triage only their findings on those files. The CodeRabbit run counts against the budget. Budget already spent → ask the user before this run. CodeRabbit unavailable → list those files as unreviewed in the report.
+- A file added or changed after the lenses ran was never reviewed, unless its only post-lens change is a Step 4 fix or it is the Step 6 changelog entry → run CodeRabbit, the harness-native lens, and the prompt-audit lens when those files include an agent-facing prompt, once more before Step 6, and triage only their findings on those files. The CodeRabbit run counts against the budget. Budget already spent → ask the user before this run. CodeRabbit unavailable → list those files as unreviewed in the report.
 
 ### Step 6 — then commit
 

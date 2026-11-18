@@ -129,7 +129,7 @@ Weight H1, H2, and the painkiller bullets most heavily.
 
 **Anti-patterns:**
 - H1 is rational/feature-led (`The to-do app for teams`) or a bare category noun, instead of a change for the reader
-- H1 or subhead names a product, tool or acronym other than the product itself
+- H1 or subhead names a product, tool or acronym other than the product itself, except the competitor on a "<competitor> alternative" page
 - Vague CTA (`Learn more`, `Get started` with no context)
 - Hero visual is a stock photo instead of the product
 

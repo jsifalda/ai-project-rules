@@ -2,6 +2,7 @@
 
 Takeaways from Marc Lou's "32 Principles of a Viral Product", restated in brief.
 Source: https://x.com/marclou/status/2065385672991752210 — read the original for the full argument.
+Headline bullets `HE6` to `HE8` are repo additions, not from the source.
 
 The auditing skill reads this file and scores a target
 against every bullet below, in file order, adding nothing.
@@ -29,7 +30,7 @@ append within a section rather than inserting.
 - <10 words. Can't say it in one sentence → users won't either.
 - No competitor name. H1, subhead, eyebrow and meta name no other product or company, except on a "<competitor> alternative" page.
 - Cold reader test. H1 and subhead alone state what it is, who it is for, why act now.
-- No unknown names. H1 and subhead use no tool name or acronym besides the product name.
+- No unknown names. H1 and subhead use no tool name or acronym besides the product name, except the competitor on a "<competitor> alternative" page.
 
 ## Copy
 

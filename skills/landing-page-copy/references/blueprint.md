@@ -123,11 +123,13 @@ Formula: emotional promise + rational delivery.
 - Primary CTA — never "Buy" / "Purchase"
 - Quick social proof: a real count, plus either a 1-line review or avatars
 - Visual note: clean product mockup or result screenshot
+- Cold-reader skim: the H1 and subhead alone state what it is, who it is for, and why act now
 
 Weight H1, H2, and the painkiller bullets most heavily.
 
 **Anti-patterns:**
 - H1 is rational/feature-led (`The to-do app for teams`) or a bare category noun, instead of a change for the reader
+- H1 or subhead names a product, tool or acronym other than the product itself
 - Vague CTA (`Learn more`, `Get started` with no context)
 - Hero visual is a stock photo instead of the product
 

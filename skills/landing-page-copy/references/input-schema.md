@@ -22,6 +22,8 @@ Ask for missing **required** fields one at a time, in this order. Use the exact 
 | 7 | `top_features` | "Give me 3 power features. For each: feature name + one line on *how* it delivers value." |
 | 8 | `pricing_model` + `price_points` | "How is it priced? (subscription / one-time / freemium) — and the actual prices for each plan." |
 
+Reject a `one_line_pitch` framed as a feature list, or as "<competitor> alternative" outside a page for that search. Ask for the outcome instead.
+
 If the user's initial product description already answers some of these, **skip them**. Only ask for what's truly missing.
 
 ### Optional (smart defaults + inline flag)

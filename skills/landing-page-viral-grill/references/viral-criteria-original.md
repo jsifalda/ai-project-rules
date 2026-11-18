@@ -27,6 +27,9 @@ append within a section rather than inserting.
 - Emotional. Laugh, wow, or WTF. People remember feelings, not features.
 - Next-day test: write 5, show friends, ask 24h later which stuck.
 - <10 words. Can't say it in one sentence → users won't either.
+- No competitor name. H1, subhead, eyebrow and meta name no other product or company, except on a "<competitor> alternative" page.
+- Cold reader test. H1 and subhead alone state what it is, who it is for, why act now.
+- No unknown names. H1 and subhead use no tool name or acronym besides the product name.
 
 ## Copy
 

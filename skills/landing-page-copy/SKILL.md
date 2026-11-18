@@ -12,7 +12,7 @@ description: >-
   feedback. Asks one question at a time for missing required input. Do NOT use for virality or
   shareability audits, SEO, or accessibility review.
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Landing Page Copy
@@ -33,7 +33,7 @@ Pick by input shape. A product description means generate. Page text, a file, or
 ### generate
 
 1. **Read the input.** Extract whatever is given.
-2. **Clarify gate — nothing gets written until it passes.** Walk the required fields in [references/input-schema.md](references/input-schema.md) one at a time, in order. Do not batch. Ask for `vision` too, but never block on it — offer the `create-product-vision` skill or take the derived default and flag it.
+2. **Clarify gate — nothing gets written until it passes.** Walk the required fields in [references/input-schema.md](references/input-schema.md) one at a time, in order. Do not batch. Apply its `one_line_pitch` check. Ask for `vision` too, but never block on it — offer the `create-product-vision` skill or take the derived default and flag it.
 3. **Apply smart defaults** for missing optional fields, flagged inline as `> ⚠️ assumed:` notes.
 4. **Draft** from [assets/output-template.md](assets/output-template.md), guided by [references/blueprint.md](references/blueprint.md) and [references/copy-rules.md](references/copy-rules.md).
 
@@ -149,7 +149,7 @@ Worked examples, both modes: [references/examples.md](references/examples.md).
 
 - One question at a time when asking for missing required input.
 - Never use "Buy" / "Purchase" as CTA labels.
-- Default to zero jargon and benefit-first; deviate only when `icp_technicality = technical`.
+- Keep hero (H1, subhead), section headings and meta benefit-first with zero jargon for every ICP. Add specs in Features only when `icp_technicality = technical`.
 - Default to no money-back guarantee; add only when `offer_guarantee = true`. A missing guarantee is a gap only in that case — never infer it from market, price, or ICP, which grades a business decision rather than the copy.
 - Use scarcity only when `urgency_basis` is real.
 

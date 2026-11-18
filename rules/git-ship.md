@@ -20,6 +20,10 @@
 - Keep each PR or MR to one purpose. Split unrelated changes into separate ones.
 - Keep each commit atomic.
 
+## Hooks
+
+- Repo has a tracked `.githooks/` and `core.hooksPath` is unset → run `git config core.hooksPath .githooks` before the first commit.
+
 ## Messages
 
 - Use conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`, optional `(scope)`.

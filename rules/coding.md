@@ -8,6 +8,7 @@
 - Use `fetch` for HTTP. Never `axios`, `superagent`, or another library.
 - Never swallow an error silently. Log or propagate it.
 - Keep routine success quiet in what you build. Send no ping or alert that needs no action.
+- Stop a process by its saved PID or its listening port. Never run `pkill -f`.
 - No convention in the repo → camelCase for variables and functions, PascalCase for classes and components.
 
 ## Comments

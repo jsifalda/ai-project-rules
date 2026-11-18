@@ -26,7 +26,7 @@ These resolve contradictions in upstream advice. Override only when the input fl
 
 ## Anti-Patterns (never do)
 - Never name another product or company in the H1, subhead, eyebrow or meta, except on a "<competitor> alternative" page.
-- Competitor comparison above the fold
+- Competitor comparison table or section above the fold
 - Generic platitudes ("revolutionary platform", "next-gen solution")
 - Fake urgency ("Only 3 spots left!" with no basis)
 - Invented testimonials with real-sounding names

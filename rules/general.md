@@ -37,7 +37,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
 - Measure each number you report when a safe check exists. Label an unmeasured, uncited number as an estimate with its basis.
 - Settle a fact with the code or a tool before you ask. Ask only a question whose answer changes what you do.
-- Answer a current-state question from the runtime, else the code's config file, never a `# SECRETS & ENV FILES` file. Name that source.
+- Answer current-state and absence questions from the runtime, else code config, never a `# SECRETS & ENV FILES` file. Name that source.
 
 # ARCHITECTURE
 

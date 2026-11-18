@@ -7,11 +7,15 @@
 - Assume the reader understands ~10% of your jargon. Strip the rest.
 - Every section: emotional hook + rational explanation.
 - Short sentences. Concrete nouns. Active verbs.
+- Translate every mechanism, interval, internal count, score or internal object name into the visitor's outcome, or cut it.
+- Apply that to all copy: body, stats, FAQ, CTAs, captions and mockup labels, not only the hero.
+- Keep a mechanism detail only inside fact-comparison content, technical-setup content, technical-ICP Features specs, or attributed quotes.
 
 ## CTA Rules
 - Action-oriented labels. Never "Buy" or "Purchase".
 - Same label across hero, pricing, and final CTA (consistency bias).
 - High contrast.
+- Name the visitor's result or the next step in every CTA label, never an internal object.
 
 ## Conflict-Resolution Defaults
 These resolve contradictions in upstream advice. Override only when the input flag says so.
@@ -46,7 +50,8 @@ Each round, check:
 2. Every row of the cross-section table in `blueprint.md` — CTA-label consistency, Testimonials adjacent to Pricing, Final CTA repeating the Hero promise, Benefits Recap not duplicating Features.
 3. `we` → `you`, superlatives, one-audience drift.
 4. Any blocked section that shipped placeholder scaffolding instead of being cut.
-5. The aftertaste.
+5. The audit pass. List every number, stat, mockup label, FAQ answer and CTA on the page, and pair each with its buyer benefit. Each section that holds one or more items with no buyer benefit drops by exactly 1, floor 0.
+6. The aftertaste.
 
 **A failing check drops each section it names by exactly 1, floor 0.** Not "to zero", not "by some amount" — one point, and name the sections explicitly. A vague magnitude here is worth several points of drift across a page and makes two honest scorers disagree on the total.
 

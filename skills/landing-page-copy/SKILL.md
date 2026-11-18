@@ -12,7 +12,7 @@ description: >-
   feedback. Asks one question at a time for missing required input. Do NOT use for virality or
   shareability audits, SEO, or accessibility review.
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Landing Page Copy
@@ -54,6 +54,8 @@ Max 3 rounds. A round is score-everything, then rewrite-what-failed.
    Then that section's anti-patterns. Derive the band — never choose it.
    Then ONE whole-page pass: the 5 reader questions, CTA-label consistency, one-audience,
    we→you, superlatives, aftertaste. A failing check drops every section it names.
+   Audit pass: pair every number, stat, mockup label, FAQ answer and CTA with its buyer benefit.
+   Each section that holds one or more items with no benefit drops by exactly 1, floor 0.
    The whole-page pass is the only part of the loop that reads the prose rather than
    counting its parts. Never skip it to save a step.
 
@@ -103,9 +105,11 @@ Where subagents are unavailable, score from the rendered text alone and never fr
 
 ## Inputs
 
-**generate** — required, blocks until provided: `product_name`, `one_line_pitch`, `target_audience`, `core_problem`, `transformation`, `top_painkiller_use_cases` (3), `top_features` (3, each with a mechanism line), `pricing_model` + `price_points`.
+**generate** — required, blocks until provided: `product_name`, `one_line_pitch`, `target_audience`, `core_problem`, `transformation`, `top_painkiller_use_cases` (3), `top_features` (3, each with a how-it-helps line), `pricing_model` + `price_points`.
 
 **improve** — required: the page. Plus `target_audience` and `transformation`, but only when the body doesn't answer them.
+
+**Briefs** — treat a mechanism detail that a brief or input locks as a question for the owner. Never copy it into the page.
 
 **Both** — optional, defaulted and flagged: `vision`, `founder_story`, `testimonials`, `trust_logos`, `icp_technicality`, `offer_guarantee`, `urgency_basis`.
 

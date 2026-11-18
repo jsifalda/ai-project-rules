@@ -72,15 +72,15 @@ Real logos only. No real logos means cut this section — an empty row of
 ## Features
 
 ### {{feature_1_outcome_headline}}
-{{feature_1_mechanism}}
+{{feature_1_how_it_helps}}
 > Visual: {{feature_1_visual_note}}
 
 ### {{feature_2_outcome_headline}}
-{{feature_2_mechanism}}
+{{feature_2_how_it_helps}}
 > Visual: {{feature_2_visual_note}}
 
 ### {{feature_3_outcome_headline}}
-{{feature_3_mechanism}}
+{{feature_3_how_it_helps}}
 > Visual: {{feature_3_visual_note}}
 
 ---

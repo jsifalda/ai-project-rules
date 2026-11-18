@@ -112,7 +112,7 @@ Anti-patterns fired: H1 is a category noun. CTA is `Buy`.
 | Must-have | Verdict | Evidence |
 |---|---|---|
 | 3–4 power features | fail | 5 listed: `"Smart lists"` … `"Notifications"` |
-| Outcome-first + mechanism | fail | bare nouns, no mechanism line |
+| Outcome-first + how it helps | fail | bare nouns, no how-it-helps line |
 | Icon + visual per feature | fail | absent |
 | Names what competitors lack | fail | absent |
 

@@ -3,10 +3,9 @@ name: investigate
 description: >-
   Read-only investigation mode for a question or problem. Changes no source file, version-control state, database or remote service, verifies each finding end to end with a command that can disprove it, and reports the answer first with evidence. Use when the user types /investigate. Do NOT use to fix, implement or plan a change, for design history or rationale (use why), or for a code walkthrough by reading (use how).
 disable-model-invocation: true
-disallowed-tools: Edit, Write, NotebookEdit
 argument-hint: "[question or problem to investigate]"
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Investigate
@@ -20,10 +19,10 @@ Task: $ARGUMENTS
 
 ## Rules
 
-- Change nothing. Make no edits to source or config files. Make no version-control writes, installs, migrations, DB writes or remote writes.
+- Change nothing, with any tool. Make no edits to source or config files. Make no version-control writes, installs, migrations, DB writes or remote writes.
 - Write only to build or test artifacts the project ignores, or to a scratch or temp directory.
-- The Edit and Write tools are blocked. Need a scratch file: create it with a shell command.
 - A step needs a change: stop and name the change. Never apply it. Report what you have so far, then ask whether to proceed.
+- Stacked with a skill that plans or ships: stay read-only until the user approves that skill's plan. Before that approval, the only allowed write is its plan file.
 
 ## Verify
 

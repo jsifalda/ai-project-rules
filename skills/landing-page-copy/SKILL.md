@@ -55,7 +55,7 @@ Max 3 rounds. A round is score-everything, then rewrite-what-failed.
    Then ONE whole-page pass: the 5 reader questions, CTA-label consistency, one-audience,
    we→you, superlatives, aftertaste. A failing check drops every section it names.
    Audit pass: pair every number, stat, mockup label, FAQ answer and CTA with its buyer benefit.
-   An item with no benefit fails its section.
+   Each section that holds one or more items with no benefit drops by exactly 1, floor 0.
    The whole-page pass is the only part of the loop that reads the prose rather than
    counting its parts. Never skip it to save a step.
 

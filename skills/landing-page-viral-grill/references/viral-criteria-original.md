@@ -39,7 +39,7 @@ append within a section rather than inserting.
 - No weak words ("most", "many", "rarely"). Claims people can picture + challenge.
 - Sell the human desire, not the feature → money, time, health, status, less pain.
 - Empathy first. Describe the problem better than they can.
-- No mechanism copy. Outside CTAs, comparison, setup and quotes, copy shows outcomes, not internal intervals, counts, scores or names.
+- No mechanism copy. Outside CTAs, comparison, setup, technical-ICP feature specs and quotes, copy shows outcomes, not internal intervals, counts, scores or names.
 
 ## Page structure
 

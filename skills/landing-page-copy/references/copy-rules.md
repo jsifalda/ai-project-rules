@@ -50,8 +50,8 @@ Each round, check:
 2. Every row of the cross-section table in `blueprint.md` — CTA-label consistency, Testimonials adjacent to Pricing, Final CTA repeating the Hero promise, Benefits Recap not duplicating Features.
 3. `we` → `you`, superlatives, one-audience drift.
 4. Any blocked section that shipped placeholder scaffolding instead of being cut.
-5. The audit pass in `SKILL.md`: any listed item with no buyer benefit fails the section that holds it.
-5. The aftertaste.
+5. The audit pass. List every number, stat, mockup label, FAQ answer and CTA on the page, and pair each with its buyer benefit. Each section that holds one or more items with no buyer benefit drops by exactly 1, floor 0.
+6. The aftertaste.
 
 **A failing check drops each section it names by exactly 1, floor 0.** Not "to zero", not "by some amount" — one point, and name the sections explicitly. A vague magnitude here is worth several points of drift across a page and makes two honest scorers disagree on the total.
 

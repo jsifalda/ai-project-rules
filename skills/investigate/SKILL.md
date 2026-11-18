@@ -22,7 +22,8 @@ Task: $ARGUMENTS
 - Change nothing, with any tool. Make no edits to source or config files. Make no version-control writes, installs, migrations, DB writes or remote writes.
 - Write only to build or test artifacts the project ignores, or to a scratch or temp directory.
 - A step needs a change: stop and name the change. Never apply it. Report what you have so far, then ask whether to proceed.
-- Stacked with a skill that plans or ships: stay read-only until the user approves that skill's plan. Before that approval, the only allowed write is its plan file.
+- Stacked with a skill that plans or ships: stay read-only until the user approves that skill's plan, or approves its first change when it has no plan.
+- Before that approval, the only write beyond those above is its plan file. After it, that skill's rules govern.
 
 ## Verify
 

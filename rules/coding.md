@@ -8,7 +8,8 @@
 - Use `fetch` for HTTP. Never `axios`, `superagent`, or another library.
 - Never swallow an error silently. Log or propagate it.
 - Keep routine success quiet in what you build. Send no ping or alert that needs no action.
-- Stop a process by its saved PID or its listening port. Never run `pkill -f`.
+- Stop a process by its saved PID or listening port. Never `pkill -f` or `pgrep -f` a pattern that matches your own command line.
+- No PID and no port → bracket one letter of a `-f` pattern unique to the target.
 - No convention in the repo → camelCase for variables and functions, PascalCase for classes and components.
 
 ## Comments

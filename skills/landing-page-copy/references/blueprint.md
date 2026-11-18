@@ -129,9 +129,11 @@ Weight H1, H2, and the painkiller bullets most heavily.
 
 **Anti-patterns:**
 - H1 is rational/feature-led (`The to-do app for teams`) or a bare category noun, instead of a change for the reader
-- H1 or subhead names a product, tool or acronym other than the product itself, except the competitor on a "<competitor> alternative" page
+- H1 or subhead names a product, tool or acronym other than the product itself, except the competitor on a "<competitor> alternative" page. A platform the ICP already uses is not one
 - Vague CTA (`Learn more`, `Get started` with no context)
+- CTA names an internal object instead of the visitor's result
 - Hero visual is a stock photo instead of the product
+- Stats row or social proof shows internal config or counts, not an outcome or proof. An outcome is what the visitor gets or avoids
 
 ## 3. Trust Logos
 
@@ -185,7 +187,7 @@ Weight H1, H2, and the painkiller bullets most heavily.
 
 **Must-have:**
 - 3–4 power features
-- Default: outcome-first headline + 1 line of mechanism
+- Default: outcome-first headline + 1 line of how it helps, in the visitor's terms
 - An icon on every feature
 - A GIF or visual note on every feature
 - Highlight what competitors lack
@@ -298,7 +300,7 @@ Sits **immediately before Pricing** — that adjacency is the point, it eases pu
 **Must-have:**
 - 5–7 conversion-blocking objections
 - Order: setup → billing → support → safety
-- Every answer names the actual limitation, number, or term — not a benefit restatement
+- Every answer names the actual limitation, number, or term the visitor cares about — not an internal mechanism or a benefit restatement
 - Safety questions (cancel, trial; guarantee only if `offer_guarantee = true`)
 
 **Anti-patterns:**
@@ -317,6 +319,7 @@ Sits **immediately before Pricing** — that adjacency is the point, it eases pu
 **Anti-patterns:**
 - Different CTA label than Hero (breaks consistency bias)
 - Generic closer ("Ready to get started?")
+- CTA names an internal object instead of the visitor's result
 
 ## 14. Footer
 

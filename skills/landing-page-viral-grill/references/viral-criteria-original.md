@@ -2,7 +2,7 @@
 
 Takeaways from Marc Lou's "32 Principles of a Viral Product", restated in brief.
 Source: https://x.com/marclou/status/2065385672991752210 — read the original for the full argument.
-Headline bullets `HE6` to `HE8` are repo additions, not from the source.
+Headline bullets `HE6` to `HE8`, Copy bullet `CO6` and Page structure bullet `PA7` are repo additions, not from the source. `HE2` gained "about the visitor's result".
 
 The auditing skill reads this file and scores a target
 against every bullet below, in file order, adding nothing.
@@ -24,13 +24,13 @@ append within a section rather than inserting.
 ## Headline
 
 - Fifth-grader test. Complexity kills curiosity.
-- Numbers > adjectives. "Fast" → "Save 4 hours every week".
+- Numbers > adjectives, about the visitor's result. "Fast" → "Save 4 hours every week".
 - Emotional. Laugh, wow, or WTF. People remember feelings, not features.
 - Next-day test: write 5, show friends, ask 24h later which stuck.
 - <10 words. Can't say it in one sentence → users won't either.
 - No competitor name. H1, subhead, eyebrow and meta name no other product or company, except on a "<competitor> alternative" page.
 - Cold reader test. H1 and subhead alone state what it is, who it is for, why act now.
-- No unknown names. H1 and subhead use no tool name or acronym besides the product name, except the competitor on a "<competitor> alternative" page.
+- No unknown names. H1 and subhead use no tool name or acronym besides the product name or a platform the ICP already uses, except the competitor on a "<competitor> alternative" page.
 
 ## Copy
 
@@ -39,6 +39,7 @@ append within a section rather than inserting.
 - No weak words ("most", "many", "rarely"). Claims people can picture + challenge.
 - Sell the human desire, not the feature → money, time, health, status, less pain.
 - Empathy first. Describe the problem better than they can.
+- No mechanism copy. Outside CTAs, comparison, setup and quotes, copy shows outcomes, not internal intervals, counts, scores or names.
 
 ## Page structure
 
@@ -48,6 +49,7 @@ append within a section rather than inserting.
 - CTA names the action. "Get Started" → "Analyze My Website".
 - Show, don't tell. Demo > paragraphs.
 - Play before pay. Best features *on* the landing page, not behind the wall.
+- Outcome CTA. A CTA names the visitor's result or next step, never an internal object.
 
 ## Proof & framing
 

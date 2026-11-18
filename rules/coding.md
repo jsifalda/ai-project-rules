@@ -29,15 +29,19 @@
 - TypeScript for new code where possible.
 - Prefer immutable data: `const`, `readonly`. Interfaces for data structures.
 - Strict types, zero `any`. No `ts-nocheck`, no `ts-ignore`.
-- Zero type errors. Always run `tsc --noEmit` and fix the typing. Use the project's own compiler. `npx` is fine for a binary the project already depends on; it is an install when it fetches a package the project does not have, so `general.md` `# RESTRICTIONS` applies.
+- Run the project's own `tsc --noEmit`. Fix every type error.
+- Run `npx` only for a binary the project already depends on. An `npx` fetch is an install under `general.md` `# RESTRICTIONS`.
 - Run locally with `node --import=tsx ...`. Build production with `tsc`.
 
 ## Dependency management
 
-- Preference order: a dependency already in the project, then the standard library, then an established third-party library, then your own code. A bias, not a ranking. Take a later option when it is materially simpler or safer, and say why. An existing dependency never overrides a named prohibition here or in `general.md` (`fetch` over `axios`) or the repo's conventions.
+- Prefer a dependency already in the project, then the standard library, then an established library, then your own code.
+- Take a later option when it is materially simpler or safer. Say why.
+- Never let an existing dependency override a named prohibition, such as `fetch` over `axios`, or a repo convention.
 - Never assume a library or framework is available or appropriate. Verify it in imports, `package.json` or `requirements.txt` first. Read its docs and types before deciding it cannot do the job.
-- Small enough to write? Write it. Propose a package only when the self-written alternative is non-trivial or correctness-sensitive: auth, crypto, parsing, dates, timezones.
-- Do not reimplement common functionality without a stated reason. Judge a library on maintenance, security and bundle cost, not popularity. Avoid deprecated, outdated or insecure ones.
+- Write small code yourself. Propose a package only for non-trivial or correctness-sensitive code: auth, crypto, parsing, dates, timezones.
+- Never reimplement common functionality without a stated reason.
+- Judge a library on maintenance, security and bundle cost, never popularity. Avoid a deprecated, outdated or insecure one.
 - Use the local package manager. Respect the lockfile. None → prefer pnpm, then yarn, then npm.
 - Latest stable version. Resolve it, never recall it. Never write a version from memory or copy one from another project. Pre-release, beta, canary and RC are not stable.
 - Latest blocked → install the newest that works and report package, version used, latest not usable, and reason. Never downgrade in silence.

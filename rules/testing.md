@@ -13,9 +13,9 @@
 
 ## TDD
 
-- Cycle Red, Green, Refactor, Commit. One cycle per commit.
+- Cycle Red, Green, Refactor. Commit each cycle only where the repo or the user allows a commit.
 - Write a failing regression test before fixing a bug. Pure CSS and layout changes are exempt.
-- Keep tests isolated, deterministic, fast, behavioral, structure-insensitive, specific, predictive.
+- Keep tests isolated, deterministic, fast and specific.
 - Fix a flaky test before anything else.
 
 ## Concurrent runs
@@ -36,5 +36,6 @@
 - Use Python `freezegun`, and an injected clock in Go and Rust.
 - Restore with `useRealTimers()` in `afterEach`.
 - Inject the timer when you cannot fake it. `AbortSignal.timeout` stays real under a fake.
+- Pin a fake clock to a fixed date years before today.
 - Never assert a production number by waiting for it.
 - Fix the wait, never the ceiling. A raised per-test timeout is the tell.

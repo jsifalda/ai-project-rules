@@ -22,7 +22,7 @@
 
 ## Hooks
 
-- Repo has a tracked `.githooks/` and `core.hooksPath` is unset → run `git config core.hooksPath .githooks` before the first commit.
+- Repo tracks `.githooks/` and `core.hooksPath` is unset → before the first commit, get a yes before you run `git config core.hooksPath .githooks`.
 
 ## Messages
 

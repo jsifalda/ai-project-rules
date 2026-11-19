@@ -2,7 +2,7 @@
 name: ship-pr
 description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
 metadata:
-  version: "2.4"
+  version: "2.5"
 ---
 
 # Ship PR
@@ -275,7 +275,7 @@ Decide:
   ```
 
   Add a `## Test plan` section ONLY if the user explicitly asks for one. Not by default.
-- **Assignee** — the new PR/MR is self-assigned to the authenticated CLI user (you). On both providers this is a dedicated post-create step; the result is read back and reported, never fired blind. Best-effort, never blocks the ship — see Phase 3b.
+- **Assignee** — the new PR/MR is self-assigned to the authenticated CLI user (you). On both providers this is a dedicated post-create step; the result is read back and reported, never fired blind. Best-effort, never blocks the ship, never fails silently — see Phase 3b.
 
 ## Phase 3 — Execute
 
@@ -469,16 +469,33 @@ BODY
   [ -n "$PR_URL" ] || { echo "ABORT: branch pushed; PR not created — run: gh pr create --repo \"$ORIGIN_SLUG\" --base \"$DEFAULT_BRANCH\""; exit 1; }
 fi
 
-# dedicated post-create assign step — never blocks the ship
-# Address the PR by URL. The URL carries the repo.
-gh pr edit "$PR_URL" --add-assignee "@me" >/dev/null 2>&1 || true
+# dedicated post-create assign step — never blocks the ship, never fails silently
+# REST, not `gh pr edit --add-assignee`: older gh versions fail that GraphQL call on
+# the retired Projects (classic) field. The REST endpoint works on every gh version.
+# Host, repo and number come from the PR URL, so a fork clone and GHE both resolve.
+PR_HOST=$(printf '%s' "$PR_URL" | sed -E 's#^https://([^/]+)/.*#\1#')
+PR_REPO=$(printf '%s' "$PR_URL" | sed -E 's#^https://[^/]+/([^/]+/[^/]+)/pull/.*#\1#')
+PR_NUM=${PR_URL##*/}
+GH_LOGIN=$(gh api --hostname "$PR_HOST" user -q .login 2>/dev/null || true)
+if [ -z "$GH_LOGIN" ]; then
+  echo "WARN: assign skipped — could not read your login (gh api user)"
+elif ! ASSIGN_ERR=$(gh api --hostname "$PR_HOST" -X POST "repos/$PR_REPO/issues/$PR_NUM/assignees" \
+       -f "assignees[]=$GH_LOGIN" 2>&1 >/dev/null); then
+  echo "WARN: assign failed — $ASSIGN_ERR"
+fi
 
-PR_ASSIGNEES=$(gh pr view "$PR_URL" --json assignees -q '[.assignees[].login] | join(",")' 2>/dev/null || true)
+# stderr goes straight to the output, so a gh notice never pollutes the value.
+if ! PR_ASSIGNEES=$(gh pr view "$PR_URL" --json assignees -q '[.assignees[]?.login] | join(",")'); then
+  echo "WARN: assignee read-back failed — see the gh error above"
+  PR_ASSIGNEES=""
+fi
+case ",$PR_ASSIGNEES," in *",$GH_LOGIN,"*) ;; *) [ -z "$GH_LOGIN" ] || echo "WARN: assign did not stick — $GH_LOGIN is not in the read-back";; esac
 echo "pr=$PR_URL"
+echo "login=$GH_LOGIN"
 echo "assignee=$PR_ASSIGNEES"
 ```
 
-`--add-assignee "@me"` self-assigns the PR to you (resolved server-side). The PR URL names the repo, so the assign and the read-back reach the right repo in a fork clone. It runs after the create, so a repo that lets you push but not assign still gets its PR. The read-back on the next line is what the report prints, so a failed assign shows as `NOT set`, never as a silent success.
+The REST call self-assigns the PR to your login. The PR URL names the host, repo and number, so the assign and the read-back reach the right repo in a fork clone. It runs after the create, so a repo that lets you push but not assign still gets its PR. GitHub drops an assignee it cannot assign and still returns success, so the read-back is the real check. A failed login lookup, assign or read-back prints a `WARN:` line with the error, and the report shows `NOT set`.
 
 **GitLab:** create the MR first, then self-assign in a **separate** step. Do NOT pass `--assignee` to `glab mr create` — it is a known silent no-op (glab injects a `/assignee` quick-action into the description instead of setting the assignee field, and when that doesn't process you get `ok created` with an empty assignee and no warning — glab issues #974/#878/#358). `glab mr update --assignee` writes the assignee field directly via the PUT update endpoint, so it actually sticks.
 
@@ -499,10 +516,12 @@ BODY
   --fill=false || true   # an MR may already exist — the read-back below settles it
 
 # self-assign target (best-effort). `.username // empty` yields "" on any lookup failure
-# (error response, 401, missing field), so a failed lookup just skips the assign.
+# (error response, 401, missing field), so a failed lookup skips the assign with a warning.
 GLAB_USER=$(glab api user 2>/dev/null | jq -r '.username // empty') || GLAB_USER=""
-if [ -n "$GLAB_USER" ]; then
-  glab mr update --assignee "$GLAB_USER" >/dev/null 2>&1 || true   # dedicated assign step — never blocks the ship
+if [ -z "$GLAB_USER" ]; then
+  echo "WARN: assign skipped — could not read your username (glab api user)"
+elif ! ASSIGN_ERR=$(glab mr update --assignee "$GLAB_USER" 2>&1 >/dev/null); then
+  echo "WARN: assign failed — $ASSIGN_ERR"   # dedicated assign step — never blocks the ship
 fi
 
 MR_JSON=$(glab mr view -F json 2>/dev/null || true)
@@ -517,6 +536,7 @@ MR_URL=$(printf '%s' "$MR_JSON" | jq -r '.web_url // empty' 2>/dev/null || true)
 GLAB_ASSIGNEES=$(printf '%s' "$MR_JSON" | jq -r '[.assignees[]?.username] | join(",")' 2>/dev/null || true)
 
 echo "pr=$MR_URL"
+echo "login=$GLAB_USER"
 echo "assignee=$GLAB_ASSIGNEES"
 ```
 
@@ -569,12 +589,24 @@ BODY
   [ -n "$PR_URL" ] || { echo "ABORT: branch pushed to fork; PR not created — run: gh pr create --repo \"$ORIGIN_SLUG\" --base \"$DEFAULT_BRANCH\" --head \"$LOGIN:$BRANCH\""; exit 1; }
 fi
 
-# best-effort self-assign — silently ignored if you lack assign rights on the upstream repo
-gh pr edit "$PR_URL" --add-assignee "@me" >/dev/null 2>&1 || true
+# best-effort self-assign over REST, same as the origin path. You often lack assign
+# rights on the upstream repo, so expect a WARN line or an empty read-back here.
+PR_HOST=$(printf '%s' "$PR_URL" | sed -E 's#^https://([^/]+)/.*#\1#')
+PR_NUM=${PR_URL##*/}
+if ! ASSIGN_ERR=$(gh api --hostname "$PR_HOST" -X POST "repos/$ORIGIN_SLUG/issues/$PR_NUM/assignees" \
+       -f "assignees[]=$LOGIN" 2>&1 >/dev/null); then
+  echo "WARN: assign failed — $ASSIGN_ERR"
+fi
 
 # Address the PR by URL. The URL carries the repo, so --repo is neither needed nor allowed.
-PR_ASSIGNEES=$(gh pr view "$PR_URL" --json assignees -q '[.assignees[]?.login] | join(",")' 2>/dev/null || true)
+# stderr goes straight to the output, so a gh notice never pollutes the value.
+if ! PR_ASSIGNEES=$(gh pr view "$PR_URL" --json assignees -q '[.assignees[]?.login] | join(",")'); then
+  echo "WARN: assignee read-back failed — see the gh error above"
+  PR_ASSIGNEES=""
+fi
+case ",$PR_ASSIGNEES," in *",$LOGIN,"*) ;; *) echo "WARN: assign did not stick — $LOGIN is not in the read-back";; esac
 echo "pr=$PR_URL"
+echo "login=$LOGIN"
 echo "assignee=$PR_ASSIGNEES"
 echo "fork=$LOGIN/${ORIGIN_SLUG#*/}"
 ```
@@ -598,9 +630,9 @@ pr:        <url>
 assignee:  <you>            # or:  NOT set — assign manually
 ```
 
-Fill every value from the variables Phase 3a and Phase 3b already echoed — `branch=`, `commit=`, `pr=`, `assignee=`, and `fork=` on the fork path. The subject beside the short SHA is the one you wrote in Phase 2; you already have it. Make no fresh call.
+Fill every value from the variables Phase 3a and Phase 3b already echoed — `branch=`, `commit=`, `pr=`, `login=`, `assignee=`, and `fork=` on the fork path. The subject beside the short SHA is the one you wrote in Phase 2; you already have it. Make no fresh call.
 
-The `assignee:` line is mandatory and must reflect the read-back, not the intent — so a silent assign failure is visible here, not discovered later. If your login (GitHub) or `$GLAB_USER` (GitLab) is in the `assignee=` value, print it. Otherwise print `assignee: NOT set — assign manually`.
+The `assignee:` line is mandatory and must reflect the read-back, not the intent — so a silent assign failure is visible here, not discovered later. If the `login=` value is in the `assignee=` value, print it. Otherwise print `assignee: NOT set — assign manually`. Phase 3b printed a `WARN:` line → print it verbatim on the line after `assignee:`.
 
 If the GitHub fork fallback was used, add its `fork=` value as a line, so the user sees where the branch lives:
 
@@ -620,7 +652,7 @@ Nothing else. No trailing summary, no narrative paragraph.
 - Never push to the default branch.
 - Never push to a remote other than `origin` — the only exception is the GitHub fork fallback (remote `fork`) after an access-denied push. Even then, never `--force`.
 - Never swallow stderr in Phase 3a. Hook and push errors must reach the user verbatim.
-- Self-assignment is best-effort — never let it abort the ship. Opening the PR/MR is the critical step; a failed or empty assignee lookup is a no-op, not a failure. But it must be a dedicated post-create step whose result is read back and reported (Phase 4) — never silently skipped. Never pass an assignee to the create itself: on GitHub `gh pr create --assignee` fails the whole create when the assignee is rejected, and on GitLab `glab mr create --assignee` is a silent no-op. Assign with `gh pr edit --add-assignee` or `glab mr update --assignee` after the create.
+- Self-assignment is best-effort — never let it abort the ship. Opening the PR/MR is the critical step; a failed or empty assignee lookup does not fail the ship. But it must be a dedicated post-create step whose result is read back and reported (Phase 4), and every failure prints a `WARN:` line — never `|| true` with the error discarded. Never pass an assignee to the create itself: on GitHub `gh pr create --assignee` fails the whole create when the assignee is rejected, and on GitLab `glab mr create --assignee` is a silent no-op. Assign after the create with the REST call `gh api -X POST repos/<owner>/<repo>/issues/<n>/assignees` (never `gh pr edit --add-assignee`, which fails on older gh) or `glab mr update --assignee`.
 
 ## Failure modes (abort with a one-line reason)
 

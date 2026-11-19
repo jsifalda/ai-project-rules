@@ -1,7 +1,6 @@
 ---
 name: learn-taste
-description: >-
-  Collects every correction the user made in a session (explicit ones, silent edits to files you wrote, repeated nudges, reverts, confirmed non-obvious choices), generalizes each to the right level, confirms its why, and proposes it as a rule or a check. Writes only the approved rules, by scope, to DESIGN.md, the project CLAUDE.md or AGENTS.md, the global rules, or memory. Use when the user types /learn-taste, or asks to learn from all their corrections across the whole session, capture their taste, or turn this session's feedback into rules. Do NOT use to save one fact or preference on "remember this" or "save my preference" (the global memory rules own that), or to distill one rule from one repeated failure, use distill-insight.
+description: "Collect every correction the user made in a session generalize each, confirm its why, and propose it as a rule or check. Writes only approved rules, by scope, to DESIGN.md, CLAUDE.md, AGENTS.md, global rules or memory. Use when the user types /learn-taste or asks to capture their taste from the session. Do NOT use to save one fact on \"remember this\" (global memory rules own that) or to distill one rule from one failure (use distill-insight)."
 license: "MIT, Copyright (c) 2026 Emil Kowalski"
 metadata:
   version: "1.2"

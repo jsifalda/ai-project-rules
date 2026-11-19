@@ -1,6 +1,6 @@
 ---
 name: rewrite
-description: Improve, correct, or rephrase text while keeping its original language — a DeepL Write style writing assistant. Fixes spelling, grammar, and punctuation, raises clarity, fluency, and conciseness, and offers word and sentence alternatives. Supports style presets (Simple, Business, Academic, Casual) and tone presets (Enthusiastic, Friendly, Confident, Diplomatic), which can combine. Use when the user says rewrite this, improve my writing, fix grammar, rephrase, polish this text, make this more formal or casual, or mentions DeepL Write. In Improve mode it loads the unslop ruleset first, so default output reads human and not AI-generated. Do NOT use to draft fresh prose from scratch (use unslop), to translate into another language (use translate-to-czech — rewrite stays in the same language), to improve an AI prompt (use prompt-enhancer), to summarise (use summarise-text or summarise-url), or for pure markdown formatting (use markdown).
+description: "Improve, correct or rephrase text while keeping its language, DeepL Write style. Fixes spelling, grammar and punctuation, raises clarity, with style presets (Simple, Business, Academic, Casual) and tone presets (Friendly, Confident, Diplomatic). Use when the user says rewrite this, improve my writing, fix grammar, rephrase, polish. Do NOT use to draft prose (unslop), translate (translate-to-czech), improve a prompt (prompt-enhancer), summarise (summarise-text) or format markdown (markdown)."
 metadata:
   version: "1.1"
 ---

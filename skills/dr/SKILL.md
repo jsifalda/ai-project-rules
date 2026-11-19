@@ -1,6 +1,6 @@
 ---
 name: dr
-description: Decision-grade research in claude.ai chat or Claude Code. Answers a hard question with a verdict first, a dated claim table, primary sources, conflicts, and one concrete next action, in one screen. Loads memory and project files first so settled facts and dead ends are not redone. Enforces a freshness limit per question type, and a ground-truth test for local-availability questions. Validates its own report with its bundled stdlib scripts in a shell. Use when the user types /dr, or asks for deep research, a comparison that ends in a decision, or research that needs several sources. Do NOT use for a single fact that one search answers, for debugging, or for long report files.
+description: "Decision-grade research in chat or Claude Code. Answers a hard question with a verdict first, a dated claim table, primary sources, conflicts and one next action, in one screen. Enforces a freshness limit per question type and validates its report with bundled scripts. Use when the user types /dr, or asks for deep research, a comparison that ends in a decision, or research needing several sources. Do NOT use for a single fact one search answers, debugging, or long report files."
 argument-hint: "The question to research"
 metadata:
   version: "3.0"

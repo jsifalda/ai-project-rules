@@ -55,14 +55,16 @@ The shape of a working deployment, if you want to reproduce it:
 
 The rule files under `rules/`. The `type` frontmatter is a convention for tools that honor it; in this setup a file loads only because `CLAUDE.md` names it.
 
-- `rules/general.md` — always-loaded core: principles, architecture, restrictions, secrets handling, reading files, writing style, and the implementation verification protocol. It opens with a trigger table routing to the on-demand rule files below.
+- `rules/general.md` — always-loaded core: principles, blockers, restrictions, secrets handling, reading files, writing style, and a one-line pointer to the verification protocol. It opens with a trigger table routing to the on-demand rule files below.
 - `rules/authoring.md` — how to write an instruction: directives only, no rationale, the five-point always-loaded test, the token budget, and the ban on stating how many items a set holds. Loads when writing or editing an instruction file, a rule, or a `SKILL.md`.
+- `rules/planning.md` — plan mode, re-planning, outage recovery, and design-from-an-established-product. Loads when planning a task with an architectural decision or a multi-file change, or an outage recovery.
+- `rules/verification.md` — the build, tests and lint, code review and end-to-end phases. Loads when finishing a change to code, config, a script, a skill, a rule or a workflow.
 - `rules/testing.md` — coverage, TDD, concurrent test runs, and the ban on waiting real wall-clock in a test. Loads when writing, changing or running tests.
 - `rules/coding.md` — coding standards, comment rules, TypeScript, and dependency management. Loads when writing, changing or reviewing code, a script or config, or adding, choosing or upgrading a dependency.
-- `rules/git-ship.md` — destructive git and `glab` operations, diff and log ranges, commit message format, and MR/PR descriptions. Loads when committing, pushing, doing any PR or MR work, running a `glab` write, or working in a git worktree.
+- `rules/git-ship.md` — destructive git and `glab` operations, diff and log ranges, commit message format, and MR/PR descriptions. Loads when committing, pushing, doing any PR or MR work, running a `glab` write, working in a git worktree, or making the first edit in a git repo (worktree entry).
 - `rules/review-tiers.md` — the review tier (0, 1, 2) that sets how many review gates run, the one-line tier announcement, and the no-retry rule for CodeRabbit errors. Loads before any review or verification gate.
 - `rules/docs-diagrams.md` — documentation and diagram rules. Loads when writing a doc, an ADR, a README, or a diagram.
-- `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds.
+- `rules/builder.md` — task-first guidance for picking an app stack (selection criteria plus a default-tools footnote), for new-app builds, plus the architecture rules for designing an interface or layer boundary.
 - `rules/tailwind.md` — the Tailwind v4 preflight change that removed `cursor: pointer` from buttons, and the one `@layer base` fix that restores it.
 
 `CLAUDE.md`'s First Action loads `rules/general.md` on every session, before anything else. Every other rule file is on demand: `general.md`'s trigger table names the condition that loads each one, so a session that never does that kind of work never pays for them. `rules/tailwind.md` is reached only from `rules/builder.md`, which names it under `## Related rules`. `rules/review-tiers.md` loads from the Verification Protocol's `When it fires` section in `CLAUDE.md`, not from that table. Frontend design thinking and aesthetics guidelines live in the `frontend-design` skill for general UI work, and the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot (see the Skills table).

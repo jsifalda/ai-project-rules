@@ -1,6 +1,6 @@
 ---
 name: dra
-description: Reach a defensible, multi-source-verified answer to one question, then compress it into a decision the reader can act on. Frames the question before research, extracting the asker's goal and researching alternative angles, not only the literal wording. Puts a YES, NO, or NOT A YES/NO QUESTION verdict first, runs the dr skill on the framed phrasings, then again on independent phrasings, requires at least 5 independent sources with primary sources preferred, searches for disconfirming evidence, and states a verification status, a confidence percentage, assumptions, conflicts, and numbered source footnotes. Validates its answer with a stdlib script before showing it. Use when the user types /dra, or says "fact-check this", "is it true that", "verify this claim", or "give me a verified answer". Do NOT use for a long research report or a comparison of approaches (use dr), or for debugging.
+description: "Reach a multi-source-verified answer to one question and compress it into a decision. Puts a YES, NO or NOT A YES/NO QUESTION verdict first, runs dr on framed and independent phrasings, requires 5+ independent sources, seeks disconfirming evidence, states confidence and footnotes. Use when the user types /dra or says \"fact-check this\", \"is it true that\", \"verify this claim\", \"give me a verified answer\". Do NOT use for long reports or approach comparisons (use dr), or for debugging."
 argument-hint: "The question to research"
 metadata:
   version: "3.0"

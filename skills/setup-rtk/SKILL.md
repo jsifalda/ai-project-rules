@@ -1,7 +1,7 @@
 ---
 name: setup-rtk
 disable-model-invocation: true
-description: Install and wire up RTK (Rust Token Killer, a CLI proxy that compresses dev-command output to cut LLM token use) on the current machine for a single Claude Code profile. Installs the rtk binary if missing (Homebrew, or the official install script when Homebrew is absent) and registers RTK's PreToolUse Bash hook in settings.json by running RTK's own installer (rtk init), so commands like git status and cat are transparently compacted. Idempotent, detects an existing hook and stops. Use when the user says "set up rtk", "install rtk", "get the token killer on this machine", "replicate my rtk setup", or runs /setup-rtk. Do NOT use for per-project rtk filters, for editing unrelated settings.json keys (permissions, env, model, other hooks), or for any dual-profile sync, this targets one profile only.
+description: "Install and wire up RTK (Rust Token Killer, a CLI proxy that compresses command output) for a single Claude Code profile. Installs the rtk binary if missing and registers RTK's PreToolUse Bash hook in settings.json through `rtk init`. Use when the user says \"set up rtk\", \"install rtk\", or runs /setup-rtk. Do NOT use for per-project rtk filters, unrelated settings.json keys (permissions, env, model, other hooks), or dual-profile sync."
 metadata:
   version: "1.0"
 ---

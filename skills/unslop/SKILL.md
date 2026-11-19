@@ -1,7 +1,6 @@
 ---
 name: unslop
-description: >-
-  Apply numbered AI-pattern rules while drafting prose, or run them as a pass over existing text, to cut AI tells (AI vocabulary, em dashes, semicolons, colon overuse, hype, cliches, inline-header lists, filler, hedging, jargon, passive voice, over-compression) and keep the meaning and tone. Use when drafting user-facing prose such as an email, a post, a doc, landing copy or a summary, or when the user asks to unslop text, remove AI tells, cut the slop, de-slop a draft, write like a human, humanise this, or check prose for AI patterns. Do NOT use for code, commit messages, JSON or YAML, terse CLI output or quick chat replies, or for general grammar and style polish, use rewrite.
+description: "Apply numbered AI-pattern rules while drafting prose, or as a pass over existing text, to cut AI tells (AI vocabulary, em dashes, semicolons, hype, filler, hedging) and keep meaning and tone. Use when drafting user-facing prose such as an email, post, doc, landing copy or summary, or when the user asks to unslop, remove AI tells, de-slop a draft, write like a human, humanise this. Do NOT use for code, commit messages, JSON or YAML, terse CLI output, chat replies, or grammar polish (use rewrite)."
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
   version: "1.3"

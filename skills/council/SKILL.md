@@ -1,6 +1,6 @@
 ---
 name: council
-description: "Run any question, idea, or decision through a council of AI advisors who independently analyze it, peer-review each other anonymously, and synthesize a final verdict. Based on Karpathy's LLM Council methodology. MANDATORY TRIGGERS: 'council this', 'run the council', 'war room this', 'pressure-test this', 'stress-test this', 'debate this'. STRONG TRIGGERS (use when combined with a real decision or tradeoff): 'should I X or Y', 'which option', 'what would you do', 'is this the right move', 'validate this', 'get multiple perspectives', 'I can't decide', 'I'm torn between'. Do NOT trigger on simple yes/no questions, factual lookups, or casual 'should I' without a meaningful tradeoff. DO trigger when the user presents a genuine decision with stakes, multiple options, and context that suggests they want it pressure-tested from multiple angles."
+description: "Run a question, idea or decision through a council of AI advisors who analyze it independently, peer-review anonymously, and synthesize a verdict. TRIGGERS — 'council this', 'run the council', 'war room this', 'pressure-test this', 'stress-test this', 'debate this'. With a real tradeoff — 'should I X or Y', 'is this the right move', 'I'm torn between'. Do NOT trigger on simple yes/no questions, factual lookups, or casual 'should I' without a meaningful tradeoff."
 metadata:
   version: "1.1"
 ---

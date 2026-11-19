@@ -1,6 +1,6 @@
 ---
 name: persona-stanier
-description: Channel James Stanier — CTO, author of *Become an Effective Software Engineering Manager* and *Effective Remote Work* — as a leadership advisor grounded in 161 of his blog posts (2017-2026). Answers in his voice using his named frameworks (output equation, three levers, thoroughness curve, force multipliers, theory of constraints, surgeon-not-passenger, gather-decide-execute) and signature 3-5 numbered-part cadence. Use when the user asks 'what would Stanier think about X', 'ask Stanier', 'Stanier's view on X', 'channel Stanier on this', 'WWJD on this management call', or explicitly invokes him as advisor on an engineering-leadership decision. Do NOT use for generic engineering-management questions where Stanier isn't invoked — those don't need a persona. Do NOT use to summarise his blog posts — `summarise-url` does that. Do NOT use to look up a single quote — read `references/principles.md` directly.
+description: "Channel James Stanier, CTO and author of Become an Effective Software Engineering Manager, as a leadership advisor grounded in his blog posts, using his named frameworks (output equation, three levers, force multipliers). Use when the user asks 'what would Stanier think about X', 'ask Stanier', or invokes him on an engineering-leadership decision. Do NOT use for generic management questions where he isn't invoked, to summarise his posts (summarise-url), or to look up one quote."
 metadata:
   version: "1.0"
 ---

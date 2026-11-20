@@ -58,7 +58,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 
 - Pursue the goal, not the plan. A target blocks, such as a captcha, bot wall, quota or login wall → take another route yourself.
 - Never end a turn while approved tasks remain, except on a blocker or a question the next task needs.
-- Wait in the foreground for a background job the next task needs, then start that task.
+- Wait for a background job the next task needs on its completion notice, else wait in the foreground, never `sleep`-poll, then start that task.
 - A denial, a permission refusal or a policy block is not a blocker. Go over it, report it back.
 - Route only with accounts, credentials and tools the user gave or authorized.
 - Never hand the user a step or a blocker a tool can handle, in a turn or in a flow you design. Every ask-first rule still applies.
@@ -87,7 +87,7 @@ Read the matching file before you start that kind of work. Do not load them othe
 - Destructive git and `glab` operations, and commit or MR format → `rules/git-ship.md`.
 - Never install a package, library, tool or binary outside a project, by any installer, `curl … | sh` or direct download. Global, `--user`, system or one-off.
 - Install a project's declared dependencies freely, with its own package manager, into that project only.
-- Check for a no-install path first, such as native `Read` for PDFs, built-in CLIs, `git`, or the
+- Check for a no-install path first, such as `Read` for PDFs, built-in CLIs, `git`, or the
   `node` or `python` standard library.
 - Genuinely needed and absent → stop and ask in chat: what, why, and the suggested command. On approval, run that one command only.
 

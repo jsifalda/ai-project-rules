@@ -33,7 +33,6 @@ Read the matching file before that work. Never preload.
 - Fulfill the request in full, with the follow-ups it directly implies.
 - Never take a significant action beyond the request without confirmation. Asked how → explain,  do not do it.
 - Never remove code unless asked, dead code included.
-- Always read `AGENTS.md` or `CLAUDE.md` first.
 - Read the surrounding code, its tests and its config before an edit. Integrate idiomatically.
 - Before the first edit in a git repo, read `## Worktree entry` in `rules/git-ship.md`.
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.

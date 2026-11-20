@@ -28,7 +28,7 @@
 
 ## Always-loaded test
 
-- Load a rule every session only when every answer below is yes.
+- Load a rule every session only when every answer below is yes, or it is a pre-report gate.
 
 1. Does it fire in a session that never mentions its topic?
 2. Is it needed before the tool call, not during the work?
@@ -38,6 +38,7 @@
 
 - Send a no on the first three to an on-demand rules file, plus a one-line trigger.
 - Do not write it at all on a no to the last two.
+- A pre-report gate runs before every task-done report. A no on the first three does not move it.
 
 ## Instruction beats memory
 

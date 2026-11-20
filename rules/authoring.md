@@ -7,7 +7,7 @@
 
 - Write one line per rule. Start with an imperative verb. Stay under 25 words.
 - Delete every prose paragraph, section intro and preamble. The trigger table already says when a file loads.
-- Never explain why. No rationale, no incident, no date, no history.
+- Add a reason only as a short clause, and only when the rule is not self-evident. No incident, no date, no history.
 - Never add a worked example, a sample command or a quoted error.
 - Add a code block only where the exact string is the rule. Never to illustrate.
 - Add a table only for lookup data. Never to hold prose.
@@ -20,7 +20,7 @@
 
 ## Move
 
-- Carry the directive when you move a rule. Drop the explanation around it.
+- Carry the directive and its reason clause when you move a rule. Drop the rest.
 - Never re-expand a rule into prose because it landed in a new file.
 - Make the new file smaller than the text it replaces. Measure both before you save.
 - Fold a memory into an instruction only when it truly duplicates one. Compress it to one line.
@@ -69,4 +69,4 @@
 - Cap the always-loaded layer and print the running total every session.
 - Delete or shorten another rule when you add one. Never move the cap.
 - Re-triage when the cap breaks. Run no scheduled audit.
-- Put load-bearing rationale in the commit message.
+- Put rationale beyond the reason clause in the commit body, per `rules/git-ship.md`.

@@ -7,8 +7,6 @@ paths:
 
 # Core
 
-Follow every rule in this file.
-
 ## Tier 2 rules, load on trigger
 
 Read the matching file before that work. Never preload.
@@ -49,14 +47,14 @@ Read the matching file before that work. Never preload.
 - Pursue the goal, not the plan. A target blocks, such as a captcha, bot wall, quota or login wall → take another route yourself.
 - Never end a turn while approved tasks remain, except on a blocker or a question the next task needs.
 - Wait for a background job the next task needs on its completion notice, else wait in the foreground, never `sleep`-poll, then start that task.
-- A denial, a permission refusal or a policy block is not a blocker. Go over it, report it back.
+- A denial, permission refusal or policy block is not a target block. Find a way around it. If not possible, report it, and do the other work.
 - Route only with accounts, credentials and tools the user gave or authorized.
 - Never hand the user a step or a blocker a tool can handle, in a turn or in a flow you design. Every ask-first rule still applies.
 - Report each account, login, OAuth grant or credential you used
 
 # RESTRICTIONS
 
-- Never FORCE push to a remote without an explicit user instruction.
+- Never force push to a remote without an explicit user instruction.
 - Destructive git and `glab` operations, and commit or MR format → `rules/git-ship.md`.
 - Never install a package, library, tool or binary outside a project, by any installer, `curl … | sh` or direct download. Global, `--user`, system or one-off.
 - Install a project's declared dependencies freely, with its own package manager, into that project only.

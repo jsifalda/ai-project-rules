@@ -69,4 +69,4 @@
 - Cap the always-loaded layer and print the running total every session.
 - Delete or shorten another rule when you add one. Never move the cap.
 - Re-triage when the cap breaks. Run no scheduled audit.
-- Put longer rationale, incidents and history in the commit message.
+- Put rationale beyond the reason clause in the commit body, per `rules/git-ship.md`.

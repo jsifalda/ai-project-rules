@@ -1,15 +1,6 @@
 ---
 name: merge
-description: >-
-  Bring the current branch up to date with the remote default branch and push the result to
-  the branch's own PR or MR. Fetches, merges (never rebases), resolves conflicts, runs the
-  project's own verification gates, then pushes only the current branch to its own upstream.
-  Works in a linked git worktree and in a plain checkout, GitHub and GitLab alike, no provider
-  CLI needed. Use when the user types /merge, or says merge main into this branch, sync this
-  branch with main, update this branch from main, pull main into here, or asks to resolve
-  conflicts with main and push. Optional argument, a base branch name, overrides the detected
-  default branch. Do NOT use to open a PR (ship-pr), to merge a PR into main, to rebase, to
-  squash, to force-push, or to switch branches.
+description: "Bring the current branch up to date with the remote default branch and push to the branch's own PR or MR. Fetches, merges (never rebases), resolves conflicts, runs the project's verification gates, pushes only the current branch. Works in worktrees, GitHub and GitLab. Use when the user types /merge, or says merge main into this branch, sync this branch with main. Do NOT use to open a PR (ship-pr), merge a PR into main, rebase, squash, force-push, or switch branches."
 metadata:
   version: "1.0"
 ---

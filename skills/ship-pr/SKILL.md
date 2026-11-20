@@ -1,6 +1,6 @@
 ---
 name: ship-pr
-description: RESTRICTED-INVOCATION skill — do NOT auto-trigger. The only entry points are the user typing the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like "ship this" or any paraphrase are ANTI-TRIGGERS — they MUST NOT load this skill; use ordinary commit + push tools instead and, if helpful, offer `/ship-pr`. When invoked through either entry point — runs an end-to-end git ship workflow from a dirty working tree, or from a committed branch that is ahead of the default branch, to an open PR (GitHub) or MR (GitLab), self-assigned to you. Auto-detects provider via `git remote` and derives branch name, commit message, and PR title/body from the change and repo conventions, no per-step prompts. Do NOT use for committing without opening a PR, reviewing or editing existing PRs, force-pushing or rewriting history, cutting releases, or creating tags or changelogs.
+description: "RESTRICTED-INVOCATION skill, do NOT auto-trigger. The only entry points are the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like \"ship this\" or any paraphrase is an ANTI-TRIGGER, use ordinary commit and push tools and offer `/ship-pr`. Ships a dirty tree or a branch ahead of default to an open, self-assigned PR (GitHub) or MR (GitLab), deriving names from repo conventions. Do NOT use to only commit, edit PRs, force-push, or tag."
 metadata:
   version: "2.5"
 ---

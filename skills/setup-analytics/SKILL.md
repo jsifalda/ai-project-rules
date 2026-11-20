@@ -1,17 +1,6 @@
 ---
 name: setup-analytics
-description: >-
-  Provision Microsoft Clarity and Google Analytics 4 for the current project in the user's
-  logged-in browser through the claude-in-chrome extension, then install both tags with a consent
-  banner. Reads the stack, existing tags, GA accounts and Clarity projects first, shows one plan
-  table, and acts only after explicit approval. Reuses a project or property whose URL matches the
-  site, creates the rest, reads back the Clarity Project ID and GA4 Measurement ID, installs them
-  (Next.js App Router, or any site with an HTML head), and checks network hits before and after
-  consent. Use when the user asks to set up or add analytics, add Google Analytics and Microsoft
-  Clarity, create a GA4 property or a Clarity project, or provision analytics for a new site. Do
-  NOT use to read or report analytics data, GA reports, Clarity dashboards or recordings, for a
-  code-only install with a known ID (use microsoft-clarity or nextjs-ga-tracking directly), or for
-  GA4 user access management.
+description: "Provision Microsoft Clarity and Google Analytics 4 for the current project in the user's logged-in browser through the claude-in-chrome extension, then install both tags with a consent banner. Shows one plan table and acts only after approval. Use when the user asks to set up analytics, or create a GA4 property or Clarity project. Do NOT use to read analytics data, for a code-only install with a known ID (use microsoft-clarity or nextjs-ga-tracking), or for GA4 user access."
 metadata:
   version: "1.1"
 ---

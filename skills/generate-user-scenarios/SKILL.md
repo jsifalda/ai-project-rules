@@ -1,6 +1,6 @@
 ---
 name: generate-user-scenarios
-description: Derive BDD user scenarios in Given, When, Then form from a PRD, or from any source that states a user problem and its solution, and write them into that PRD as a User Scenarios section. Covers each user story, real edge case and failure path, maps every functional requirement to a scenario, builds dated domain IDs, and sets every Verified by line to TODO. Reads the project's scenario inventory docs/user-scenarios.md for domains, IDs and overlaps, and never edits it. Use when the user types /generate-user-scenarios, or says "generate user scenarios from this PRD", "write BDD scenarios for this feature" or "turn this PRD into scenarios", or when a setup skill delegates scenario generation. Do NOT use to bootstrap a scenario inventory, to verify scenarios in a browser, to write test code, or to break a PRD into tasks.
+description: "Derive BDD user scenarios in Given, When, Then form from a PRD, and write them into the PRD as a User Scenarios section. Covers stories, edge cases and failure paths, maps every requirement, builds dated domain IDs, never edits docs/user-scenarios.md. Use when the user types /generate-user-scenarios or asks for BDD scenarios. Do NOT use to bootstrap an inventory, verify in a browser, write test code, or break a PRD into tasks."
 metadata:
   version: "1.0"
 ---

@@ -1,6 +1,6 @@
 ---
 name: yt-narrate-video
-description: Turn any YouTube link into a beautiful interactive narrated web page in an editorial New Yorker or NYT-graphics style. Works for every genre (podcasts, talks, tutorials, lectures, documentaries, reviews, music, vlogs, Shorts) and any URL form (youtu.be, watch, shorts, live, embed, with timestamps or playlists). It re-tells the whole video chapter by chapter with timestamp links, picks a genre lens for the takeaways, adds original inline SVG illustrations, interactive data-viz figures, fact-check boxes and a filterable deck of all takeaways. Use when the user shares a YouTube link and asks to narrate it, make an artifact, page or explainer from it, visualize it, or turn it into a scrollytelling piece. Do NOT use for a plain chat summary or bullet takeaways with no page, a transcript-only request, downloading or editing video, or slide decks.
+description: "Turn a YouTube link (any genre, any URL form) into an interactive narrated web page in an editorial New Yorker or NYT-graphics style. Re-tells the video chapter by chapter with timestamp links, SVG illustrations, data-viz figures and a takeaway deck. Use when the user shares a YouTube link and asks to narrate it, make an artifact, page or explainer from it, or turn it into a scrollytelling piece. Do NOT use for a plain chat summary, a transcript-only request, video downloads, or slide decks."
 metadata:
   version: "2.0"
 ---

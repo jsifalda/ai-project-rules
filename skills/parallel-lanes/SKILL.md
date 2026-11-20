@@ -1,6 +1,6 @@
 ---
 name: parallel-lanes
-description: Turn a specification, such as a PRD, spec, RFC, ticket set, or any document that lists user scenarios, acceptance criteria or functional requirements, into a plan for running coding agents in parallel without two agents editing one file. Scouts each repo read-only, classifies hotspot files, builds one minimal foundation unit per repo, cuts lanes that own their files exclusively, checks that every scenario is covered, batches units under resource caps, and validates the plan with a bundled script. Works for one repo or many, on any stack, and follows host delivery conventions. Use when the user types /parallel-lanes, or asks to split a spec or PRD for parallel agents, plan parallel execution without conflicts, find which stories can run at once, or batch work for many agents. Do NOT use to implement, dispatch or schedule workers, to route tasks to models (use op), to slice a spec into tickets, or for a single-file change.
+description: "Turn a specification (PRD, spec, RFC, ticket set, or any document with scenarios or requirements) into a plan for running coding agents in parallel without two editing one file. Cuts lanes with exclusive file ownership, checks scenario coverage, and validates the plan with a bundled script. Use when the user types /parallel-lanes or asks to split a spec for parallel agents. Do NOT use to implement or dispatch workers, route models (use op), or slice into tickets."
 argument-hint: "spec path, URL or text [--max-agents N]"
 metadata:
   version: "1.0"

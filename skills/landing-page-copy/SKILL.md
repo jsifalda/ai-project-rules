@@ -1,16 +1,6 @@
 ---
 name: landing-page-copy
-description: >-
-  Write a landing page from a product description, or improve an existing page until it stops
-  getting better. Two modes — generate (description in, full page out) and improve (pasted
-  markdown, a local file path, or a URL in, rewritten page out). Both run the same scored loop
-  against a conversion blueprint, rewriting every section that fails and re-scoring
-  until it converges, then return the page plus a score trail. Use when the user asks to write
-  landing page copy, create a landing page, LP copy, sales page, draft a landing page, improve or
-  rewrite my landing page, audit my landing page, review LP copy, gap-analyze a landing page,
-  score this landing page, what's missing on this page, or pastes landing page text and asks for
-  feedback. Asks one question at a time for missing required input. Do NOT use for virality or
-  shareability audits, SEO, or accessibility review.
+description: "Write a landing page from a product description (generate mode) or improve an existing page from pasted markdown, a file path or a URL (improve mode). Both run a scored loop against a conversion blueprint until it converges. Use when the user asks to write or create a landing page, LP copy, sales page, or to improve, audit or score one. Do NOT use for virality audits (use landing-page-viral-grill), SEO, or accessibility review."
 metadata:
   version: "1.2"
 ---

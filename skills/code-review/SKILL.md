@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Multi-axis code review of the current diff, a diff range, a PR, or paths, across correctness, readability, architecture, security, and performance. Runs as a forked read-only Sonnet subagent and returns findings labeled Critical, Required, Optional, Nit, or FYI with file and line. Use before merging any change, after a feature or a bug fix, when another agent or a human wrote the code, or when a verification gate calls the code-review lens. Do NOT use for a structural code-judo audit (code-review-nuclear), to apply fixes, or to post PR comments.
+description: "Multi-axis review of a diff, range, PR, or paths, across correctness, readability, architecture, security, and performance. Runs as forked read-only Sonnet subagent, returning findings labeled Critical, Required, Optional, Nit, or FYI by file and line. Use before merging, after a feature or bug fix, when an agent or human wrote the code, or when a gate calls the code-review lens. Do NOT use for a structural code-judo audit (code-review-nuclear), to apply fixes, or to post PR comments."
 license: "MIT, Copyright (c) 2025 Addy Osmani"
 context: fork
 agent: Explore

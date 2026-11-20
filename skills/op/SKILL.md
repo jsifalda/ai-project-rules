@@ -1,6 +1,6 @@
 ---
 name: op
-description: Route the tasks in an implementation plan to the most cost-effective Claude model that can do each one well, then execute the plan by dispatching tasks as subagents on their assigned model. The session model only orchestrates, pure chores go to Haiku, most tasks go to Sonnet, and only deep-reasoning tasks go to Opus. Use when the user types /op, or asks to route a plan across models, assign per-task models, split a plan by model, run a plan cheaply, or execute plan tasks on different models. Expects a plan already in context (from plan mode) or pasted by the user. Do NOT use to write the plan itself, for a single one-off task with no plan, or to change Claude Code's global model setting.
+description: "Route the tasks of an implementation plan to the cheapest Claude model that can do each well, then execute by dispatching subagents on their assigned model. Chores go to Haiku, most tasks to Sonnet, deep reasoning to Opus. Use when the user types /op, or asks to route a plan across models, assign per-task models. Expects a plan in context or pasted. Do NOT use to write the plan, for a single one-off task with no plan."
 metadata:
   version: "1.0"
 ---

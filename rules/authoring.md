@@ -16,6 +16,7 @@
 - Rewrite an existing rule that a new rule contradicts, in the same change. Never ship both with the conflict flagged.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
 - Never hardcode a repo name or list, project slug, person or host path in a skill, template or shared instruction. Find it at runtime.
+- Keep a skill `description` at or under 500 characters. Put detail in the body.
 
 ## Move
 

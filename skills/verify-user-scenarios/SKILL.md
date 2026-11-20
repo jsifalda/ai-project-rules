@@ -1,6 +1,6 @@
 ---
 name: verify-user-scenarios
-description: Drive a project's documented user scenarios through a real browser with Playwright MCP, then report what actually broke. Reads whatever scenario inventory the repo keeps, sorts each scenario into browser-reachable or out of scope, writes a falsifiable test plan, resets and seeds the local database, drives each scenario serially against a dev server it starts itself, and judges every one as pass, fail, gap, drift or blocked with a screenshot as evidence. Reports the findings, then decides with the user what to do about each. Never auto-fixes, never files a backlog entry. Use when the user types /verify-user-scenarios, or asks to QA the documented scenarios, verify user scenarios in a browser, or hunt for bugs against the scenario inventory. Do NOT use for writing new end-to-end test files, a one-off browser check of a single change, creating or editing the scenario inventory itself, or running an existing test suite.
+description: "Drive a project's documented user scenarios through a real browser with Playwright MCP and report what broke. Writes a test plan, seeds the local database, runs each scenario against a dev server it starts, and judges each pass, fail, gap, drift or blocked with a screenshot. Never auto-fixes or files backlog entries. Use when the user types /verify-user-scenarios or asks to QA the documented scenarios. Do NOT use to write e2e test files, check one change, or run an existing suite."
 disable-model-invocation: true
 metadata:
   version: "1.0"

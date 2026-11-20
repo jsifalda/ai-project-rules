@@ -44,3 +44,9 @@
 - Set up a fresh worktree before its first gate, commit or dev server.
 - Copy each `.env*` from the main checkout with `cp`, never reading it. Then install the project's dependencies.
 - `cd` to the main checkout, then run `/usr/bin/git -C <worktree> worktree remove <worktree>`.
+
+## Worktree entry (Claude Code)
+
+- Prefer a worktree under `.claude/worktrees/` for any change to a git repo.
+- Not in one before the first edit → suggest `EnterWorktree` once, then follow the user's answer.
+- Never suggest it from a subagent or a non-interactive run.

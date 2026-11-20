@@ -3,7 +3,7 @@ name: create-skill
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations. Do NOT use to write a rule file, a CLAUDE.md, or a slash command, or to run an existing skill.
 license: Complete terms in LICENSE.txt
 metadata:
-  version: "1.5"
+  version: "1.6"
 ---
 
 # Create Skill
@@ -361,7 +361,7 @@ Parser-strictness rules trip up long descriptions. Each passes Claude Code's len
    - Bad: `…via the slash command: runs end-to-end…`
    - Good: `…via the slash command — runs end-to-end…`
 
-2. **`description` ≤ 1024 characters.** Copilot CLI rejects longer descriptions outright (`Skill description must be at most 1024 characters`). Target ≤ ~950 chars to leave headroom — em-dashes are 3 UTF-8 bytes, and some parsers count bytes. Keep operational detail in the body; the description is for discovery only.
+2. **`description` ≤ 1024 characters.** Copilot CLI rejects longer descriptions outright (`Skill description must be at most 1024 characters`). Target ≤ 500 chars. Keep operational detail in the body; the description is for discovery only.
 
 **Always validate before committing:**
 

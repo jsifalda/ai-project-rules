@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when building or restyling any user-facing web UI in a greenfield or side project, including components, pages, landing pages, dashboards, artifacts, posters, and React/HTML/CSS layouts, and including incidental UI added mid-task, not only explicit design requests. Generates creative, polished code that avoids generic AI aesthetics. In an existing repo, defer to that project's established design conventions first.
+description: "Create distinctive, production-grade frontend interfaces with high design quality. Use when building or restyling any user-facing web UI in a greenfield or side project, including components, pages, landing pages, dashboards, artifacts, posters, and React/HTML/CSS layouts, and incidental UI added mid-task, not only explicit design requests. Avoids generic AI aesthetics. In an existing repo, defer to that project's established design conventions first."
 license: Complete terms in LICENSE.txt
 metadata:
   version: "1.1"

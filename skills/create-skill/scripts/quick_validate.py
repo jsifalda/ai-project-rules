@@ -95,6 +95,8 @@ def validate_skill(skill_path, require_version=False):
         # Check description length (max 1024 characters per spec)
         if len(description) > 1024:
             return False, f"Description is too long ({len(description)} characters). Maximum is 1024 characters."
+        if len(description) > 500:
+            print(f"Warning: description is {len(description)} characters. Target is 500 or fewer.", file=sys.stderr)
 
     # Optional stricter checks for versioned skills (opt-in via --require-version)
     if require_version:

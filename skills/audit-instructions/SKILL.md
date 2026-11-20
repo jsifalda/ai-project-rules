@@ -1,6 +1,6 @@
 ---
 name: audit-instructions
-description: Audit every instruction loaded in this session's context and report all contradictions between them. Inventories atomic rules from the system prompt, tool definitions, skill descriptions, MCP instructions, injected CLAUDE.md and memory entries, and the conversation itself. Normalises each to a WHEN/DO/ON/UNLESS form, compares only rule pairs whose triggers overlap, then classifies each clash as direct negation, format collision, scope overlap, conditional collision, priority ambiguity, silent override, process conflict, or tool conflict. Every finding carries verbatim quotes on both sides, a trigger scenario, severity, and ready-to-paste fix wording, followed by a reusable identification guide and repair guide. Slash-only, invoke with /audit-instructions. Reports and recommends only, it never rewrites the instruction set. Do NOT use to review code, audit one file's internal consistency, or improve a prompt's wording.
+description: "Audit every instruction loaded in this session (system prompt, tools, skill descriptions, MCP, CLAUDE.md, memory) and report contradictions between them. Normalises rules to WHEN/DO/ON/UNLESS, compares overlapping pairs, classifies each clash, and gives verbatim quotes, severity and paste-ready fix wording. Slash-only, invoke with /audit-instructions. Recommends only, never rewrites. Do NOT use to review code, audit one file's internal consistency, or improve a prompt's wording."
 disable-model-invocation: true
 metadata:
   version: "1.0"

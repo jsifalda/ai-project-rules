@@ -1,7 +1,6 @@
 ---
 name: how
-description: >-
-  Explores the codebase with read-only subagents and returns a senior-engineer architectural explanation of how X works, a code walkthrough before a change, or a placement, ownership or layering answer (which package owns this, is this the right layer), with overview, key concepts, flow, file map and gotchas. Use when the user types /how, or asks how a subsystem or flow works, walk me through this code, explain this subsystem, or where should this live. Answer a question about one function directly. Do NOT use for motivation or history, use why.
+description: "Explores the codebase with read-only subagents and explains how X works like a senior engineer, a walkthrough before a change, or a placement answer (which package owns this, is this the right layer), with overview, concepts, flow, file map and gotchas. Use when the user types /how, or asks how a subsystem or flow works, walk me through this code, explain this subsystem, or where should this live. Answer a question about one function directly. Do NOT use for motivation or history, use why."
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
   version: "1.1"

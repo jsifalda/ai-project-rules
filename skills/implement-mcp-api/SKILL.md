@@ -1,6 +1,6 @@
 ---
 name: implement-mcp-api
-description: Create a phased implementation plan that adds a remote Model Context Protocol API to an existing application. The plan is the input for implementation. Run this skill inside plan mode, for example /plan in Claude Code, and the approved plan executes in the same step. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add or implement an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, or general API planning.
+description: "Plan adding a remote Model Context Protocol API to an existing application, in phases. Run this skill inside plan mode, for example /plan in Claude Code, and the approved plan executes in the same step. Use when a user asks to expose authenticated application capabilities through remote MCP tools, add or implement an MCP endpoint, or plan a remote MCP integration. Do not use for a greenfield application, local stdio MCP server, or general API planning."
 metadata:
   version: "2.1"
 ---

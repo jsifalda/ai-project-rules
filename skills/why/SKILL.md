@@ -1,7 +1,6 @@
 ---
 name: why
-description: >-
-  Investigates why code works the way it does, design rationale, why we picked Y, regressions, postmortems, or data-backed thresholds. Plans the evidence the question needs, picks the best tool per need, checks which tools are present (built-in, MCP, CLI), and queries each present source in parallel, then returns a cited, confidence-tiered read on decisions and tradeoffs. Use when the user types /why, or asks why is this like this, why do we do X, what was the reason for Y, or when did this regress. Do NOT use for how code works at runtime, use how.
+description: "Investigates why code works the way it does, design rationale, why we picked Y, regressions, postmortems, or data-backed thresholds. Checks which evidence tools are present (built-in, MCP, CLI), queries each in parallel, then returns a cited, confidence-tiered read on decisions and tradeoffs. Use when the user types /why, or asks why is this like this, why do we do X, what was the reason for Y, or when did this regress. Do NOT use for how code works at runtime, use how."
 license: "MIT, Copyright (c) 2026 Lauren Tan"
 metadata:
   version: "1.2"

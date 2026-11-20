@@ -53,3 +53,13 @@ paths:
   buttons, and the one `@layer base` fix that restores it. Read it when the stack for this task
   includes Tailwind v4 and shadcn/ui, and apply the fix while the global stylesheet is being
   written. Skip for non-Tailwind projects and for Tailwind v3.
+
+## Architecture
+
+- Pick the design you would still stand behind in a year. Never a stopgap meant to be swapped.
+- Durable interface and boundary. Smallest implementation behind it that meets today's
+  requirement.
+- Ship the smallest end-to-end version, then stack each capability on what already works.
+  A runnable product exists at every step.
+- Explicit interfaces between layers. No reaching across. No shared mutable state as a back
+  channel.

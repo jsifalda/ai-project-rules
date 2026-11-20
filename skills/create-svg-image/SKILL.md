@@ -1,6 +1,6 @@
 ---
 name: create-svg-image
-description: Generate production-quality SVG images (banners, cards, heroes, badges, posters) from a text description. Optionally enriches content by fetching a URL to extract branding, copy, and stats. Asks targeted clarifying questions one-at-a-time for missing info, then outputs a hand-crafted SVG file. Use when the user asks to "create an SVG", "generate a banner image", "make a card image", "create an OG image", "design a badge", or needs a vector image created from a description. Do NOT use for raster images (PNG/JPG), photo editing, or complex illustrations with many detailed shapes.
+description: "Generate SVG images (banners, cards, heroes, badges, posters) from a text description. Optionally fetches a URL for branding, copy, and stats. Asks clarifying questions one at a time, then outputs a hand-crafted SVG file. Use when the user asks to \"create an SVG\", \"generate a banner image\", \"make a card image\", \"create an OG image\", \"design a badge\", or needs a vector image. Do NOT use for raster images (PNG/JPG), photo editing, or complex illustrations with many detailed shapes."
 metadata:
   version: "1.0"
 ---

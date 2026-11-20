@@ -27,5 +27,16 @@ pass front-only
 
 python3 $V "$D/bare-one" | grep -q "line 8: bare positional parameter '\$1'" || { echo "FAIL bare-one message names line 8"; ok=1; }
 
+longdesc() { # dir name, length
+  mkdir -p "$D/$1"
+  printf -- '---\nname: %s\ndescription: %s\nmetadata:\n  version: "1.0"\n---\n\nbody\n' "$1" "$(python3 -c "print('a'*$2)")" > "$D/$1/SKILL.md"
+}
+longdesc d500 500; pass d500
+longdesc d520 520; pass d520
+longdesc d1024 1024; pass d1024
+longdesc d1025 1025; fail d1025
+python3 $V "$D/d520" 2>&1 >/dev/null | grep -q "Warning: description is 520 characters. Target is 500 or fewer." || { echo "FAIL d520 warns"; ok=1; }
+[ -z "$(python3 $V "$D/d500" 2>&1 >/dev/null)" ] || { echo "FAIL d500 no warning"; ok=1; }
+
 [ $ok -eq 0 ] && echo "ALL TESTS PASS"
 exit $ok

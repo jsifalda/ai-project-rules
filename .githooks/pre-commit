@@ -38,7 +38,7 @@ done < <(git diff --cached --name-only --diff-filter=ACM)
 "$SCANNER" "${abs[@]}" || exit 1
 
 # Validate any staged skills/<name>/SKILL.md against the agentskills.io spec
-# (YAML frontmatter parses, description ≤1024 chars, etc.).
+# (YAML frontmatter parses, description ≤1024 chars with a warning over 500, etc.).
 if [[ -f "$SKILL_VALIDATOR" ]]; then
   fail=0
   seen_dirs=""

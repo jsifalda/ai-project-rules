@@ -41,7 +41,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
   - Never edit an archived skill, except to fix a universality or policy violation. Restore it to `skills/` with `git mv` first for any other change.
 - **Skill validation**: run `python skills/create-skill/scripts/quick_validate.py --require-version skills/<your-skill>/` (drop the flag for a skill in `scripts/synced-skills.txt`) before committing — after **editing** an existing skill too, not just when adding a new one (a bad `description` most often lands via a later edit). The pre-commit hook runs the same validator on every staged `SKILL.md`, but it is per-clone (needs `bash scripts/install-hooks.sh`) and `--no-verify`-bypassable, so treat it as a backstop, not a guarantee. Parser-strictness rules to know (each silently passes Claude Code but breaks Copilot CLI):
   - `description` must not contain `": "` (colon + space) — YAML plain-scalar terminator. Use ` — ` or `, ` instead.
-  - `description` must be ≤1024 chars (target ≤950 for headroom).
+  - `description` must be ≤1024 chars (target ≤500).
 - **Rule files** use `type: "always_apply"` frontmatter when meant to load on every session.
 - **Gemini commands** are `.toml` with `description` and `prompt` fields. Use `{{args}}` for user-supplied input.
 - **README lists are manually maintained — keep them in sync.** There is no generator — drift only stays out if every skill/command change touches the README too.

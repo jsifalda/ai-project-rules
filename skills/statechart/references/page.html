@@ -1,0 +1,191 @@
+<title>{{TITLE}}</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: one reading column. Chart sits in its own scroll box so a wide chart never widens the page. */
+:root {
+  --bg: #f7f7f5;
+  --fg: #1d2127;
+  --muted: #5a6370;
+  --line: #d9dcd9;
+  --surface: #ffffff;
+  --code-bg: #eef0ee;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --blue: #c3e0ff; --orange: #f0d3bf; --purple: #e3d5ff; --yellow: #f0dcbf;
+  --teal: #bfe3df; --tan: #e5d9ce; --pink: #ffcbe6;
+  --breaks-fill: #ffecee; --breaks-stroke: #e72e3b; --breaks-text: #cd2834;
+  --may-fill: #fff3e6; --may-stroke: #e8730c; --may-text: #b85a06;
+  --bug-stroke: #1680f3;
+  --rep-stroke: #9b35d6;
+  --node-text: #1d2127;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171b; --fg: #e6e9ec; --muted: #9aa4b0; --line: #2d333b;
+    --surface: #1b1f24; --code-bg: #1f242a;
+    --blue: #1b3857; --orange: #573117; --purple: #3c2e57; --yellow: #573d17;
+    --teal: #174641; --tan: #3d3127; --pink: #57233e;
+    --breaks-fill: #2e2021; --breaks-stroke: #cf2b35; --breaks-text: #ff6463;
+    --may-fill: #2e2619; --may-stroke: #d0700f; --may-text: #ffa257;
+    --bug-stroke: #116dd2;
+    --rep-stroke: #9a3fcf;
+    --node-text: #e6e9ec;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171b; --fg: #e6e9ec; --muted: #9aa4b0; --line: #2d333b;
+  --surface: #1b1f24; --code-bg: #1f242a;
+  --blue: #1b3857; --orange: #573117; --purple: #3c2e57; --yellow: #573d17;
+  --teal: #174641; --tan: #3d3127; --pink: #57233e;
+  --breaks-fill: #2e2021; --breaks-stroke: #cf2b35; --breaks-text: #ff6463;
+  --may-fill: #2e2619; --may-stroke: #d0700f; --may-text: #ffa257;
+  --bug-stroke: #116dd2;
+  --rep-stroke: #9a3fcf;
+  --node-text: #e6e9ec;
+  color-scheme: dark;
+}
+
+body { background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.55; }
+.page {
+  max-width: 62rem; margin: 0 auto; box-sizing: border-box;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 28px;
+}
+.page > * { min-width: 0; }
+h1 { font-size: 1.75rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+h2 { font-size: 1.15rem; margin: 0 0 8px; text-wrap: balance; }
+.note { color: var(--muted); margin: 6px 0 0; font-size: 0.9rem; }
+p, ul, ol { margin: 0 0 8px; }
+ul, ol { padding-left: 1.4em; }
+li { margin-bottom: 4px; }
+section { min-width: 0; overflow-wrap: anywhere; }
+
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+.summary > :last-child { margin-bottom: 0; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 10px; padding: 0; list-style: none; font-size: 0.85rem; color: var(--muted); }
+.legend li { display: flex; align-items: center; gap: 6px; margin: 0; }
+.swatch { width: 22px; height: 14px; border-radius: 3px; border: 2.5px solid var(--line); box-sizing: border-box; background: var(--surface); }
+.swatch.breaks { background: var(--breaks-fill); border-color: var(--breaks-stroke); }
+.swatch.mayBreak { background: var(--may-fill); border-color: var(--may-stroke); }
+.swatch.bugPath { border-color: var(--bug-stroke); }
+.swatch.repeats { border-color: var(--rep-stroke); border-style: dashed; }
+
+.chartbox { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: 12px; box-sizing: border-box; }
+.chartbox svg { display: block; margin: 0 auto; max-width: none; }
+pre.mermaid { margin: 0; visibility: hidden; white-space: pre; }
+.chart-error { color: var(--breaks-text); font-size: 0.9rem; margin: 0 0 8px; }
+.chartbox pre.raw { margin: 0; font-family: var(--mono); font-size: 0.8rem; white-space: pre; visibility: visible; }
+
+details { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); min-width: 0; }
+summary { cursor: pointer; padding: 10px 14px; font-weight: 600; }
+summary:focus-visible { outline: 2px solid var(--bug-stroke); outline-offset: 2px; }
+details pre { margin: 0; padding: 12px 14px; overflow-x: auto; background: var(--code-bg); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 0.8rem; line-height: 1.5; }
+
+/* The script strips Mermaid's inline classDef styles. These rules then set both themes. Mark rules come last. */
+#chartbox .node.blue :is(rect, path, polygon) { fill: var(--blue) !important; }
+#chartbox .node.orange :is(rect, path, polygon) { fill: var(--orange) !important; }
+#chartbox .node.purple :is(rect, path, polygon) { fill: var(--purple) !important; }
+#chartbox .node.yellow :is(rect, path, polygon) { fill: var(--yellow) !important; }
+#chartbox .node.teal :is(rect, path, polygon) { fill: var(--teal) !important; }
+#chartbox .node.tan :is(rect, path, polygon) { fill: var(--tan) !important; }
+#chartbox .node.pink :is(rect, path, polygon) { fill: var(--pink) !important; }
+#chartbox .node :is(.nodeLabel, .nodeLabel p, .label, span, text, tspan) { color: var(--node-text) !important; fill: var(--node-text) !important; }
+
+#chartbox .node.breaks :is(rect, path, polygon) { fill: var(--breaks-fill) !important; stroke: var(--breaks-stroke) !important; stroke-width: 2.5px !important; }
+#chartbox .node.breaks :is(.nodeLabel, .nodeLabel p, .label, span, text, tspan) { color: var(--breaks-text) !important; fill: var(--breaks-text) !important; }
+#chartbox .node.mayBreak :is(rect, path, polygon) { fill: var(--may-fill) !important; stroke: var(--may-stroke) !important; stroke-width: 2.5px !important; }
+#chartbox .node.mayBreak :is(.nodeLabel, .nodeLabel p, .label, span, text, tspan) { color: var(--may-text) !important; fill: var(--may-text) !important; }
+#chartbox .node.bugPath :is(rect, path, polygon) { stroke: var(--bug-stroke) !important; stroke-width: 2.5px !important; }
+#chartbox .node.repeats :is(rect, path, polygon) { stroke: var(--rep-stroke) !important; stroke-width: 2.5px !important; stroke-dasharray: 6 3 !important; }
+</style>
+
+<main class="page">
+  <header>
+    <h1>{{TITLE}}</h1>
+    <p class="note">The agent checked this model by reasoning and exploring states. No model checker ran.</p>
+  </header>
+
+  <section class="summary" aria-label="Summary">
+    {{SUMMARY}}
+  </section>
+
+  <section id="chart-section" aria-label="Statechart">
+    <h2>Statechart</h2>
+    <ul class="legend" id="legend">
+      <li><span class="swatch breaks"></span>Breaks a rule</li>
+      <li><span class="swatch mayBreak"></span>May break a rule</li>
+      <li><span class="swatch bugPath"></span>On a bug path</li>
+      <li><span class="swatch repeats"></span>Repeats</li>
+    </ul>
+    <div class="chartbox" id="chartbox"><pre class="mermaid" id="mermaid-src">{{MERMAID}}</pre></div>
+  </section>
+
+  <section aria-label="Report">
+    <h2>Report</h2>
+    {{REPORT}}
+  </section>
+
+  <details>
+    <summary>TLA+ spec</summary>
+    <pre><code>{{SPEC}}</code></pre>
+  </details>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/12.3.0/mermaid.min.js" integrity="sha512-CaEn6DWYJ1MM0mFAT9nvJzd3z5gPsXTM7wzprb8wx615WzTnTSrGrbKkZUqe1s24lpW27X4HlIrSFvQm/ykqZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+(function () {
+  var pre = document.getElementById('mermaid-src');
+  var box = document.getElementById('chartbox');
+  var source = pre.textContent.trim();
+  if (!source) {
+    document.getElementById('chart-section').hidden = true;
+    return;
+  }
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  var count = 0;
+
+  function isDark() {
+    var t = document.documentElement.getAttribute('data-theme');
+    return t ? t === 'dark' : mq.matches;
+  }
+
+  function showError(err) {
+    box.textContent = '';
+    var p = document.createElement('p');
+    p.className = 'chart-error';
+    p.textContent = 'The chart could not be drawn: ' + (err && err.message ? err.message : String(err));
+    var raw = document.createElement('pre');
+    raw.className = 'raw';
+    raw.textContent = source;
+    box.appendChild(p);
+    box.appendChild(raw);
+  }
+
+  function draw() {
+    if (!window.mermaid) { showError(new Error('Mermaid did not load.')); return; }
+    mermaid.initialize({ startOnLoad: false, theme: isDark() ? 'dark' : 'default', securityLevel: 'strict' });
+    mermaid.render('statechart-svg-' + (++count), source).then(function (out) {
+      box.innerHTML = out.svg;
+      var svg = box.querySelector('svg');
+      // Inline !important from classDef beats any stylesheet rule, so drop it and let the theme CSS decide.
+      svg.querySelectorAll('.node :is(rect, path, polygon, span, p, text, tspan)').forEach(function (el) {
+        ['fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'color'].forEach(function (p) { el.style.removeProperty(p); });
+      });
+      var vb = svg && svg.viewBox && svg.viewBox.baseVal;
+      if (vb && vb.width) {
+        svg.setAttribute('width', Math.ceil(vb.width));
+        svg.style.maxWidth = 'none';
+      }
+    }).catch(showError);
+  }
+
+  draw();
+  if (mq.addEventListener) mq.addEventListener('change', draw);
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>

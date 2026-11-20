@@ -2,7 +2,7 @@
 name: ship-pr
 description: "RESTRICTED-INVOCATION skill, do NOT auto-trigger. The only entry points are the literal slash command `/ship-pr`, or the ship step of a skill declaring `ship-pr` as a dependency. Phrasing like \"ship this\" or any paraphrase is an ANTI-TRIGGER, use ordinary commit and push tools and offer `/ship-pr`. Ships a dirty tree or a branch ahead of default to an open, self-assigned PR (GitHub) or MR (GitLab), deriving names from repo conventions. Do NOT use to only commit, edit PRs, force-push, or tag."
 metadata:
-  version: "2.5"
+  version: "2.6"
 ---
 
 # Ship PR
@@ -39,6 +39,7 @@ Abort on the first failure with a one-line reason — do not retry with `--no-ve
 Run this one block. It aborts with a single reason, or it prints one `key=value` header plus labelled sections. Read the output; do not re-run any part of it as a separate call.
 
 ```bash
+setopt NULL_GLOB 2>/dev/null || :   # zsh aborts the block on an unmatched glob. Shells without setopt skip this line.
 # test the printed value, not the exit status — a bare repo exits 0 and prints "false"
 [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" = "true" ] || { echo "ABORT: not a git repository"; exit 1; }
 
@@ -65,7 +66,7 @@ done
 PORCELAIN=$(git -c core.quotePath=false status --porcelain -uall) \
   || { echo "ABORT: git status failed"; exit 1; }
 # A clean tree on the default branch has nothing to ship. Abort here, before any
-# remote or provider check, so this path stays as cheap as it was.
+# remote or provider check, so the no-op path stays network-free.
 if [ -z "$PORCELAIN" ]; then
   LOCAL_DEFAULT=$(git symbolic-ref refs/remotes/origin/HEAD --short 2>/dev/null | sed 's|^origin/||')
   [ -n "$LOCAL_DEFAULT" ] && [ "$BRANCH" = "$LOCAL_DEFAULT" ] && { echo "ABORT: no changes to commit"; exit 1; }
@@ -133,7 +134,7 @@ if [ -z "$DEFAULT_BRANCH" ]; then   # network fallback only when the local ref i
   fi
 fi
 
-# Two entry states. A dirty tree ships as before. A clean tree ships only when the
+# Two entry states. A dirty tree ships its working-tree changes. A clean tree ships only when the
 # branch already carries commits the default branch lacks — a repo whose rules require
 # a commit before the ship (a bundled changelog commit, a TDD cycle) lands here.
 if [ -n "$PORCELAIN" ]; then

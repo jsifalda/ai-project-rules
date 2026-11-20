@@ -47,7 +47,7 @@ metadata:
 - Name Mermaid states `s1`, `s2` and so on, with labels via `state "Label" as s1`.
 - Label each state with what the reader can see or cares about.
 - Label each step as the user sees it happen. Never name the code or the TLA+ action.
-- Give two actions that end the same one label, so they share one arrow.
+- Give two actions that go from the same chart state to the same chart state one label, so they share one arrow.
 - End a step label with its condition in brackets, in the reader's words, when the step occurs only in some conditions.
 - In a regions chart, bracket a condition on another region only with that region's state labels, never your own words.
 - Name the result in the step label when a value that no label shows decides where the step goes.
@@ -118,7 +118,7 @@ classDef repeats stroke:#9b35d6,stroke-width:2.5px,stroke-dasharray:6 3
 
 ## Hand off
 
-- Show the Mermaid text as a `mermaid` code block in the reply.
+- When you drew a chart, show the Mermaid text as a `mermaid` code block in the reply.
 - Add one line per bug: the rule, the reader's sentence for it, and the path as the report numbers it.
 - Say which steps the chart hides and what the model leaves out.
 - Name the exploration method and the state count. Say the spec was not machine-checked, and give the paths of the spec and its config.

@@ -25,7 +25,7 @@ Read the matching file before that work. Never preload.
 
 - Simplicity first. Make the simplest change that meets the requirement. No speculative abstraction or config.
 - Fix the root cause, never the symptom.
-- Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, but never correctness, a caveat or a test.
+- Signal over noise. Surface what changes a decision, a risk or an outcome. Cut the rest, never correctness.
 - Touch only what is necessary. No side effects, no new bugs.
 - Match effort to the request size. A short note is one edit in one file. Add no unrequested rule, fallback or sentence.
 - Fulfill the request in full, with the follow-ups it directly implies.
@@ -36,6 +36,7 @@ Read the matching file before that work. Never preload.
 - Verify. No assumptions, no jumping to conclusions. Asked to assume → state the assumptions.
 - Measure each number you report when a safe check exists. Label an unmeasured, uncited number as an estimate with its basis.
 - Settle a fact with the code or a tool before you ask. Ask only a question whose answer changes what you do.
+- Before you ask the user to pick between rules or options, show each one's effect on one concrete case.
 - Answer current-state and absence questions from the runtime, else code config, never a `# SECRETS & ENV FILES` file. Name that source.
 
 # CHEAPEST REMEDY FIRST

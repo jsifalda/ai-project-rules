@@ -75,7 +75,7 @@ Read the matching file before that work. Never preload.
 - Before any code change, find and read all relevant files.
 - Before modifying a function, grep every caller. Understand each call site before changing a signature or behavior.
 - Never re-read a file range already in the conversation and unchanged.
-- Broad exploration across many files → an `Explore` subagent.
+- Broad search of many files → `scout`, `Explore` if absent.
 - Long output → save to a file, then `grep`, `head` or `tail` it. Re-run only after a fix. Read failures in full.
 
 # FILE LENGTH

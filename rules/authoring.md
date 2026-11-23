@@ -16,13 +16,14 @@
 - Rewrite an existing rule that a new rule contradicts, in the same change. Never ship both with the conflict flagged.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
 - Never hardcode a repo name or list, project slug, person or host path in a skill, template or shared instruction. Find it at runtime.
+- Check each case a routing rule sends to an agent against its tool list. Name each fallback agent and its trigger.
 - Keep a skill `description` at or under 500 characters. Put detail in the body.
 
 ## Move
 
 - Carry the directive and its reason clause when you move a rule. Drop the rest.
 - Never re-expand a rule into prose because it landed in a new file.
-- Make the new file smaller than the text it replaces. Measure both before you save.
+- Make the new file smaller than the text it replaces, never by cutting a case. Measure both before you save.
 - Fold a memory into an instruction only when it truly duplicates one. Compress it to one line.
 - Leave a memory alone when no instruction states it.
 

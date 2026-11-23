@@ -2,7 +2,7 @@
 name: op
 description: "Route the tasks of an implementation plan to the cheapest Claude model that can do each well, then execute by dispatching subagents on their assigned model. Chores go to Haiku, most tasks to Sonnet, deep reasoning to Opus. Use when the user types /op, or asks to route a plan across models, assign per-task models. Expects a plan in context or pasted. Do NOT use to write the plan, for a single one-off task with no plan."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Op — per-task model routing for a plan
@@ -54,11 +54,11 @@ When unsure between haiku and sonnet, pick sonnet. When unsure between sonnet an
 - **Subagents are isolated.** They do not see this conversation. Each prompt must be self-contained: the files to touch, the exact change, constraints, and the acceptance check. Missing context is the top failure mode.
 - **Parallel = one message, many Agent calls.** Put every ready independent task in a single response so they run at once. A dependent task waits for its inputs, then its prompt includes those results.
 - **Cap a batch at 20 parallel dispatches.** A wider batch splits into successive batches, unless the user asks for more.
-- **Use a coding-capable subagent type** (e.g. `general-purpose`) for tasks that edit files, since they need Edit/Write. Use a read-only type for pure research tasks.
+- **Pick the subagent type by what the task needs, not by its model.** Edit task: `worker`. Read-only task: `scout`. When either is not in the Agent tool's available agent types, fall back to `general-purpose` (edits) or `Explore` (reads). When a task needs a skill, an MCP tool, web access, or a nested agent, use `general-purpose` for edits and `Explore` for reads, since `worker` and `scout` carry none of these. The lean agents start with about a quarter of `general-purpose`'s prompt, so each dispatch costs less on the same model.
 - **Avoid parallel edits to the same file.** If two independent tasks touch one file, either serialize them or merge them into one task to prevent clobbering.
 - **Keep the orchestrator on the session model.** Routing decisions, conflict resolution, and the final verification pass stay in the main loop, whatever its tier. Do not dispatch them to a worker.
 - **Never execute a routed task inline.** A task not dispatched via an `Agent` call with a `model` parameter was not routed. Running it inline on the orchestrator (the session model) is exactly the failure op exists to prevent. This holds when the session model is Opus and the task is opus-tier: dispatch it to an `opus` subagent, so the orchestrator context stays small.
-- **Never pass a dated model ID to `model`.** Always dispatch with the bare tier alias (`haiku` / `sonnet` / `opus` / `fable`), never a specific version string like `claude-sonnet-4-x`. The alias is what guarantees the subagent lands on the current, highest release for that tier — a hardcoded ID would defeat that and risk pinning to a superseded version.
+- **Never pass a dated model ID to `model`.** Always dispatch with the bare tier alias (`haiku` / `sonnet` / `opus` / `fable`), never a dated model ID string. The alias is what guarantees the subagent lands on the current, highest release for that tier — a hardcoded ID would defeat that and risk pinning to a superseded version.
 
 ## Annotated-plan output format
 

@@ -3,7 +3,7 @@ name: setup-skills-autorefresh
 disable-model-invocation: true
 description: "Set up auto-refresh syncing of agent skills into Claude Code. Registers a SessionStart hook in the profile settings.json (~/.claude or CLAUDE_CONFIG_DIR) that symlinks each skill folder from a chosen source folder into skills/ and prunes removed ones. Asks for the source if none is given. Use when the user says \"set up skills auto-refresh\", \"install the skills sync hook\", or runs /setup-skills-autorefresh. Do NOT use for unrelated settings.json changes or one-off manual skill copying."
 metadata:
-  version: "1.1"
+  version: "1.2"
 ---
 
 ## What this does
@@ -14,6 +14,7 @@ The hook symlinks each skill folder (`<name>/SKILL.md`) found under a **source f
 you choose** into `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`, and prunes symlinks for skills that no longer
 exist. Result — drop a skill into that folder and it auto-loads next session, on any
 machine where you've run this once.
+The hook also links `agents/*.md` (the folder next to each source) into `${CLAUDE_CONFIG_DIR:-~/.claude}/agents/`.
 
 The source folder is a parameter baked into the hook command, so the same script syncs
 whatever folder you point it at.
@@ -68,7 +69,7 @@ whatever folder you point it at.
   first appears in the *next* session. The installer's one-time run creates the symlink
   immediately, but enumeration still happens at startup.
 - **Custom config dir** — with an absolute `CLAUDE_CONFIG_DIR`, the installer edits
-  `<dir>/settings.json` and the hook links into `<dir>/skills/`, instead of `~/.claude`. A
+  `<dir>/settings.json` and the hook links into `<dir>/skills/` and `<dir>/agents/`, instead of `~/.claude`. A
   relative value is ignored by the hook, which then uses `~/.claude`, while the installer
   still edits the relative path. Always pass an absolute path.
 - **Scope** — installs the Claude Code hook only. A separate Copilot CLI variant

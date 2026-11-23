@@ -3,6 +3,7 @@
 // sync-skills.js — SessionStart hook that auto-syncs Claude Code skills.
 // Scans the source directory(ies) given as CLI args for skill folders (each
 // containing SKILL.md) and creates directory symlinks in ${CLAUDE_CONFIG_DIR:-~/.claude}/skills/.
+// It also links *.md files from each source's sibling agents/ folder into .../agents/.
 //
 // Usage:
 //   node sync-skills.js <skills-dir> [<skills-dir> ...]
@@ -25,6 +26,7 @@ const CONFIG_BASE =
   envConfigDir && path.isAbsolute(envConfigDir) ? envConfigDir : path.join(os.homedir(), '.claude');
 const SKILLS_DIR = path.join(CONFIG_BASE, 'skills');
 const COMMANDS_DIR = path.join(CONFIG_BASE, 'commands');
+const AGENTS_DIR = path.join(CONFIG_BASE, 'agents');
 
 if (envConfigDir && !path.isAbsolute(envConfigDir)) {
   console.error(
@@ -76,6 +78,81 @@ function migrateLegacyCommands() {
       `[sync-skills] Migrated: removed ${migrated} legacy symlinks from ${COMMANDS_DIR}/`
     );
   }
+}
+
+// Links regular *.md files from each source's sibling agents/ folder into
+// ${CONFIG_BASE}/agents/. Same rules as skills: first source wins, unmanaged entries are never touched.
+function syncAgents() {
+  const agentMap = new Map(); // file name -> source file path
+  const roots = [];
+  for (const source of SOURCES) {
+    const dir = path.join(path.dirname(source), 'agents');
+    roots.push(dir + path.sep); // Kept even when the folder is gone, so its stale links get pruned
+    let entries;
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+      roots.push(fs.realpathSync(dir) + path.sep);
+    } catch {
+      continue; // No agents folder next to this source
+    }
+    for (const entry of entries) {
+      if (!entry.isFile() || entry.name.startsWith('.') || !entry.name.endsWith('.md')) continue;
+      const filePath = path.join(dir, entry.name);
+      if (agentMap.has(entry.name)) {
+        console.error(
+          `[sync-skills] CONFLICT: agent "${entry.name}" exists in both sources. Using: ${agentMap.get(entry.name)} (skipping: ${filePath})`
+        );
+      } else {
+        agentMap.set(entry.name, filePath);
+      }
+    }
+  }
+
+  // Remove stale managed symlinks (source file gone or now provided by another source)
+  if (fs.existsSync(AGENTS_DIR)) {
+    for (const entry of fs.readdirSync(AGENTS_DIR)) {
+      const fullPath = path.join(AGENTS_DIR, entry);
+      try {
+        const target = fs.readlinkSync(fullPath);
+        const resolved = path.isAbsolute(target) ? target : path.resolve(AGENTS_DIR, target);
+        if (!roots.some((r) => resolved.startsWith(r))) continue;
+        if (agentMap.get(entry) !== resolved) fs.unlinkSync(fullPath);
+      } catch {
+        // Not a symlink, leave alone
+      }
+    }
+  }
+
+  if (agentMap.size === 0) return 0;
+  fs.mkdirSync(AGENTS_DIR, { recursive: true });
+
+  for (const [name, sourcePath] of agentMap) {
+    const linkPath = path.join(AGENTS_DIR, name);
+    try {
+      let linkStat = null;
+      try {
+        linkStat = fs.lstatSync(linkPath); // lstat, so a dangling symlink still counts as present
+      } catch {} // Nothing at that path
+      if (linkStat) {
+        if (!linkStat.isSymbolicLink()) {
+          console.error(`[sync-skills] WARNING: ${linkPath} exists but is not a symlink, skipping`);
+          continue;
+        }
+        const current = fs.readlinkSync(linkPath);
+        if (current === sourcePath) continue;
+        const resolved = path.isAbsolute(current) ? current : path.resolve(AGENTS_DIR, current);
+        if (!roots.some((r) => resolved.startsWith(r))) {
+          console.error(`[sync-skills] WARNING: ${linkPath} is an unmanaged symlink, skipping`);
+          continue;
+        }
+        fs.unlinkSync(linkPath);
+      }
+      fs.symlinkSync(sourcePath, linkPath);
+    } catch (err) {
+      console.error(`[sync-skills] WARNING: failed to link agent ${name}: ${err.message}`);
+    }
+  }
+  return agentMap.size;
 }
 
 function syncSkills() {
@@ -201,10 +278,16 @@ function syncSkills() {
     }
   }
 
+  let agents = 0;
+  try {
+    agents = syncAgents();
+  } catch (err) {
+    console.error(`[sync-skills] WARNING: agent sync failed: ${err.message}`);
+  }
   const total = skillMap.size;
   const failedNote = failed > 0 ? `, ${failed} failed` : '';
   console.log(
-    `[sync-skills] Synced ${total} skills (${created} new, ${removed} removed, ${unchanged} unchanged, ${conflicts.length} conflicts${failedNote})`
+    `[sync-skills] Synced ${total} skills (${created} new, ${removed} removed, ${unchanged} unchanged, ${conflicts.length} conflicts${failedNote}), ${agents} agents`
   );
 }
 

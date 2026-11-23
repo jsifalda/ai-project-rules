@@ -10,7 +10,8 @@ Everything here is tool-agnostic where possible. Each AI tool picks up what it n
 | --- | --- |
 | `rules/` | Rule files — the always-loaded core (restrictions, writing style in ASD-STE100) and on-demand rules for coding, testing, git, docs, authoring and stack choice |
 | `skills/` | Agent skills following the [agentskills.io](https://agentskills.io/specification) spec. Each subdir has a `SKILL.md` |
-| `archive/` | Retired instructions, kept for reference. The sync hook reads only `skills/`, so nothing in `archive/` loads. `archive/skills/<name>/` holds a retired skill |
+| `agents/` | Custom subagent definitions (`worker`, `scout`), linked into `${CLAUDE_CONFIG_DIR:-~/.claude}/agents/` by the sync hook |
+| `archive/` | Retired instructions, kept for reference. The sync hook reads only `skills/` and `agents/`, so nothing in `archive/` loads. `archive/skills/<name>/` holds a retired skill |
 | `gemini-cli/commands/` | `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`) |
 | `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` | Standalone PRD workflow prompts (the original "AI Dev Tasks" pipeline) |
 | `CLAUDE.md` / `AGENTS.md` | Project instructions for AI tools. `AGENTS.md` is a symlink to `CLAUDE.md` |

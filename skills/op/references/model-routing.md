@@ -89,18 +89,20 @@ Watch for **hidden file conflicts**: two independent tasks that both edit the sa
 Independent tasks in a batch are dispatched as multiple Agent calls in one message:
 
 ```
-Agent(subagent_type: "general-purpose", model: "haiku",
+Agent(subagent_type: "worker", model: "haiku",
       description: "Task 1: update changelog",
       prompt: "<self-contained instructions + files + acceptance check>")
-Agent(subagent_type: "general-purpose", model: "sonnet",
+Agent(subagent_type: "worker", model: "sonnet",
       description: "Task 2: add validation endpoint",
       prompt: "<self-contained instructions + files + acceptance check>")
 ```
 
+`worker` (edits) and `scout` (read-only) are lean custom agents. When they are not installed, use `general-purpose` and `Explore`. When a task needs a skill, an MCP tool, web access, or a nested agent, use `general-purpose` for edits and `Explore` for reads.
+
 A dependent task runs only after its inputs return, and its prompt carries those results:
 
 ```
-Agent(subagent_type: "general-purpose", model: "opus",
+Agent(subagent_type: "worker", model: "opus",
       description: "Task 3: integrate endpoint with new schema",
       prompt: "Task 1 produced <result>. Task 2 produced <result>. Now <instructions>...")
 ```

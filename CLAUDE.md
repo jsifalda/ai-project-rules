@@ -10,7 +10,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 
 - `rules/` — rule files (frontmatter `type` is honored only by tools that name them). `general.md` (core) loads via `CLAUDE.md`'s First Action on every session and opens with a trigger table routing to the other rule files. On demand only: `authoring.md` (how to write an instruction, plus the counts ban), `testing.md`, `coding.md` (coding standards, TypeScript and dependency management), `git-ship.md`, `docs-diagrams.md`, `review-tiers.md` (loaded from the Verification Protocol's `When it fires` section), and `planning.md`, and `builder.md` (task-first stack guidance and architecture rules, and when to load the `frontend-design` and `hallmark` skills together). `tailwind.md` has no trigger of its own — `builder.md` names it under `## Related rules`. Frontend aesthetics live in the `frontend-design` skill for general UI work, and in the `hallmark` skill for anti-generic-AI-look builds, audits, redesigns, and design extraction from a URL or screenshot.
 - `skills/` — agent skills following [agentskills.io](https://agentskills.io/specification). Each subdir has a `SKILL.md`.
-- `archive/` — retired instructions, kept for reference. The sync hook reads only `skills/`, so nothing here loads. `archive/skills/<name>/` holds a retired skill.
+- `archive/` — retired instructions, kept for reference. The sync hook reads only `skills/` and `agents/`, so nothing here loads. `archive/skills/<name>/` holds a retired skill.
 - `gemini-cli/commands/` — `.toml` slash commands for Gemini CLI (`description` + `prompt` with `{{args}}`).
 - `create-prd.md`, `generate-tasks.md`, `process-task-list.md`, `feature-request.md` — standalone PRD workflow prompts (the original AI Dev Tasks pipeline). Outputs to `_prds/`, `_tasks/`, `_tickets/` (gitignored).
 - `scripts/` — `check-universality.sh` (policy scanner) and `install-hooks.sh` (one-time hook activation for a clone), plus `synced-skills.txt` (script-synced skills, exempt from `--require-version`).
@@ -25,6 +25,7 @@ Personal monorepo of AI-tool instructions: rules, skills, and slash commands use
 - **Canonical hook script**, in this repo: `skills/setup-skills-autorefresh/scripts/sync-skills.js`. It symlinks every skill from a **source folder passed as an argument** into `${CLAUDE_CONFIG_DIR:-~/.claude}/skills/`, and prunes removed ones.
 - **Install/register on a machine** with the `setup-skills-autorefresh` skill: `bash skills/setup-skills-autorefresh/scripts/install.sh <skills-dir>`. That bakes the source folder into the hook command in `${CLAUDE_CONFIG_DIR:-~/.claude}/settings.json`.
 - **Copilot CLI** uses a parallel script at `~/.copilot/hooks/sync-skills.js` that copies (not symlinks, due to a Copilot CLI bug) skills into `~/.copilot/skills/`.
+- The hook also symlinks `agents/*.md` (custom subagents) into `${CLAUDE_CONFIG_DIR:-~/.claude}/agents/`.
 - The hook script is the source of truth — read it for sync behaviour.
 
 ## Conventions

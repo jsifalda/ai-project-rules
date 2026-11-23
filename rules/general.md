@@ -71,8 +71,7 @@ Read the matching file before that work. Never preload.
 
 # READING FILES
 
-- Read file content with `Read`, using `offset` and `limit`.
-- Find the lines first with `grep -n pattern file | head`, then read only that range.
+- Find lines with `grep -n`, then `Read` only that range. Change a file with `Edit`.
 - Before any code change, find and read all relevant files.
 - Before modifying a function, grep every caller. Understand each call site before changing a signature or behavior.
 - Never re-read a file range already in the conversation and unchanged.

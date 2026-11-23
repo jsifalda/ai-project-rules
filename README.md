@@ -145,7 +145,6 @@ The **`disable-model-invocation`** column shows `true` when the skill's `SKILL.m
 | [`prompt-enhancer`](skills/prompt-enhancer/SKILL.md) | Transform a simple prompt into a high-quality, structured one for better AI results. | — | — | — |
 | [`prototype`](skills/prototype/SKILL.md) | Build a throwaway prototype to flesh out a design, as a runnable terminal app or several toggleable UI variations. | — | [mattpocock/skills](https://github.com/mattpocock/skills) | `true` |
 | [`qmd-project`](skills/qmd-project/SKILL.md) | Turn any folder into a folder-local qmd semantic index over its nested `.md` files (isolated from the global index, shared models) and ship a project-local `qmd-ask` skill that answers questions from it. | — | — | `true` |
-| [`radical-feedback`](skills/radical-feedback/SKILL.md) | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. | — | — | — |
 | [`reddit-post`](skills/reddit-post/SKILL.md) | Create high-engagement Reddit posts (title + body) from a guided questionnaire. | — | — | — |
 | [`rephrase`](skills/rephrase/SKILL.md) | Restates the user's goals and problem in your own words as a finished answer, with no confirmation question, and lists any assumptions it made. | — | [cursor/plugins](https://github.com/cursor/plugins) | — |
 | [`rewrite`](skills/rewrite/SKILL.md) | Improve, correct, or rephrase text in its own language (DeepL Write style) with Simple/Business/Academic/Casual styles and Enthusiastic/Friendly/Confident/Diplomatic tones. Improve mode loads the unslop ruleset first so default output reads human. | `unslop` | — | — |
@@ -182,6 +181,7 @@ Retired skills, kept for reference. The sync hook does not link them. CLAUDE.md 
 | [`apple-mail-query`](archive/skills/apple-mail-query/SKILL.md) | Query the local Apple Mail (Mail.app) SQLite DB on macOS to list, search, count, or extract emails (read-only snapshot). | — | — | — |
 | [`apple-mail-thread-export`](archive/skills/apple-mail-thread-export/SKILL.md) | Export Apple Mail conversation threads from a sender into one markdown file per thread, with an incremental manifest so re-runs only write new or changed threads. | — | — | — |
 | [`create-implementation-plan`](archive/skills/create-implementation-plan/SKILL.md) | Generate a concise, machine-friendly implementation-plan template for engineering work. | — | — | `true` |
+| [`radical-feedback`](archive/skills/radical-feedback/SKILL.md) | Diagnose and improve feedback with Kim Scott's Radical Candor framework, or generate well-structured feedback for a situation. Merged into em-feedback. | — | — | — |
 | [`retro`](archive/skills/retro/SKILL.md) | Look back over a coding session and propose fixes to the agent's environment: checks, pointers and standards. | — | [mattpocock/skills](https://github.com/mattpocock/skills) | `true` |
 | [`write-like-human`](archive/skills/write-like-human/SKILL.md) | Apply a strict style guide so prose reads as human, not AI-generated. Merged into unslop. | — | — | — |
 

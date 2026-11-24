@@ -8,6 +8,7 @@ set -euo pipefail
 REPO_OWNER="kepano"
 REPO_NAME="obsidian-skills"
 BRANCH="main"
+REMOTE_PREFIX="plugins/obsidian/skills"  # upstream path of the skills folder
 
 # Skills to sync — add or remove entries here
 SKILLS=(
@@ -15,6 +16,7 @@ SKILLS=(
   "json-canvas"
   "obsidian-bases"
   "obsidian-cli"
+  "obsidian-headless"
   "obsidian-markdown"
 )
 
@@ -26,18 +28,19 @@ for arg in "$@"; do
   case "$arg" in
     --help|-h)
       cat <<'EOF'
-Sync the five Obsidian skills from kepano/obsidian-skills into this repo's
-skills/ folder.
+Sync the Obsidian skills listed below from kepano/obsidian-skills into
+this repo's skills/ folder.
 
 Usage:
   sync-obsidian-skills.sh [--help]
 
-This script takes no skill names. It always syncs a fixed set, the same
-five skills every run:
+This script takes no skill names. It always syncs the same fixed set of
+skills:
   - defuddle
   - json-canvas
   - obsidian-bases
   - obsidian-cli
+  - obsidian-headless
   - obsidian-markdown
 
 Destination:
@@ -48,8 +51,13 @@ OVERWRITE HAZARD (read this before running):
   there is no sha256 baseline, no manifest, and no refusal gate. Every run
   deletes local files that are not present upstream and overwrites every
   remaining file unconditionally. Any local edit you made to one of the
-  five skills above is lost, with no warning and no prompt.
+  skills above is lost, with no warning and no prompt.
   Commit or stash local changes to those skills before running this.
+
+After a sync:
+  Re-add the metadata block (version and upstream) to each SKILL.md and bump
+  the version. Re-apply the local defuddle description. This repo keeps it on
+  purpose, because it routes web page reads to defuddle instead of WebFetch.
 
 Changing the skill set:
   Edit the SKILLS array near the top of this script.
@@ -89,7 +97,7 @@ for skill in "${SKILLS[@]}"; do
   [ -d "$LOCAL_SKILLS_DIR/$skill" ] || new_skills+=("$skill")
 done
 
-echo "WARNING: this sync overwrites the five Obsidian skills unconditionally." >&2
+echo "WARNING: this sync overwrites the synced Obsidian skills unconditionally." >&2
 echo "         There is no baseline and no refusal gate. Local edits to them are lost." >&2
 echo "         Commit or stash changes to those skills first if you want to keep them." >&2
 
@@ -159,14 +167,16 @@ import sys, json
 with open(sys.argv[1]) as f:
     tree = json.load(f)
 
-skills = set(sys.argv[2:])
+prefix = sys.argv[2].split('/')
+n = len(prefix)
+skills = set(sys.argv[3:])
 for item in tree.get('tree', []):
     if item['type'] != 'blob':
         continue
     parts = item['path'].split('/')
-    if len(parts) >= 3 and parts[0] == 'skills' and parts[1] in skills:
+    if len(parts) >= n + 2 and parts[:n] == prefix and parts[n] in skills:
         print(item['path'])
-" "$TMPFILE" "${SKILLS[@]}")
+" "$TMPFILE" "$REMOTE_PREFIX" "${SKILLS[@]}")
 
 if [ -z "$REMOTE_FILES" ]; then
   echo "ERROR: No matching files found in remote tree. Check skill names and repo structure."
@@ -174,6 +184,17 @@ if [ -z "$REMOTE_FILES" ]; then
 fi
 
 echo "Found $(echo "$REMOTE_FILES" | wc -l | tr -d ' ') files across ${#SKILLS[@]} skills"
+
+# Refuse to run when a skill has no upstream files (renamed or moved upstream).
+# Step 3 would otherwise delete every local file of that skill.
+missing=()
+for skill in "${SKILLS[@]}"; do
+  echo "$REMOTE_FILES" | grep -qF "$REMOTE_PREFIX/$skill/" || missing+=("$skill")
+done
+if [ "${#missing[@]}" -gt 0 ]; then
+  echo "ERROR: no upstream files for: ${missing[*]}. Check the SKILLS array and REMOTE_PREFIX. Nothing was changed."
+  exit 1
+fi
 echo ""
 
 # =============================================================================
@@ -185,7 +206,7 @@ for skill in "${SKILLS[@]}"; do
   if [ -d "$local_skill_dir" ]; then
     while IFS= read -r local_file; do
       rel_path="${local_file#"$LOCAL_SKILLS_DIR"/}"
-      remote_path="skills/$rel_path"
+      remote_path="$REMOTE_PREFIX/$rel_path"
       if ! echo "$REMOTE_FILES" | grep -qxF "$remote_path"; then
         rm "$local_file"
         echo "[removed] $rel_path"
@@ -204,9 +225,9 @@ done
 RAW_BASE="https://raw.githubusercontent.com/$REPO_OWNER/$REPO_NAME/$BRANCH"
 
 while IFS= read -r remote_path; do
-  # remote_path is like "skills/defuddle/SKILL.md"
+  # remote_path is like "plugins/obsidian/skills/defuddle/SKILL.md"
   # local_rel is like "defuddle/SKILL.md"
-  local_rel="${remote_path#skills/}"
+  local_rel="${remote_path#"$REMOTE_PREFIX"/}"
   local_path="$LOCAL_SKILLS_DIR/$local_rel"
   local_dir="$(dirname "$local_path")"
 

@@ -130,8 +130,9 @@ The **`disable-model-invocation`** column shows `true` when the skill's `SKILL.m
 | [`merge`](skills/merge/SKILL.md) | `/merge`, or merge main into this branch — fetch the remote default branch, merge it into the current branch (never rebase), resolve conflicts, run the project's own gates, push only the current branch to its own PR/MR. Worktree-safe, GitHub and GitLab, no provider CLI. | — | — | — |
 | [`microsoft-clarity`](skills/microsoft-clarity/SKILL.md) | Add Microsoft Clarity analytics (heatmaps, session recordings) to a Next.js app. | — | — | — |
 | [`nextjs-ga-tracking`](skills/nextjs-ga-tracking/SKILL.md) | Add GA4 tracking with GDPR-compliant Silktide cookie consent to a Next.js project. | — | — | — |
-| [`obsidian-bases`](skills/obsidian-bases/SKILL.md) | Create and edit Obsidian Bases (`.base`) — views, filters, formulas, summaries. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | — |
+| [`obsidian-bases`](skills/obsidian-bases/SKILL.md) | Create and edit Obsidian Bases (`.base`) — table, card, list, map and kanban views, filters, formulas, summaries. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | — |
 | [`obsidian-cli`](skills/obsidian-cli/SKILL.md) | Interact with Obsidian vaults via the Obsidian CLI (read/create/search notes; plugin/theme dev + debug). | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | — |
+| [`obsidian-headless`](skills/obsidian-headless/SKILL.md) | Sync and publish Obsidian vaults from the command line with Obsidian Headless (`ob`), without the desktop app. | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | — |
 | [`obsidian-markdown`](skills/obsidian-markdown/SKILL.md) | Create and edit Obsidian Flavored Markdown (wikilinks, embeds, callouts, properties). | — | [kepano/obsidian-skills](https://github.com/kepano/obsidian-skills) | — |
 | [`obsidian-task-extractor`](skills/obsidian-task-extractor/SKILL.md) | Extract atomic tasks from a note and add them to `To Remember.md`. | — | — | — |
 | [`op`](skills/op/SKILL.md) | Route each task in a plan to the cheapest capable Claude model (Haiku for chores, Sonnet by default, Opus for deep reasoning), then execute by dispatching tasks as subagents on their assigned model while the session model only orchestrates. | — | — | — |
@@ -230,13 +231,15 @@ These names are refused outright, exit code 2: `grilling` and `grill-me`. This r
 
 ### `scripts/sync-obsidian-skills.sh`
 
-Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a fixed set: `defuddle`, `json-canvas`, `obsidian-bases`, `obsidian-cli`, `obsidian-markdown`. Passing a name, or any unknown flag, is an error, exit code 2. Change the set by editing the `SKILLS` array near the top of the script. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
+Pulls from `kepano/obsidian-skills`. It takes no skill names, always syncing a fixed set: `defuddle`, `json-canvas`, `obsidian-bases`, `obsidian-cli`, `obsidian-headless`, `obsidian-markdown`. Passing a name, or any unknown flag, is an error, exit code 2. Change the set by editing the `SKILLS` array near the top of the script. Set `GITHUB_TOKEN` to raise the GitHub API rate limit.
 
 ```bash
 bash scripts/sync-obsidian-skills.sh
 ```
 
 > **Warning:** this script has no safety net. Unlike the other sync scripts, there is no sha256 baseline, no manifest, and no refusal gate. Every run deletes local files not present upstream and overwrites every remaining file unconditionally. Local edits to any of those skills are lost with no warning and no prompt. Commit or stash changes to them before running it.
+
+The local `defuddle` description is a deliberate divergence from upstream. It routes web page reads to `defuddle` instead of WebFetch. Re-apply it after every sync, together with the `metadata` block of each skill.
 
 ### Overwrite safety and registering new skills
 

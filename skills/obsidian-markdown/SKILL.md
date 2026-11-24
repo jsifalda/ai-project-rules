@@ -2,7 +2,7 @@
 name: obsidian-markdown
 description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wikilinks, callouts, frontmatter, tags, embeds, or Obsidian notes.
 metadata:
-  version: "1.0"
+  version: "1.1"
   upstream: "https://github.com/kepano/obsidian-skills"
 ---
 
@@ -30,6 +30,9 @@ Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark an
 [[Note Name#^block-id]]                Link to block
 [[#Heading in same note]]              Same-note heading link
 ```
+Inside Markdown tables, escape wikilink alias pipes as `[[Note\|Alias]]` so the alias separator is not parsed as a table cell delimiter. When a table follows a paragraph, leave a blank line above it, or it renders as plain text.
+
+Links resolve by file name, not by the `aliases` property. A bare `[[Alias]]` stays unresolved; write `[[Note|Alias]]` to show an alias.
 
 Define a block ID by appending `^block-id` to any paragraph:
 
@@ -92,7 +95,7 @@ cssclasses:
 ---
 ```
 
-Default properties: `tags` (searchable labels), `aliases` (alternative note names for link suggestions), `cssclasses` (CSS classes for styling).
+Default properties: `tags` (searchable labels), `aliases` (alternative names offered in link suggestions; links still use the file name), `cssclasses` (CSS classes for styling).
 
 See [PROPERTIES.md](references/PROPERTIES.md) for all property types, tag syntax rules, and advanced usage.
 
@@ -103,7 +106,7 @@ See [PROPERTIES.md](references/PROPERTIES.md) for all property types, tag syntax
 #nested/tag             Nested tag with hierarchy
 ```
 
-Tags can contain letters, numbers (not first character), underscores, hyphens, and forward slashes. Tags can also be defined in frontmatter under the `tags` property.
+Tags can contain letters, numbers, underscores, hyphens, and forward slashes, but must include at least one non-numerical character (`#1984` is invalid, `#1984book` is valid). A space ends a tag, so `#my tag` is the tag `#my`. Tags can also be defined in frontmatter under the `tags` property.
 
 ## Comments
 
@@ -119,7 +122,10 @@ This entire block is hidden in reading view.
 
 ```markdown
 ==Highlighted text==                   Highlight syntax
+==🔴Highlighted text==                 Colored highlight (Obsidian 1.14.1 and later)
 ```
+
+A colored highlight starts with 🔴, 🟠, 🟡, 🟢, 🔵 or 🟣 (or the matching square) right after `==`. Other emoji stay as text.
 
 ## Math (LaTeX)
 

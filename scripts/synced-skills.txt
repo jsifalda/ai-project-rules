@@ -7,5 +7,6 @@ handoff
 json-canvas
 obsidian-bases
 obsidian-cli
+obsidian-headless
 obsidian-markdown
 prototype

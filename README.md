@@ -58,7 +58,7 @@ The rule files under `rules/`. The `type` frontmatter is a convention for tools 
 
 - `rules/general.md` — always-loaded core: principles, blockers, restrictions, secrets handling, reading files, writing style, and the implementation verification protocol. It opens with a trigger table routing to the on-demand rule files below.
 - `rules/authoring.md` — how to write an instruction: directives with a short reason clause only when not self-evident, the always-loaded test, the token budget, and the ban on stating how many items a set holds. Loads when writing or editing an instruction file, a rule, or a `SKILL.md`.
-- `rules/planning.md` — plan mode, re-planning, outage recovery, and design-from-an-established-product. Loads when planning a task with an architectural decision or a multi-file change, or an outage recovery.
+- `rules/planning.md` — plan mode, re-planning, outage recovery, design-from-an-established-product, and agent delivery principles. Loads when planning an architectural, multi-file, agent-workflow or outage-recovery task.
 - `rules/testing.md` — coverage, TDD, concurrent test runs, and the ban on waiting real wall-clock in a test. Loads when writing, changing or running tests.
 - `rules/coding.md` — coding standards, comment rules, TypeScript, and dependency management. Loads when writing, changing or reviewing code, a script or config, or adding, choosing or upgrading a dependency.
 - `rules/git-ship.md` — destructive git and `glab` operations, diff and log ranges, commit message format, and MR/PR descriptions. Loads when committing, pushing, doing any PR or MR work, running a `glab` write, working in a git worktree, or making the first edit in a git repo (worktree entry).

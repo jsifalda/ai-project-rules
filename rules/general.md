@@ -19,7 +19,7 @@ Read the matching file before that work. Never preload.
 | Writing a doc, an ADR, a README, or a diagram | `rules/docs-diagrams.md` |
 | Writing or editing an instruction file, a rule, or a `SKILL.md` | `rules/authoring.md` |
 | Starting a new app, choosing a stack or tooling, or designing a layer boundary | `rules/builder.md` |
-| Planning a task with an architectural decision or a multi-file change, or an outage recovery | `rules/planning.md` |
+| Planning an architectural, multi-file, agent-workflow or outage-recovery task | `rules/planning.md` |
 
 ## Core principles
 

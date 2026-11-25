@@ -13,7 +13,6 @@
 - Add a table only for lookup data. Never to hold prose.
 - Use the same word for the same thing. No synonyms.
 - Never restate a rule stated elsewhere. Point to it. The always-loaded summary of this file is the one exception.
-- Delete or fix wrong, stale or contradicted lines on a topic before you add to it, in the same change. Wrong context poisons agents.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
 - Never hardcode a repo name or list, project slug, person or host path in a skill, template or shared instruction. Find it at runtime.
 - Check each case a routing rule sends to an agent against its tool list. Name each fallback agent and its trigger.

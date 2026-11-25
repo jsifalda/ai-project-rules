@@ -13,11 +13,11 @@
 - Add a table only for lookup data. Never to hold prose.
 - Use the same word for the same thing. No synonyms.
 - Never restate a rule stated elsewhere. Point to it. The always-loaded summary of this file is the one exception.
-- Rewrite an existing rule that a new rule contradicts, in the same change. Never ship both with the conflict flagged.
+- Delete or fix wrong, stale or contradicted lines on a topic before you add to it, in the same change. Wrong context poisons agents.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
 - Never hardcode a repo name or list, project slug, person or host path in a skill, template or shared instruction. Find it at runtime.
 - Check each case a routing rule sends to an agent against its tool list. Name each fallback agent and its trigger.
-- Keep a skill `description` at or under 500 characters. Put detail in the body.
+- Keep a skill `description` at or under 500 characters, never over 1024. Put detail in the body.
 
 ## Move
 
@@ -44,7 +44,7 @@
 ## Instruction beats memory
 
 - Never store a memory for something an instruction states. Shorten the instruction instead.
-- Delete a memory that duplicates an instruction, and its `MEMORY.md` line.
+- Delete a memory that duplicates an instruction, and its index line.
 - Keep memory for an environment fact or a one-off gotcha with no rule attached.
 
 ## Counts

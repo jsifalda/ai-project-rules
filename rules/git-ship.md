@@ -23,12 +23,11 @@
 ## Messages
 
 - Use conventional commits: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`, `test:`, `perf:`, optional `(scope)`.
-- Write the subject imperative, 72 characters or fewer, no articles, no trailing period, with the task ID when one exists.
+- Write the subject imperative, 72 characters or fewer, no articles, no trailing period. End it with `, #<task-id>` when one exists.
 - Give the PR or MR title the same format. Only subject and title are exempt from the writing-style rules.
 - Write the commit body and the MR or PR body in the writing style.
 - Write a body only when the reason is not obvious from the subject plus the diff.
 - Keep that body to one or two bullets of why. Never a file list.
-- Example: `feat(module): add payment validation logic, #ISSUE-ID`.
 
 ## Descriptions
 

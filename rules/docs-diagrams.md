@@ -4,6 +4,8 @@
 
 - Write only what code cannot state: the constraint, the option that lost, the failure it prevents.
 - Apply the deletion test. If a reader would get nothing wrong once the line is gone, delete it.
+- Delete or fix each wrong or stale doc on a topic before you add to it. Wrong docs poison agents.
+- Supersede a wrong dated record, such as an ADR or a changelog entry, with a new one. Never delete it.
 - Prefer a clear name, a type, or a test. Reach for a doc last.
 - Argue a decision once. Link to it everywhere else.
 - Put a module-wide why in the project's decision record, never a comment.

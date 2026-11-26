@@ -2,7 +2,7 @@
 name: landing-page-viral-grill
 description: "Audit a landing page against a fixed viral checklist, one verdict per check with quoted evidence, then grill the gaps and plan fixes. Pricing, positioning and founder-visibility checks go to a grill-me interview, never scored from markup. Emits a gap report and a fix plan for confirmed gaps, no composite score. Use for \"audit my landing page for virality\", \"run the viral checklist\", \"grill my landing page\". Do NOT use for conversion optimization, SEO, accessibility, or writing new copy."
 metadata:
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Landing Page Viral Grill
@@ -18,7 +18,9 @@ Audit a landing page against the checklist in [references/viral-criteria-origina
 One of:
 - pasted markdown / plain text of the page
 - a local file path (read with the `Read` tool)
-- a URL (delegate to the `defuddle` skill for clean markdown, do not use `WebFetch` directly)
+- a URL (delegate to the `obsidian:defuddle` skill, or `defuddle parse <url> --md` when that skill is absent, for clean markdown, do not use `WebFetch` directly)
+
+If neither the skill nor the CLI is available, or the fetch errors, stop and tell the user. Never report a fetch that did not run.
 
 Sanity-check it. If the input is empty, under ~150 words, or clearly not a landing page (README, blog post, docs), stop and ask. Never audit something you cannot see.
 

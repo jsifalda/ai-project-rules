@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Retired: the claude.ai obsidian plugin provides these skills now. Do not run, it recreates them under skills/.
 set -euo pipefail
 
 # =============================================================================

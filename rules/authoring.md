@@ -14,6 +14,7 @@
 - Use the same word for the same thing. No synonyms.
 - Never restate a rule stated elsewhere. Point to it. The always-loaded summary of this file is the one exception.
 - Never write a rule the model already follows, a hook enforces, or a lint rule catches.
+- Recommend deleting, not rewriting, an instruction that points at a tool, file or step nothing uses or produces.
 - Never hardcode a repo name or list, project slug, person or host path in a skill, template or shared instruction. Find it at runtime.
 - Check each case a routing rule sends to an agent against its tool list. Name each fallback agent and its trigger.
 - Keep a skill `description` at or under 500 characters, never over 1024. Put detail in the body.

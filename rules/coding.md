@@ -7,6 +7,7 @@
 - No magic numbers. Name every constant.
 - Use `fetch` for HTTP. Never `axios`, `superagent`, or another library.
 - Never swallow an error silently. Log or propagate it.
+- Delete a config key, env var or flag to reach its default. Never pin the default value unless another layer overrides it.
 - Keep routine success quiet in what you build. Send no ping or alert that needs no action.
 - Stop a process by its saved PID or listening port. Never `pkill -f` or `pgrep -f` a pattern that matches your own command line.
 - No PID and no port → bracket one letter of a `-f` pattern unique to the target.

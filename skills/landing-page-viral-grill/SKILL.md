@@ -20,6 +20,8 @@ One of:
 - a local file path (read with the `Read` tool)
 - a URL (delegate to the `obsidian:defuddle` skill, or `defuddle parse <url> --md` when that skill is absent, for clean markdown, do not use `WebFetch` directly)
 
+If neither the skill nor the CLI is available, or the fetch errors, stop and tell the user. Never report a fetch that did not run.
+
 Sanity-check it. If the input is empty, under ~150 words, or clearly not a landing page (README, blog post, docs), stop and ask. Never audit something you cannot see.
 
 ### 2. Load the checklist

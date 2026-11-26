@@ -29,7 +29,7 @@ Pick by input shape. A product description means generate. Page text, a file, or
 
 ### improve
 
-1. **Ingest.** Pasted text as-is; a file path via `Read`; a URL via the `obsidian:defuddle` skill, or `defuddle parse <url> --md` when that skill is absent (never `WebFetch` directly).
+1. **Ingest.** Pasted text as-is; a file path via `Read`; a URL via the `obsidian:defuddle` skill, or `defuddle parse <url> --md` when that skill is absent (never `WebFetch` directly). If neither the skill nor the CLI is available, or the fetch errors, stop and tell the user. Never report a fetch that did not run.
 2. **Sanity-check.** Stop and ask if the input is empty, or clearly not a landing page (README, blog post, docs). A very short page (~200 words or less) is a prompt to double-check it really is a landing page, not an automatic stop — thin pages are exactly the ones worth improving.
 3. **Tier-1 probe.** Extract `target_audience` and `transformation` from the page **body**, never the H1. Ask only if unreadable. See [references/input-schema.md](references/input-schema.md).
 4. **Map text to sections.** Match by content, not position. Preserve the user's order and any off-blueprint sections.

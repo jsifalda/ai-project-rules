@@ -38,7 +38,7 @@ bash "<this skill's base directory>/scripts/file.sh" --skill <name> --title "<sh
 
 | Failure | Fix |
 | --- | --- |
-| Exit 2, usage printed | Add the missing flag. All six flags are required. |
+| Exit 2, usage printed | Add the missing flag. Every flag in the command above is required. |
 | Exit 3, secret guard | Remove the secret from the field. Describe it, for example "a token". Run again. |
 | Script prints "logged to <path>" when you expected an issue | Set `PAPERCUT_REPO` to `owner/name` and check that `gh auth status` passes. The line in the file is still valid. |
 | `bash` cannot find the script | Use the base directory your agent gave when it loaded this skill. Else find it with `ls` in the skills folder of your agent. |

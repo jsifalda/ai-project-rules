@@ -30,11 +30,11 @@ $tried
 $expected
 $got
 $fix"
-if printf '%s' "$all" | grep -Eq 'ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|xox[bp]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN .*PRIVATE KEY|glpat-[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|Bearer [A-Za-z0-9._-]{20,}'; then
+if printf '%s' "$all" | grep -Eq 'gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}|xox[bp]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN .*PRIVATE KEY|glpat-[A-Za-z0-9_-]{20,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}|Bearer [A-Za-z0-9._-]{20,}'; then
   echo "refused: a field looks like it holds a secret. Remove it and run again." >&2
   exit 3
 fi
-if printf '%s' "$all" | grep -Eiq '(password|passwd|secret|token)=[^ ]{6,}'; then
+if printf '%s' "$all" | grep -Eiq '(password|passwd|secret|token|api[_-]?key)[=:][^ ]{6,}'; then
   echo "refused: a field looks like it holds a secret. Remove it and run again." >&2
   exit 3
 fi
@@ -53,15 +53,16 @@ log_local() {
 }
 
 file_issue() {
-  local issue_title="papercut($skill): $title" body found number
+  local issue_title="papercut($skill): $title" body number
   body="$(printf '**Skill:** %s\n\n**Tried:** %s\n\n**Expected:** %s\n\n**Got:** %s\n\n**Fix:** %s\n\nFiled by: log-papercut\n' "$skill" "$tried" "$expected" "$got" "$fix")"
   # Plain list, not --search: the search index lags, so a fresh duplicate is missed.
-  found="$(gh issue list -R "$PAPERCUT_REPO" --label papercut --state open --limit 500 --json number,title)" || return 1
-  number="$(printf '%s' "$found" | T="$issue_title" node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const m=JSON.parse(s).find(i=>i.title===process.env.T);if(m)console.log(m.number)})')" || return 1
+  number="$(T="$issue_title" gh issue list -R "$PAPERCUT_REPO" --label papercut --state open --limit 500 \
+    --json number,title --jq 'first(.[]|select(.title==env.T)|.number)')" || return 1
   if [ -n "$number" ]; then
     gh issue comment "$number" -R "$PAPERCUT_REPO" --body "$body" >/dev/null || return 1
     echo "commented #$number"
   else
+    gh label create papercut -R "$PAPERCUT_REPO" >/dev/null 2>&1 || true
     gh issue create -R "$PAPERCUT_REPO" --label papercut --title "$issue_title" --body "$body" || return 1
   fi
 }
